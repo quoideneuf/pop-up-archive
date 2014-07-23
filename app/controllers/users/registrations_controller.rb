@@ -11,8 +11,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
       if resource.active_for_authentication?
         sign_up(resource_name, resource)
         notify_user
-        send_to_mixpanel
         respond_with resource, :location => '/collections'
+        send_to_mixpanel
       else
         expire_data_after_sign_in!
         respond_with resource, :location => after_inactive_sign_up_path_for(resource)
@@ -109,16 +109,20 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
   
   def send_to_mixpanel
-    tracker = Mixpanel::Tracker.new(ENV['MIXPANEL_PROJECT'])
-    mp_cookie = JSON.parse(cookies["mp_"+ENV['MIXPANEL_PROJECT']+"_mixpanel"])
-    # logger.debug("mixpanel cookie" + mp_cookie['distinct_id'])
-    tracker.alias(@user.email, mp_cookie["distinct_id"])    
-    tracker.people.set(@user.email, {
-      '$name' => @user.name,
-      '$email' => @user.email,
-      '$plan' => @user.plan_id,
-    }, ip=request.remote_ip)
-    tracker.track(@user.email,  'Registered')
+    begin
+      tracker = Mixpanel::Tracker.new(ENV['MIXPANEL_PROJECT'])
+      mp_cookie = JSON.parse(cookies["mp_"+ENV['MIXPANEL_PROJECT']+"_mixpanel"])
+      # logger.debug("mixpanel cookie" + mp_cookie['distinct_id'])
+      tracker.alias(@user.email, mp_cookie["distinct_id"])    
+      tracker.people.set(@user.email, {
+        '$name' => @user.name,
+        '$email' => @user.email,
+        '$plan' => @user.plan_id,
+      }, ip=request.remote_ip)
+      tracker.track(@user.email,  'Registered')
+    rescue
+      logger.error "Mixpanel registration error."
+    end
   end
   
 end
