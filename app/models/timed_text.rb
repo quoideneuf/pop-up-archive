@@ -3,7 +3,6 @@ class TimedText < ActiveRecord::Base
   belongs_to :transcript
   belongs_to :speaker
 
-  attr_accessor :speaker
   delegate :audio_file, to: :transcript
 
   def as_json(options = :sigil)
