@@ -1,7 +1,9 @@
 class TimedText < ActiveRecord::Base
-  attr_accessible :start_time, :end_time, :text, :confidence
+  attr_accessible :start_time, :end_time, :text, :confidence, :speaker
   belongs_to :transcript
+  belongs_to :speaker
 
+  attr_accessor :speaker
   delegate :audio_file, to: :transcript
 
   def as_json(options = :sigil)
