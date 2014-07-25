@@ -80,6 +80,8 @@ gem 'soundcloud'
 
 gem 'amara', "~> 0.1.1"
 
+gem 'speechmatics'
+
 gem 'prerender_rails'
 
 # gem 'amara', :path => '../amara'
