@@ -69,6 +69,25 @@ class Utils
       result
     end
 
+    def download_temp_file(connection, uri, retry_count=10)
+      file_name = uri.path[1..-1].split("/").last
+      temp_file = create_temp_file(file_name)
+
+      file = download_private_file(connection, uri, retry_count)
+
+      temp_file.write(file)
+      temp_file.fsync()
+      temp_file
+    end
+
+    def create_temp_file(base_file_name=nil, bin_mode=true)
+      file_name = File.basename(base_file_name)
+      file_ext = File.extname(base_file_name)
+      tmp = Tempfile.new([file_name, file_ext])
+      tmp.binmode if bin_mode
+      tmp
+    end
+
     def is_audio_file?(url)
       #puts "is_audio_file? url:#{url}"
       begin
