@@ -1,8 +1,10 @@
 class Speaker < ActiveRecord::Base
 
-  attr_accessible :name
+  serialize :times
 
+  attr_accessible :name, :times
+
+  belongs_to :transcript
   has_many :timed_texts
-  has_many :transcripts, through: :timed_texts
 
 end

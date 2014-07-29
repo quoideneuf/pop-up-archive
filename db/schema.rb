@@ -263,9 +263,11 @@ ActiveRecord::Schema.define(:version => 20140725222220) do
   add_index "roles", ["name"], :name => "index_roles_on_name"
 
   create_table "speakers", :force => true do |t|
+    t.integer  "transcript_id"
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.text     "times"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
   end
 
   create_table "storage_configurations", :force => true do |t|

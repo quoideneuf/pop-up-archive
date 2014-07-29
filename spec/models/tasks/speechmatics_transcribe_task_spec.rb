@@ -11,28 +11,41 @@ describe Tasks::SpeechmaticsTranscribeTask do
   let(:response) {
     m = Hashie::Mash.new
     m.body = {
+      "format" => "1.0",
+      "job" => {
+        "created_at" => "Tue Jul 29 17:12:52 2014",
+        "duration" => 2,
+        "id" => 843,
+        "lang" => "en-US",
+        "name" => "npr_336167091.mp3",
+        "user_id" => 40
+      },
       "speakers" => [
       {
-        "duration" => "1.270",
+        "duration" => "0.680",
         "name" => "M1",
-        "time" => "0.590"
+        "time" => "0.590",
+        "confidence" => nil
       }
       ],
       "words" => [
       { 
         "duration" => "0.230",
         "name" => "Hello",
-        "time" => "0.590"
+        "time" => "0.590",
+        "confidence" => "0.995"
       },
       { 
         "duration" => "0.070",
         "name" => "World",
-        "time" => "0.960"
+        "time" => "0.960",
+        "confidence" => "0.995"
       },
       { 
         "duration" => "0.000",
         "name" => ".",
-        "time" => "1.270"
+        "time" => "1.270",
+        "confidence" => "NaN"
       }
       ]
     }
@@ -65,8 +78,17 @@ describe Tasks::SpeechmaticsTranscribeTask do
     it "processes transcript result" do
       
       trans = task.process_transcript(response)
-      puts "trans: #{trans.timed_texts.to_json}"
 
+      # puts "trans: #{trans.to_json}"
+      # puts "tt: #{trans.timed_texts.to_json}"
+      # puts "sp: #{trans.speakers.to_json}"
+
+      trans.timed_texts.count.should == 1
+      trans.timed_texts.first.text.should == "Hello World."
+
+      trans.speakers.count.should == 1
+      trans.speakers.first.name.should == "M1"
+      trans.timed_texts.first.speaker_id.should == trans.speakers.first.id
     end
 
 

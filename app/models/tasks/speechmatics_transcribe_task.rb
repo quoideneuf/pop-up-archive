@@ -37,57 +37,71 @@ class Tasks::SpeechmaticsTranscribeTask < Task
   end
 
   def process_transcript(response)
-    return nil if response.blank? || response.body.blank?
+    trans = nil
+    return trans if response.blank? || response.body.blank?
 
     json = response.body.to_json
     identifier = Digest::MD5.hexdigest(json)
 
     if trans = audio_file.transcripts.where(identifier: identifier).first
       logger.debug "transcript #{trans.id} already exists for this json: #{json[0,50]}"
-      return false
+      return trans
     end
 
-    trans = audio_file.transcripts.build(language: 'en-US', identifier: identifier, start_time: 0, end_time: 0)
+    Transcript.transaction do
+      trans    = audio_file.transcripts.create!(language: 'en-US', identifier: identifier, start_time: 0, end_time: 0)
+      speakers = response.speakers
+      words    = response.words
 
-    speakers = response.speakers
-    words = response.words
+      speaker_lookup = create_speakers(trans, speakers)
 
-    # iterate through the words and speakers
-    tt = nil
-    speaker_idx = 0
-    words.each do |row|
-      speaker = speakers[speaker_idx]
+      # iterate through the words and speakers
+      tt = nil
+      speaker_idx = 0
+      words.each do |row|
+        speaker = speakers[speaker_idx]
 
-      row_end = BigDecimal.new(row['time'].to_s) + BigDecimal.new(row['duration'].to_s)
-      speaker_end = BigDecimal.new(speaker['time'].to_s) + BigDecimal.new(speaker['duration'].to_s)
+        row_end = BigDecimal.new(row['time'].to_s) + BigDecimal.new(row['duration'].to_s)
+        speaker_end = BigDecimal.new(speaker['time'].to_s) + BigDecimal.new(speaker['duration'].to_s)
 
-      if tt
-        if (row_end > speaker_end)
-          speaker_idx += 1
-          tt.save
-          tt = nil
-        elsif (row_end - tt[:start_time]) > 5.0
-          tt.save
-          tt = nil
-        else
-          tt[:end_time] = row_end
-          space = (row['name'] =~ /[[:punct:]]/) ? '' : ' '
-          tt[:text] += "#{space}#{row['name']}"
+        if tt
+          if (row_end > speaker_end)
+            speaker_idx += 1
+            tt.save
+            tt = nil
+          elsif (row_end - tt[:start_time]) > 5.0
+            tt.save
+            tt = nil
+          else
+            tt[:end_time] = row_end
+            space = (row['name'] =~ /[[:punct:]]/) ? '' : ' '
+            tt[:text] += "#{space}#{row['name']}"
+          end
+        end
+
+        if !tt
+          tt = trans.timed_texts.build({
+            start_time: BigDecimal.new(row['time'].to_s),
+            end_time:   row_end,
+            text:       row['name'],
+            speaker:    speaker_lookup[speaker['name']]
+          })
         end
       end
 
-      if !tt
-        tt = trans.timed_texts.build({
-          start_time: BigDecimal.new(row['time'].to_s),
-          end_time:   row_end,
-          text:       row['name'],
-          speaker:    speaker['name']
-        })
-      end
+      trans.save!
     end
-
-    trans.save!
     trans
+  end
+
+  def create_speakers(trans, speakers)
+    speakers_lookup = {}
+    speakers_by_name = speakers.inject({}) {|all, s| all.key?(s['name']) ? all[s['name']] << s : all[s['name']] = [s]; all }
+    speakers_by_name.keys.each do |n|
+      times = speakers_by_name[n].collect{|r| [BigDecimal.new(r['time'].to_s), (BigDecimal.new(r['time'].to_s) + BigDecimal.new(r['duration'].to_s))] }        
+      speakers_lookup[n] = trans.speakers.create(name: n, times: times)
+    end
+    speakers_lookup
   end
 
   def set_speechmatics_defaults

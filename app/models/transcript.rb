@@ -4,7 +4,7 @@ class Transcript < ActiveRecord::Base
   belongs_to :audio_file
   has_one :item, through: :audio_file
   has_many :timed_texts, order: 'start_time ASC'
-  has_many :speakers, through: :timed_texts
+  has_many :speakers
 
   default_scope includes(:timed_texts)
 
