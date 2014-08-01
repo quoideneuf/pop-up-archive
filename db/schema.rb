@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140725222220) do
+ActiveRecord::Schema.define(:version => 20140801202318) do
 
   add_extension "hstore"
 
@@ -193,6 +193,21 @@ ActiveRecord::Schema.define(:version => 20140725222220) do
   add_index "items", ["collection_id"], :name => "index_items_on_collection_id"
   add_index "items", ["csv_import_id"], :name => "index_items_on_csv_import_id"
   add_index "items", ["geolocation_id"], :name => "index_items_on_geolocation_id"
+
+  create_table "monthly_usages", :force => true do |t|
+    t.integer  "entity_id"
+    t.string   "entity_type"
+    t.string   "use"
+    t.integer  "month"
+    t.integer  "year"
+    t.decimal  "value"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "monthly_usages", ["entity_id", "entity_type", "use", "month", "year"], :name => "index_entity_use_date"
+  add_index "monthly_usages", ["entity_id", "entity_type", "use"], :name => "index_monthly_usages_on_entity_id_and_entity_type_and_use"
+  add_index "monthly_usages", ["entity_id", "entity_type"], :name => "index_monthly_usages_on_entity_id_and_entity_type"
 
   create_table "oauth_access_grants", :force => true do |t|
     t.integer  "resource_owner_id", :null => false
