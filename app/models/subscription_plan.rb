@@ -63,6 +63,11 @@ class SubscriptionPlan
     @interval = plan.interval
   end
 
+  # this is stubbed out until it is clear how to tell when plan gets paid transcripts
+  def has_paid_transcripts?
+    false
+  end
+
   attr_reader :name, :amount, :hours, :id, :interval
 
   def eql?(plan)
