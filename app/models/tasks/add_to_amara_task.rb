@@ -36,7 +36,11 @@ class Tasks::AddToAmaraTask < Task
 
   def start_add_subtitles_worker
     return if self.extras['omit_subtitles']
-    AddSubtitlesWorker.perform_async(self.id) unless Rails.env.test?
+    ProcessTaskWorker.perform_async(self.id) unless Rails.env.test?
+  end
+
+  def process
+    add_subtitles
   end
 
   def add_subtitles
