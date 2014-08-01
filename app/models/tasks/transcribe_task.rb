@@ -7,7 +7,7 @@ class Tasks::TranscribeTask < Task
     connection = Fog::Storage.new(storage.credentials)
     uri        = URI.parse(destination)
 
-    transcript = download_file(connection, uri)
+    transcript = get_file(connection, uri)
     new_trans  = process_transcript(transcript)
 
     # if new transcript resulted, then call analyze
