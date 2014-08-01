@@ -152,25 +152,28 @@ class AudioFile < ActiveRecord::Base
   end
 
   def transcribe_audio(user=self.user)
-    start_transcribe_job(user, 'ts_start', {start_only: true})
-    if storage.at_internet_archive? || (user && (user.plan != SubscriptionPlan.community))
-      start_transcribe_job(user, 'ts_all')
+    if user.plan.has_paid_transcripts?
+      start_paid_transcribe_job(user, 'ts_paid')
+    else
+      start_transcribe_job(user, 'ts_start', {start_only: true})
+      if storage.at_internet_archive? || (user && (user.plan != SubscriptionPlan.community))
+        start_transcribe_job(user, 'ts_all')
+      end
     end
   end
 
+  def start_paid_transcribe_job(user, identifier, options={})
+    extras =  { original: process_file_url, user_id:  user.try(:id) }.merge(options)
+    self.tasks << Tasks::SpeechmaticsTranscribeTask.new(identifier: identifier, extras: extras)
+  end
+
   def start_transcribe_job(user, identifier, options={})
-    extras =  {
-      original: process_file_url,
-      user_id:  user.try(:id)
-    }.merge(options)
+    extras = { original: process_file_url, user_id:  user.try(:id) }.merge(options)
 
     if task = tasks.transcribe.without_status(:failed).where(identifier: identifier).last
       logger.debug "transcribe task #{identifier} #{task.id} already exists for audio_file #{self.id}"
     else
-      self.tasks << Tasks::TranscribeTask.new(
-        identifier: identifier,
-        extras: extras
-      )
+      self.tasks << Tasks::TranscribeTask.new( identifier: identifier, extras: extras )
     end
   end
   
@@ -178,10 +181,7 @@ class AudioFile < ActiveRecord::Base
     raise 'cannot create transcript when duration is 0' if (duration.to_i <= 0)
     task = Tasks::OrderTranscriptTask.new(
       identifier: 'order_transcript',
-      extras: {
-        user_id: user.id,
-        amount:  amount_for_transcript
-      }
+      extras: { user_id: user.id, amount:  amount_for_transcript }
     )
     self.tasks << task
     task
