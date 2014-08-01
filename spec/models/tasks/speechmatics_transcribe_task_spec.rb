@@ -63,7 +63,7 @@ describe Tasks::SpeechmaticsTranscribeTask do
     it "downloads audio_file" do
       task.set_task_defaults
       audio_file.item.token = "untitled.NqMBNV.popuparchive.org"
-      Utils.should_receive(:download_temp_file).and_return(File.open(test_file('test.mp3')))
+      Utils.should_receive(:download_file).and_return(File.open(test_file('test.mp3')))
 
       data_file = task.download_audio_file
       data_file.should_not be_nil
@@ -78,10 +78,6 @@ describe Tasks::SpeechmaticsTranscribeTask do
     it "processes transcript result" do
       
       trans = task.process_transcript(response)
-
-      # puts "trans: #{trans.to_json}"
-      # puts "tt: #{trans.timed_texts.to_json}"
-      # puts "sp: #{trans.speakers.to_json}"
 
       trans.timed_texts.count.should == 1
       trans.timed_texts.first.text.should == "Hello World."

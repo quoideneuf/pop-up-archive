@@ -8,6 +8,10 @@ class Tasks::SpeechmaticsTranscribeTask < Task
   after_commit :create_transcribe_job, :on => :create
 
   def create_transcribe_job
+    ProcessTaskWorker.perform_async(self.id) unless Rails.env.test?
+  end
+
+  def process
     # download audio file
     data_file = download_audio_file
     sm = Speechmatics::Client.new
@@ -109,20 +113,17 @@ class Tasks::SpeechmaticsTranscribeTask < Task
   end
 
   def speechmatics_call_back_url
-    Rails.application.routes.url_helpers.speechmatics_callback_url(model_name: owner.class.model_name.underscore, id: owner.id)
+    Rails.application.routes.url_helpers.speechmatics_callback_url(model_name: owner.class.model_name.underscore, model_id: owner.id)
   end
 
   def download_audio_file
     connection = Fog::Storage.new(storage.credentials)
     uri        = URI.parse(audio_file_url)
-    Utils.download_temp_file(connection, uri)    
+    Utils.download_file(connection, uri)
   end
 
   def audio_file_url
-    extras['destination'] || owner.try(:destination, {
-      storage: storage,
-      version: 'mp3'
-    })
+    self.original
   end
 
   def notify_user
