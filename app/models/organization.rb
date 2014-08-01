@@ -7,11 +7,14 @@ class Organization < ActiveRecord::Base
   has_many :collection_grants, as: :collector
   has_many :collections, through: :collection_grants
 
+  has_many :monthly_usages, as: :entity
+
   has_one  :uploads_collection_grant, class_name: 'CollectionGrant', as: :collector, conditions: {uploads_collection: true}
   has_one  :uploads_collection, through: :uploads_collection_grant, source: :collection
 
   after_commit :add_uploads_collection, on: :create
 
+  
   ROLES = [:admin, :member]
 
   def add_uploads_collection

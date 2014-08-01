@@ -25,6 +25,8 @@ class User < ActiveRecord::Base
   has_many :csv_imports
   has_many :oauth_applications, class_name: 'Doorkeeper::Application', as: :owner
 
+  has_many :monthly_usages, as: :entity
+
   validates_presence_of :name, if: :name_required?
   validates_presence_of :uploads_collection
 
@@ -118,6 +120,25 @@ class User < ActiveRecord::Base
 
   def plan
     organization ? organization.plan : customer.plan
+  end
+
+  def entity
+    organization || self
+  end
+
+  def usage_for(label, now=DateTime.now)
+    entity.monthly_usages.where(label: label, year: now.year, month: now.month).sum(:value)
+  end
+
+  def update_usage_for(label, value, now=DateTime.now)
+    entity.monthly_usages.where(label: label, year: now.year, month: now.month).first_or_initialize.update_attributes!(value: value)
+  end
+
+  def update_paid_transcript_usage(now=DateTime.now)
+    # get all tasks for the entity
+    tasks    = Tasks::SpeechmaticsTranscribeTask.where("extras -> 'entity_id' = ?", entity.id).where(created_at: now.beginning_of_month..now.end_of_month)
+    duration = tasks.inject(0){|sum, t| sum + t.duration }
+    update_usage_for('premium transcripts', duration, now)
   end
 
   def plan_json

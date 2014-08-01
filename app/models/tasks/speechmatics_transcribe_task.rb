@@ -14,6 +14,8 @@ class Tasks::SpeechmaticsTranscribeTask < Task
   def process
     # download audio file
     data_file = download_audio_file
+
+    # create the speechmatics job
     sm = Speechmatics::Client.new
     info = sm.user.jobs.create(
       data_file:    data_file.path,
@@ -22,8 +24,12 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       callback:     call_back_url
     )
 
+    # save the speechmatics job reference
     self.extras['job_id'] = info.id
     self.save!
+
+    # update usage
+    user.update_paid_transcript_usage
   end
 
   def finish_task
@@ -110,6 +116,8 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
   def set_speechmatics_defaults
     extras['call_back_url'] = speechmatics_call_back_url
+    extras['entity_id']     = user.entity.id if user
+    extras['duration']      = audio_file.duration.to_i if audio_file
   end
 
   def speechmatics_call_back_url
@@ -141,6 +149,10 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
   def user_id
     self.extras['user_id']
+  end
+
+  def duration    
+    self.extras['duration'].to_i
   end
 
 end

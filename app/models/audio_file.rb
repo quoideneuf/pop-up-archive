@@ -163,8 +163,11 @@ class AudioFile < ActiveRecord::Base
   end
 
   def start_paid_transcribe_job(user, identifier, options={})
+    raise 'cannot create transcript when duration is 0' if (duration.to_i <= 0)
     extras =  { original: process_file_url, user_id:  user.try(:id) }.merge(options)
-    self.tasks << Tasks::SpeechmaticsTranscribeTask.new(identifier: identifier, extras: extras)
+    task = Tasks::SpeechmaticsTranscribeTask.new(identifier: identifier, extras: extras)
+    self.tasks << task
+    task
   end
 
   def start_transcribe_job(user, identifier, options={})
