@@ -4,6 +4,10 @@ describe Utils do
   before { StripeMock.start }
   after { StripeMock.stop }
 
+  it "has a logger" do
+    Utils.logger.should_not be_nil
+  end
+
   it "checks http resource exists" do
     Utils.http_resource_exists?('http://www.prx.org/robots.txt').should be_true
   end
@@ -12,12 +16,14 @@ describe Utils do
     Utils.http_resource_exists?('http://prx.org/robots.txt').should be_true
   end
 
-  it "checks http resource doesn't exist" do
-    Utils.http_resource_exists?('http://www.prx.org/noway.txt', 1).should be_false
-  end
-
   it "checks http resource and retries" do
     Utils.http_resource_exists?('http://www.prx.org/noway.txt', 2).should be_false
+  end
+
+  it "downloads a public file to tmp file" do
+    url = "https://www.popuparchive.com/assets/prx_logo-e88984ad067c1491be8eb941112b393e.png"
+    pf = Utils.download_public_file(URI.parse(url))
+    pf.size.should == 58432
   end
 
   it "checks for when a url is for an audio file" do
