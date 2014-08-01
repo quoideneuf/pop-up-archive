@@ -24,13 +24,10 @@ class CallbacksController < ApplicationController
   end
 
   def speechmatics
-    @resource = params[:model_name].camelize.constantize.find(params[:id])
-
+    @resource = params[:model_name].camelize.constantize.find(params[:model_id])
     # don't know which param it is going to be
-    if job_id = params[:id] || params[:job_id]
-      if task = @resource.tasks.speechmatics_transcribe.where("extras -> 'job_id' = ?", job_id)
-        FinishTaskWorker.perform_async(task.id) unless Rails.env.test?
-      end
+    if @resource && (task = @resource.tasks.speechmatics_transcribe.where("extras -> 'job_id' = ?", params[:id]))
+      FinishTaskWorker.perform_async(task.id) unless Rails.env.test?
       head 202
     else
       head 200
