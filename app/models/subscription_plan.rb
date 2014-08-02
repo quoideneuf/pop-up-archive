@@ -63,9 +63,9 @@ class SubscriptionPlan
     @interval = plan.interval
   end
 
-  # this is stubbed out until it is clear how to tell when plan gets paid transcripts
+  # if the plan name has _business_ or _enterprise_ in it, we'll do premium transcripts
   def has_paid_transcripts?
-    false
+    self.name.match(/_(business|enterprise)_/)
   end
 
   attr_reader :name, :amount, :hours, :id, :interval
