@@ -5,8 +5,9 @@ describe Tasks::SpeechmaticsTranscribeTask do
   before { StripeMock.start }
   after { StripeMock.stop }
 
+  let(:user) { FactoryGirl.create :user }
   let(:audio_file) { FactoryGirl.create(:audio_file_private) }
-  let(:task) { Tasks::SpeechmaticsTranscribeTask.new(owner: audio_file) }
+  let(:task) { Tasks::SpeechmaticsTranscribeTask.new(owner: audio_file, extras: {'user_id' => user.id}) }
 
   let(:response) {
     m = Hashie::Mash.new
@@ -56,6 +57,7 @@ describe Tasks::SpeechmaticsTranscribeTask do
 
   context "create job" do
 
+
     it "has audio_file url" do
       url = task.audio_file_url
     end
@@ -87,6 +89,19 @@ describe Tasks::SpeechmaticsTranscribeTask do
       trans.timed_texts.first.speaker_id.should == trans.speakers.first.id
     end
 
+    it 'updates paid transcript usage' do
+      now = DateTime.now
+
+      user.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS).should == 0
+      extras = { 'original' => audio_file.process_file_url, 'user_id' => user.id }
+      t = Tasks::SpeechmaticsTranscribeTask.create!(owner: audio_file, identifier: 'test', extras: extras)
+      t.user_id.should == user.id.to_s
+      t.extras['entity_id'].should == user.entity.id.to_s
+
+      t.update_premium_transcript_usage(now).should == 60
+      user.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS).should == 60
+
+    end
 
   end
 
