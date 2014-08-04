@@ -4,5 +4,6 @@ class MonthlyUsage < ActiveRecord::Base
   attr_accessible :entity, :entity_id, :entity_type, :month, :year, :use, :value
 
   PREMIUM_TRANSCRIPTS = 'premium transcripts'
+  BASIC_TRANSCRIPTS   = 'basic transcripts'
 
 end
