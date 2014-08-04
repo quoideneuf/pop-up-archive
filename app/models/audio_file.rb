@@ -152,8 +152,8 @@ class AudioFile < ActiveRecord::Base
   end
 
   def transcribe_audio(user=self.user)
-    if user.plan.has_paid_transcripts?
-      start_paid_transcribe_job(user, 'ts_paid')
+    if user.plan.has_premium_transcripts?
+      start_premium_transcribe_job(user, 'ts_paid')
     else
       start_transcribe_job(user, 'ts_start', {start_only: true})
       if storage.at_internet_archive? || (user && (user.plan != SubscriptionPlan.community))
@@ -162,19 +162,24 @@ class AudioFile < ActiveRecord::Base
     end
   end
 
-  def start_paid_transcribe_job(user, identifier, options={})
+  def start_premium_transcribe_job(user, identifier, options={})
     raise 'cannot create transcript when duration is 0' if (duration.to_i <= 0)
-    extras =  { original: process_file_url, user_id:  user.try(:id) }.merge(options)
-    task = Tasks::SpeechmaticsTranscribeTask.new(identifier: identifier, extras: extras)
-    self.tasks << task
-    task
+
+    if task = tasks.speechmatics_transcribe.without_status(:failed).where(identifier: identifier).last
+      logger.debug "speechmatics transcribe task #{identifier} #{task.id} already exists for audio file #{self.id}"
+    else
+      extras = { original: process_file_url, user_id:  user.try(:id) }.merge(options)
+      task = Tasks::SpeechmaticsTranscribeTask.new(identifier: identifier, extras: extras)
+      self.tasks << task
+      task
+    end
   end
 
   def start_transcribe_job(user, identifier, options={})
     extras = { original: process_file_url, user_id:  user.try(:id) }.merge(options)
 
     if task = tasks.transcribe.without_status(:failed).where(identifier: identifier).last
-      logger.debug "transcribe task #{identifier} #{task.id} already exists for audio_file #{self.id}"
+      logger.debug "transcribe task #{identifier} #{task.id} already exists for audio file #{self.id}"
     else
       self.tasks << Tasks::TranscribeTask.new( identifier: identifier, extras: extras )
     end

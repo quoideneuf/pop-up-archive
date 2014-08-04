@@ -64,7 +64,7 @@ class SubscriptionPlan
   end
 
   # if the plan id has _business_ or _enterprise_ in it, we'll do premium transcripts
-  def has_paid_transcripts?
+  def has_premium_transcripts?
     self.id.match(/_(business|enterprise)_/)
   end
 
