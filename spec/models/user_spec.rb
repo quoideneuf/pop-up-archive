@@ -20,6 +20,40 @@ describe User do
     end
   end
 
+  context 'usage' do
+
+    let(:org_user) {
+      now = DateTime.now
+      ou = FactoryGirl.create :organization_user
+      ou.organization.monthly_usages.create(use: 'test', year: now.year, month: now.month, value: 10)
+      ou
+    }
+
+    let(:audio_file) { FactoryGirl.create(:audio_file_private) }
+
+    it 'gets usage for current month' do
+      user.usage_for('test').should == 0
+    end
+
+    it 'gets org usage for current month' do
+      org_user.usage_for('test').should == 10
+    end
+
+    it 'gets usage for different month' do
+      org_user.usage_for('test', 1.month.ago).should == 0
+    end
+
+    it 'updates usage' do
+      time = DateTime.now
+      user.usage_for('test', time).to_i.should == 0
+      user.update_usage_for('test', 100, time)
+      user.usage_for('test', time).should eq 100
+      user.update_usage_for('test', 1000, time)
+      user.usage_for('test', time).should eq 1000
+    end
+
+  end
+
   context 'storage' do
     it 'meters storage' do
       user.used_metered_storage.should eq 0

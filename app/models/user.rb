@@ -126,19 +126,12 @@ class User < ActiveRecord::Base
     organization || self
   end
 
-  def usage_for(label, now=DateTime.now)
-    entity.monthly_usages.where(label: label, year: now.year, month: now.month).sum(:value)
+  def usage_for(use, now=DateTime.now)
+    entity.monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).sum(:value)
   end
 
-  def update_usage_for(label, value, now=DateTime.now)
-    entity.monthly_usages.where(label: label, year: now.year, month: now.month).first_or_initialize.update_attributes!(value: value)
-  end
-
-  def update_paid_transcript_usage(now=DateTime.now)
-    # get all tasks for the entity
-    tasks    = Tasks::SpeechmaticsTranscribeTask.where("extras -> 'entity_id' = ?", entity.id).where(created_at: now.beginning_of_month..now.end_of_month)
-    duration = tasks.inject(0){|sum, t| sum + t.duration }
-    update_usage_for('premium transcripts', duration, now)
+  def update_usage_for(use, value, now=DateTime.now)
+    entity.monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).first_or_initialize.update_attributes!(value: value)
   end
 
   def plan_json
