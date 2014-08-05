@@ -2,7 +2,7 @@ section ng-controller="AccountCtrl"
   .modal-header
     button type="button" class="close" data-dismiss="modal" aria-hidden="true" x
     h4
-      |Are you sure you'd like to change your plan from {{me.plan.name}} to {{plan.name}}? 
+      |Are you sure you'd like to change your plan from {{me.plan.name}} ({{me.plan.interval}}) to {{plan.name}} ({{plan.interval}}) ? 
       
     p
       |Total: ${{plan.amount/100}} per {{plan.interval}}

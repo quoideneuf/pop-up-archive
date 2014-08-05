@@ -32,7 +32,7 @@ describe SubscriptionPlan do
 
   it 'defaults to 2 hours as a minimum' do
     plan = SubscriptionPlan.new(Stripe::Plan.create(name: 'Test Again Plan', amount: 0, id: 'malformed'))
-    plan.hours.should eq 2
+    plan.hours.should eq 1
   end
 
   it 'gets the dollar amount from the stripe object' do

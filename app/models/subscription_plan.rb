@@ -76,7 +76,7 @@ class SubscriptionPlan
   def calculate_plan_hours(id)
     hours = id.split(/\-|_/)[0].to_i
     if hours == 0
-      2
+      1
     else
       hours
     end

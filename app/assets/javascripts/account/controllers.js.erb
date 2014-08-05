@@ -1,4 +1,4 @@
-angular.module('Directory.account.controllers', ['stripe', 'Directory.account.models'])
+angular.module('Directory.account.controllers', ['stripe', 'Directory.account.models', 'ngPlayer'])
 .config(function () {
   Stripe.setPublishableKey('<%= ENV["STRIPE_PUBLISHABLE_KEY"] %>');
 })
@@ -26,39 +26,31 @@ angular.module('Directory.account.controllers', ['stripe', 'Directory.account.mo
     $modal({template: '/assets/account/credit_card.html', persist: true, show: true, backdrop: 'static', scope: $scope});
   }
 }])
-.controller('AccountPlanCtrl', ['$scope', 'Me', 'Plan', '$modal', '$location', function ($scope, Me, Plan, $modal, $location) {
-  $scope.interval = 'month';
-  $scope.offer = $scope.offer || {};
 
-  Plan.get().then(function (plans) {
-    $scope.plans = plans;
-  });
-  $scope.community = Plan.community();
+.filter('shortInterval', function () {
+  return function (interval) {
+    if (!interval || interval.toLowerCase() == 'month') {
+      return 'mo';
+    } else {
+      return 'yr';
+    }
+  }
+})
+
+.controller('AccountPlanCtrl', ['$scope', 'Me', 'Plan', '$modal', '$location', '$window', 'SampleAudio', 'Subscribe', function ($scope, Me, Plan, $modal, $location, $window, SampleAudio, Subscribe) {
 
   Me.authenticated(function (me) {
     $scope.me = me;
     $scope.pendingPlan = me.plan.id;
     $scope.interval = me.plan.interval;
+    console.log($scope.me);
   });
 
-  $scope.paidPlan = function (plan) {
-    return plan.amount > 0;
-  };
+  $scope.interval = 'month';
 
   $scope.isCurrentPlan = function (plan) {
     return plan && $scope.me && $scope.me.plan && plan.id == $scope.me.plan.id;
-  };
-
-  $scope.isPaidPlan = function (plan) {
-    return plan && plan.amount > 0;
-  };
-
-  $scope.toggleInterval = function () {
-    $scope.interval = ( $scope.interval == 'year' ? 'month' : 'year');
-  };
-
-  $scope.oppositeInterval = function () {
-    return $scope.interval == 'year' ? 'Monthly' : 'Annual';
+    console.log($scope.me.plan.id);
   };
 
   $scope.hasSpecialPlan = function () {
@@ -72,7 +64,7 @@ angular.module('Directory.account.controllers', ['stripe', 'Directory.account.mo
     return special;
   };
   
-  $scope.subscribe = function (plan) {
+  subscribe = function (plan) {
     $scope.plan = plan;
     $modal({template: '/assets/account/signup_verify.html', persist: true, show: true, backdrop: 'static', scope: $scope});
   };
@@ -95,88 +87,6 @@ angular.module('Directory.account.controllers', ['stripe', 'Directory.account.mo
       $modal({template: '/assets/account/credit_card.html', persist: true, show: true, backdrop: 'static', scope: $scope});
     }
   };
-}])
-.controller('PRXAccountPlanCtrl', ['$scope', 'Me', 'Plan', '$location', function ($scope, Me, Plan, $location) {
-  $scope.me = true;
-  Plan.get().then(function (plans) {
-    var suggest, min = Infinity, max = -1;
-    angular.forEach(plans, function (plan) {
-      if (plan.interval == 'month') {
-        if (plan.amount < min) {
-          min = plan.amount;
-        }
-        if (plan.amount > max) {
-          max = plan.amount;
-        }
-      }
-    });
-    angular.forEach(plans, function (plan) {
-      if (plan.interval == 'month') {
-        if (plan.amount < max && plan.amount > min && (!suggest || plan.amount > suggest.amount)) {
-          suggest = plan;
-        }
-      }
-    });
-    $scope.plan = suggest;
-  });
-
-  Me.authenticated(function (me) {
-    $scope.me = me;
-  });
-
-  $scope.subscribe = function () {
-    $scope.signingUp = true;
-    $scope.me.subscribe($scope.plan.id, 'prx').then(function () {
-      $location.path('/account');
-    });
-  };
-
-  $scope.cancel = function () {
-    $location.path('/account/plan');
-  }
-}])
-.filter('shortInterval', function () {
-  return function (interval) {
-    if (!interval || interval.toLowerCase() == 'month') {
-      return 'mo';
-    } else {
-      return 'yr';
-    }
-  }
-})
-.controller('PRXSignUpCtrl', ['$scope', 'Me', 'Plan', '$location', function ($scope, Me, Plan, $location) {
-  Me.authenticated(function (me) {
-    $location.path('/account/plan/prx').replace();
-  }, function () {
-    Plan.get().then(function (plans) {
-      var suggest, min = Infinity, max = -1;
-      angular.forEach(plans, function (plan) {
-        if (plan.interval == 'month') {
-          if (plan.amount < min) {
-            min = plan.amount;
-          }
-          if (plan.amount > max) {
-            max = plan.amount;
-          }
-        }
-      });
-      angular.forEach(plans, function (plan) {
-        if (plan.interval == 'month') {
-          if (plan.amount < max && plan.amount > min && (!suggest || plan.amount > suggest.amount)) {
-            suggest = plan;
-          }
-        }
-      });
-      $scope.plan = suggest;
-    });
-    $scope.subscribe = function () {
-      $scope.signingUp = true;
-      window.location.href = '/users/sign_up?plan_id=' + $scope.plan.id + '&offer_code=prx';
-    };
-    $scope.cancel = function () {
-      $location.path('/pricing');
-    };
-  });
 }])
 .controller('CreditCardCtrl', ['$scope', function ($scope) {
   var currentUser = $scope.currentUser || $scope.me;
@@ -212,61 +122,12 @@ angular.module('Directory.account.controllers', ['stripe', 'Directory.account.mo
     return plans;
   }
 })
-.controller('SignUpCtrl', ['$scope', 'Me', '$location', 'Plan', '$modal', function($scope, Me, $location, Plan, $modal) {
+.controller('SignUpCtrl', ['$scope', 'Me', '$location', 'Plan', '$modal', 'SampleAudio', 'Subscribe', function($scope, Me, $location, Plan, $modal, SampleAudio, Subscribe) {
   Me.authenticated(function (me) {
     $location.path('/account/plan').replace();;
   });
-
-  $scope.interval = 'month';
-  $scope.offer = $scope.offer || {};
-
-  Plan.get().then(function (plans) {
-    $scope.plans = plans;
-    var suggest, min = Infinity, max = -1;
-    angular.forEach(plans, function (plan) {
-      if (plan.interval == 'month') {
-        if (plan.amount < min) {
-          min = plan.amount;
-        }
-        if (plan.amount > max) {
-          max = plan.amount;
-        }
-      }
-    });
-    angular.forEach(plans, function (plan) {
-      if (plan.interval == 'month') {
-        if (plan.amount < max && plan.amount > min && (!suggest || plan.amount > suggest.amount)) {
-          suggest = plan;
-        }
-      }
-    });
-    $scope.pendingPlan = suggest.id;
-  });
-  $scope.community = Plan.community();
-
-  $scope.paidPlan = function (plan) {
-    return plan.amount > 0;
-  };
-
-  $scope.isCurrentPlan = function (plan) {
-    return plan && $scope.me && $scope.me.plan && plan.id == $scope.me.plan.id;
-  };
-
-  $scope.isPaidPlan = function (plan) {
-    return plan && plan.amount > 0;
-  };
   
-  $scope.subscribe = function (plan) {
+  subscribe = function (plan) {
     window.location = "/users/sign_up?plan_id=" + plan.id;
-  }
-
-  function getPendingPlan() {
-    var returnPlan;
-    angular.forEach($scope.plans, function (plan) {
-      if ($scope.pendingPlan == plan.id) {
-        returnPlan = plan;
-      }
-    });
-    return returnPlan;
   }
 }]);
