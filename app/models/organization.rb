@@ -3,6 +3,8 @@ class Organization < ActiveRecord::Base
 
   attr_accessible :name
 
+  belongs_to :owner, class_name: 'User', foreign_key: 'owner_id'
+
   has_many :users
   has_many :collection_grants, as: :collector
   has_many :collections, through: :collection_grants
@@ -22,7 +24,7 @@ class Organization < ActiveRecord::Base
   end
 
   def plan
-    SubscriptionPlan.organization
+    owner ? owner.plan : SubscriptionPlan.organization
   end
 
   def set_amara_team(options={})

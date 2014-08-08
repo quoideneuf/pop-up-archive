@@ -113,8 +113,8 @@ describe User do
       user.plan_amount.should eq 0
     end
 
-    it 'has a #customer method that returns a User::Customer' do
-      user.customer.should be_a User::Customer
+    it 'has a #customer method that returns a Customer' do
+      user.customer.should be_a Customer
     end
 
     it 'persists the customer' do
