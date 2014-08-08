@@ -50,7 +50,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     # if new transcript resulted, then call analyze
     if new_trans
       audio_file.analyze_transcript
-      notify_user unless start_only?
+      notify_user
     end
   end
 
