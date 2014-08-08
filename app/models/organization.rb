@@ -14,7 +14,6 @@ class Organization < ActiveRecord::Base
 
   after_commit :add_uploads_collection, on: :create
 
-  
   ROLES = [:admin, :member]
 
   def add_uploads_collection

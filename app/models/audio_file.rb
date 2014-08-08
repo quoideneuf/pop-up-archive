@@ -123,7 +123,7 @@ class AudioFile < ActiveRecord::Base
     if !force && task = tasks.analyze_audio.without_status(:failed).last
       logger.debug "analyze task #{task.id} already exists for audio_file #{self.id}"
     else
-      result = Tasks::AnalyzeAudioTask.new(extras: { original: process_file_url })
+      result = Tasks::AnalyzeAudioTask.new(extras: { 'original' => process_file_url })
       self.tasks << result
     end
     result
@@ -137,13 +137,13 @@ class AudioFile < ActiveRecord::Base
     options = {
       identifier: 'add_to_amara',
       extras: {
-        user_id: user.try(:id)
+        'user_id' => user.try(:id)
       }
     }
 
     # if the user is in an org, and that org has an amara team defined, set it here
     if user.organization && user.organization.amara_team
-      options[:extras][:amara_team] = user.organization.amara_team
+      options[:extras]['amara_team'] = user.organization.amara_team
     end
 
     task = Tasks::AddToAmaraTask.new(options)
@@ -168,7 +168,7 @@ class AudioFile < ActiveRecord::Base
     if task = tasks.speechmatics_transcribe.without_status(:failed).where(identifier: identifier).last
       logger.debug "speechmatics transcribe task #{identifier} #{task.id} already exists for audio file #{self.id}"
     else
-      extras = { original: process_file_url, user_id:  user.try(:id) }.merge(options)
+      extras = { 'original' => process_file_url, 'user_id' => user.try(:id) }.merge(options)
       task = Tasks::SpeechmaticsTranscribeTask.new(identifier: identifier, extras: extras)
       self.tasks << task
       task
@@ -176,7 +176,7 @@ class AudioFile < ActiveRecord::Base
   end
 
   def start_transcribe_job(user, identifier, options={})
-    extras = { original: process_file_url, user_id:  user.try(:id) }.merge(options)
+    extras = { 'original' => process_file_url, 'user_id' => user.try(:id) }.merge(options)
 
     if task = tasks.transcribe.without_status(:failed).where(identifier: identifier).last
       logger.debug "transcribe task #{identifier} #{task.id} already exists for audio file #{self.id}"
@@ -189,7 +189,7 @@ class AudioFile < ActiveRecord::Base
     raise 'cannot create transcript when duration is 0' if (duration.to_i <= 0)
     task = Tasks::OrderTranscriptTask.new(
       identifier: 'order_transcript',
-      extras: { user_id: user.id, amount:  amount_for_transcript }
+      extras: { 'user_id' => user.id, 'amount' => amount_for_transcript }
     )
     self.tasks << task
     task
@@ -273,7 +273,7 @@ class AudioFile < ActiveRecord::Base
   end
 
   def analyze_transcript
-    self.tasks << Tasks::AnalyzeTask.new(extras: { original: transcript_text_url })
+    self.tasks << Tasks::AnalyzeTask.new(extras: { 'original' => transcript_text_url })
   end
 
   def transcript_text_url

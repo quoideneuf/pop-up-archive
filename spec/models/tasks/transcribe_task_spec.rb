@@ -7,7 +7,7 @@ describe Tasks::TranscribeTask do
 
   before(:each) do
     @audio_file = FactoryGirl.create :audio_file
-    @task = Tasks::TranscribeTask.new(owner: @audio_file, identifier: 'ts_all', extras: {original: "http://fakeurl.dev" } )
+    @task = Tasks::TranscribeTask.new(owner: @audio_file, identifier: 'ts_all', extras: {'original' => "http://fakeurl.dev" } )
   end
 
   context "transcripts" do

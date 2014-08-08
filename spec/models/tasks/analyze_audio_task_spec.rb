@@ -7,7 +7,7 @@ describe Tasks::AnalyzeAudioTask do
 
   before(:each) do 
     @audio_file = FactoryGirl.create :audio_file
-    @task = Tasks::AnalyzeAudioTask.new(owner: @audio_file, extras: { original: "http://test.test/test.wav" })
+    @task = Tasks::AnalyzeAudioTask.new(owner: @audio_file, extras: { 'original' => "http://test.test/test.wav" })
   end
 
   it 'callback' do

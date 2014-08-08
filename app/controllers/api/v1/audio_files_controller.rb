@@ -98,11 +98,11 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
       result = task.extras
     else
       extras = {
-        user_id:         current_user.id,
-        filename:        params[:filename],
-        filesize:        params[:filesize].to_i,
-        last_modified:   params[:last_modified],
-        key:             params[:key]
+        'user_id'       => current_user.id,
+        'filename'      => params[:filename],
+        'filesize'      => params[:filesize].to_i,
+        'last_modified' => params[:last_modified],
+        'key'           => params[:key]
       }
       task = audio_file.tasks << Tasks::UploadTask.new(extras: extras)
       result = signature_hash(:init)

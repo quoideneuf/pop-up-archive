@@ -6,13 +6,13 @@ describe Task do
   
   it "should allow writing to the extras attributes" do
     task = FactoryGirl.build :task
-    task.extras = {test: 'test value'}
+    task.extras = {'test' => 'test value'}
     task.save
   end
 
   it 'should persist the extras attributes' do
     task = FactoryGirl.create :task
-    task.extras = {test: 'test value'}
+    task.extras = {'test' => 'test value'}
     task.save
 
     Task.find(task.id).extras['test'].should eq 'test value'
@@ -39,7 +39,7 @@ describe Task do
   describe 'fixer call backs' do
     before {
       @task = FactoryGirl.build :task
-      @task.extras[:call_back_url] = 'https://www.popuparchive.com/test'
+      @task.extras['call_back_url'] = 'https://www.popuparchive.com/test'
       @task.save!
       @task.reload
     }
