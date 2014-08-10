@@ -99,6 +99,8 @@ class AudioFile < ActiveRecord::Base
   def process_update_file
     # logger.debug "af #{id} call copy_to_item_storage"
     copy_to_item_storage
+
+    transcribe_audio
   end
 
   def process_file
@@ -163,7 +165,7 @@ class AudioFile < ActiveRecord::Base
   end
 
   def start_premium_transcribe_job(user, identifier, options={})
-    raise 'cannot create transcript when duration is 0' if (duration.to_i <= 0)
+    return if (duration.to_i <= 0)
 
     if task = tasks.speechmatics_transcribe.without_status(:failed).where(identifier: identifier).last
       logger.debug "speechmatics transcribe task #{identifier} #{task.id} already exists for audio file #{self.id}"
