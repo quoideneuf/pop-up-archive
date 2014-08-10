@@ -121,7 +121,7 @@ class User < ActiveRecord::Base
   end
 
   def plan
-    organization ? organization.plan : customer.plan
+    organization && (organization.owner_id != id) ? organization.plan : customer.plan
   end
 
   def entity
