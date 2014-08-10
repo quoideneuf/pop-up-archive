@@ -56,9 +56,10 @@ class Tasks::UploadTask < Task
     self.extras['chunks_uploaded'] = chunks_array.to_csv
   end
 
-  def self.make_identifier(o=nil)
-    raise 'you must pass in options to make an identifier' unless o
-    Digest::SHA1.hexdigest("u:#{o['user_id']};n:#{o['filename']};s:#{o['filesize']};m:#{o['last_modified']}")
+  def self.make_identifier(options=nil)
+    raise 'you must pass in options to make an identifier' unless options
+    o = HashWithIndifferentAccess.new(options)
+    Digest::SHA1.hexdigest("u:#{o[:user_id]};n:#{o[:filename]};s:#{o[:filesize]};m:#{o[:last_modified]}")
   end
 
 end
