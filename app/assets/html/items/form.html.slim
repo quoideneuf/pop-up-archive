@@ -148,7 +148,7 @@ section ng-controller="ItemFormCtrl"
                     option ng-repeat="role in item.standardRoles" value="{{role}}" {{role}}
 
                 span.field
-                  input ui-select2="peopleSelect" ng-model="contribution.person"
+                  input ui-select2="peopleSelect" type="hidden" ng-model="contribution.person"
 
                 button.btn type="button" ng-click="deleteContribution(contribution)" Delete
 
