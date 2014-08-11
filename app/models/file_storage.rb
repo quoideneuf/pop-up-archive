@@ -97,9 +97,9 @@ module FileStorage
         identifier: dest,
         storage_id: stor.id,
         extras: {
-          user_id:     resource_user.try(:id),
-          original:    orig,
-          destination: dest
+          'user_id'     => resource_user.try(:id),
+          'original'    => orig,
+          'destination' => dest
         }
 
       )

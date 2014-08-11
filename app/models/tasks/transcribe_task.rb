@@ -1,5 +1,6 @@
 class Tasks::TranscribeTask < Task
 
+  before_validation :set_transcribe_defaults, :on => :create
   after_commit :create_transcribe_job, :on => :create
 
   def finish_task
@@ -7,7 +8,7 @@ class Tasks::TranscribeTask < Task
     connection = Fog::Storage.new(storage.credentials)
     uri        = URI.parse(destination)
 
-    transcript = download_file(connection, uri)
+    transcript = get_file(connection, uri)
     new_trans  = process_transcript(transcript)
 
     # if new transcript resulted, then call analyze
@@ -69,6 +70,16 @@ class Tasks::TranscribeTask < Task
         })
       end
     end
+
+    update_transcript_usage
+  end
+
+  def update_transcript_usage(now=DateTime.now)
+    # get all tasks for the entity
+    tasks    = Tasks::TranscribeTask.where("extras -> 'entity_id' = ?", user.entity.id.to_s).where(created_at: now.utc.beginning_of_month..now.utc.end_of_month)
+    duration = tasks.inject(0){|sum, t| sum + t.duration }
+    user.update_usage_for(MonthlyUsage::BASIC_TRANSCRIPTS, duration, now)
+    duration
   end
 
   def process_transcript(json)
@@ -137,6 +148,11 @@ class Tasks::TranscribeTask < Task
       suffix:  suffix,
       options: { metadata: { 'x-archive-meta-mediatype' => 'data' } }
     })
+  end
+
+  def set_transcribe_defaults
+    extras['entity_id']     = user.entity.id if user
+    extras['duration']      = audio_file.duration.to_i if audio_file
   end
 
 end

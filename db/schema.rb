@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140317182319) do
+ActiveRecord::Schema.define(:version => 20140808172043) do
 
   add_extension "hstore"
 
@@ -194,6 +194,21 @@ ActiveRecord::Schema.define(:version => 20140317182319) do
   add_index "items", ["csv_import_id"], :name => "index_items_on_csv_import_id"
   add_index "items", ["geolocation_id"], :name => "index_items_on_geolocation_id"
 
+  create_table "monthly_usages", :force => true do |t|
+    t.integer  "entity_id"
+    t.string   "entity_type"
+    t.string   "use"
+    t.integer  "month"
+    t.integer  "year"
+    t.decimal  "value"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "monthly_usages", ["entity_id", "entity_type", "use", "month", "year"], :name => "index_entity_use_date"
+  add_index "monthly_usages", ["entity_id", "entity_type", "use"], :name => "index_monthly_usages_on_entity_id_and_entity_type_and_use"
+  add_index "monthly_usages", ["entity_id", "entity_type"], :name => "index_monthly_usages_on_entity_id_and_entity_type"
+
   create_table "oauth_access_grants", :force => true do |t|
     t.integer  "resource_owner_id", :null => false
     t.integer  "application_id",    :null => false
@@ -220,7 +235,6 @@ ActiveRecord::Schema.define(:version => 20140317182319) do
 
   add_index "oauth_access_tokens", ["refresh_token"], :name => "index_oauth_access_tokens_on_refresh_token", :unique => true
   add_index "oauth_access_tokens", ["resource_owner_id"], :name => "index_oauth_access_tokens_on_resource_owner_id"
-  add_index "oauth_access_tokens", ["token"], :name => "index_oauth_access_tokens_on_token", :unique => true
 
   create_table "oauth_applications", :force => true do |t|
     t.string   "name",         :null => false
@@ -243,6 +257,7 @@ ActiveRecord::Schema.define(:version => 20140317182319) do
     t.string   "amara_key"
     t.string   "amara_username"
     t.string   "amara_team"
+    t.integer  "owner_id"
   end
 
   create_table "people", :force => true do |t|
@@ -262,6 +277,14 @@ ActiveRecord::Schema.define(:version => 20140317182319) do
 
   add_index "roles", ["name", "resource_type", "resource_id"], :name => "index_roles_on_name_and_resource_type_and_resource_id"
   add_index "roles", ["name"], :name => "index_roles_on_name"
+
+  create_table "speakers", :force => true do |t|
+    t.integer  "transcript_id"
+    t.string   "name"
+    t.text     "times"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
 
   create_table "storage_configurations", :force => true do |t|
     t.string   "provider"
@@ -299,12 +322,13 @@ ActiveRecord::Schema.define(:version => 20140317182319) do
 
   create_table "timed_texts", :force => true do |t|
     t.integer  "transcript_id"
-    t.integer  "start_time"
-    t.integer  "end_time"
+    t.decimal  "start_time"
+    t.decimal  "end_time"
     t.text     "text"
     t.decimal  "confidence"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+    t.integer  "speaker_id"
   end
 
   add_index "timed_texts", ["start_time", "transcript_id"], :name => "index_timed_texts_on_start_time_and_transcript_id"

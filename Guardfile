@@ -1,12 +1,21 @@
-require 'rbconfig';
-if RbConfig::CONFIG['host_os'].sub(/^[^\d]+/,'').to_i <= 11
-  require 'growl'
-  notification :growl
-else
-  notification :terminal_notifier
+# A sample Guardfile
+# More info at https://github.com/guard/guard#readme
+
+guard 'bundler' do
+  watch('Gemfile')
+  # Uncomment next line if Gemfile contain `gemspec' command
+  # watch(/^.+\.gemspec/)
 end
 
-guard 'rspec', all_on_start: false, all_after_pass: false, spring: true, bundler: false do
+# guard :jasmine do
+#   watch(%r{spec/javascripts/spec\.(js\.coffee|js|coffee)$}) { 'spec/javascripts' }
+#   watch(%r{spec/javascripts/.+_spec\.(js\.coffee|js|coffee)$})
+#   watch(%r{spec/javascripts/fixtures/.+$})
+#   watch(%r{app/assets/javascripts/(.+?)\.(js\.coffee|js|coffee)(?:\.\w+)*$}) { |m| "spec/javascripts/#{ m[1] }_spec.#{ m[2] }" }
+# end
+
+#guard :rspec do
+guard :rspec, all_on_start: false, all_after_pass: false do
   watch(%r{^spec/.+_spec\.rb$})
   watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
   watch('spec/spec_helper.rb')  { "spec" }
@@ -23,15 +32,3 @@ guard 'rspec', all_on_start: false, all_after_pass: false, spring: true, bundler
   watch(%r{^app/views/(.+)/.*\.(erb|haml)$})          { |m| "spec/features/#{m[1]}_spec.rb" }
 end
 
-# guard :jasmine do
-#   watch(%r{spec/javascripts/spec\.(js\.coffee|js|coffee)$}) { 'spec/javascripts' }
-#   watch(%r{spec/javascripts/.+_spec\.(js\.coffee|js|coffee)$})
-#   watch(%r{spec/javascripts/fixtures/.+$})
-#   watch(%r{app/assets/javascripts/(.+?)\.(js\.coffee|js|coffee)(?:\.\w+)*$}) { |m| "spec/javascripts/#{ m[1] }_spec.#{ m[2] }" }
-# end
-
-guard 'bundler' do
-  watch('Gemfile')
-  # Uncomment next line if Gemfile contain `gemspec' command
-  # watch(/^.+\.gemspec/)
-end

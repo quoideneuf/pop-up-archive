@@ -11,7 +11,7 @@ describe CallbacksController do
 
   describe "POST 'create'" do
     before :each do
-      @task = FactoryGirl.create :add_to_amara_task, extras: {video_id: 'abcdefg'}
+      @task = FactoryGirl.create :add_to_amara_task, extras: {'video_id' => 'abcdefg'}
 
     end
 

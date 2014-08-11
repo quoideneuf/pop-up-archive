@@ -15,7 +15,7 @@ class Task < ActiveRecord::Base
   scope :incomplete, where('status != ?', COMPLETE)
 
   # convenient scopes for subclass types
-  [:analyze_audio, :analyze, :copy, :detect_derivatives, :order_transcript, :transcode, :transcribe, :upload].each do |task_subclass|
+  [:analyze_audio, :analyze, :copy, :detect_derivatives, :order_transcript, :transcode, :transcribe, :upload, :speechmatics_transcribe].each do |task_subclass|
     scope task_subclass, where('type = ?', "Tasks::#{task_subclass.to_s.camelize}Task")
   end
 
@@ -112,6 +112,9 @@ class Task < ActiveRecord::Base
     url
   end
 
+  def process
+  end
+
   def finish_task
   end
 
@@ -149,8 +152,8 @@ class Task < ActiveRecord::Base
     self.extras['results'] = HashWithIndifferentAccess.new(rs)
   end
 
-  def download_file(connection, uri)
-    Utils.download_private_file(connection, uri)
+  def get_file(connection, uri)
+    Utils.get_private_file(connection, uri)
   end
 
   def create_job

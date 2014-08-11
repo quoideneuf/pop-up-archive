@@ -10,8 +10,8 @@ describe Tasks::CopyTask do
       identifier: 'http://destination.com/file.mp3',
       storage_id: 2,
       extras: {
-        original:    'http://original.com/file.mp3',
-        destination: 'http://destination.com/file.mp3'
+        'original'    => 'http://original.com/file.mp3',
+        'destination' => 'http://destination.com/file.mp3'
       })
 
     task.should be_valid
@@ -28,8 +28,8 @@ describe Tasks::CopyTask do
       identifier: 'http://destination.com/file.mp3',
       storage_id: storage_id,
       extras: {
-        original:    'http://original.com/file.mp3',
-        destination: 'http://destination.com/file.mp3'
+        'original'    => 'http://original.com/file.mp3',
+        'destination' => 'http://destination.com/file.mp3'
       })
 
     task.owner = audio_file

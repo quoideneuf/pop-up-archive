@@ -16,12 +16,23 @@ class CallbacksController < ApplicationController
 
   def fixer
     @resource = params[:model_name].camelize.constantize.find(params[:id])
-    # @audio_file = AudioFile.find(params[:id])
     if params[:task].present? && @resource.update_from_fixer(params[:task])
       head 202
     else
       head 200
     end    
+  end
+
+  def speechmatics
+    @resource = params[:model_name].camelize.constantize.find(params[:model_id])
+    # don't know which param it is going to be
+    if @resource && (task = @resource.tasks.speechmatics_transcribe.where("extras -> 'job_id' = ?", params[:id]).first)
+      FinishTaskWorker.perform_async(task.id) unless Rails.env.test?
+      head 202
+    else
+      head 200
+    end    
+  
   end
 
 end

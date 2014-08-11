@@ -8,7 +8,7 @@ class Tasks::AnalyzeTask < Task
     connection = Fog::Storage.new(storage.credentials)
     uri        = URI.parse(destination)
 
-    analysis   = download_file(connection, uri)    
+    analysis   = get_file(connection, uri)    
     process_analysis(analysis)
   end
 

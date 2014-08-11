@@ -63,6 +63,11 @@ class SubscriptionPlan
     @interval = plan.interval
   end
 
+  # if the plan id has _business_ or _enterprise_ in it, we'll do premium transcripts
+  def has_premium_transcripts?
+    self.id.match(/_(business|enterprise)_/)
+  end
+
   attr_reader :name, :amount, :hours, :id, :interval
 
   def eql?(plan)

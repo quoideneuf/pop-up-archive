@@ -41,3 +41,7 @@ RSpec.configure do |config|
   FactoryGirl.reload
 
 end
+
+def test_file(ff)
+  File.expand_path(File.dirname(__FILE__) + '/factories/files/' + ff)
+end

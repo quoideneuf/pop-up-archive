@@ -10,3 +10,6 @@ services:
 notifications:
   email:
     - popuparchive-tech@prx.org
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y libmagic-dev

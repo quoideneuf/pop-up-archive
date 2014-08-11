@@ -35,6 +35,8 @@ PopUpArchive::Application.routes.draw do
   post 'fixer_callback/files/:model_name/:id', controller: 'callbacks', action: 'fixer', as: 'fixer_callback'
 
   post 'amara_callback', controller: 'callbacks', action: 'amara', as: 'amara_callback'
+
+  post 'speechmatics_callback/files/:model_name/:model_id', controller: 'callbacks', action: 'speechmatics', as: 'speechmatics_callback'
   
   get 'sitemap.xml', :to => 'sitemap#sitemap', as: 'sitemap', defaults: { format: 'xml' }
     
