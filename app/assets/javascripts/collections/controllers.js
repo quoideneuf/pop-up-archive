@@ -1,4 +1,4 @@
-angular.module('Directory.collections.controllers', ['Directory.loader', 'Directory.user', 'Directory.collections.models', 'ngTutorial', 'Directory.storage'])
+angular.module('Directory.collections.controllers', ['Directory.loader', 'Directory.user', 'Directory.collections.models', 'ngTutorial', 'Directory.storage', 'ngSanitize'])
 .controller('CollectionsCtrl', ['$scope', '$modal', 'Collection', 'Loader', 'Me', 'Tutorial', 'Storage', function CollectionsCtrl($scope, $modal, Collection, Loader, Me, Tutorial, Storage) {
 
   $scope.Storage = Storage;
