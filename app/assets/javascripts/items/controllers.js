@@ -1,4 +1,4 @@
-angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.user', 'Directory.items.models', 'Directory.entities.models', 'Directory.people.models', 'prxSearch', 'Directory.storage'])
+angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.user', 'Directory.items.models', 'Directory.entities.models', 'Directory.people.models', 'prxSearch', 'Directory.storage', 'ngRoute', 'ngSanitize'])
 .controller('ItemsCtrl', [ '$scope', 'Item', 'Loader', 'Me', 'Storage', function ItemsCtrl($scope, Item, Loader, Me, Storage) {
 
   $scope.Storage = Storage;
@@ -94,7 +94,18 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     return encodeURIComponent(text);
   };
   
- $scope.my_path= $window.location.protocol + "//" + $window.location.host;
+
+  $scope.callEditor = function() {
+    $scope.$broadcast('CallEditor');
+    $scope.editTable = true;
+  };
+
+  $scope.callSave = function() {
+    $scope.$broadcast('CallSave');
+    $scope.editTable = false;
+  }
+
+  $scope.my_path= $window.location.protocol + "//" + $window.location.host;
 }])
 .controller('ItemStorageCtrl', [ '$scope', 'Item', 'Loader', 'Me', function ItemsCtrl($scope, Item, Loader, Me) {
 
@@ -110,8 +121,8 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
     return pad(d.getUTCHours()) + ":" + pad(d.getUTCMinutes()) + ":" + pad(d.getUTCSeconds());
   };
-
 }])
+
 .controller('ItemFormCtrl', ['$window', '$cookies', '$scope', '$http', '$q', '$timeout', '$route', '$routeParams', '$modal', 'Me', 'Loader', 'Alert', 'Collection', 'Item', 'Contribution', 'ImageFile', function FilesCtrl($window, $cookies, $scope, $http, $q, $timeout, $route, $routeParams, $modal, Me, Loader, Alert, Collection, Item, Contribution, ImageFile) {
 
   $scope.$watch('item', function (is) {
@@ -290,7 +301,6 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       $scope.item.contributions = [];
     }
     $scope.item.contributions.push(c);
-    // console.log('addContribution', $scope);
   }
 
   $scope.deleteContribution = function(contribution) {

@@ -29,10 +29,6 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
     { "title": "Copy and Paste the Following Code to Embed This File on Your Site",
        "content": "<xmp><iframe frameborder='0' width='508' height='95' scrolling='no' seamless='yes' name='"+ $scope.item.title + "' src='"+ $scope.my_path + "/embed_player/" + encodeURIComponent($scope.item.title.replace(/\./g, '&#46;')) + "/" + $scope.audioFile.id + "/" + $scope.item.id + "/" + $scope.collection.id + "'></iframe></xmp>",
     };
-  $scope.keyCommands =
-    { "title": "Transcription Key Commands",
-      "content": "<table><tr><td class='icon-hand-right'>&nbsp;<strong><span>Enter:</strong></span> </td><td><em>Next Line</em></td></tr><tr><td class='icon-arrow-up'><strong><span>&nbsp;Up:</strong></td><td><em>Prev Line</em></span></td></tr><tr><td>&nbsp;<span class='icon-step-forward'></span><strong><span>&nbsp;&nbsp;Tab:</strong></span></td><td><em>Pause/Play</em></td></tr><tr><td><span class='icon-chevron-up' ></span>&nbsp;<span class='icon-step-forward'></span><strong><span>&nbsp;Shift+Tab:</strong></span></td><td><em>Rewind 5 Secs</em></td></tr></table>",    
-    };  
 
   $scope.play = function () {
     $scope.audioFile = new AudioFile($scope.audioFile);

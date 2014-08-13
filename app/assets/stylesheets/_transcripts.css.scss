@@ -1,0 +1,160 @@
+.collapsed .file-transcript {
+  max-height: 75px;
+}
+
+.btn-transcript {
+  background: #F9A732;
+  color: white;
+}
+
+.search-result .file-transcript {
+	line-height: 16px;
+	font-size: 11px;
+	overflow: hidden;
+
+	.file-transcript-text {
+		height: 16px;
+		-webkit-marquee: auto medium infinite scroll normal;
+		text-overflow: ellipsis;
+	}
+
+	.current {
+		background-color: transparent;
+	}
+}
+
+.file-transcript {
+	padding: 0px;
+	display: block;
+	overflow: auto;
+	clear: right;
+	width: 100%;
+  
+	a {
+		color: #444;
+		text-decoration: none;
+	}
+  
+	input {
+		width: 100%;
+	}
+
+	.current {
+		background-color: #FFFBCC;
+	}
+
+	.file-transcript-text {
+		height: 22px;
+		overflow: hidden;
+		margin-left: 5px;
+	}
+
+	td[ng-show="showStart"] {
+		font-weight: 300;
+		font-style: italic;
+	}
+
+	em {
+		background-color: #85D0F1;
+		font-style: normal
+	}
+
+	table {
+		td {
+			padding: 2px;
+			border: none;
+
+			a i {
+			    color: black;
+			    opacity: .5;
+			    text-decoration: none;
+			}
+		}
+
+		input {
+			border: none;
+			font-family: "soleil", sans-serif;
+			color: #444;
+			height: 22px;
+			margin-left: 5px;
+			line-height: 20px;
+		}
+		input:focus {
+			outline: none;
+			border: none;
+		}
+	}
+}
+
+.file-transcript::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+
+.file-transcript::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0,0,0,.5);
+  -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+.key-commands {
+  font-size: 13px;
+  background: #f2cfa5;
+  padding: 10px;
+  p {
+    font-family: freight-text-pro, serif;
+    font-weight: bold;
+    margin: 0;
+  }
+  td {
+    padding-right: 5px;
+  }
+}
+
+.transcript-options {
+  position: absolute;
+  margin-right: 95px;
+  right: 0;
+
+  .btn {
+    font-size: 12px;
+    background: #ddd !important;
+    color: #333 !important;
+    padding: 3px 5px;
+    font-weight: 900;
+    margin-top: 3px;
+    display: inline-block;
+  }
+
+  .clear-filter {
+    position: absolute;
+    z-index: 10;
+    right: -76px;
+    top: 3px;
+    color: #ddd;
+    font-size: 20px;
+    &:hover {
+      text-decoration: none;
+      color: #999;
+    }
+  }
+
+  .search-query {
+    width: 40px;
+    position: absolute;
+    z-index: 1;
+    right: -75px;
+    font-size: 11px;
+    top: 1px;
+    border: 1px solid #ddd;
+    outline: none;
+    -webkit-transition: 0.2s;
+    transition: 0.2s;
+    -moz-transition: 0.2s;
+    -o-transition: 0.2s;
+
+    &:active, &:focus, &.extended {
+      width: 200px;
+    }
+  }
+}

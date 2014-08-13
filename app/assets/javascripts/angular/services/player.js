@@ -342,15 +342,8 @@
                       '<td style="width: 8px; text-align:left;"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
                       '<td style="width: 16px; text-align:left; padding: 0 0 0 10px" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
-                      '<td ng-show="!editorEnabled"><a ng-click="seekTo(text.startTime)"><div class="file-transcript-text" ng-bind-html-unsafe="text.text"></div></a></td>' +
-                      '<td ng-show="canShowEditor()" style="width: 8px; padding-right: 10px; text-align: right">'+
-                        '<a href="#" ng-click="enableEditor()"><i class="icon-pencil"></i></a></td>' +
-                      '<td ng-show="editorEnabled"><input ng-model="editableTranscript" ng-enter="updateText(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)" ng-show="editorEnabled" ></td>' +
-                      '<td ng-show="editorEnabled" style="width: 50px;">' +
-                        '<a href="#" ng-click="updateTextFromCheck(text)" style="width: 8px; float: left; padding: 0 8px">' +
-                          '<i class="icon-ok"></i></a>' +
-                        '<a href="#" ng-click="disableEditor()" style="width: 8px; float: left; padding: 0 10px 0 8px">' +
-                          '<i class="icon-remove"></i></a></td>' +
+                      '<td ng-show="!editorEnabled"><a ng-click="editOrPlay(text.startTime)"><div class="file-transcript-text" ng-bind-html="text.text"></div></a></td>' +
+                      '<td ng-show="editorEnabled"><input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)"></td>' +
                     '</tr>' +
                   '</table>' +
                 '</div>',
@@ -377,13 +370,13 @@
           scope.showStart = true;
           scope.showRange = false;
         }
-        scope.updateTextFromCheck = function (text) {
+        scope.updateText = function (text) {
           text.text = this.editableTranscript; 
           this.disableEditor();          
           this.saveText({text: text});
         };        
 
-        scope.updateText = function (text) {
+        scope.updateTextKeyCommand = function (text) {
           text.text = this.editableTranscript; 
           this.disableEditor();          
           this.saveText({text: text});
@@ -393,6 +386,23 @@
           }
         };
 
+        scope.$on('CallEditor', function() {
+          scope.editTable = true;
+        });
+
+        scope.$on('CallSave', function() {
+          scope.editTable = false;
+        });
+
+        scope.editOrPlay = function(time) {
+          if (scope.editTable == true) {
+            this.enableEditor();
+          } else {
+            scope.seekTo(time)
+          }
+        };
+
+
         scope.enableEditor = function() {
           var index = this.$index;
           this.editorEnabled = true;
@@ -401,8 +411,8 @@
             var inp = el.find('input')[index];
             inp.setSelectionRange(0, 0);
             inp.focus(); 
-          });         
-        };        
+          });
+        };
 
         scope.enableEditorNextField = function (nextField) { 
           var index = this.$index + 1;
@@ -411,7 +421,7 @@
           $timeout(function() {
             var inp = el.find('input')[index];
             inp.setSelectionRange(0, 0);
-            inp.focus();           
+            inp.focus();        
           });
         };  
 
