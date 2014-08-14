@@ -52,7 +52,7 @@ ul.pager
             section ng-repeat="audioFile in item.highlights.audioFiles" ng-controller="AudioFileCtrl"
               .transcript transcript-text="audioFile.transcript" transcript-editable="false" transcript-timestamps="start"
           .entities
-            .tag ng-repeat="entity in item.entityShortList()" {{entity}}
+            .tag ng-repeat="entity in item.entityShortList() track by $index" {{entity}}
     .result-count-footer        
       ul.pager ng-show="search.hasMoreResults() || search.page > 1"
         li.previous ng-class="{disabled: search.page <= 1}"
