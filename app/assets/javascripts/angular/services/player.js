@@ -450,10 +450,14 @@
         
         scope.toTimestamp = function (seconds) {
           var d = new Date(seconds * 1000);
+          var round = function(num, places)
+            {
+              return Math.round(num * 100) / 100
+            }
           if (seconds > 3600) {
-            return Math.floor(seconds / 3600) + ":" + dd(Math.floor(seconds % 3600 / 60)) + ":" + dd(seconds % 3600 % 60);
+            return Math.floor(seconds / 3600) + ":" + dd(Math.floor(seconds % 3600 / 60)) + ":" + dd(round(seconds % 3600 % 60));
           } else {
-            return Math.floor(seconds / 60) + ":" + dd(seconds % 60);
+            return Math.floor(seconds / 60) + ":" + dd(round(seconds % 60));
           }
         }
 
