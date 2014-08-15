@@ -59,7 +59,8 @@
 
     Results.setCurrentIndex = function (requirements) {
       var set = false;
-      angular.forEach(data, function (object, index) {
+      for (var index in data) {
+        var object = data[index];
         if (!set) {
           var match = true;
           angular.forEach(requirements, function (value, key) {
@@ -69,10 +70,10 @@
           });
           if (match) {
             set = true;
-            Results.currentIndex = index;
+            Results.currentIndex = Number(index);
           }
         }
-      });
+      };
       if (!set) {
         Results.setResults();
       }
