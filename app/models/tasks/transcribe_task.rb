@@ -155,4 +155,8 @@ class Tasks::TranscribeTask < Task
     extras['duration']      = audio_file.duration.to_i if audio_file
   end
 
+  def duration    
+    self.extras['duration'].to_i
+  end
+
 end
