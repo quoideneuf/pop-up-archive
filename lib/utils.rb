@@ -186,7 +186,7 @@ class Utils
           if redirect_url
             # this is imperfect, but deals with odd case where we have spaces in some redirects
             redirect_url = URI.escape(redirect_url) if redirect_url =~ /\s+/
-            temp_file = http_download_file(URI.parse(redirect_url), retry_count, limit - 1)
+            temp_file = download_public_file(URI.parse(redirect_url), retry_count, limit - 1)
           end
         rescue StandardError => err
           logger.error "File failed to be retrieved: '#{file_name}': #{err.message}"
