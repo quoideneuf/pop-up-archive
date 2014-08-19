@@ -1,5 +1,3 @@
-require 'customer'
-
 class User < ActiveRecord::Base
   rolify
   # Include default devise modules. Others available are:

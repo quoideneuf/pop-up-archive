@@ -101,8 +101,6 @@ class AudioFile < ActiveRecord::Base
     copy_to_item_storage
 
     transcribe_audio
-
-    premium_transcribe_audio
   end
 
   def process_file
@@ -155,21 +153,14 @@ class AudioFile < ActiveRecord::Base
     task
   end
 
-  def premium_transcribe_audio(user=self.user)
-    # only start this if transcode is complete
-    return unless (transcoded_at && user.plan.has_premium_transcripts?)
-    start_premium_transcribe_job(user, 'ts_paid')
-  end
-
   def transcribe_audio(user=self.user)
-    # always do the first 2 minutes
-    start_transcribe_job(user, 'ts_start', {start_only: true})
-
-    # don't bother if this is premium plan
-    return if (user && user.plan.has_premium_transcripts?)
-
-    if (storage.at_internet_archive? || (user && (user.plan != SubscriptionPlan.community)))
-      start_transcribe_job(user, 'ts_all')
+    if user.plan.has_premium_transcripts?
+      start_premium_transcribe_job(user, 'ts_paid')
+    else
+      start_transcribe_job(user, 'ts_start', {start_only: true})
+      if storage.at_internet_archive? || (user && (user.plan != SubscriptionPlan.community))
+        start_transcribe_job(user, 'ts_all')
+      end
     end
   end
 
