@@ -122,6 +122,11 @@ module FileStorage
     destination
   end
 
+  def process_version_url(options)
+    return file.url(options) if storage.is_public?
+    destination
+  end
+
   def destination_options(options={})
     stor = options[:storage] || storage
     dest_opts = options[:options] || {}

@@ -139,7 +139,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
   end
 
   def audio_file_url
-    self.original
+    audio_file.public_url(extension: :mp3)
   end
 
   def notify_user
