@@ -276,7 +276,7 @@ class AudioFile < ActiveRecord::Base
 
   def timed_transcript_array(language='en-US')
     @_timed_transcript_arrays ||= {}
-    @_timed_transcript_arrays[language] ||= (timed_transcript(language).try(:timed_texts) || []).collect{|tt| tt.as_json(only: [:id, :start_time, :end_time, :text])}
+    @_timed_transcript_arrays[language] ||= (timed_transcript(language).try(:timed_texts) || []).collect{|tt| tt.item_json()}
   end
 
   def timed_transcript(language='en-US')
