@@ -39,6 +39,18 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     return (user && item && user.canEdit(item) && (item.audioFiles.length > 0) && (item.audioFiles[0].transcript == 0));
   };
 
+  $scope.allowEditButton = function(tasks) {
+    var item = $scope.item;
+    var found = true;
+    for(var i = 0; i < tasks.length; i++) {
+      if (tasks[i].identifier == 'ts_complete' && tasks[i].status== 'complete') {
+        var found = false;
+        break;
+      }
+    }
+    return found;
+  }
+
   $scope.toggleTranscript = function () {
     $scope.transcriptExpanded = !$scope.transcriptExpanded;
   };

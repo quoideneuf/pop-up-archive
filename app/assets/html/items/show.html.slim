@@ -78,7 +78,7 @@ ul.pager ng-show="nextItem || previousItem || searchResults.query"
             a.clear-filter.icon-remove-sign ng-show="transcriptFilter.length > 0" ng-click="transcriptFilter=''"
 
             .btn-group.pull-right ng-show="item.audioFiles[0].transcript"
-              button.btn ng-show="currentUser.canEdit(item) && !editTable" ng-click="callEditor()" 
+              button.btn ng-disabled="allowEditButton(audioFile.tasks)" ng-show="currentUser.canEdit(item) && !editTable" ng-click="callEditor()" 
                 | Edit Transcript
               button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave()"
                 | Save Transcript
@@ -172,7 +172,7 @@ ul.pager ng-show="nextItem || previousItem || searchResults.query"
     section.tags ng-show="item.tags"
       h5 Tags
       ul
-        li ng-repeat="tag in item.tags"
+        li ng-repeat="tag in item.tags track by $index"
           a.btn ng-href='/search?query=tag:%22{{tag}}%22' {{tag}}
 
 .row-fluid.item-detail

@@ -1,4 +1,4 @@
-attributes :id, :status, :name
+attributes :id, :status, :name, :identifier
 attribute :type_name => :type
 
 
