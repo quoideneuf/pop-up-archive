@@ -5,11 +5,6 @@ class TimedText < ActiveRecord::Base
 
   delegate :audio_file, to: :transcript
 
-  # json subset to be used in the item page json results
-  def item_json()
-    {id: id, text: text, start_time: start_time, end_time: end_time, speaker_name: speaker.name, speaker_id: speaker.id }
-  end
-
   def as_json(options = :sigil)
     if options == :sigil
       {audio_file_id: transcript.audio_file_id, confidence: confidence, text: text, start_time: start_time, end_time: end_time }
