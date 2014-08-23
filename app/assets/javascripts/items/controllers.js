@@ -39,13 +39,19 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     return (user && item && user.canEdit(item) && (item.audioFiles.length > 0) && (item.audioFiles[0].transcript == 0));
   };
 
-  $scope.allowEditButton = function(tasks) {
+  $scope.allowEditButton = function(file) {
     var item = $scope.item;
     var found = true;
-    for(var i = 0; i < tasks.length; i++) {
-      if (tasks[i].identifier == 'ts_complete' && tasks[i].status== 'complete') {
-        var found = false;
-        break;
+    if (file.duration != null && file.duration <= 120 ) {
+      var found = false;
+    }
+    else {
+      for(var i = 0; i < file.tasks.length; i++) {
+        task = file.tasks[i];
+        if ((task.identifier == 'ts_all' || task.identifier == 'ts_paid') && (task.status== 'complete')) {
+          var found = false;
+          break;
+        }
       }
     }
     return found;
