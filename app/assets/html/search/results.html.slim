@@ -50,7 +50,7 @@ ul.pager
           p ng-show="item.getDescription()" ng-bind-html="item.getDescription()"
           .transcripts ng-show="item.highlights.audioFiles.length"
             section ng-repeat="audioFile in item.highlights.audioFiles" ng-controller="AudioFileCtrl"
-              .transcript transcript-text="audioFile.transcript" transcript-editable="false" transcript-timestamps="start"
+              .transcript transcript-text="audioFile.transcript.parts" transcript-editable="false" transcript-timestamps="start"
           .entities
             .tag ng-repeat="entity in item.entityShortList() track by $index" {{entity}}
     .result-count-footer        
