@@ -1,8 +1,8 @@
 attributes :id, :filename, :transcoded_at, :duration
 attributes :urls => :url
 
-node :transcript do |af|
-  af.transcript_array
+child timed_transcript: 'transcript' do |t|
+  extends 'api/v1/transcripts/transcript'
 end
 
 child tasks: 'tasks' do |c|
