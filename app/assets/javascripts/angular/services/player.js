@@ -359,7 +359,7 @@
         scope.$watch('transcript', function (is, was) {
           angular.copy({}, scope.transcriptRows);
           angular.forEach(is, function(row, index) {
-            scope.transcriptRows[row.startTime] = index;
+            scope.transcriptRows[Math.round(row.startTime)] = index;
           });
         });
 
