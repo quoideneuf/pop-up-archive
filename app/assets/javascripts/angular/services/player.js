@@ -338,7 +338,7 @@
       priority: -1000,
       template: '<div class="file-transcript">' +
                   '<table class="table">' +
-                    '<tr ng-repeat="text in transcript" ng-class="{current: transcriptStart==text.startTime}" >' +
+                    '<tr ng-repeat="text in transcript" ng-class="{current: transcriptStart== {{text.startTime | number:0}}}" >' +
                       '<td style="width: 8px; text-align:left;"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
                       '<td style="width: 16px; text-align:left; padding: 0 0 0 10px" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
