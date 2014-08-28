@@ -98,16 +98,7 @@ section ng-controller="ItemFormCtrl"
           .clearfix.controls
             button.btn file-button="setImageFiles" Choose Images 
             span &nbsp OR &nbsp
-            input.text.input#image type='text' placeholder="Insert Url" ng-model='urlForImage'                         
-
-        section ng-show='item.collectionId != uploadsCollection.id'
-          .control-group
-            label.control-label
-              | Title
-              i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['title']" data-placement="bottom"
-            .controls 
-              input.text.input-xlarge#title type='text' ng-model='item.title'
-
+            input.text.input#image type='text' placeholder="Insert Url" ng-model='urlForImage'              
 
 
           .control-group
