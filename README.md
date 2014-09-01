@@ -57,9 +57,8 @@ You will need to set the SECRET_TOKEN value for the app to start (the default va
 
     bundle exec rake db:create
     rake db:setup
-    rake db:migrate
 
-If you receive a Postges connection error or role error, you may need to create a Postgres user: 
+If you receive a Postgres connection error or role error, you may need to create a Postgres user: 
 
     createuser -s -r <USERNAME FROM database.yml>
     
