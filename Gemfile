@@ -34,7 +34,8 @@ gem 'bootstrap_form'
 gem 'cancan'
 
 # search with elasticsearch
-gem 'tire'
+gem 'elasticsearch-model', '~> 0.1.4'
+gem 'elasticsearch-rails', '~> 0.1.4'
 
 # server-side templates
 gem 'slim-rails', '~> 1.0'
