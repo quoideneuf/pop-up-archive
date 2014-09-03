@@ -11,7 +11,7 @@ class Transcript < ActiveRecord::Base
   after_save :update_item
 
   def update_item
-    item.update_index_async if item
+    IndexerWorker.perform_async(:update, item.class.to_s, item.id) if item
   end
 
   def timed_texts

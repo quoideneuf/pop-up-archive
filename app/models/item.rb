@@ -4,39 +4,14 @@ class Item < ActiveRecord::Base
 
   include Searchable
 
+  index_name { ENV['ITEMS_INDEX_NAME'] || 'items'}
+
   DEFAULT_INDEX_PARAMS = {except: [:transcription, :rights, :storage_id, :token, :geolocation_id, :csv_import_id, :deleted_at]}
 
   STANDARD_ROLES = ['producer', 'interviewer', 'interviewee', 'creator', 'host', 'guest']
 
-  before_validation :set_defaults, if: :new_record?
-
-  before_update :handle_collection_change, if: :collection_id_changed?
-
-  after_save do
-    deleted_at.nil? ? store_to_index : remove_from_index
-  end
-
-  after_destroy do
-    remove_from_index
-  end
-
-  def remove_from_index
-    self.index.remove(self)
-  end
-
-  def store_to_index
-    self.index.store(self)
-  end
-
-  def update_index_async
-    UpdateIndexWorker.perform_async(self.class.name, self.id) unless Rails.env.test?
-  end
-
-  index_name { ENV['ITEMS_INDEX_NAME'] || 'items' }
-
-  tire do
-    settings number_of_shards: 2, number_of_replicas: 1
-    mapping do
+  settings index: { number_of_shards: 2, number_of_replicas: 1 } do
+    mappings dynamic: 'false' do
       indexes :id, index: :not_analyzed
       indexes :is_public, index: :not_analyzed
       indexes :collection_id, index: :not_analyzed
@@ -87,9 +62,12 @@ class Item < ActiveRecord::Base
       STANDARD_ROLES.each do |role|
         indexes role.pluralize.to_sym, type: 'string', include_in_all: false, index_name: role, index: "not_analyzed"
       end
-
     end
   end
+
+  before_validation :set_defaults, if: :new_record?
+
+  before_update :handle_collection_change, if: :collection_id_changed?
 
   attr_accessible :date_broadcast, :date_created, :date_peg,
     :description, :digital_format, :digital_location, :duration,
