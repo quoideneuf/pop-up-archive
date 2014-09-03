@@ -154,6 +154,7 @@ group :test do
   gem 'stripe-ruby-mock', require: 'stripe_mock'
   gem 'simplecov'
   gem 'coveralls'
+  gem 'elasticsearch-extensions'
 end
 
 group :development, :production, :staging do
