@@ -19,6 +19,8 @@ require 'rspec/rails'
 require 'capybara/rspec'
 require 'capybara/rails'
 require 'capybara/poltergeist'
+require 'elasticsearch/extensions/test/cluster'
+require 'elasticsearch/extensions/test/cluster'
 # require 'webmock/rspec'
 
 Capybara.register_driver :chrome do |app|
@@ -39,6 +41,14 @@ RSpec.configure do |config|
   config.include Devise::TestHelpers, type: :controller
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f }
   FactoryGirl.reload
+
+  config.before :suite, elasticsearch: true do
+    Elasticsearch::Extensions::Test::Cluster.start(nodes: 1) unless Elasticsearch::Extensions::Test::Cluster.running?
+  end
+
+  config.after :suite, elasticsearch: true do
+    Elasticsearch::Extensions::Test::Cluster.stop if Elasticsearch::Extensions::Test::Cluster.running?
+  end
 
 end
 
