@@ -7,5 +7,5 @@ Transcript for file: <%= transcript.audio_file.filename + "\r\n" %>
 <%= if n%7===0 
       "\n\r" + format_time(tt.start_time) + "\r\n"
     end %>
-<%= tt.text -%>
+<%= tt.text + " " -%>
 <%- end -%>
