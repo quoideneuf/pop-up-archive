@@ -8,7 +8,7 @@ class Person < ActiveRecord::Base
 
   include Searchable
 
-  index_name { ENV['PEOPLE_INDEX_NAME'] || 'people'}
+  index_name { Rails.env.test? ? "test_#{people}" : ENV['PEOPLE_INDEX_NAME'] || 'people'}
 
   settings index: { number_of_shards: 1 },
     analysis: {
