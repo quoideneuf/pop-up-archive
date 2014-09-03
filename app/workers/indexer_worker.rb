@@ -4,7 +4,7 @@
 #
 #     $ bundle exec sidekiq --queue elasticsearch --verbose
 #
-class Indexer
+class IndexerWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'elasticsearch', retry: false, backtrace: true
 
