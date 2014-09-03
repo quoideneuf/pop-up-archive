@@ -2,8 +2,7 @@ class Item < ActiveRecord::Base
 
   acts_as_paranoid
 
-  include Tire::Model::Callbacks
-  include Tire::Model::Search
+  include Searchable
 
   DEFAULT_INDEX_PARAMS = {except: [:transcription, :rights, :storage_id, :token, :geolocation_id, :csv_import_id, :deleted_at]}
 

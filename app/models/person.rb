@@ -8,8 +8,7 @@ class Person < ActiveRecord::Base
 
   after_save :update_items
 
-  include Tire::Model::Callbacks
-  include Tire::Model::Search
+  include Searchable
 
   index_name { ENV['PEOPLE_INDEX_NAME'] || 'people' }
 
