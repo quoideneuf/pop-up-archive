@@ -203,11 +203,11 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
       templateUrl: "<%= asset_path 'dashboard/terms_of_use.html' %>",
       title: "Terms of Use"
     })
-    .when('/user_stories', {
-      templateUrl: "<%= asset_path 'dashboard/user_stories.html' %>",
-      title: "User Stories",
-      description: "Learn how Pop Up Archive is used by KCRW Los Angeles, WFMT Chicago, and Illinois Public Media."
-    })
+    // .when('/#user_stories', {
+    //   templateUrl: "<%= asset_path 'dashboard/user_stories.html' %>",
+    //   title: "User Stories",
+    //   description: "Learn how Pop Up Archive is used by KCRW Los Angeles, WFMT Chicago, and Illinois Public Media."
+    // })
     .otherwise({
       template: "<h1>404 - not found</h1>"
     });
@@ -240,6 +240,14 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
   window.directory.constant('STORAGE_PROVIDER', {
     bucket: '<%= ENV["AWS_BUCKET"] %>',
     access_key: '<%= ENV["AWS_ACCESS_KEY_ID"] %>'
+  });
+
+  // Adds Angular's anchorScroll functionality
+  window.directory.run(function($rootScope, $location, $anchorScroll, $routeParams) {
+    $rootScope.$on('$routeChangeSuccess', function(newRoute, oldRoute) {
+      $location.hash($routeParams.scrollTo);
+      $anchorScroll();
+    });
   });
 
   window.directory.config(applicationConfig);
@@ -324,7 +332,7 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
                           },
       'image'           : { 'image': 'Image',
                             'content': '<p>Image Placeholder text</p><ul><li>Thumbnail</li><li>Bigger Picture</li></ul>'
-                          },                          
+                          },
       'episodeTitle'    : { 'title': 'Episode Title',
                             'content': '<p>A finished episode or piece to which the audio contributed. Not all of your audio contributes to a larger piece. In these cases, leave this field blank.</p><p>Examples</p><ul><li>Hidden Kitchens Texas</li><li>Notes on Camp</li><li>Parasites</li></ul>'
                           },
