@@ -10,13 +10,13 @@ section ng-controller="OrderTranscriptFormCtrl"
 
       h4 We'll send your transcript to be hand-crafted.
       p
-       |Transcripts are meticulously refined by the hightly trained staff at 
+       |Transcripts are meticulously refined by the highly trained staff at
        a href="http://www.amara.org" Amara
-       |. Your transcript will be returned within 48 hours to your Pop Up Archive account, where it will be indexed and auto-tagged. We'll send you an email when it's ready. You can also download the transcript text file with timestamps every 30 seconds. Speaker changes are differentiated by ">>\" markers throughout the transcript. 
+       |. Your transcript will be returned within 48 hours to your Pop Up Archive account, where it will be indexed and auto-tagged. We'll send you an email when it's ready. You can also download the transcript text file with timestamps every 30 seconds. Speaker changes are differentiated by ">>\" markers throughout the transcript.
       .alert
-        | For this file of 
+        | For this file of
         b {{ length() }}
-        |, a charge of 
+        |, a charge of
         b {{ price() | currency:"$" }}
         |  will be added to your monthly bill.
       / .control-group
