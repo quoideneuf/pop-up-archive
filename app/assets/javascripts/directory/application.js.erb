@@ -232,7 +232,11 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
                   'Directory.collections.controllers',
                   'Directory.organizations.controllers',
                   'Directory.account.controllers',
-                  'Directory.faq.controllers'
+                  'Directory.faq.controllers',
+                  '$anchorScroll',
+                  '$rootScope',
+                  '$location',
+                  '$routeParams'
                   ];
 
   window.directory = angular.module('Directory', depends);
@@ -243,7 +247,7 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
   });
 
   // Adds Angular's anchorScroll functionality
-  window.directory.run(function($rootScope, $location, $anchorScroll, $routeParams) {
+  window.directory.run(function() {
     $rootScope.$on('$routeChangeSuccess', function(newRoute, oldRoute) {
       $location.hash($routeParams.scrollTo);
       $anchorScroll();
