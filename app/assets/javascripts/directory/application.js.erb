@@ -243,12 +243,12 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
   });
 
   // Adds Angular's anchorScroll functionality
-  window.directory.run(function($rootScope, $location, $anchorScroll, $routeParams) {
+  window.directory.run(['$rootScope', '$location', '$anchorScroll', '$routeParams', function($rootScope, $location, $anchorScroll, $routeParams) {
     $rootScope.$on('$routeChangeSuccess', function(newRoute, oldRoute) {
       $location.hash($routeParams.scrollTo);
       $anchorScroll();
     });
-  });
+  }]);
 
   window.directory.config(applicationConfig);
   window.directory.controller("DirectoryCtrl", ['$scope', '$route', '$interpolate', 'Me', '$timeout', '$location', function($scope, $route, $interpolate, Me, $timeout, $location) {
