@@ -28,7 +28,7 @@ form.form-inline ng-controller="ImportMappingCtrl"
           i.icon-refresh
           small &nbsp; Fetch new preview 
     tbody
-      tr ng-repeat="header in csvImport.headers"
+      tr ng-repeat="header in csvImport.headers track by $index"
         td {{header}}
         td
           select ng-model="csvImport.mappings[$index].column" ng-options="column.name as column.humanName group by schema.types[column.typeId].humanName for column in schema.columnsWith(header) | type:csvImport.mappings[$index].type"
