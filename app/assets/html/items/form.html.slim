@@ -10,9 +10,9 @@ section ng-controller="ItemFormCtrl"
 
       div ng-hide='(item.id > 0) || (item.files.length > 0)' style="text-align:center;"
         h3 Drag and drop files anywhere on the site
-        div or
+        div style="margin:-10px 0 10px 0;" or
         span file-button="" style='margin-right: 4px;'
-          button.btn.btn-large Choose Files
+          button.btn.btn-large style="margin-bottom:10px;" Choose Files
 
       section ng-show='(item.id > 0) || (item.files.length > 0)'
         .control-group
