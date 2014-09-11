@@ -20,8 +20,9 @@ angular.module("Directory.searches.filters", [])
       ary.length = 0;
       angular.forEach(obj, function (object) {
         if (object.text.match(regex)) {
-          ary.push(angular.copy(object));
-          ary[ary.length-1].text = object.text.replace(regex, "<em>$1</em>");
+          ary.push(object);
+          // ary.push(angular.copy(object));
+          // ary[ary.length-1].text = object.text.replace(regex, "<em>$1</em>");
         }
       });
       return ary;

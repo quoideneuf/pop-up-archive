@@ -137,7 +137,7 @@ angular.module('Directory.csvImports.models', ['RailsModel'])
     "physical_format":                 {type:"short_text",  display: "Physical Format"},
     "digital_format":                  {type:"short_text",  display: "Digital Format"},
     "physical_location":               {type:"short_text",  display: "Physical Location"},
-    "audio_files[][remote_file_url]":  {type:"array",       display: "Links(s) to Audio File"},
+    "audio_files[][remote_file_url]":  {type:"array",       display: "Link(s) to Audio File"},
     "duration":                        {type:"number",      display: "Duration"},
     "music_sound_used":                {type:"short_text",  display: "Music"},
     "date_peg":                        {type:"short_text",  display: "Date Peg"},
@@ -149,7 +149,9 @@ angular.module('Directory.csvImports.models', ['RailsModel'])
     "producers[]":                     {type:"person",      display: "Producer"},
     "creators[]":                      {type:"person",      display: "Creator"},
     "hosts[]":                         {type:"person",      display: "Host"},
-    "guests[]":                        {type:"person",      display: "Guest"}, 
+    "guests[]":                        {type:"person",      display: "Guest"},
+    "image_files[][remote_file_url]":  {type:"array",       display: "Link to Image File"}, 
+    "language":                        {type:"string",      display: "Language"},
   }, function (metaData, columnName) {
     for (var typeIndex=0; schema.types[typeIndex].name != metaData.type; typeIndex++);
     schema.columns.push({name:columnName, humanName:metaData.display, typeId: typeIndex, camelCaseName:camelize(columnName), typeName:metaData.type});
