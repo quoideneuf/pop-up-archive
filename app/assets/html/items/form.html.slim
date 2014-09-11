@@ -32,10 +32,6 @@ section ng-controller="ItemFormCtrl"
                 td.file-remove
                   a href="#" ng-click="removeAudioFile(audioFile)" style='text-decoration: none; color: #da4f49;'
                     i.icon-remove-sign
-          .controls ng-show="item.files.length > 1"
-            .checkbox
-              input type="checkbox" ng-model="individualItems"
-              | Each file is a separate item
           .clearfix.controls
             span.pull-right file-button=""
               button.btn Add Files to Item
