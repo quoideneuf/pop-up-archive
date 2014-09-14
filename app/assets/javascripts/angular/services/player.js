@@ -8,7 +8,7 @@
     }
   }
 
-  angular.module('ngPlayer', ['ngPlayerHater'])
+  angular.module('ngPlayer', ['ngPlayerHater', 'ngSanitize'])
   .factory('Player', ['playerHater', '$rootScope', function (playerHater, $rootScope) {
     var Player = {};
 
@@ -340,16 +340,17 @@
         currentTime: "=",
         fileUrl: "=",
         autoScroll: "=",
-        saveText: "&"
+        saveText: "&",
+        transcriptFilter: "=ngModel"
       },
       priority: -1000,
       template: '<div class="file-transcript">' +
                   '<table class="table">' +
-                    '<tr ng-repeat="text in transcript" ng-class="{current: transcriptStart== {{text.startTime | round}}}" >' +
+                    '<tr ng-repeat="text in transcript" ng-class="{current: transcriptStart== {{text.startTime | round}}}">' +
                       '<td style="width: 8px; text-align:left;"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
-                      '<td style="width: 16px; text-align:left; padding: 0 0 0 10px" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
+                      '<td style="width: 16px; text-align:left; padding: 2px 0 0 10px" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
-                      '<td ng-show="!editorEnabled"><a ng-click="editOrPlay(text.startTime)"><div class="file-transcript-text" ng-bind-html="text.text"></div></a></td>' +
+                      '<td ng-show="!editorEnabled"><a ng-click="editOrPlay(text.startTime)"><div class="file-transcript-text" ng-bind-html="text.text | highlight:transcriptFilter"></div></a></td>' +
                       '<td ng-show="editorEnabled"><input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)"></td>' +
                     '</tr>' +
                   '</table>' +
@@ -378,18 +379,18 @@
           scope.showRange = false;
         }
         scope.updateText = function (text) {
-          text.text = this.editableTranscript; 
-          this.disableEditor();          
+          text.text = this.editableTranscript;
+          this.disableEditor();
           this.saveText({text: text});
-        };        
+        };
 
         scope.updateTextKeyCommand = function (text) {
-          text.text = this.editableTranscript; 
-          this.disableEditor();          
+          text.text = this.editableTranscript;
+          this.disableEditor();
           this.saveText({text: text});
           if (this.$last !== true){
-            nextField = this.$$nextSibling;             
-            this.enableEditorNextField(nextField);            
+            nextField = this.$$nextSibling;
+            this.enableEditorNextField(nextField);
           }
         };
 
@@ -417,25 +418,25 @@
           $timeout(function() {
             var inp = el.find('input')[index];
             inp.setSelectionRange(0, 0);
-            inp.focus(); 
+            inp.focus();
           });
         };
 
-        scope.enableEditorNextField = function (nextField) { 
+        scope.enableEditorNextField = function (nextField) {
           var index = this.$index + 1;
           nextField.editorEnabled = true;
-          nextField.editableTranscript = nextField.text.text; 
+          nextField.editableTranscript = nextField.text.text;
           $timeout(function() {
             var inp = el.find('input')[index];
             inp.setSelectionRange(0, 0);
-            inp.focus();        
+            inp.focus();
           });
-        };  
+        };
 
         scope.enableEditorPreviousField = function(text) {
           var index = this.$index - 1;
-          text.text = this.editableTranscript; 
-          this.disableEditor();          
+          text.text = this.editableTranscript;
+          this.disableEditor();
           this.saveText({text: text});
           prevField = this.$$prevSibling;
           prevField.editorEnabled = true;
@@ -443,18 +444,18 @@
           $timeout(function() {
             var inp = el.find('input')[index];
             inp.setSelectionRange(0, 0);
-            inp.focus();                      
-          });           
+            inp.focus();
+          });
         }
-        
+
         scope.playerPausePlay = function() {
           if (scope.player.paused()){
             scope.player.play();
           } else {
             scope.player.pause();
           };
-        };   
-        
+        };
+
         scope.toTimestamp = function (seconds) {
           var d = new Date(seconds * 1000);
           var round = function(num, places)

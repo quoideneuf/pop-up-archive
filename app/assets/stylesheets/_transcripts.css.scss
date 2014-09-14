@@ -54,11 +54,6 @@
 		font-style: italic;
 	}
 
-	em {
-		background-color: #85D0F1;
-		font-style: normal
-	}
-
 	table {
 		td {
 			padding: 2px;
@@ -113,7 +108,7 @@
 
 .transcript-options {
   position: absolute;
-  margin-right: 95px;
+  margin-right: 20px;
   right: 0;
 
   .btn {
@@ -129,8 +124,8 @@
   .clear-filter {
     position: absolute;
     z-index: 10;
-    right: -76px;
-    top: 3px;
+    right: 228px;
+    top: 6px;
     color: #ddd;
     font-size: 20px;
     &:hover {
@@ -140,12 +135,13 @@
   }
 
   .search-query {
-    width: 40px;
+    width: 50px;
     position: absolute;
+    padding: 3px 12px;
     z-index: 1;
-    right: -75px;
-    font-size: 11px;
-    top: 1px;
+    right: 224px;
+    font-size: 14px;
+    top: 2px;
     border: 1px solid #ddd;
     outline: none;
     -webkit-transition: 0.2s;
