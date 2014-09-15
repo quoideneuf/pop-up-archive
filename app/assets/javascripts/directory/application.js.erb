@@ -26,6 +26,7 @@
 //= require ng-player-hater
 //= require_tree ../account
 //= require_tree ../admin
+//= require_tree ../analytics
 //= require_tree ../angular
 //= require_tree ../audio_files
 //= require_tree ../collections
@@ -203,11 +204,10 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
       templateUrl: "<%= asset_path 'dashboard/terms_of_use.html' %>",
       title: "Terms of Use"
     })
-    // .when('/#user_stories', {
-    //   templateUrl: "<%= asset_path 'dashboard/user_stories.html' %>",
-    //   title: "User Stories",
-    //   description: "Learn how Pop Up Archive is used by KCRW Los Angeles, WFMT Chicago, and Illinois Public Media."
-    // })
+    .when('/analytics', {
+      templateUrl: "<%= asset_path 'analytics/index.html' %>",
+      title: "Analytics"
+    })
     .otherwise({
       template: "<h1>404 - not found</h1>"
     });
@@ -233,6 +233,7 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
                   'Directory.organizations.controllers',
                   'Directory.account.controllers',
                   'Directory.faq.controllers',
+                  'Directory.analytics.controllers'
                   ];
 
   window.directory = angular.module('Directory', depends);
@@ -303,6 +304,14 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
 
         var menu = [
           {
+            text: 'my collections',
+            href: '/collections'
+          },
+          {
+            text: 'my data',
+            href: '/analytics'
+          },
+          {
             text: 'my account',
             href: '/account'
           },
@@ -349,7 +358,7 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
                             'content': '<p>The name that will appear when you search for the item. Not all audio will have a predefined title, e.g., interviews or segments of a longer work. In these situations, make up a title that you think will help you or others easily identify the audio\’s content.</p><p>Examples</p><ul><li>Willie Nelson Interview</li><li>War of the Worlds</li><li>NASA Apollo 11 Onboard Recordings</li></ul>'
                           },
       'image'           : { 'image': 'Image',
-                            'content': '<p>Select an image to display on this item page. All images resized to 75px by 75px. Accepted image formats include:</p><ul><li>Jpg</li><li>Png</li></ul>'
+                            'content': '<p>Select an image to display on this item page. All images resized to 75px by 75px. Accepted image formats include:</p><ul><li>JPG</li><li>PNG</li></ul>'
                           },
       'episodeTitle'    : { 'title': 'Episode Title',
                             'content': '<p>A finished episode or piece to which the audio contributed. Not all of your audio contributes to a larger piece. In these cases, leave this field blank.</p><p>Examples</p><ul><li>Hidden Kitchens Texas</li><li>Notes on Camp</li><li>Parasites</li></ul>'
