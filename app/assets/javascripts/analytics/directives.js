@@ -9,7 +9,8 @@ angular.module('Directory.analytics.directives',['d3'])
         d3Service.d3().then(function () {
           var node,
               maxRadius = 50,
-              textSize = 12,
+              nameTextSize = 12,
+              countTextSize = 10,
               height = 400,
               width = 700,
               collisionPadding = 4,
@@ -110,7 +111,7 @@ angular.module('Directory.analytics.directives',['d3'])
           }
 
           var partialText = function (d) {
-            var text = d.name.substring(0, (d.radius * 3) / textSize + 1);
+            var text = d.name.substring(0, (d.radius * 3) / nameTextSize + 1);
             return (d.name.length <= text.length ? text : text + "\u2026");
           }
 
@@ -146,19 +147,21 @@ angular.module('Directory.analytics.directives',['d3'])
 
             node.selectAll('text')
               .style("text-anchor", "middle")
-              .style("color", "#333")
-              .style("font-size", textSize + "px");
+              .style("color", "#333");
+
 
             node.selectAll(".name")
               .text(function (d) {
                   return partialText(d);
               })
+              .style("font-size", nameTextSize + "px");
 
             node.selectAll(".count")
               .attr("dy", "1.2em")
               .text(function(d) {
                   return d.count;
               })
+              .style("font-size", countTextSize + "px");
           }
 
 
