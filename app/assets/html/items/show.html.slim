@@ -74,17 +74,18 @@ ul.pager ng-show="nextItem || previousItem || searchResults.query"
                   td.bold Shift+Tab:
                   td Play from beginning of line
           .span6.transcript-options
-            input.search-query.pull-right ng-class="{extended:!!transcriptFilter}" ng-model="transcriptFilter" placeholder="Search"
-            a.clear-filter.icon-remove-sign ng-show="transcriptFilter.length > 0" ng-click="transcriptFilter=''"
+            .search-group
+              input.search-query ng-class="{extended:!!transcriptFilter}" ng-model="transcriptFilter" placeholder="Search"
+              a.clear-filter.icon-remove-sign ng-show="transcriptFilter.length > 0" ng-click="transcriptFilter=''"
 
-            .btn-group.pull-right ng-show="item.audioFiles[0].transcript"
+            .btn-group ng-show="item.audioFiles[0].transcript"
               button.btn ng-disabled="allowEditButton(audioFile)" ng-show="currentUser.canEdit(item) && !editTable" ng-click="callEditor()"
                 | Edit Transcript
               button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave()"
                 | Save Transcript
               / button.btn ng-show="currentUser.canEdit(item)" ng-click="assignSpeakers()"
               /   | Assign Speakers
-              button.btn ng-click="toggleTranscript()"
+              button.btn ng-click="toggleTranscript()" style="width:121px"
                 |{{!transcriptExpanded && 'Expand Transcript' || 'Collapse Transcript' }}
 
         div ng-class="transcriptClass()"
