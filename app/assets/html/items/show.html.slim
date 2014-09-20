@@ -34,7 +34,7 @@ ul.pager ng-show="nextItem || previousItem || searchResults.query"
       section ng-repeat="audioFile in item.audioFiles" ng-controller="AudioFileCtrl"
         .btn-group.pull-right
           button.btn.icon-link ng-show="collection.itemsVisibleByDefault" type="button" bs-popover="embedCode"  data-placement="bottom" Embed Code
-          button.btn.icon-download-alt.dropdown-toggle type="button" bs-dropdown="downloadLinks" data-toggle="dropdown"  Download
+          button.btn.icon-download-alt.dropdown-toggle#download-btn type="button" bs-dropdown="downloadLinks" data-toggle="dropdown"  Download
         h4 ng-show="item.audioFiles.length > 1" {{audioFile.filename || 'no audio file'}}
         .player
           button.player-button ng-disabled="player.time == 0" ng-click="player.rewind()"
@@ -85,7 +85,7 @@ ul.pager ng-show="nextItem || previousItem || searchResults.query"
                 | Save Transcript
               / button.btn ng-show="currentUser.canEdit(item)" ng-click="assignSpeakers()"
               /   | Assign Speakers
-              button.btn ng-click="toggleTranscript()" style="width:121px"
+              button.btn#expand-transcript ng-click="toggleTranscript()"
                 |{{!transcriptExpanded && 'Expand Transcript' || 'Collapse Transcript' }}
 
         div ng-class="transcriptClass()"
