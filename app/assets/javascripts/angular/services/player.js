@@ -351,7 +351,7 @@
                       '<td style="width: 8px; text-align:left;"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
                       '<td style="width: 16px; text-align:left; padding: 2px 0 0 10px" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
-                      '<td><button>{{assignSpeaker(text.speakerId)}}</button></td>' +
+                      '<td><button title="{{assignSpeaker(text.speakerId)}}">{{abbreviateSpeaker(text.speakerId)}}</button></td>' +
                       '<td ng-show="!editorEnabled"><a ng-click="editOrPlay(text.startTime)"><div class="file-transcript-text" ng-bind-html="text.text | highlight:transcriptFilter"></div></a></td>' +
                       '<td ng-show="editorEnabled"><input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)"></td>' +
                     '</tr>' +
@@ -482,16 +482,18 @@
           scope.$emit('transcriptSeek', time);
         }
 
+        //replace speaker ids with speaker names
         scope.assignSpeaker = function(speakerId) {
           var speakers = scope.speakers;
           var index = speakerId - 1;
           console.log(speakers[index]);
-          var speaker = abbreviateSpeaker(speakers[index].name);
+          var speaker = speakers[index].name;
           return speaker;
         }
 
         //abbreviate speaker names to initials
-        abbreviateSpeaker = function (name) {
+        scope.abbreviateSpeaker = function (speakerId) {
+          var name = scope.assignSpeaker(speakerId);
           //if speaker is in the format F1 or M1 or S1 do not abbreviate
           re = /^M|F|S\d+/;
           if (re.test(name)){
@@ -500,7 +502,7 @@
           } else {
             return name.replace(/[^A-Z]/g, '');
           }
-        } 
+        }
 
         //edit transcripts
         scope.editorEnabled = false;
