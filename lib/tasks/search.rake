@@ -1,14 +1,21 @@
 require 'digest/sha1'
+require 'pp'
+
+# rake environment elasticsearch:import:model CLASS=Item
 
 namespace :search do
   desc 're-index all items'
   task index: [:environment] do
-    Item.create_elasticsearch_index
-    import_all_items(Item.index)
+    errs = Item.__elasticsearch__.import :return => 'errors'
+    if errs.size
+      STDERR.puts "ERRORS: "
+      STDERR.puts pp(errs)
+    end
   end
 
   desc 'stage a reindex of all items'
   task stage: [:environment] do
+    abort("TODO re-write to use elasticsearch tasks")
     Tire.index('items_ip').delete
     Tire.index(items_index_name) do
       add_alias 'items_ip'
@@ -26,6 +33,7 @@ namespace :search do
 
   desc 'commit the staged index to be the new index'
   task :commit do
+    abort("TODO re-write to use elasticsearch tasks")
     Tire.index('items').remove_alias('items')
     Tire.index 'items_st' do
       add_alias 'items'
