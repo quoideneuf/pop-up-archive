@@ -305,7 +305,7 @@
         scope.$watch(function () { return Player.time }, drawScrubber);
 
         scope.$watch(checkWaveform);
-        angular.element(window).bind('resize', checkWaveform);
+        // angular.element(window).bind('resize', checkWaveform);
 
         el.bind('click', function (e) {
           var left = 0, element = this;
@@ -350,6 +350,7 @@
                       '<td style="width: 8px; text-align:left;"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
                       '<td style="width: 16px; text-align:left; padding: 2px 0 0 10px" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
+                      '<td><button>{{text.speakerId}}</button></td>' +
                       '<td ng-show="!editorEnabled"><a ng-click="editOrPlay(text.startTime)"><div class="file-transcript-text" ng-bind-html="text.text | highlight:transcriptFilter"></div></a></td>' +
                       '<td ng-show="editorEnabled"><input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)"></td>' +
                     '</tr>' +
@@ -479,6 +480,7 @@
         scope.seekTo = function(time) {
           scope.$emit('transcriptSeek', time);
         }
+        
 
         //edit transcripts
         scope.editorEnabled = false;
