@@ -480,7 +480,18 @@
         scope.seekTo = function(time) {
           scope.$emit('transcriptSeek', time);
         }
-        
+
+        //abbreviate speaker names to initials
+        scope.abbreviateSpeaker = function (name) {
+          //if speaker is in the format F1 or M1 do nothing
+          re = /^M|F\d+/;
+          if (re.test(name)){
+            return name;
+          //else attempt to abbreviate the name
+          } else {
+            return name.replace(/[^A-Z]/g, '');
+          }
+        } 
 
         //edit transcripts
         scope.editorEnabled = false;
