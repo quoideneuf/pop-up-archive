@@ -191,6 +191,10 @@ class Item < ActiveRecord::Base
     collection.try(:title)
   end
 
+  def as_indexed_json(params={})
+    to_indexed_json(params)  # returns object not json string
+  end
+
   def to_indexed_json(params={})
     as_json(params.reverse_merge(DEFAULT_INDEX_PARAMS)).tap do |json|
       ([:contributors] + STANDARD_ROLES.collect{|r| r.pluralize.to_sym}).each do |assoc|
@@ -204,7 +208,7 @@ class Item < ActiveRecord::Base
       json[:low_unconfirmed_entities] = low_scoring_entities.map(&:as_indexed_json)
       json[:mid_unconfirmed_entities] = middle_scoring_entities.map(&:as_indexed_json)
       json[:high_unconfirmed_entities] = high_scoring_entities.map(&:as_indexed_json)
-    end.to_json
+    end
   end
 
   def tags
