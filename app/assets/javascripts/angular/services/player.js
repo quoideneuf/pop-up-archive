@@ -504,6 +504,18 @@
           }
         }
 
+        //set unique color for each speaker
+        scope.speakerColor = function() {
+          var speakers = scope.speakers;
+          var colors = ['#FFFFFF', '#CAD9FF', '#D9F3FF', '#FFDA9A', '#FFEDC6', '#E5E5E5'];
+          console.log(speakers);
+          for (var i = 0; i < speakers.length; i++) {
+            var speaker = speakers[i].id;
+            var color = colors[i % colors.length]; // loop through color assignment
+            console.log(speaker + ' = ' + color);
+          }
+        }
+
         //edit transcripts
         scope.editorEnabled = false;
 
