@@ -109,7 +109,7 @@ ul.pager ng-show="nextItem || previousItem || searchResults.query"
             li
               a href="#" &nbsp;
               
-          .transcript transcript-text="audioFile.transcript.parts | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
+          .transcript speakers="audioFile.transcript.speakers" transcript-text="audioFile.transcript.parts | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
       div ng-show="isTransciptProcessing()" 
         .alert.alert-info ng-show="currentUser.hasCommunityPlan()" 
           strong TRANSCRIPT PROCESSING

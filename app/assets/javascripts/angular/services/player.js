@@ -335,6 +335,7 @@
       replace: true,
       scope: {
         transcript: "=transcriptText",
+        speakers: "=speakers",
         canEdit: "=transcriptEditable",
         transcriptTimestamps: "@",
         currentTime: "=",
@@ -350,7 +351,7 @@
                       '<td style="width: 8px; text-align:left;"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
                       '<td style="width: 16px; text-align:left; padding: 2px 0 0 10px" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
-                      '<td><button>{{text.speakerId}}</button></td>' +
+                      '<td><button>{{assignSpeaker(text.speakerId)}}</button></td>' +
                       '<td ng-show="!editorEnabled"><a ng-click="editOrPlay(text.startTime)"><div class="file-transcript-text" ng-bind-html="text.text | highlight:transcriptFilter"></div></a></td>' +
                       '<td ng-show="editorEnabled"><input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)"></td>' +
                     '</tr>' +
@@ -481,13 +482,21 @@
           scope.$emit('transcriptSeek', time);
         }
 
+        scope.assignSpeaker = function(speakerId) {
+          var speakers = scope.speakers;
+          var index = speakerId - 1;
+          console.log(speakers[index]);
+          var speaker = abbreviateSpeaker(speakers[index].name);
+          return speaker;
+        }
+
         //abbreviate speaker names to initials
-        scope.abbreviateSpeaker = function (name) {
-          //if speaker is in the format F1 or M1 do nothing
-          re = /^M|F\d+/;
+        abbreviateSpeaker = function (name) {
+          //if speaker is in the format F1 or M1 or S1 do not abbreviate
+          re = /^M|F|S\d+/;
           if (re.test(name)){
             return name;
-          //else attempt to abbreviate the name
+          //else attempt to get initials for the name
           } else {
             return name.replace(/[^A-Z]/g, '');
           }
