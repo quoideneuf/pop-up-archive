@@ -28,7 +28,7 @@ class Item < ActiveRecord::Base
 
       indexes :transcripts do
         indexes :audio_file_id, type: 'long', index: "not_analyzed"
-        indexes :start_time, type: 'long', index: "not_analyzed"
+        indexes :start_time, type: 'float', index: "not_analyzed"
         indexes :confidence, type: 'float', index: 'not_analyzed'
         indexes :transcript, type: 'string', store: true, boost: 0.1
       end
