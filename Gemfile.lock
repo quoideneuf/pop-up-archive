@@ -170,11 +170,11 @@ GEM
     elasticsearch-extensions (0.0.15)
       ansi
       ruby-prof
-    elasticsearch-model (0.1.4)
+    elasticsearch-model (0.1.5)
       activesupport (> 3)
       elasticsearch (> 0.4)
       hashie
-    elasticsearch-rails (0.1.4)
+    elasticsearch-rails (0.1.5)
     elasticsearch-transport (1.0.4)
       faraday
       multi_json
@@ -564,8 +564,8 @@ DEPENDENCIES
   devise_invitable!
   doorkeeper
   elasticsearch-extensions
-  elasticsearch-model (~> 0.1.4)
-  elasticsearch-rails (~> 0.1.4)
+  elasticsearch-model (~> 0.1.5)
+  elasticsearch-rails (~> 0.1.5)
   etagger!
   excon (~> 0.21.0)
   factory_girl_rails
