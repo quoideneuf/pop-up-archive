@@ -28,10 +28,12 @@ class Api::V1::SearchesController < Api::V1::BaseController
       highlight transcript: { number_of_fragments: 0 }
     end
 
-    response = Item.search(search_query)
+    response = Item.search(search_query).response
 
     # FIXME: ItemResultsPresenter is not support ElasticSearch response format
-    @search = ItemResultsPresenter.new(results)
+    # @search = ItemResultsPresenter.new(response)
+    @search = response
+
     respond_with @search
   end
 end
