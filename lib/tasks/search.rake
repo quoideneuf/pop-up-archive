@@ -6,10 +6,16 @@ require 'pp'
 namespace :search do
   desc 're-index all items'
   task index: [:environment] do
-    errs = Item.__elasticsearch__.import :return => 'errors'
-    if errs.size
-      STDERR.puts "ERRORS: "
-      STDERR.puts pp(errs)
+    if ENV['DEBUG']
+      errs = Item.__elasticsearch__.import :return => 'errors'
+      if errs.size
+        STDERR.puts "ERRORS: "
+        STDERR.puts pp(errs)
+      end
+    else 
+      ENV['CLASS'] = 'Item'
+      Rake::Task["elasticsearch:import:model"].invoke
+      Rake::Task["elasticsearch:import:model"].reenable
     end
   end
 
