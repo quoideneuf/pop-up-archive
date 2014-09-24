@@ -28,7 +28,7 @@ class Item < ActiveRecord::Base
 
       indexes :transcripts do
         indexes :audio_file_id, type: 'long', index: "not_analyzed"
-        indexes :start_time, type: 'float', index: "not_analyzed"
+        indexes :start_time, type: 'double', index: "not_analyzed"
         indexes :confidence, type: 'float', index: 'not_analyzed'
         indexes :transcript, type: 'string', store: true, boost: 0.1
       end
@@ -191,11 +191,11 @@ class Item < ActiveRecord::Base
     collection.try(:title)
   end
 
-  def as_indexed_json(params={})
-    to_indexed_json(params)  # returns object not json string
+  def to_indexed_json(params={})
+    as_indexed_json(params).to_json 
   end
 
-  def to_indexed_json(params={})
+  def as_indexed_json(params={})
     as_json(params.reverse_merge(DEFAULT_INDEX_PARAMS)).tap do |json|
       ([:contributors] + STANDARD_ROLES.collect{|r| r.pluralize.to_sym}).each do |assoc|
         json[assoc]      = send(assoc).map{|c| c.as_json }
@@ -208,6 +208,9 @@ class Item < ActiveRecord::Base
       json[:low_unconfirmed_entities] = low_scoring_entities.map(&:as_indexed_json)
       json[:mid_unconfirmed_entities] = middle_scoring_entities.map(&:as_indexed_json)
       json[:high_unconfirmed_entities] = high_scoring_entities.map(&:as_indexed_json)
+      json[:date_created]   ||= self.created_at.as_json
+      json[:date_broadcast] ||= self.created_at.as_json
+      json[:date_added]       = self.created_at.as_json
     end
   end
 
