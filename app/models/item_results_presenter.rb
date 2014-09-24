@@ -1,4 +1,3 @@
-require 'pp'
 class Result; end
 
 class ItemResultsPresenter < BasicObject
@@ -27,8 +26,6 @@ class ItemResultsPresenter < BasicObject
 
     def initialize(result)
       @result = result
-      $stderr.puts "result: "
-      $stderr.puts ::PP::pp(result)
     end
 
     def loaded_from_database?
@@ -59,27 +56,7 @@ class ItemResultsPresenter < BasicObject
       [:audio_files, :highlighted_audio_files, :entities].include?(method) || @result.respond_to?(method) || database_object.respond_to?(method)
     end
 
-    def hits
-      $stderr.puts ".hits method called"
-      #@_hits = @result
-    end
-
-    def present?
-      return @result.present?
-    end
-   
-    def XXXis_a?(klass)
-      $stderr.puts "is_a?#{klass}"
-      return false
-    end 
-
-    def XXXpretty_print(args)
-      return ::PP::pp(args)
-    end
-
     def method_missing(method, *args)
-      #$stderr.puts "missing method #{method}"
-      #$stderr.puts ::PP::pp(args)
       if loaded_from_database? && database_object.respond_to?(method)
         return database_object.send method, *args
       end
