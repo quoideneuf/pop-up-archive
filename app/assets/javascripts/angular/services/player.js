@@ -1,6 +1,6 @@
 (function () {
 
-  function getEvent (event) {
+  function getEvent(event) {
     if (typeof event.originalEvent !== 'undefined') {
       return event.originalEvent;
     } else {
@@ -351,7 +351,7 @@
                       '<td style="width: 8px; text-align:left;"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
                       '<td style="width: 16px; text-align:left; padding: 2px 0 0 10px" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
-                      '<td><button title="{{assignSpeaker(text.speakerId)}}">{{abbreviateSpeaker(text.speakerId)}}</button></td>' +
+                      '<td><button title="{{assignSpeaker(text.speakerId)}}" ng-show="speakerChange(transcript[$index-1].speakerId, text.speakerId)">{{abbreviateSpeaker(text.speakerId)}}</button></td>' +
                       '<td ng-show="!editorEnabled"><a ng-click="editOrPlay(text.startTime)"><div class="file-transcript-text" ng-bind-html="text.text | highlight:transcriptFilter"></div></a></td>' +
                       '<td ng-show="editorEnabled"><input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)"></td>' +
                     '</tr>' +
@@ -478,15 +478,14 @@
           return dd;
         }
 
-        scope.seekTo = function(time) {
+        scope.seekTo = function (time) {
           scope.$emit('transcriptSeek', time);
         }
 
         //replace speaker ids with speaker names
-        scope.assignSpeaker = function(speakerId) {
+        scope.assignSpeaker = function (speakerId) {
           var speakers = scope.speakers;
           var index = speakerId - 1;
-          console.log(speakers[index]);
           var speaker = speakers[index].name;
           return speaker;
         }
@@ -505,25 +504,32 @@
         }
 
         //set unique color for each speaker
-        scope.speakerColor = function() {
+        scope.speakerColor = function () {
           var speakers = scope.speakers;
           var colors = ['#FFFFFF', '#CAD9FF', '#D9F3FF', '#FFDA9A', '#FFEDC6', '#E5E5E5'];
-          console.log(speakers);
+          // console.log(speakers);
           for (var i = 0; i < speakers.length; i++) {
             var speaker = speakers[i].id;
             var color = colors[i % colors.length]; // loop through color assignment
-            console.log(speaker + ' = ' + color);
+            // console.log(speaker + ' = ' + color);
+          }
+        }
+
+        //only show speaker if different from the previous speaker
+        scope.speakerChange = function (previousSpeaker, currentSpeaker) {
+          if (currentSpeaker != previousSpeaker) {
+            return true;
           }
         }
 
         //edit transcripts
         scope.editorEnabled = false;
 
-        scope.canShowEditor = function() {
+        scope.canShowEditor = function () {
           return (!this.editorEnabled && scope.canEdit && (parseInt(this.text.id, 10) > 0));
         };
 
-        scope.disableEditor = function() {
+        scope.disableEditor = function () {
           this.editorEnabled = false;
         };
 
