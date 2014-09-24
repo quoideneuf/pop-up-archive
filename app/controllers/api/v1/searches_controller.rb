@@ -30,7 +30,8 @@ class Api::V1::SearchesController < Api::V1::BaseController
     end
 
     response = Item.search(search_query).response
-    @search = ItemResultsPresenter.new(response.hits)
+    #$stderr.puts ::PP::pp(response)
+    @search = ItemResultsPresenter.new(response)
     respond_with @search
   end
 end

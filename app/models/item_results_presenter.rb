@@ -5,11 +5,16 @@ class ItemResultsPresenter < BasicObject
   class SearchResult; end
 
   def initialize(results)
-    @results = results
+    @results = results.hits
+    @facets  = results.facets
   end
 
   def results
-    @_results ||= @results.hits.map {|result| ItemResultPresenter.new(result['_source']) }
+    @_results ||= @results.hits.map {|result| ItemResultPresenter.new(result) }
+  end
+
+  def facets
+    @facets
   end
 
   # ported from the .rabl file to (a) make it easier to write the coercion logic
@@ -37,10 +42,13 @@ class ItemResultsPresenter < BasicObject
           { :file => imgf.file, :upload_id => imgf.upload_id, :original_file_url => imgf.original_file_url }
         end
         if result.entities.present?
-           
+          fres[:entities] = result.entities.map do |ent|
+            { :name => ent.name, :category => ent.category }
+          end
         end
         if result.highlighted_audio_files.present?
-          fres[:highlights] = result.highlighted_audio_files.map do |haf|
+          fres[:highlights] = {}
+          fres[:highlights][:audio_files] = result.highlighted_audio_files.map do |haf|
             { :url => haf.url, :filename => haf.filename, :id => haf.id, :transcript => haf.transcript_array }
           end
         end
@@ -65,7 +73,8 @@ class ItemResultsPresenter < BasicObject
   class ItemResultPresenter < BasicObject
 
     def initialize(result)
-      @result = result
+      @result = result['_source']
+      @highlight = result.highlight
     end
 
     def loaded_from_database?
@@ -115,8 +124,10 @@ class ItemResultsPresenter < BasicObject
     private
 
     def generate_highlighted_audio_files
-      if @result.highlight.present? && @result.highlight.transcript.present?
-        lookup = ::Hash[@result.highlight.transcript[0,5].map{|t| [t.gsub(/<\/?em>/, ''), t]}]
+      if @highlight.present? && @highlight.transcript.present?
+        $stderr.puts "found highlight: "
+        $stderr.puts ::PP::pp(@highlight)
+        lookup = ::Hash[@highlight.transcript[0,5].map{|t| [t.gsub(/<\/?em>/, ''), t]}]
       else
         return []
       end
