@@ -125,8 +125,6 @@ class ItemResultsPresenter < BasicObject
 
     def generate_highlighted_audio_files
       if @highlight.present? && @highlight.transcript.present?
-        $stderr.puts "found highlight: "
-        $stderr.puts ::PP::pp(@highlight)
         lookup = ::Hash[@highlight.transcript[0,5].map{|t| [t.gsub(/<\/?em>/, ''), t]}]
       else
         return []
