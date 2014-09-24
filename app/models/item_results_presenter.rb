@@ -12,6 +12,46 @@ class ItemResultsPresenter < BasicObject
     @_results ||= @results.hits.map {|result| ItemResultPresenter.new(result['_source']) }
   end
 
+  # ported from the .rabl file to (a) make it easier to write the coercion logic
+  # and (b) easier to test
+  def format_results
+    formatted = []
+    attrs = [:title, :description, :date_created, :identifier, :collection_id,
+             :collection_title, :episode_title, :series_title, :date_broadcast,
+             :tags, :notes]
+
+    if results and results.size
+      results.each do |result|
+        fres = { :id => result.id }
+        attrs.each do |attr|
+          if result[attr].present?
+            fres[attr] = result[attr]
+          end
+        end
+
+        # child objects
+        fres[:audio_files] = result.audio_files.map do |af|
+          { :url => af.url, :id => af.id, :filename => af.filename } 
+        end
+        fres[:image_files] = result.image_files.map do |imgf|
+          { :file => imgf.file, :upload_id => imgf.upload_id, :original_file_url => imgf.original_file_url }
+        end
+        if result.entities.present?
+           
+        end
+        if result.highlighted_audio_files.present?
+          fres[:highlights] = result.highlighted_audio_files.map do |haf|
+            { :url => haf.url, :filename => haf.filename, :id => haf.id, :transcript => haf.transcript_array }
+          end
+        end
+
+        # add to the formatted array
+        formatted.push fres
+      end
+    end
+    return formatted
+  end 
+
   def respond_to?(method)
     method == :results || @results.respond_to?(method)
   end

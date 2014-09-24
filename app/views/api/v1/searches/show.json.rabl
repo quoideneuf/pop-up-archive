@@ -6,7 +6,7 @@ node(:total_hits) { @search.total }
 node(:max_score) { @search.max_score }
 node(:page) { params[:page] }
 node(:query) { params[:query] }
-
+node(:results) { @search.format_results }
 
 if @search.results.present?
   child @search.results do
