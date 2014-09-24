@@ -19,6 +19,59 @@ namespace :search do
     end
   end
 
+  desc 're-index all items, in parallel'
+  task mindex: [:environment] do
+    nprocs     = ENV['NPROCS'] || 1
+    batch_size = ENV['BATCH']  || 100
+    nprocs = nprocs.to_i
+    batch_size = batch_size.to_i
+
+    # if asked to run on multiple CPUs,
+    # calculate array of offsets based on nprocs
+    if nprocs > 1
+      pool_size = (Item.count / nprocs).round
+      offsets = [ 0 ]
+      i = 1 
+      begin
+        offsets.push( offsets[i-1] + pool_size )
+        i += 1
+      end until i >= nprocs
+      puts "pool_size=#{pool_size} #{offsets} "
+      offsets.each do |start_at|
+        ActiveRecord::Base.connection.disconnect! # IMPORTANT before fork
+        fork do
+          # IMPORTANT after fork
+          ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
+
+          puts "Start process #{$$} at offset #{start_at}"
+
+          pbar   = ANSI::Progressbar.new(:Item, pool_size) rescue nil
+          pbar.__send__ :show if pbar
+
+          errs = Item.__elasticsearch__.import :return => 'errors', :start => start_at, 
+              :batch_size => batch_size    do |resp|
+                pbar.inc resp['items'].size if pbar
+                STDERR.flush
+                STDOUT.flush
+              end 
+
+          if errs.size
+            STDERR.puts "ERRORS in #{$$}:"
+            STDERR.puts pp(errs)
+          end
+        end
+      end 
+      Process.waitall
+
+    else
+      # otherwise just run as usual
+      Rake::Task["search:index"].invoke
+      Rake::Task["search:index"].reenable
+    end
+  end
+      
+      
+
   desc 'stage a reindex of all items'
   task stage: [:environment] do
     abort("TODO re-write to use elasticsearch tasks")
