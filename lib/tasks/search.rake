@@ -30,13 +30,17 @@ namespace :search do
     # calculate array of offsets based on nprocs
     if nprocs > 1
       pool_size = (Item.count / nprocs).round
-      offsets = [ 0 ]
-      i = 1 
-      begin
-        offsets.push( offsets[i-1] + pool_size )
-        i += 1
-      end until i >= nprocs
-      puts "pool_size=#{pool_size} #{offsets} "
+      offsets = []
+
+      # get all ids since we can't assume there are no holes in the PK sequencing
+      # because of the deleted_at paranoia feature.
+      ids = Item.order('id ASC').pluck(:id)
+      ids.each_slice(pool_size) do |chunk|
+        #puts "chunk: size=#{chunk.size} #{chunk.first}..#{chunk.last}"
+        offsets.push( chunk.first )
+      end
+      puts "nprocs=#{nprocs} pool_size=#{pool_size} offsets=#{offsets} "
+
       offsets.each do |start_at|
         ActiveRecord::Base.connection.disconnect! # IMPORTANT before fork
         fork do
@@ -44,8 +48,7 @@ namespace :search do
           ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
 
           puts "Start process #{$$} at offset #{start_at}"
-
-          pbar   = ANSI::Progressbar.new(:Item, pool_size) rescue nil
+          pbar   = ANSI::Progressbar.new("Item [#{$$}]", pool_size) rescue nil
           pbar.__send__ :show if pbar
 
           errs = Item.__elasticsearch__.import :return => 'errors', :start => start_at, 
