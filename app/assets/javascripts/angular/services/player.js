@@ -348,10 +348,10 @@
       template: '<div class="file-transcript">' +
                   '<table class="table">' +
                     '<tr ng-repeat="text in transcript" ng-class="{current: transcriptStart== {{text.startTime | round}}}">' +
-                      '<td style="width: 8px; text-align:left;"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
-                      '<td style="width: 16px; text-align:left; padding: 2px 0 0 10px" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
+                      '<td class="play"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
+                      '<td class ="timestamp" ng-class="{keytime: $index % 5 != 0}" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
-                      '<td><button title="{{assignSpeaker(text.speakerId)}}" ng-show="speakerChange(transcript[$index-1].speakerId, text.speakerId)">{{abbreviateSpeaker(text.speakerId)}}</button></td>' +
+                      '<td class="speaker" title="{{assignSpeaker(text.speakerId)}}" ng-bind="speakerChange(transcript[$index-1].speakerId, text.speakerId)"></td>' +
                       '<td ng-show="!editorEnabled"><a ng-click="editOrPlay(text.startTime)"><div class="file-transcript-text" ng-bind-html="text.text | highlight:transcriptFilter"></div></a></td>' +
                       '<td ng-show="editorEnabled"><input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)"></td>' +
                     '</tr>' +
@@ -491,7 +491,7 @@
         }
 
         //abbreviate speaker names to initials
-        scope.abbreviateSpeaker = function (speakerId) {
+        abbreviateSpeaker = function (speakerId) {
           var name = scope.assignSpeaker(speakerId);
           //if speaker is in the format F1 or M1 or S1 do not abbreviate
           re = /^M|F|S\d+/;
@@ -507,7 +507,6 @@
         scope.speakerColor = function () {
           var speakers = scope.speakers;
           var colors = ['#FFFFFF', '#CAD9FF', '#D9F3FF', '#FFDA9A', '#FFEDC6', '#E5E5E5'];
-          // console.log(speakers);
           for (var i = 0; i < speakers.length; i++) {
             var speaker = speakers[i].id;
             var color = colors[i % colors.length]; // loop through color assignment
@@ -518,7 +517,7 @@
         //only show speaker if different from the previous speaker
         scope.speakerChange = function (previousSpeaker, currentSpeaker) {
           if (currentSpeaker != previousSpeaker) {
-            return true;
+            return abbreviateSpeaker(currentSpeaker);
           }
         }
 
