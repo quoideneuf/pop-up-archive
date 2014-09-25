@@ -201,16 +201,16 @@ class Item < ActiveRecord::Base
         json[assoc]      = send(assoc).map{|c| c.as_json }
       end
       json[:tags]        = tags_for_index
-      json[:location]    = geolocation.to_indexed_json if geolocation.present?
+      json[:location]    = geolocation.as_indexed_json if geolocation.present?
       json[:transcripts] = transcripts_for_index
       json[:collection_title] = collection.title if collection.present?
       json[:confirmed_entities] = confirmed_entities.map(&:as_indexed_json)
       json[:low_unconfirmed_entities] = low_scoring_entities.map(&:as_indexed_json)
       json[:mid_unconfirmed_entities] = middle_scoring_entities.map(&:as_indexed_json)
       json[:high_unconfirmed_entities] = high_scoring_entities.map(&:as_indexed_json)
-      json[:date_created]   ||= self.created_at.as_json
-      json[:date_broadcast] ||= self.created_at.as_json
-      json[:date_added]       = self.created_at.as_json
+      json[:date_created]   = self.date_created.nil? ? nil : self.date_created.as_json
+      json[:date_broadcast] = self.date_broadcast.nil? ? nil : self.date_broadcast.as_json
+      json[:date_added]     = self.created_at.as_json
     end
   end
 
