@@ -124,6 +124,9 @@ class ItemResultsPresenter < BasicObject
     private
 
     def generate_highlighted_audio_files
+      if audio_files.size == 0
+        return []
+      end
       if @highlight.present? && @highlight.transcript.present?
         lookup = ::Hash[@highlight.transcript[0,5].map{|t| [t.gsub(/<\/?em>/, ''), t]}]
       else
