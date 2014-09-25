@@ -23,7 +23,8 @@ namespace :search do
   task mindex: [:environment] do
     nprocs     = ENV['NPROCS'] || 1
     batch_size = ENV['BATCH']  || 100
-    nprocs = nprocs.to_i
+    max        = ENV['MAX']    || nil
+    nprocs     = nprocs.to_i
     batch_size = batch_size.to_i
 
     # if asked to run on multiple CPUs,
@@ -44,24 +45,38 @@ namespace :search do
       offsets.each do |start_at|
         ActiveRecord::Base.connection.disconnect! # IMPORTANT before fork
         fork do
+          # child worker
           # IMPORTANT after fork
           ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
 
-          puts "Start process #{$$} at offset #{start_at}"
-          pbar   = ANSI::Progressbar.new("Item [#{$$}]", pool_size) rescue nil
-          pbar.__send__ :show if pbar
+          completed = 0
+          errors    = []
+          puts "Start worker #{$$} at offset #{start_at}"
+          pbar = ANSI::Progressbar.new("Item [#{$$}]", pool_size) rescue nil
+          if pbar
+            pbar.__send__ :show 
+            pbar.bar_mark = '='
+          end
 
-          errs = Item.__elasticsearch__.import :return => 'errors', :start => start_at, 
+          Item.__elasticsearch__.import :return => 'errors', :start => start_at, 
               :batch_size => batch_size    do |resp|
+                # show errors immediately (rather than buffering them)
+                errors += resp['items'].select { |k, v| k.values.first['error'] }
+                completed += resp['items'].size
                 pbar.inc resp['items'].size if pbar
                 STDERR.flush
                 STDOUT.flush
+                if errors.size > 0
+                  STDERR.puts "ERRORS in #{$$}:"
+                  STDERR.puts pp(errors)
+                end
+                if completed >= pool_size || (max && max.to_i == completed)
+                  pbar.finish
+                  puts "Worker #{$$} finished #{completed} records"
+                  exit # exit child worker
+                end
               end 
-
-          if errs.size
-            STDERR.puts "ERRORS in #{$$}:"
-            STDERR.puts pp(errs)
-          end
+          # end Item callback
         end
       end 
       Process.waitall
