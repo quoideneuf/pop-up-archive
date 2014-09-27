@@ -11,10 +11,10 @@ Elasticsearch::Model.client = Elasticsearch::Client.new({
 })
 
 if Rails.env.development?
-  tracer = Logger.new('log/elasticsearch.log')
-  tracer.level =  Logger::DEBUG
+  logger = Logger.new('log/elasticsearch.log')
+  logger.level =  Logger::DEBUG
 end
 
-Elasticsearch::Model.client.transport.tracer = tracer
+Elasticsearch::Model.client.transport.logger = tracer
 
 puts "Starting Elasticsearch model with server #{es_url}"
