@@ -5,7 +5,9 @@ Item::STANDARD_ROLES.each{|r| attribute r.pluralize.to_sym}
 attribute created_at: :date_added
 
 node (:storage) do |i|
-  i.storage.provider
+  if i.storage
+    i.storage.provider
+  end
 end
 
 child :audio_files do |af|
