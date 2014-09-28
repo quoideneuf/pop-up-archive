@@ -11,7 +11,7 @@ Elasticsearch::Model.client = Elasticsearch::Client.new({
 })
 
 if Rails.application.config.elasticsearch_logging
-  logger = Logger.new(STDERR)
+  logger = Logger.new(STDOUT)
   logger.level =  Logger::DEBUG
   Elasticsearch::Model.client.transport.logger = logger
 end

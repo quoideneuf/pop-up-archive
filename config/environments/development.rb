@@ -41,7 +41,7 @@ PopUpArchive::Application.configure do
   config.action_mailer.default_url_options = { :host => 'pop-up-archive.dev' }
 
   # elasticsearch logging
-  config.elasticsearch_logging = true
+  config.elasticsearch_logging = false
 
   # And fixer (for testing)
   Rails.application.routes.default_url_options = { host: 'pop-up-archive.dev' } 
