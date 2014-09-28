@@ -71,7 +71,7 @@ namespace :search do
                   STDERR.puts pp(errors)
                 end
                 if completed >= pool_size || (max && max.to_i == completed)
-                  pbar.finish
+                  pbar.finish if pbar
                   puts "Worker #{$$} finished #{completed} records"
                   exit # exit child worker
                 end
