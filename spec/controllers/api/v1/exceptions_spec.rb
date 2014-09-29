@@ -24,7 +24,7 @@ describe Api::V1::TestController do
     expect(response.status).to eq(500)
     resp = JSON.parse(response.body)
     #puts resp.inspect
-    expect(resp["error"]).to match(/Internal server error/)
+    expect(resp["error"]).to eq('Internal server error')
     expect(resp["status"]).to eq(500)
   end
 

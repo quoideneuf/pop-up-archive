@@ -55,6 +55,9 @@ PopUpArchive::Application.routes.draw do
 
       post '/credit_card' => 'credit_cards#save_token'
 
+      get '/test/croak' => 'test#croak'
+      resources :test
+
       resource :last_items
       resource :search
       resources :items do
