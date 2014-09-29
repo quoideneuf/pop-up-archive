@@ -82,7 +82,7 @@ PopUpArchive::Application.configure do
   Rails.application.routes.default_url_options = { host: 'pop-up-archive-staging.herokuapp.com' }
 
   # elasticsearch logging
-  config.elasticsearch_logging = true
+  config.elasticsearch_logging = false
 
   require 'autoscaler/sidekiq'
   require 'autoscaler/heroku_scaler'

@@ -10,7 +10,7 @@ Elasticsearch::Model.client = Elasticsearch::Client.new({
   trace: true
 })
 
-if Rails.application.config.elasticsearch_logging
+if Rails.application.config.elasticsearch_logging || ENV['DEBUG']
   logger = Logger.new(STDOUT)
   logger.level =  Logger::DEBUG
   Elasticsearch::Model.client.transport.logger = logger
