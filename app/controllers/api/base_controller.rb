@@ -2,6 +2,7 @@ class Api::BaseController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, :with => :not_found
   rescue_from RuntimeError, :with => :runtime_error
   rescue_from ActionView::MissingTemplate, :with => :template_error
+  rescue_from Stripe::InvalidRequestError, :with => :upstream_error
 
   def not_found
     respond_to do |format|
@@ -35,9 +36,25 @@ class Api::BaseController < ApplicationController
         :status => 507
       }   
       format.json {
-        render :text => { :error => "Cannot present response", :status => 500 }.to_json,
+        render :text => { :error => "Cannot present response", :status => 507 }.to_json,
         :status => 507
       }   
     end 
   end
+
+  def upstream_error(exception)
+    logger.error(exception)
+    respond_to do |format|
+      format.html {
+        render :file => File.join(Rails.root, 'public', '500.html'),
+        :locals => { :exception => exception },
+        :status => 502
+      }   
+      format.json {
+        render :text => { :error => "Upstream server error", :status => 502 }.to_json,
+        :status => 502
+      }   
+    end 
+  end
+
 end
