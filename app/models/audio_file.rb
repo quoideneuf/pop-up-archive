@@ -60,7 +60,7 @@ class AudioFile < ActiveRecord::Base
 
   def url(*args)
     if has_file? and !file.nil?
-      file.try(:url, *args)
+      file.try(:url, *args) || file
     else 
       original_file_url
     end
