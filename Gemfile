@@ -132,6 +132,7 @@ group :development, :test do
   gem 'pry-rails'
   gem 'pry-stack_explorer'
   gem 'pry-debugger'
+  gem 'pry-remote'
   gem 'rspec-rails', '~> 2.4'
   gem 'listen'
   gem 'terminal-notifier-guard'
