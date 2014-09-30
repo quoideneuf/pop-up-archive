@@ -11,17 +11,18 @@ class Api::V1::ItemsController < Api::V1::BaseController
 
   expose(:searched_item) do
     query_builder = QueryBuilder.new({query:"id:#{params[:id].to_i}"}, current_user)
-    Item.search do
+    search_query = Search.new(items_index_name) do
       query_builder.query do |q|
         query &q
       end
       query_builder.filters do |f|
         filter f.type, f.value
       end
-    end.first.tap do |item|
+    end
+    Item.search(search_query).response.first.tap do |item|
       if item.blank?
         raise ActiveRecord::RecordNotFound
-      end
+      end 
     end
   end
 

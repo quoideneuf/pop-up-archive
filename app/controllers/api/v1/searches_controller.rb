@@ -1,4 +1,3 @@
-require 'pp'
 class Api::V1::SearchesController < Api::V1::BaseController
   def show
     query_builder = QueryBuilder.new(params, current_user)
@@ -30,7 +29,6 @@ class Api::V1::SearchesController < Api::V1::BaseController
     end
 
     response = Item.search(search_query).response
-    #$stderr.puts ::PP::pp(response)
     @search = ItemResultsPresenter.new(response)
     respond_with @search
   end
