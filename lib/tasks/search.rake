@@ -53,9 +53,12 @@ namespace :search do
           errors    = []
           puts "Start worker #{$$} at offset #{start_at}"
           pbar = ANSI::Progressbar.new("Item [#{$$}]", pool_size, STDOUT) rescue nil
+          checkpoint = false
           if pbar
             pbar.__send__ :show 
             pbar.bar_mark = '='
+          else 
+            checkpoint = true
           end
 
           Item.__elasticsearch__.import :return => 'errors', :start => start_at, 
@@ -64,6 +67,7 @@ namespace :search do
                 errors += resp['items'].select { |k, v| k.values.first['error'] }
                 completed += resp['items'].size
                 pbar.inc resp['items'].size if pbar
+                puts "[#{$$}] #{Time.now.utc.iso8601} : #{completed} records completed" if checkpoint
                 STDERR.flush
                 STDOUT.flush
                 if errors.size > 0
