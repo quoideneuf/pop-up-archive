@@ -38,6 +38,7 @@ class ItemResultsPresenter < BasicObject
 
         # child objects
         fres[:audio_files] = result.audio_files.map do |af|
+          $stderr.puts "audio_file:"
           $stderr.puts ::PP::pp(af)
           { :url => af.url, :id => af.id, :filename => af.filename } 
         end
