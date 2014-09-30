@@ -52,7 +52,7 @@ namespace :search do
           completed = 0
           errors    = []
           puts "Start worker #{$$} at offset #{start_at}"
-          pbar = ANSI::Progressbar.new("Item [#{$$}]", pool_size) rescue nil
+          pbar = ANSI::Progressbar.new("Item [#{$$}]", pool_size, STDOUT) rescue nil
           if pbar
             pbar.__send__ :show 
             pbar.bar_mark = '='
@@ -67,8 +67,8 @@ namespace :search do
                 STDERR.flush
                 STDOUT.flush
                 if errors.size > 0
-                  STDERR.puts "ERRORS in #{$$}:"
-                  STDERR.puts pp(errors)
+                  STDOUT.puts "ERRORS in #{$$}:"
+                  STDOUT.puts pp(errors)
                 end
                 if completed >= pool_size || (max && max.to_i == completed)
                   pbar.finish if pbar
