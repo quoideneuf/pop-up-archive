@@ -56,7 +56,10 @@ class AudioFileUploader < CarrierWave::Uploader::Base
   end
 
   def fog_public
-    model.storage.is_public?
+    if model.storage
+      model.storage.is_public?
+    end
+    return false
   end
 
   def provider
