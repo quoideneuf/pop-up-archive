@@ -63,11 +63,17 @@ class AudioFileUploader < CarrierWave::Uploader::Base
   end
 
   def provider
-    model.storage.credentials[:provider].to_s
+    if model.storage
+      model.storage.credentials[:provider].to_s
+    end
+    return ''
   end
 
   def fog_credentials
-    model.storage.credentials
+    if model.storage
+      model.storage.credentials
+    end
+    return nil
   end
 
   private
