@@ -70,7 +70,7 @@ module PopUpArchive
     config.assets.version = '1.0'
 
     # Needed for Heroku
-    require Rails.root.join('config', 'initializers', 'tire')
+    require Rails.root.join('config', 'initializers', 'elasticsearch')
     config.assets.initialize_on_precompile = false
 
     config.assets.paths << "#{Rails.root}/app/assets/html"

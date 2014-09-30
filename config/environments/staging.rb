@@ -81,9 +81,6 @@ PopUpArchive::Application.configure do
   config.action_mailer.default_url_options = { :host => 'pop-up-archive-staging.herokuapp.com' }
   Rails.application.routes.default_url_options = { host: 'pop-up-archive-staging.herokuapp.com' }
 
-  # elasticsearch logging
-  config.elasticsearch_logging = false
-
   require 'autoscaler/sidekiq'
   require 'autoscaler/heroku_scaler'
   Sidekiq.configure_client do |config|
