@@ -114,9 +114,9 @@ PopUpArchive::Application.routes.draw do
   # used only for dev and test
   mount JasmineRails::Engine => "/jasmine" if defined?(JasmineRails)
 
-  if Rails.env.development? || Rails.env.staging?
+  authenticate :user, lambda { |u| u.super_admin? } do
     require 'sidekiq/web'
-    mount Sidekiq::Web => '/sidekiq'
+    mount Sidekiq::Web => '/admin/sidekiq'
   end
 
   match '*path', to: 'directory/dashboard#user'

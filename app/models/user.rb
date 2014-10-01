@@ -100,6 +100,10 @@ class User < ActiveRecord::Base
     has_role?(:admin, organization) ? :admin : :member
   end
 
+  def super_admin?
+    has_role?(:super_admin)
+  end
+
   def update_card!(card_token)
     cus = customer.stripe_customer
     cus.card = card_token
