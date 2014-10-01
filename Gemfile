@@ -34,7 +34,8 @@ gem 'bootstrap_form'
 gem 'cancan'
 
 # search with elasticsearch
-gem 'tire'
+gem 'elasticsearch-model', '~> 0.1.5'
+gem 'elasticsearch-rails', '~> 0.1.5'
 
 # server-side templates
 gem 'slim-rails', '~> 1.0'
@@ -153,6 +154,7 @@ group :test do
   gem 'stripe-ruby-mock', require: 'stripe_mock'
   gem 'simplecov'
   gem 'coveralls'
+  gem 'elasticsearch-extensions'
 end
 
 group :development, :production, :staging do

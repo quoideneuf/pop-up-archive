@@ -9,13 +9,7 @@ class Entity < ActiveRecord::Base
   
   serialize :extra
 
-  belongs_to :item
-
-  after_save :update_item
-
-  def update_item
-    item.update_index_async if item
-  end
+  belongs_to :item, touch: true
 
   def as_indexed_json
     {entity: name, category: category }

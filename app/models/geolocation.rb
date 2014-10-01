@@ -16,11 +16,15 @@ class Geolocation < ActiveRecord::Base
   end
 
   def to_indexed_json
+    as_indexed_json.to_json
+  end
+
+  def as_indexed_json
     {
       name: name,
       position: {
-        lat: latitude,
-        lon: longitude
+        lat: latitude.to_i,
+        lon: longitude.to_i
       }
     }
   end

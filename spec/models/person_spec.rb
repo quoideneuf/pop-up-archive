@@ -15,7 +15,6 @@ describe Person do
   end
 
   it "has an uploads collection" do
-    @person.items.first.should_receive(:update_index_async)
     @person.name = 'change'
     @person.save!
   end

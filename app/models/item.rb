@@ -2,42 +2,16 @@ class Item < ActiveRecord::Base
 
   acts_as_paranoid
 
-  include Tire::Model::Callbacks
-  include Tire::Model::Search
+  include Searchable
+
+  index_name { Rails.env.test? ? "test_#{items}" : ENV['ITEMS_INDEX_NAME'] || 'items'}
 
   DEFAULT_INDEX_PARAMS = {except: [:transcription, :rights, :storage_id, :token, :geolocation_id, :csv_import_id, :deleted_at]}
 
   STANDARD_ROLES = ['producer', 'interviewer', 'interviewee', 'creator', 'host', 'guest']
 
-  before_validation :set_defaults, if: :new_record?
-
-  before_update :handle_collection_change, if: :collection_id_changed?
-
-  after_save do
-    deleted_at.nil? ? store_to_index : remove_from_index
-  end
-
-  after_destroy do
-    remove_from_index
-  end
-
-  def remove_from_index
-    self.index.remove(self)
-  end
-
-  def store_to_index
-    self.index.store(self)
-  end
-
-  def update_index_async
-    UpdateIndexWorker.perform_async(self.class.name, self.id) unless Rails.env.test?
-  end
-
-  index_name { ENV['ITEMS_INDEX_NAME'] || 'items' }
-
-  tire do
-    settings number_of_shards: 2, number_of_replicas: 1
-    mapping do
+  settings index: { number_of_shards: 2, number_of_replicas: 1 } do
+    mappings dynamic: 'false' do
       indexes :id, index: :not_analyzed
       indexes :is_public, index: :not_analyzed
       indexes :collection_id, index: :not_analyzed
@@ -54,7 +28,7 @@ class Item < ActiveRecord::Base
 
       indexes :transcripts do
         indexes :audio_file_id, type: 'long', index: "not_analyzed"
-        indexes :start_time, type: 'long', index: "not_analyzed"
+        indexes :start_time, type: 'double', index: "not_analyzed"
         indexes :confidence, type: 'float', index: 'not_analyzed'
         indexes :transcript, type: 'string', store: true, boost: 0.1
       end
@@ -88,9 +62,12 @@ class Item < ActiveRecord::Base
       STANDARD_ROLES.each do |role|
         indexes role.pluralize.to_sym, type: 'string', include_in_all: false, index_name: role, index: "not_analyzed"
       end
-
     end
   end
+
+  before_validation :set_defaults, if: :new_record?
+
+  before_update :handle_collection_change, if: :collection_id_changed?
 
   attr_accessible :date_broadcast, :date_created, :date_peg,
     :description, :digital_format, :digital_location, :duration,
@@ -215,19 +192,26 @@ class Item < ActiveRecord::Base
   end
 
   def to_indexed_json(params={})
+    as_indexed_json(params).to_json 
+  end
+
+  def as_indexed_json(params={})
     as_json(params.reverse_merge(DEFAULT_INDEX_PARAMS)).tap do |json|
       ([:contributors] + STANDARD_ROLES.collect{|r| r.pluralize.to_sym}).each do |assoc|
         json[assoc]      = send(assoc).map{|c| c.as_json }
       end
       json[:tags]        = tags_for_index
-      json[:location]    = geolocation.to_indexed_json if geolocation.present?
+      json[:location]    = geolocation.as_indexed_json if geolocation.present?
       json[:transcripts] = transcripts_for_index
       json[:collection_title] = collection.title if collection.present?
       json[:confirmed_entities] = confirmed_entities.map(&:as_indexed_json)
       json[:low_unconfirmed_entities] = low_scoring_entities.map(&:as_indexed_json)
       json[:mid_unconfirmed_entities] = middle_scoring_entities.map(&:as_indexed_json)
       json[:high_unconfirmed_entities] = high_scoring_entities.map(&:as_indexed_json)
-    end.to_json
+      json[:date_created]   = self.date_created.nil? ? nil : self.date_created.as_json
+      json[:date_broadcast] = self.date_broadcast.nil? ? nil : self.date_broadcast.as_json
+      json[:date_added]     = self.created_at.as_json
+    end
   end
 
   def tags

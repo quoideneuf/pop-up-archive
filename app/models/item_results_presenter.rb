@@ -1,3 +1,5 @@
+require 'pp'
+
 class Result; end
 
 class ItemResultsPresenter < BasicObject
@@ -5,12 +7,60 @@ class ItemResultsPresenter < BasicObject
   class SearchResult; end
 
   def initialize(results)
-    @results = results
+    @results = results.hits
+    @facets  = results.facets
   end
 
   def results
-    @_results ||= @results.map {|result| ItemResultPresenter.new(result) }
+    @_results ||= @results.hits.map {|result| ItemResultPresenter.new(result) }
   end
+
+  def facets
+    @facets
+  end
+
+  # ported from the .rabl file to (a) make it easier to write the coercion logic
+  # and (b) easier to test
+  def format_results
+    formatted = []
+    attrs = [:title, :description, :date_created, :identifier, :collection_id,
+             :collection_title, :episode_title, :series_title, :date_broadcast,
+             :tags, :notes]
+
+    if results and results.size
+      results.each do |result|
+        fres = { :id => result.id }
+        attrs.each do |attr|
+          if result[attr].present?
+            fres[attr] = result[attr]
+          end
+        end
+
+        # child objects
+        fres[:audio_files] = result.audio_files.map do |af|
+          { :url => af.url, :id => af.id, :filename => af.filename } 
+        end
+        fres[:image_files] = result.image_files.map do |imgf|
+          { :file => imgf.file, :upload_id => imgf.upload_id, :original_file_url => imgf.original_file_url }
+        end
+        if result.entities.present?
+          fres[:entities] = result.entities.map do |ent|
+            { :name => ent.name, :category => ent.category }
+          end
+        end
+        if result.highlighted_audio_files.present?
+          fres[:highlights] = {}
+          fres[:highlights][:audio_files] = result.highlighted_audio_files.map do |haf|
+            { :url => haf.url, :filename => haf.filename, :id => haf.id, :transcript => haf.transcript_array }
+          end
+        end
+
+        # add to the formatted array
+        formatted.push fres
+      end
+    end
+    return formatted
+  end 
 
   def respond_to?(method)
     method == :results || @results.respond_to?(method)
@@ -25,7 +75,8 @@ class ItemResultsPresenter < BasicObject
   class ItemResultPresenter < BasicObject
 
     def initialize(result)
-      @result = result
+      @result = result['_source']
+      @highlight = result.highlight
     end
 
     def loaded_from_database?
@@ -75,8 +126,11 @@ class ItemResultsPresenter < BasicObject
     private
 
     def generate_highlighted_audio_files
-      if @result.highlight.present? && @result.highlight.transcript.present?
-        lookup = ::Hash[@result.highlight.transcript[0,5].map{|t| [t.gsub(/<\/?em>/, ''), t]}]
+      if audio_files.size == 0
+        return []
+      end
+      if @highlight.present? && @highlight.transcript.present?
+        lookup = ::Hash[@highlight.transcript[0,5].map{|t| [t.gsub(/<\/?em>/, ''), t]}]
       else
         return []
       end

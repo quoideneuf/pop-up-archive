@@ -59,7 +59,11 @@ class AudioFile < ActiveRecord::Base
   end
 
   def url(*args)
-    has_file? ? file.try(:url, *args) : original_file_url
+    if has_file? and !file.nil?
+      file.try(:url, *args) 
+    else 
+      original_file_url
+    end
   end
 
   def transcoded?

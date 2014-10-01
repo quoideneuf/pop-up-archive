@@ -56,6 +56,9 @@ class AudioFileUploader < CarrierWave::Uploader::Base
   end
 
   def fog_public
+    if model.storage.nil?
+      raise "No storage defined on uploaded audio #{model.id}"
+    end
     model.storage.is_public?
   end
 

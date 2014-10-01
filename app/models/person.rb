@@ -6,14 +6,11 @@ class Person < ActiveRecord::Base
 
   before_save :generate_slug, on: :create
 
-  after_save :update_items
+  include Searchable
 
-  include Tire::Model::Callbacks
-  include Tire::Model::Search
+  index_name { Rails.env.test? ? "test_#{people}" : ENV['PEOPLE_INDEX_NAME'] || 'people'}
 
-  index_name { ENV['PEOPLE_INDEX_NAME'] || 'people' }
-
-  settings number_of_shards: 1,
+  settings index: { number_of_shards: 1 },
     analysis: {
       filter: {
         ngram_filter: {
@@ -36,7 +33,7 @@ class Person < ActiveRecord::Base
         }
       }
     } do
-    mapping do
+    mappings dynamic: 'false' do
       indexes :id, index: :not_analyzed
       indexes :name, type: 'string', index_analyzer: 'index_ngram_analyzer', search_analyzer: 'search_ngram_analyzer'
       indexes :collection_id, type: 'string', as: 'collection_ids', index_name: 'collection_id'
@@ -48,10 +45,6 @@ class Person < ActiveRecord::Base
       query { string "name:#{query}" }
       filter :terms, collection_id:[collection_id.to_i]
     end
-  end
-
-  def async_index
-    UpdateIndexWorker.perform_async(self.class.name, self.id) unless Rails.env.test?
   end
 
   def collection_ids
@@ -67,10 +60,6 @@ class Person < ActiveRecord::Base
   end
 
   private
-
-  def update_items
-    self.items.each{|i| i.update_index_async }
-  end
 
   def generate_slug
     self.slug = self.class.slugify name
