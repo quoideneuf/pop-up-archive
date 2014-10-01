@@ -122,6 +122,7 @@ PopUpArchive::Application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
+  match '/api/*path', to: 'api/base#not_found'
   match '*path', to: 'directory/dashboard#user'
   root to: 'directory/dashboard#guest', constraints: GuestConstraint.new(true)
   root to: 'directory/dashboard#user', constraints: GuestConstraint.new(false)

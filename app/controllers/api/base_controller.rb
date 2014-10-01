@@ -6,7 +6,9 @@ class Api::BaseController < ApplicationController
 
   def not_found
     respond_to do |format|
-      format.html { render :file => File.join(Rails.root, 'public', '404.html'), :status => :not_found }
+      # TODO render app 404 rather than generic 
+      format.html { render :file => File.join(Rails.root, 'public', '404'), :formats => [:html], :status => :not_found }
+
       format.json { render :text => { :error => "not found", :status => 404 }.to_json, :status => :not_found }
     end
 
@@ -16,7 +18,8 @@ class Api::BaseController < ApplicationController
     logger.error(exception)
     respond_to do |format|
       format.html {
-        render :file => File.join(Rails.root, 'public', '500.html'),
+        render :file => File.join(Rails.root, 'public', '500'), 
+        :formats => [:html],
         :locals => { :exception => exception },
         :status => 500
       }
@@ -31,7 +34,8 @@ class Api::BaseController < ApplicationController
     logger.error(exception)
     respond_to do |format|
       format.html {
-        render :file => File.join(Rails.root, 'public', '500.html'),
+        render :file => File.join(Rails.root, 'public', '500'),
+        :formats => [:html],
         :locals => { :exception => exception },
         :status => 507
       }   
@@ -46,7 +50,8 @@ class Api::BaseController < ApplicationController
     logger.error(exception)
     respond_to do |format|
       format.html {
-        render :file => File.join(Rails.root, 'public', '500.html'),
+        render :file => File.join(Rails.root, 'public', '500'),
+        :formats => [:html],
         :locals => { :exception => exception },
         :status => 502
       }   
