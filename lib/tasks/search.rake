@@ -12,7 +12,7 @@ namespace :search do
         STDERR.puts "ERRORS: "
         STDERR.puts pp(errs)
       end
-    else 
+    else
       ENV['CLASS'] = 'Item'
       Rake::Task["elasticsearch:import:model"].invoke
       Rake::Task["elasticsearch:import:model"].reenable
@@ -27,72 +27,64 @@ namespace :search do
     nprocs     = nprocs.to_i
     batch_size = batch_size.to_i
 
-    # if asked to run on multiple CPUs,
     # calculate array of offsets based on nprocs
-    if nprocs > 1
-      pool_size = (Item.count / nprocs).round
-      offsets = []
+    total_expected = Item.count
+    pool_size = (total_expected / nprocs).round
+    offsets = []
 
-      # get all ids since we can't assume there are no holes in the PK sequencing
-      # because of the deleted_at paranoia feature.
-      ids = Item.order('id ASC').pluck(:id)
-      ids.each_slice(pool_size) do |chunk|
-        #puts "chunk: size=#{chunk.size} #{chunk.first}..#{chunk.last}"
-        offsets.push( chunk.first )
-      end
-      puts "nprocs=#{nprocs} pool_size=#{pool_size} offsets=#{offsets} "
-
-      offsets.each do |start_at|
-        ActiveRecord::Base.connection.disconnect! # IMPORTANT before fork
-        fork do
-          # child worker
-          # IMPORTANT after fork
-          ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
-
-          completed = 0
-          errors    = []
-          puts "Start worker #{$$} at offset #{start_at}"
-          pbar = ANSI::Progressbar.new("Item [#{$$}]", pool_size, STDOUT) rescue nil
-          checkpoint = false
-          if pbar
-            pbar.__send__ :show 
-            pbar.bar_mark = '='
-          else 
-            checkpoint = true
-          end
-
-          Item.__elasticsearch__.import :return => 'errors', :start => start_at, 
-              :batch_size => batch_size    do |resp|
-                # show errors immediately (rather than buffering them)
-                errors += resp['items'].select { |k, v| k.values.first['error'] }
-                completed += resp['items'].size
-                pbar.inc resp['items'].size if pbar
-                puts "[#{$$}] #{Time.now.utc.iso8601} : #{completed} records completed" if checkpoint
-                STDERR.flush
-                STDOUT.flush
-                if errors.size > 0
-                  STDOUT.puts "ERRORS in #{$$}:"
-                  STDOUT.puts pp(errors)
-                end
-                if completed >= pool_size || (max && max.to_i == completed)
-                  pbar.finish if pbar
-                  puts "Worker #{$$} finished #{completed} records"
-                  exit # exit child worker
-                end
-              end 
-          # end Item callback
-        end
-      end 
-      Process.waitall
-
-    else
-      # otherwise just run as usual
-      Rake::Task["search:index"].invoke
-      Rake::Task["search:index"].reenable
+    # get all ids since we can't assume there are no holes in the PK sequencing
+    # because of the deleted_at paranoia feature.
+    ids = Item.order('id ASC').pluck(:id)
+    ids.each_slice(pool_size) do |chunk|
+      #puts "chunk: size=#{chunk.size} #{chunk.first}..#{chunk.last}"
+      offsets.push( chunk.first )
     end
+    puts "total=#{total_expected} nprocs=#{nprocs} pool_size=#{pool_size} offsets=#{offsets} "
+
+    offsets.each do |start_at|
+      ActiveRecord::Base.connection.disconnect! # IMPORTANT before fork
+      fork do
+        # child worker
+        # IMPORTANT after fork
+        ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
+
+        completed = 0
+        errors    = []
+        puts "Start worker #{$$} at offset #{start_at}"
+        pbar = ANSI::Progressbar.new("Item [#{$$}]", pool_size, STDOUT) rescue nil
+        checkpoint = false
+        if pbar
+          pbar.__send__ :show
+          pbar.bar_mark = '='
+        else
+          checkpoint = true
+        end
+
+        Item.__elasticsearch__.import :return => 'errors', :start => start_at,
+        :batch_size => batch_size    do |resp|
+          # show errors immediately (rather than buffering them)
+          errors += resp['items'].select { |k, v| k.values.first['error'] }
+          completed += resp['items'].size
+          pbar.inc resp['items'].size if pbar
+          puts "[#{$$}] #{Time.now.utc.iso8601} : #{completed} records completed" if checkpoint
+          STDERR.flush
+          STDOUT.flush
+          if errors.size > 0
+            STDOUT.puts "ERRORS in #{$$}:"
+            STDOUT.puts pp(errors)
+          end
+          if completed >= pool_size || (max && max.to_i == completed)
+            pbar.finish if pbar
+            puts "Worker #{$$} finished #{completed} records"
+            exit # exit child worker
+          end
+        end
+        # end Item callback
+      end
+    end
+    Process.waitall
   end
-      
-      
+
 
   desc 'stage a reindex of all items'
   task stage: [:environment] do
