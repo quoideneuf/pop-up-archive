@@ -60,7 +60,9 @@ namespace :search do
           checkpoint = true
         end
 
-        Item.__elasticsearch__.import :return => 'errors', :start => start_at,
+        Item.__elasticsearch__.import :return => 'errors', 
+        :start => start_at,
+        :force => ENV.fetch('FORCE', false),
         :batch_size => batch_size    do |resp|
           # show errors immediately (rather than buffering them)
           errors += resp['items'].select { |k, v| k.values.first['error'] }

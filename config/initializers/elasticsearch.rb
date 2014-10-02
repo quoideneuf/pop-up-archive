@@ -19,11 +19,15 @@ if ENV['ES_DEBUG'].to_i > 0
     url: es_url,
     log: true,
     logger: logger,
+    timeout: 1800,
+    open_timeout: 1800,
   })
   puts "Elasticsearch logging set to DEBUG mode"
 else 
   Elasticsearch::Model.client = Elasticsearch::Client.new({
     url: es_url,
+    timeout: 1800,
+    open_timeout: 1800,
   })
 end
 
