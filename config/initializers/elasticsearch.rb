@@ -12,23 +12,23 @@ if ENV['BONSAI_URL'] || ENV['ELASTICSEARCH_URL']
   ENV['ELASTICSEARCH_URL'] = es_url
 end
 
+es_args = {
+  url: es_url,
+  transport_options: {
+    timeout: 1800,
+    open_timeout: 1800,
+  },
+  retry_on_failure: 5,
+}
+
 if ENV['ES_DEBUG'].to_i > 0
   logger = Logger.new(STDOUT)
   logger.level =  Logger::DEBUG
-  Elasticsearch::Model.client = Elasticsearch::Client.new({
-    url: es_url,
-    log: true,
-    logger: logger,
-    timeout: 1800,
-    open_timeout: 1800,
-  })
-  puts "Elasticsearch logging set to DEBUG mode"
-else 
-  Elasticsearch::Model.client = Elasticsearch::Client.new({
-    url: es_url,
-    timeout: 1800,
-    open_timeout: 1800,
-  })
+  es_args[:log] = true
+  es_args[:logger] = logger
+  puts "[#{Time.now.utc.iso8601}] Elasticsearch logging set to DEBUG mode"
 end
 
-puts "Starting Elasticsearch model with server #{es_url}"
+Elasticsearch::Model.client = Elasticsearch::Client.new(es_args)
+
+puts "[#{Time.now.utc.iso8601}] Starting Elasticsearch model with server #{es_url}"
