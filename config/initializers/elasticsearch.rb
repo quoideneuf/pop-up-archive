@@ -15,8 +15,10 @@ end
 es_args = {
   url: es_url,
   transport_options: {
-    timeout: 1800,
-    open_timeout: 1800,
+    request: {
+      timeout: 1800,
+      open_timeout: 1800,
+    }
   },
   retry_on_failure: 5,
 }
