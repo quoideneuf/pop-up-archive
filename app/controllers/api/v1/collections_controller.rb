@@ -26,7 +26,7 @@ class Api::V1::CollectionsController < Api::V1::BaseController
   end
 
   def update
-    kollection.save
+    kollection.update_attributes(params[:collection])
     respond_with :api, kollection
   end 
 

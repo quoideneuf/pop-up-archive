@@ -118,7 +118,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
 
   });
 }])
-.controller('CollectionCtrl', ['$scope', '$routeParams', 'Collection', 'Loader', 'Item', '$location', '$timeout', function CollectionCtrl($scope, $routeParams, Collection, Loader, Item, $location, $timeout) {
+.controller('CollectionCtrl', ['$scope', '$routeParams', 'Collection', 'Loader', 'Item', '$location', '$timeout', '$modal', function CollectionCtrl($scope, $routeParams, Collection, Loader, Item, $location, $timeout, $modal) {
   $scope.canEdit = false;
 
   Loader.page(Collection.get($routeParams.collectionId), Collection.query(), 'Collection/' + $routeParams.collectionId,  $scope).then(function () {
@@ -131,6 +131,10 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
 
   $scope.edit = function () {
     $scope.editItem = true;
+  }
+
+  $scope.newCollection = function () {
+    $modal({template: "/assets/collections/form.html", persist: false, show: true, scope: $scope});
   }
 
   $scope.close = function () {
@@ -155,8 +159,9 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
 }])
 .controller('CollectionFormCtrl', ['$scope', 'Collection', 'Me', function CollectionFormCtrl($scope, Collection, Me) {
 
-  $scope.collection = new Collection();
-
+  if (!$scope.collection) {
+    $scope.collection = new Collection();
+  }
 
   $scope.visibilityChange = function () {
     if (!$scope.collection.itemsVisibleByDefault) {
@@ -171,7 +176,9 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
   $scope.submit = function () {
 
     // make sure this is a resource object.
-    var collection = new Collection($scope.collection);
+    console.log($scope.collection);
+
+    var collection = $scope.collection;
 
     if (collection.id) {
       collection.update();

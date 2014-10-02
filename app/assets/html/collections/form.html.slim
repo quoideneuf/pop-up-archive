@@ -15,7 +15,7 @@ div ng-controller='CollectionFormCtrl'
           | Description
         .controls
           input ng-model="collection.description"
-      .control-group
+      .control-group ng-hide="collection.id"
         label.control-label
           | Privacy
         .controls
