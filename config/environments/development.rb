@@ -37,6 +37,9 @@ PopUpArchive::Application.configure do
 
   #config.logger = Logger.new(STDOUT)
 
+  # save ourselves api calls when developing non-stripe-related code
+  config.stripe_cache = 5.months
+
   # Required configuration for Devise
   config.action_mailer.default_url_options = { :host => 'pop-up-archive.dev' }
 
