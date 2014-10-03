@@ -29,8 +29,14 @@ class Customer
   alias :eql? :==
 
   def subscribe_to_community
-    stripe_customer.update_subscription(plan: SubscriptionPlan.community.id)
-    Rails.cache.delete([:customer, :individual, id])
-    SubscriptionPlan.community
+    cust = stripe_customer
+    if cust.respond_to? :deleted and cust.deleted == true
+      puts "**TODO** customer #{cust.id} exists but has been deleted -- cannot subscribe to community but treating as if we can"
+      Rails.cache.delete([:customer, :individual, cust.id])
+      return SubscriptionPlan.community
+    end
+    cust.update_subscription(plan: SubscriptionPlan.community.id)
+    Rails.cache.delete([:customer, :individual, cust.id])
+    return SubscriptionPlan.community
   end
 end
