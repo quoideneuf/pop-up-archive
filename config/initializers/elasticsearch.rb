@@ -33,4 +33,4 @@ end
 
 Elasticsearch::Model.client = Elasticsearch::Client.new(es_args)
 
-puts "[#{Time.now.utc.iso8601}] Starting Elasticsearch model with server #{es_url}"
+puts "[#{Time.now.utc.iso8601}] Using Elasticsearch server #{es_url}"
