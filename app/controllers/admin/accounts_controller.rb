@@ -5,8 +5,8 @@ class Admin::AccountsController < Admin::BaseController
   end
 
   def total_usage
-    @accounts = @accounts.paginate(:page => params[:page],
-                                   :per_page => 5,
+    @accounts = @accounts.paginate(:page => params[:page] || 1,
+                                   :per_page => 20,
                                    :order => ('used_metered_storage_cache DESC,
                                                                created_at DESC'))
   end  
