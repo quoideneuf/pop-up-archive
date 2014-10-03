@@ -154,15 +154,20 @@ class User < ActiveRecord::Base
   end
 
   def customer
+    begin
+      cache_ttl = Rails.application.config.stripe_cache
+    rescue
+      cache_ttl = 5.minutes
+    end
     if customer_id.present?
-      Rails.cache.fetch([:customer, :individual, customer_id], expires_in: 5.minutes) do
+      Rails.cache.fetch([:customer, :individual, customer_id], expires_in: cache_ttl) do
         Customer.new(Stripe::Customer.retrieve(customer_id))
       end
     else
       Customer.new(Stripe::Customer.create(email: email, description: name)).tap do |cus|
         self.customer_id = cus.id
         update_attribute :customer_id, cus.id if persisted?
-        Rails.cache.write([:customer, :individual, cus.id], cus, expires_in: 5.minutes)
+        Rails.cache.write([:customer, :individual, cus.id], cus, expires_in: cache_ttl)
       end
     end
   end
