@@ -12,15 +12,20 @@ module Api::BaseHelper
   end
 
   def total_hours_on_pua
-    u = User.all
-    total_time = u.map {|user| [user.used_unmetered_storage, user.used_metered_storage] }.flatten.sum 
-    time_definition(total_time)
+    hours = Rails.cache.fetch(:pua_total_hours_on_pua, expires_in: 5.minutes) do
+      u = User.all
+      total_time = u.map {|user| [user.used_unmetered_storage, user.used_metered_storage] }.flatten.sum 
+      hours = time_definition(total_time)
+    end
+    return hours
   end
 
   def total_time_in_hours
-    u = User.all
-    total_time = u.map {|user| [user.used_unmetered_storage, user.used_metered_storage] }.flatten.sum
-    hours = (total_time / 3600).to_s + "hrs"
+    hours = Rails.cache.fetch(:pua_total_time_in_hours, expires_in: 5.minutes) do
+      u = User.all
+      total_time = u.map {|user| [user.used_unmetered_storage, user.used_metered_storage] }.flatten.sum
+      hours = (total_time / 3600).to_s + "hrs"
+    end
     return hours
   end        
 
