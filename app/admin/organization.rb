@@ -13,7 +13,9 @@ ActiveAdmin.register Organization do
         row("ID") { organization.id }
         row("Name") { organization.name }
         row("Owner") { organization.owner_id ? (link_to organization.owner.name, superadmin_user_path(organization.owner)) : '(none)' }
-        row("Plan Name") { organization.owner.plan.name }
+        row("Plan Name") { organization.owner_id ? organization.owner.plan.name : '(none)' }
+        row("Metered Storage") { Api::BaseHelper::time_definition(organization.used_metered_storage) }
+        row("Unmetered Storage") { Api::BaseHelper::time_definition(organization.used_unmetered_storage) }
         row("Created") { organization.created_at }
         row("Updated") { organization.updated_at }
       end
@@ -26,6 +28,13 @@ ActiveAdmin.register Organization do
         tbl.column("Metered Storage") {|user| Api::BaseHelper::time_definition(user.used_metered_storage) }
         tbl.column("Unmetered Storage") {|user| Api::BaseHelper::time_definition(user.used_unmetered_storage) }
         tbl.column("Plan Name") {|user| user.plan.name }
+      end
+    end
+    panel "Collections" do
+      table_for organization.collections do |tbl|
+        tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
+        tbl.column("Created") {|coll| coll.created_at }
+        tbl.column("Storage") {|coll| coll.storage }
       end
     end
    
