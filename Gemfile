@@ -108,6 +108,9 @@ gem 'text-table'
 
 gem 'mixpanel-ruby'
 
+gem 'activeadmin', github: 'activeadmin', branch: '0-6-stable'
+gem 'coffee-script'
+
 group :assets do
   gem 'sprockets'
   gem 'sass-rails', '~> 3.2'

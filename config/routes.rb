@@ -18,7 +18,9 @@ PopUpArchive::Application.routes.draw do
   root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'popuparchive.com' }
   root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'popuparchive.org' }
 
+  #devise_for ActiveAdmin::Devise.config
   devise_for :users, controllers: { registrations: 'users/registrations', invitations: 'users/invitations', omniauth_callbacks: 'users/omniauth_callbacks', sessions: 'users/sessions' }
+  ActiveAdmin.routes(self)
 
   namespace :admin do
     resources :task_list
