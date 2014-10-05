@@ -36,4 +36,5 @@ module Api::BaseHelper
     time = "%dd: %dh: %dm: %ds" % [dd, hh, mm, ss]
     return time
   end  	
+  module_function :time_definition
 end
