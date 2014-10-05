@@ -59,4 +59,13 @@ class Organization < ActiveRecord::Base
     )
   end
 
+  def used_metered_storage
+    @_used_metered_storage ||= collections.map{|coll| coll.used_metered_storage}.inject(:+)
+  end
+
+  def used_unmetered_storage
+    @_used_unmetered_storage ||= collections.map{|coll| coll.used_unmetered_storage}.inject(:+)
+  end
+
+
 end
