@@ -6,6 +6,23 @@ GIT
       omniauth-oauth2 (~> 1.1.0)
 
 GIT
+  remote: git://github.com/activeadmin/activeadmin.git
+  revision: b41450a52c096af8794df0eb0c09bd1d4bf1cdf1
+  branch: 0-6-stable
+  specs:
+    activeadmin (0.6.3)
+      arbre (~> 1.0)
+      bourbon (>= 1.0.0, < 4)
+      devise (>= 1.5.4, < 4, != 2.2.2, != 2.2.1, != 2.2.0, != 2.1.2, != 2.1.1, != 2.1.0, != 2.0.4, != 2.0.3, != 2.0.2, != 2.0.1, != 2.0.0)
+      formtastic (~> 2.0)
+      inherited_resources (~> 1.3)
+      jquery-rails (>= 1.0.0, < 3)
+      kaminari (~> 0.13, != 0.15.0)
+      meta_search (~> 1.0)
+      rails (>= 3.0.0, < 4)
+      sass (~> 3.1)
+
+GIT
   remote: git://github.com/fschwahn/mini_magick.git
   revision: 302aaa3b3e6a9a629d66fb32ecd07edfd8fbbe87
   specs:
@@ -92,6 +109,8 @@ GEM
       multi_json
     angularjs-rails-resource (0.2.0)
     ansi (1.4.3)
+    arbre (1.0.2)
+      activesupport (>= 3.0.0)
     arel (3.0.3)
     atomic (1.1.10)
     autoscaler (0.2.1)
@@ -107,6 +126,9 @@ GEM
     bootstrap-sass (2.3.2.1)
       sass (~> 3.2)
     bootstrap_form (1.0.0)
+    bourbon (3.2.3)
+      sass (~> 3.2)
+      thor
     builder (3.0.4)
     cache_digests (0.3.1)
       actionpack (>= 3.2)
@@ -128,6 +150,10 @@ GEM
       ffi (~> 1.0, >= 1.0.11)
     chronic (0.9.1)
     coderay (1.1.0)
+    coffee-script (2.3.0)
+      coffee-script-source
+      execjs
+    coffee-script-source (1.8.0)
     columnize (0.8.9)
     connection_pool (1.1.0)
     copyrighter (1.0.0)
@@ -209,6 +235,8 @@ GEM
       dotenv (>= 0.7)
       thor (>= 0.13.6)
     formatador (0.2.5)
+    formtastic (2.3.1)
+      actionpack (>= 3.0)
     geocoder (1.1.8)
     gibbon (1.1.1)
       httparty
@@ -232,6 +260,9 @@ GEM
     guard-rspec (3.0.2)
       guard (>= 1.8)
       rspec (~> 2.13)
+    has_scope (0.6.0.rc)
+      actionpack (>= 3.2, < 5)
+      activesupport (>= 3.2, < 5)
     hashie (2.0.5)
     heroku-api (0.3.10)
       excon (~> 0.21.0)
@@ -245,6 +276,9 @@ GEM
       multi_xml (>= 0.5.2)
     httpauth (0.2.0)
     i18n (0.6.9)
+    inherited_resources (1.5.0)
+      has_scope (~> 0.6.0.rc)
+      responders (~> 1.0)
     jasmine (1.3.2)
       jasmine-core (~> 1.3.1)
       rack (~> 1.0)
@@ -262,9 +296,15 @@ GEM
       rest-client (~> 1.0)
     journey (1.0.4)
     jplayer-rails (2.4.1)
+    jquery-rails (2.3.0)
+      railties (>= 3.0, < 5.0)
+      thor (>= 0.14, < 2.0)
     json (1.8.1)
     jwt (0.1.8)
       multi_json (>= 1.5)
+    kaminari (0.16.1)
+      actionpack (>= 3.0.0)
+      activesupport (>= 3.0.0)
     kgio (2.8.0)
     language_list (1.0.0)
     listen (1.3.1)
@@ -282,6 +322,11 @@ GEM
       i18n
       json
       oauth
+    meta_search (1.1.3)
+      actionpack (~> 3.1)
+      activerecord (~> 3.1)
+      activesupport (~> 3.1)
+      polyamorous (~> 0.5.0)
     method_source (0.8.2)
     mime-types (1.25.1)
     mimemagic (0.2.1)
@@ -325,6 +370,8 @@ GEM
       capybara (~> 2.1.0)
       faye-websocket (>= 0.4.4, < 0.5.0)
       http_parser.rb (~> 0.5.3)
+    polyamorous (0.5.0)
+      activerecord (~> 3.0)
     polyglot (0.3.4)
     postgres_ext (0.4.0)
       activerecord (~> 3.2.0)
@@ -410,6 +457,8 @@ GEM
       redis-store (~> 1.1.4)
     redis-store (1.1.4)
       redis (>= 2.2)
+    responders (1.1.1)
+      railties (>= 3.2, < 4.2)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rmagick (2.13.2)
@@ -542,6 +591,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activeadmin!
   activerecord-postgres-hstore (~> 0.6.0)
   acts_as_list
   acts_as_paranoid (~> 0.4.2)
@@ -557,6 +607,7 @@ DEPENDENCIES
   capybara
   carrierwave
   chronic
+  coffee-script
   copyrighter
   countries
   coveralls
