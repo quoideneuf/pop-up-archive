@@ -108,10 +108,10 @@ ul.pager ng-show="nextItem || previousItem || searchResults.query"
                 img src='#{asset_path("amarasmall.png")}'
             li
               a href="#" &nbsp;
-
-          .transcript transcript-text="audioFile.transcript | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
-      div ng-show="isTransciptProcessing()"
-        .alert.alert-info ng-show="currentUser.hasCommunityPlan()"
+              
+          .transcript speakers="audioFile.transcript.speakers" transcript-text="audioFile.transcript.parts | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
+      div ng-show="isTransciptProcessing()" 
+        .alert.alert-info ng-show="currentUser.hasCommunityPlan()" 
           strong TRANSCRIPT PROCESSING
           |  We're automatically transcribing the first two minutes of your audio. It should be ready momentarily. Want full transcripts?
           strong

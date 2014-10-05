@@ -43,6 +43,26 @@
 		background-color: #FFFBCC;
 	}
 
+  .timestamp {
+    width: 16px; 
+    text-align:left; 
+    padding: 0 5px;
+  }
+
+  .keytime {
+    color: #DADADA;  
+  }
+
+  .play {
+    width: 8px; 
+    text-align:left;
+  }
+
+  .speaker {
+    font-weight: 800;
+    padding: 0 5px;
+  }
+
 	.file-transcript-text {
 		height: 22px;
 		overflow: hidden;

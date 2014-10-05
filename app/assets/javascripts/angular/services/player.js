@@ -1,6 +1,6 @@
 (function () {
 
-  function getEvent (event) {
+  function getEvent(event) {
     if (typeof event.originalEvent !== 'undefined') {
       return event.originalEvent;
     } else {
@@ -305,7 +305,7 @@
         scope.$watch(function () { return Player.time }, drawScrubber);
 
         scope.$watch(checkWaveform);
-        angular.element(window).bind('resize', checkWaveform);
+        // angular.element(window).bind('resize', checkWaveform);
 
         el.bind('click', function (e) {
           var left = 0, element = this;
@@ -335,6 +335,7 @@
       replace: true,
       scope: {
         transcript: "=transcriptText",
+        speakers: "=speakers",
         canEdit: "=transcriptEditable",
         transcriptTimestamps: "@",
         currentTime: "=",
@@ -347,9 +348,10 @@
       template: '<div class="file-transcript">' +
                   '<table class="table">' +
                     '<tr ng-repeat="text in transcript" ng-class="{current: transcriptStart== {{text.startTime | round}}}">' +
-                      '<td style="width: 8px; text-align:left;"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
-                      '<td style="width: 16px; text-align:left; padding: 2px 0 0 10px" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
+                      '<td class="play"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
+                      '<td class ="timestamp" ng-class="{keytime: $index % 5 != 0}" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
+                      '<td class="speaker" title="{{assignSpeaker(text.speakerId)}}" ng-bind="speakerChange(transcript[$index-1].speakerId, text.speakerId)"></td>' +
                       '<td ng-show="!editorEnabled"><a ng-click="editOrPlay(text.startTime)"><div class="file-transcript-text" ng-bind-html="text.text | highlight:transcriptFilter"></div></a></td>' +
                       '<td ng-show="editorEnabled"><input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)"></td>' +
                     '</tr>' +
@@ -476,18 +478,57 @@
           return dd;
         }
 
-        scope.seekTo = function(time) {
+        scope.seekTo = function (time) {
           scope.$emit('transcriptSeek', time);
+        }
+
+        //replace speaker ids with speaker names
+        scope.assignSpeaker = function (speakerId) {
+          var speakers = scope.speakers;
+          var index = speakerId - 1;
+          var speaker = speakers[index].name;
+          return speaker;
+        }
+
+        //abbreviate speaker names to initials
+        abbreviateSpeaker = function (speakerId) {
+          var name = scope.assignSpeaker(speakerId);
+          //if speaker is in the format F1 or M1 or S1 do not abbreviate
+          re = /^M|F|S\d+/;
+          if (re.test(name)){
+            return name;
+          //else attempt to get initials for the name
+          } else {
+            return name.replace(/[^A-Z]/g, '');
+          }
+        }
+
+        //set unique color for each speaker
+        scope.speakerColor = function () {
+          var speakers = scope.speakers;
+          var colors = ['#FFFFFF', '#CAD9FF', '#D9F3FF', '#FFDA9A', '#FFEDC6', '#E5E5E5'];
+          for (var i = 0; i < speakers.length; i++) {
+            var speaker = speakers[i].id;
+            var color = colors[i % colors.length]; // loop through color assignment
+            // console.log(speaker + ' = ' + color);
+          }
+        }
+
+        //only show speaker if different from the previous speaker
+        scope.speakerChange = function (previousSpeaker, currentSpeaker) {
+          if (currentSpeaker != previousSpeaker) {
+            return abbreviateSpeaker(currentSpeaker);
+          }
         }
 
         //edit transcripts
         scope.editorEnabled = false;
 
-        scope.canShowEditor = function() {
+        scope.canShowEditor = function () {
           return (!this.editorEnabled && scope.canEdit && (parseInt(this.text.id, 10) > 0));
         };
 
-        scope.disableEditor = function() {
+        scope.disableEditor = function () {
           this.editorEnabled = false;
         };
 
