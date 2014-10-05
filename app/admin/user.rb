@@ -1,13 +1,13 @@
 ActiveAdmin.register User do
   actions :all, :except => [:edit, :destroy]
   index do
+    column("Name") {|user| link_to user.name, superadmin_user_path(user) }
     column :email
     column :last_sign_in_at
     column :sign_in_count
     column 'Metered Use', :used_metered_storage_cache do |user|
       Api::BaseHelper::time_definition(user.used_metered_storage_cache)
     end
-    default_actions
   end
 
   filter :email
@@ -33,7 +33,7 @@ ActiveAdmin.register User do
         row("Updated") { user.updated_at }
       end
     end
-   
+
     active_admin_comments
   end
 
