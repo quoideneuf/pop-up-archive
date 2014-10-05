@@ -1,7 +1,7 @@
 ActiveAdmin.register Organization do
   actions :all, :except => [:destroy]
   index do
-    column("Name") {|org| link_to org.name, superadmin_organization_path(org) }
+    column :name, sortable: :name do |org| link_to org.name, superadmin_organization_path(org) end
     column :owner
   end
 
