@@ -67,5 +67,9 @@ class Organization < ActiveRecord::Base
     @_used_unmetered_storage ||= collections.map{|coll| coll.used_unmetered_storage}.inject(:+)
   end
 
+  def update_usage_report!
+    update_attribute :used_metered_hours_cache, used_metered_storage
+    update_attribute :used_unmetered_hours_cache, used_unmetered_storage
+  end
 
 end
