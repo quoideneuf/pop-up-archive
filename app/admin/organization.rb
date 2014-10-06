@@ -3,6 +3,12 @@ ActiveAdmin.register Organization do
   index do
     column :name, sortable: :name do |org| link_to org.name, superadmin_organization_path(org) end
     column :owner
+    column 'Metered Use', :used_metered_hours_cache, sortable: :used_metered_hours_cache do |org|
+      Api::BaseHelper::time_definition(org.used_metered_hours_cache||0)
+    end
+    column 'Unmetered Use', :used_unmetered_hours_cache, sortable: :used_unmetered_hours_cache do |org|
+      Api::BaseHelper::time_definition(org.used_unmetered_hours_cache||0)
+    end
   end
 
   filter :name
