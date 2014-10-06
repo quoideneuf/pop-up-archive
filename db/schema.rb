@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141003211828) do
+ActiveRecord::Schema.define(:version => 20141006150813) do
 
   add_extension "hstore"
 
@@ -269,12 +269,14 @@ ActiveRecord::Schema.define(:version => 20141003211828) do
 
   create_table "organizations", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
     t.string   "amara_key"
     t.string   "amara_username"
     t.string   "amara_team"
     t.integer  "owner_id"
+    t.integer  "used_unmetered_hours_cache"
+    t.integer  "used_metered_hours_cache"
   end
 
   create_table "people", :force => true do |t|
