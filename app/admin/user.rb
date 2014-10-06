@@ -6,7 +6,6 @@ ActiveAdmin.register User do
     end
     column :email
     column :last_sign_in_at
-    column :sign_in_count
     column 'Metered Use', :used_metered_storage_cache, sortable: :used_metered_storage_cache do |user|
       Api::BaseHelper::time_definition(user.used_metered_storage_cache)
     end
@@ -38,9 +37,9 @@ ActiveAdmin.register User do
 
     panel "Collections" do
       table_for user.collections do|tbl|
-        tbl.column("ID") {|coll| coll.id }
         tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
         tbl.column("Created") {|coll| coll.created_at }
+        tbl.column("Storage") {|coll| coll.storage }
       end
     end
 
