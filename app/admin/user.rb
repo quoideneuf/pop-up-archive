@@ -36,6 +36,14 @@ ActiveAdmin.register User do
       end
     end
 
+    panel "Collections" do
+      table_for user.collections do|tbl|
+        tbl.column("ID") {|coll| coll.id }
+        tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
+        tbl.column("Created") {|coll| coll.created_at }
+      end
+    end
+
     active_admin_comments
   end
 
