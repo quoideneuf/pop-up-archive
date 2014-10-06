@@ -19,7 +19,7 @@ ActiveAdmin.register Collection do
         row("Updated") { collection.updated_at }
       end     
     end
-    panel "Items" do
+    panel "Items (#{collection.items.count})" do
       table_for collection.items do|tbl|
         tbl.column("ID") {|item| item.id }
         tbl.column("Title") {|item| link_to item.title, superadmin_item_path(item) }
