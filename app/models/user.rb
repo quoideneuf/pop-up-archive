@@ -137,7 +137,7 @@ class User < ActiveRecord::Base
     if organization && (organization.owner_id != id)
       return organization.plan
     elsif subscription_plan_id.present?
-      return subscription_plan
+      return subscription_plan.as_cached
     else
       return customer.plan
     end
