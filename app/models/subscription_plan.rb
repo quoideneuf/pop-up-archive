@@ -28,4 +28,10 @@ class SubscriptionPlan < ActiveRecord::Base
     end
     return sp
   end
+
+  # return a SubscriptionPlanCached object
+  def as_cached
+    return SubscriptionPlanCached.find(self.stripe_plan_id)
+  end
+
 end
