@@ -50,7 +50,7 @@ ul.pager ng-show="nextItem || previousItem || searchResults.query"
             span ng-show="item.duration" &#47; {{item.getDurationString()}}
           .clearfix
 
-        .row-fluid ng-show="audioFile.transcript.length"
+        .row-fluid ng-show="audioFile.transcript.parts.length"
           .span6
             .key-commands ng-show="editTable"
               table
