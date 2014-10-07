@@ -151,6 +151,8 @@ ActiveRecord::Schema.define(:version => 20141029204336) do
     t.datetime "updated_at",        :null => false
     t.string   "original_file_url"
     t.string   "storage_id"
+    t.integer  "imageable_id"
+    t.string   "imageable_type"
   end
 
   create_table "import_mappings", :force => true do |t|
