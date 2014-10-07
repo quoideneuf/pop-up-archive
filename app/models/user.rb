@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :remember_me, :provider, :uid, :name
 
   belongs_to :organization
+  belongs_to :subscription_plan
 
   after_validation :customer #ensure that a stripe customer has been created
   after_destroy :delete_customer
@@ -118,6 +119,12 @@ class User < ActiveRecord::Base
     else
       cus.update_subscription(plan: plan.id, coupon: offer)
     end
+
+    # must do this manually after update_subscription has successfully completed
+    # so that our local caches are in sync.
+    sp = SubscriptionPlan.find_by_stripe_plan_id(plan.id)
+    self.update(:subscription_plan_id => sp.id)
+
     invalidate_cache
   end
 
@@ -127,7 +134,13 @@ class User < ActiveRecord::Base
   end
 
   def plan
-    organization && (organization.owner_id != id) ? organization.plan : customer.plan
+    if organization && (organization.owner_id != id)
+      return organization.plan
+    elsif subscription_plan_id.present?
+      return subscription_plan
+    else
+      return customer.plan
+    end
   end
 
   def entity
@@ -161,8 +174,9 @@ class User < ActiveRecord::Base
     end
     if customer_id.present?
       Rails.cache.fetch([:customer, :individual, customer_id], expires_in: cache_ttl) do
+        cus = nil
         begin
-          Customer.new(Stripe::Customer.retrieve(customer_id))
+          cus = Customer.new(Stripe::Customer.retrieve(customer_id))
         rescue Stripe::InvalidRequestError => err
           #puts "Error: #{err.message} #{err.http_status}"
           if err.http_status == 404 and err.message.match(/object exists in live mode, but a test mode key/)
@@ -174,12 +188,20 @@ class User < ActiveRecord::Base
         rescue => err
           raise "Caught Stripe error #{err}"
         end 
+
+        # update our local cache to point at the current plan
+        sp = SubscriptionPlan.find_by_stripe_plan_id(cus.plan.id)
+        update_attribute :subscription_plan_id, sp.id if persisted?
+
+        return cus
       end
     else
       Customer.new(Stripe::Customer.create(email: email, description: name)).tap do |cus|
         self.customer_id = cus.id
         update_attribute :customer_id, cus.id if persisted?
         Rails.cache.write([:customer, :individual, cus.id], cus, expires_in: cache_ttl)
+        sp = SubscriptionPlan.find_by_stripe_plan_id(cus.plan.id)
+        update_attribute :subscription_plan_id, sp.id if persisted?
       end
     end
   end

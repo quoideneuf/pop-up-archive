@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141007150021) do
+ActiveRecord::Schema.define(:version => 20141007191320) do
 
   add_extension "hstore"
 
@@ -397,6 +397,7 @@ ActiveRecord::Schema.define(:version => 20141007150021) do
     t.string   "customer_id"
     t.integer  "pop_up_hours_cache"
     t.integer  "used_metered_storage_cache"
+    t.integer  "subscription_plan_id"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
