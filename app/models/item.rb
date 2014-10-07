@@ -273,6 +273,11 @@ class Item < ActiveRecord::Base
     true
   end
 
+  # shortcut
+  def reindex 
+    self.__elasticsearch__.index_document
+  end
+
   private
 
   def tags_for_index

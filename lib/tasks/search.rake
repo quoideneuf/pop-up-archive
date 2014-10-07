@@ -2,6 +2,9 @@ require 'digest/sha1'
 require 'pp'
 
 # rake environment elasticsearch:import:model CLASS=Item
+#
+# example of running this in production (at heroku)
+# % heroku run --size=2X rake search:mindex NEWRELIC_ENABLE=false NPROCS=2 BATCH=200 -a pop-up-archive
 
 namespace :search do
   desc 're-index all items'
@@ -62,7 +65,6 @@ namespace :search do
 
         Item.__elasticsearch__.import :return => 'errors', 
         :start => start_at,
-        :force => ENV.fetch('FORCE', false),
         :batch_size => batch_size    do |resp|
           # show errors immediately (rather than buffering them)
           errors += resp['items'].select { |k, v| k.values.first['error'] }
