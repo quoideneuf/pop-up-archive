@@ -157,7 +157,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
 .controller('PublicCollectionsCtrl', ['$scope', 'Collection', 'Loader', function PublicCollectionsCtrl($scope, Collection, Loader) {
   $scope.collections = Loader(Collection.public());
 }])
-.controller('CollectionFormCtrl', ['$scope', 'Collection', 'Me', function CollectionFormCtrl($scope, Collection, Me) {
+.controller('CollectionFormCtrl', ['$scope', 'Collection', 'Me', 'ImageFile', function FilesCtrl($scope, Collection, Me, ImageFile) {
 
   if (!$scope.collection) {
     $scope.collection = new Collection();
@@ -173,6 +173,37 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     $scope.collection = collection;
   }
 
+  $scope.setImageFile = function(event) {
+    element = angular.element(event.target);
+
+    $scope.$apply(function($scope) {
+
+      var newImageFile = element[0].files;
+      // console.log('image files',element[0].files);
+
+      if (!$scope.collection.image) {
+        $scope.collection.image = [];
+      }
+
+      // add image files to the item
+      angular.forEach(newImageFile, function (file) {
+        $scope.collection.image.push(file);
+      });
+
+      element[0].value = "";
+
+    });
+  }; 
+
+  $scope.addRemoteImageFile = function (saveItem, imageUrl){
+    if (!$scope.urlForImage)
+      return;
+    new ImageFile({remoteFileUrl: imageUrl, itemId: saveItem.id} ).create();      
+    $scope.collection.image.push({ name: 'name', remoteFileUrl: imageUrl, size: ''});
+    console.log("url link", $scope.urlForImage);
+    $scope.urlForImage = "";
+  };
+
   $scope.submit = function () {
 
     // make sure this is a resource object.
@@ -181,7 +212,11 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     var collection = $scope.collection;
 
     if (collection.id) {
-      collection.update();
+      collection.update().then(function (data) {
+        $scope.addRemoteImageFile(collection, collection.urlForImage);        
+        $scope.uploadImageFiles(collection, collection.image);
+        delete $scope.item;
+      });
     } else {
       collection.create().then(function (data) {
         $scope.collections.push(collection);
