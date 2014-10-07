@@ -161,7 +161,19 @@ class User < ActiveRecord::Base
     end
     if customer_id.present?
       Rails.cache.fetch([:customer, :individual, customer_id], expires_in: cache_ttl) do
-        Customer.new(Stripe::Customer.retrieve(customer_id))
+        begin
+          Customer.new(Stripe::Customer.retrieve(customer_id))
+        rescue Stripe::InvalidRequestError => err
+          #puts "Error: #{err.message} #{err.http_status}"
+          if err.http_status == 404 and err.message.match(/object exists in live mode, but a test mode key/)
+            puts "404 for #{customer_id} running in Stripe test mode"
+            raise err
+          else 
+            raise err
+          end
+        rescue => err
+          raise "Caught Stripe error #{err}"
+        end 
       end
     else
       Customer.new(Stripe::Customer.create(email: email, description: name)).tap do |cus|
