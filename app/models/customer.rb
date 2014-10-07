@@ -15,7 +15,7 @@ class Customer
   end
 
   def plan
-    SubscriptionPlan.find(plan_id) || subscribe_to_community
+    SubscriptionPlanCached.find(plan_id) || subscribe_to_community
   end
 
   def eql?(customer)
@@ -33,10 +33,10 @@ class Customer
     if cust.respond_to? :deleted and cust.deleted == true
       puts "**TODO** customer #{cust.id} exists but has been deleted -- cannot subscribe to community but treating as if we can"
       Rails.cache.delete([:customer, :individual, cust.id])
-      return SubscriptionPlan.community
+      return SubscriptionPlanCached.community
     end
-    cust.update_subscription(plan: SubscriptionPlan.community.id)
+    cust.update_subscription(plan: SubscriptionPlanCached.community.id)
     Rails.cache.delete([:customer, :individual, cust.id])
-    return SubscriptionPlan.community
+    return SubscriptionPlanCached.community
   end
 end

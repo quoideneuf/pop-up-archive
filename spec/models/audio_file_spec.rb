@@ -3,7 +3,7 @@ require 'spec_helper'
 describe AudioFile do
 
   before {
-    SubscriptionPlan.reset_cache
+    SubscriptionPlanCached.reset_cache
     StripeMock.start
   }
   after { StripeMock.stop }
@@ -162,14 +162,14 @@ describe AudioFile do
     }
 
     it 'should order only start of transcript for free private audio' do
-      @audio_file.user.plan.should eq SubscriptionPlan.community
+      @audio_file.user.plan.should eq SubscriptionPlanCached.community
       @audio_file.should_receive(:start_transcribe_job)
       @audio_file.transcribe_audio
     end
 
     it 'should order start and all transcripts for internet archive audio' do
       @audio_file = FactoryGirl.build :audio_file
-      @audio_file.user.plan.should eq SubscriptionPlan.community
+      @audio_file.user.plan.should eq SubscriptionPlanCached.community
       @audio_file.should_receive(:start_transcribe_job)
       @audio_file.should_receive(:start_transcribe_job)
       @audio_file.transcribe_audio

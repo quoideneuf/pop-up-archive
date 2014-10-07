@@ -1,25 +1,25 @@
 require 'spec_helper'
 
-describe SubscriptionPlan do
+describe SubscriptionPlanCached do
 
   before { StripeMock.start }
   after { StripeMock.stop }
 
   before do
-    @stripe_plan = SubscriptionPlan.create name: 'Test Plan', amount: 10000, hours: 200
-    SubscriptionPlan.create name: "*test grandfathered", amount: 100, hours: 1
+    @stripe_plan = SubscriptionPlanCached.create name: 'Test Plan', amount: 10000, hours: 200
+    SubscriptionPlanCached.create name: "*test grandfathered", amount: 100, hours: 1
   end
 
-  let (:plan) { SubscriptionPlan.all.first }
+  let (:plan) { SubscriptionPlanCached.all.first }
 
   let (:stripe_plan) { @stripe_plan }
 
   it 'can fetch all plans from the server' do
-    SubscriptionPlan.all.size.should eq 2
+    SubscriptionPlanCached.all.size.should eq 2
   end
 
   it 'wraps all query results in a local object' do
-    plan.should be_a SubscriptionPlan
+    plan.should be_a SubscriptionPlanCached
   end
 
   it 'gets the name from the stripe object' do
@@ -31,7 +31,7 @@ describe SubscriptionPlan do
   end
 
   it 'defaults to 2 hours as a minimum' do
-    plan = SubscriptionPlan.new(Stripe::Plan.create(name: 'Test Again Plan', amount: 0, id: 'malformed'))
+    plan = SubscriptionPlanCached.new(Stripe::Plan.create(name: 'Test Again Plan', amount: 0, id: 'malformed'))
     plan.hours.should eq 1
   end
 
@@ -44,6 +44,6 @@ describe SubscriptionPlan do
   end
 
   it 'can query for ungrandfathered plans without a * at the start of the name' do
-    SubscriptionPlan.ungrandfathered.size.should eq 1
+    SubscriptionPlanCached.ungrandfathered.size.should eq 1
   end
 end
