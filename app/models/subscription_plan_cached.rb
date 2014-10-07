@@ -1,3 +1,5 @@
+require 'subscription_plan'
+
 class SubscriptionPlanCached
 
 # this class does *NOT* front a db table directly.
@@ -69,6 +71,7 @@ class SubscriptionPlanCached
     @name = plan.name
     @amount = plan.amount
     @interval = plan.interval
+    SubscriptionPlan.sync_with_stripe(self)
   end
 
   # if the plan id has _business_ or _enterprise_ in it, we'll do premium transcripts
