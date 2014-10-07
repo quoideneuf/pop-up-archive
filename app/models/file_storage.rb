@@ -23,10 +23,14 @@ module FileStorage
   end
 
   def storage
+    # binding.pry_remote
+    # item = Item.first
     storage_configuration || item.try(:storage)
   end
 
   def store_dir(stor=storage)
+    # binding.pry_remote
+    # item = Item.first
     p = self.respond_to?(:path) ? self.path : ''
     stor.use_folders? ? "#{item.try(:token)}/#{p}" : nil
   end
