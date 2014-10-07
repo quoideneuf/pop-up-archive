@@ -102,11 +102,11 @@ describe User do
     let (:plan) { free_plan }
 
     before do
-      SubscriptionPlan.create hours: 2, amount: 0, name: 'community'
-      @other = SubscriptionPlan.create hours: 80, amount: 2000, name: 'big'
+      SubscriptionPlanCached.create hours: 2, amount: 0, name: 'community'
+      @other = SubscriptionPlanCached.create hours: 80, amount: 2000, name: 'big'
     end
 
-    let (:free_plan) { SubscriptionPlan.community }
+    let (:free_plan) { SubscriptionPlanCached.community }
     let (:paid_plan) { @other }
 
     it 'has an amount' do
@@ -122,7 +122,7 @@ describe User do
     end
 
     it 'has the community plan if it is not subscribed' do
-      user.plan.should eq SubscriptionPlan.community
+      user.plan.should eq SubscriptionPlanCached.community
     end
 
     it 'returns the name of the plan' do

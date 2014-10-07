@@ -1,4 +1,12 @@
-class SubscriptionPlan
+class SubscriptionPlanCached
+
+# this class does *NOT* front a db table directly.
+# it is more of a write-through caching manager,
+# for keeping the Stripe subscription plans
+# in sync with the local db. The Stripe plan is authoritative.
+# We just sync it locally since (a) plans rarely change
+# and (b) we want to be able to save remote API calls
+# but still use/display user plan data.
 
   def self.all
     Rails.cache.fetch([:plans, :group, :all], expires_in: 30.minutes) do

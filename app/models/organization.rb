@@ -24,7 +24,7 @@ class Organization < ActiveRecord::Base
   end
 
   def plan
-    owner ? owner.plan : SubscriptionPlan.organization
+    owner ? owner.plan : SubscriptionPlanCached.organization
   end
 
   def set_amara_team(options={})
