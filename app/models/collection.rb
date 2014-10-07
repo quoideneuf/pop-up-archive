@@ -16,6 +16,7 @@ class Collection < ActiveRecord::Base
   has_many :items, dependent: :destroy
   has_many :audio_files, through: :items
   has_many :transcripts, through: :audio_files
+  has_many :image_files, :as => :imageable, dependent: :destroy
 
   validates_presence_of :title
 

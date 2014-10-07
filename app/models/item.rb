@@ -86,7 +86,7 @@ class Item < ActiveRecord::Base
   has_many   :instances, dependent: :destroy
   has_many   :audio_files, dependent: :destroy
   has_many   :transcripts, through: :audio_files
-  has_many   :image_files, dependent: :destroy
+  has_many   :image_files, :as => :imageable, dependent: :destroy
 
   has_many   :contributions, dependent: :destroy
   has_many   :contributors, through: :contributions, source: :person
