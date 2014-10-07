@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141006150813) do
+ActiveRecord::Schema.define(:version => 20141007150021) do
 
   add_extension "hstore"
 
@@ -321,6 +321,10 @@ ActiveRecord::Schema.define(:version => 20141006150813) do
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
     t.string   "stripe_plan_id"
+    t.string   "name"
+    t.string   "amount"
+    t.string   "hours"
+    t.string   "interval"
   end
 
   create_table "tasks", :force => true do |t|
