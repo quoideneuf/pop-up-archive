@@ -110,6 +110,17 @@ class Item < ActiveRecord::Base
   delegate :title, to: :collection, prefix: true
 
   accepts_nested_attributes_for :contributions
+
+  # meta_search and elasticsearch both try and inject a class search() method,
+  # so we declare our own and Try To Do the Right Thing
+  def self.search(*args, &block)
+    puts pp args.first
+    if args.first.is_a?(Search)
+      return self.__elasticsearch__.search(*args, &block)
+    else
+      return metasearch(*args, &block)
+    end
+  end
   
   def duration
     read_attribute(:duration) || audio_files.inject(0){|s,a| s + a.duration.to_i}
