@@ -35,6 +35,23 @@ div ng-controller='CollectionFormCtrl'
             | All audio stored at the Internet Archive will be available to stream and download at 
             a href='http://archive.org' target='_blank' archive.org
             |  and will be visible to the world.
+      .control-group
+          label.control-label
+            | Upload Images
+            i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['image']" data-placement="bottom"
+          .controls ng-show="collection.images.length > 0"
+            table.table.file-table
+              tr.file ng-repeat="image in collection.images"
+                td.file-name alt="{{image.name}}" {{image.name}}
+                td.file-size {{readableFileSize(image.size)}}
+                td.file-remove
+                  a href="#" ng-click="removeImageFile(image)" style='text-decoration: none; color: #da4f49;'
+                    i.icon-remove-sign
+          .clearfix.controls.control-group
+            button.btn file-button="setImageFiles" Choose Images
+            span &nbsp OR &nbsp
+            input.text.input#image type='text' placeholder="Insert Url" ng-model='urlForImage'
+            br
 
 
 
