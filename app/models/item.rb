@@ -114,7 +114,6 @@ class Item < ActiveRecord::Base
   # meta_search and elasticsearch both try and inject a class search() method,
   # so we declare our own and Try To Do the Right Thing
   def self.search(*args, &block)
-    puts pp args.first
     if args.first.is_a?(Search)
       return self.__elasticsearch__.search(*args, &block)
     else
