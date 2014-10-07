@@ -9,7 +9,7 @@ class Api::V1::ImageFilesController < Api::V1::BaseController
 
   def create
     image_file.save
-    respond_with :api, image_file.item, image_file
+    respond_with :api, image_file.imageable_id, image_file.imageable_type, image_file
   end
 
   def show
