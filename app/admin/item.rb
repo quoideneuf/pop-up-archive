@@ -6,7 +6,7 @@ ActiveAdmin.register Item do
     column :duration
   end
 
-  filter :name
+  filter :title
 
   show do 
     panel "Item Details" do
