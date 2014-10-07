@@ -484,10 +484,15 @@
 
         //replace speaker ids with speaker names
         scope.assignSpeaker = function (speakerId) {
-          var speakers = scope.speakers;
-          var index = speakerId - 1;
-          var speaker = speakers[index].name;
-          return speaker;
+          if(speakerId){
+            var speakers = scope.speakers;
+            for(var i in speakers){
+              if(speakers[i].id == speakerId) {
+                return speakers[i].name;
+                break;
+              }
+            }
+          }
         }
 
         //abbreviate speaker names to initials
