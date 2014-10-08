@@ -18,12 +18,33 @@ class SubscriptionPlan < ActiveRecord::Base
     else
 
       # compare and update if necessary
-      if spc.name != sp.name               then sp.name = spc.name end
-      if spc.interval != sp.interval       then sp.interval = spc.interval end
-      if spc.hours != sp.hours             then sp.hours = spc.hours end
-      if spc.hours.to_i != sp.pop_up_hours then sp.pop_up_hours = spc.hours.to_i end
-      if spc.amount != sp.amount           then sp.amount = spc.amount end
-      sp.save
+      needs_update = false
+      if spc.name != sp.name
+        puts "sp name has changed from #{sp.name} to #{spc.name}"
+        sp.name = spc.name 
+        needs_update = true 
+      end
+      if spc.interval != sp.interval
+        puts "sp interval has changed from #{sp.interval} to #{spc.interval}"
+        sp.interval = spc.interval
+        needs_update = true 
+      end
+      if spc.hours.to_i != sp.hours.to_i
+        puts "sp hours has changed from #{sp.hours} to #{spc.hours}"
+        sp.hours = spc.hours
+        needs_update = true
+      end
+      if spc.hours.to_i != sp.pop_up_hours
+        puts "sp pop_up_hours has changed from #{sp.pop_up_hours} to #{spc.hours.to_i}"
+        sp.pop_up_hours = spc.hours.to_i
+        needs_update = true 
+      end
+      if spc.amount.to_i != sp.amount.to_i
+        puts "sp amount has changed from #{sp.amount} to #{spc.amount}"
+        sp.amount = spc.amount
+        needs_update = true 
+      end
+      sp.save if needs_update
 
     end
     return sp
