@@ -180,8 +180,9 @@ class User < ActiveRecord::Base
         rescue Stripe::InvalidRequestError => err
           #puts "Error: #{err.message} #{err.http_status}"
           if err.http_status == 404 and err.message.match(/object exists in live mode, but a test mode key/)
-            puts "404 for #{customer_id} running in Stripe test mode"
-            raise err
+            Rails.logger.warn("404 for #{customer_id} running in Stripe test mode")
+            # use generic Customer object here so dev/stage still work with prod snapshots
+            cus = Customer.generic_community
           else 
             raise err
           end
