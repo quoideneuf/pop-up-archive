@@ -20,8 +20,8 @@ ActiveAdmin.register Organization do
         row("Name") { organization.name }
         row("Owner") { organization.owner_id ? (link_to organization.owner.name, superadmin_user_path(organization.owner)) : '(none)' }
         row("Plan Name") { organization.owner_id ? organization.owner.plan.name : '(none)' }
-        row("Metered Storage") { Api::BaseHelper::time_definition(organization.used_metered_storage) }
-        row("Unmetered Storage") { Api::BaseHelper::time_definition(organization.used_unmetered_storage) }
+        row("Metered Storage") { Api::BaseHelper::time_definition(organization.used_metered_storage||0) }
+        row("Unmetered Storage") { Api::BaseHelper::time_definition(organization.used_unmetered_storage||0) }
         row("Created") { organization.created_at }
         row("Updated") { organization.updated_at }
       end
@@ -31,8 +31,8 @@ ActiveAdmin.register Organization do
         tbl.column("Name") {|user| link_to user.name, superadmin_user_path(user) }
         tbl.column("Email") {|user| user.email }
         tbl.column("Last Sign In") {|user| user.last_sign_in_at }
-        tbl.column("Metered Storage") {|user| Api::BaseHelper::time_definition(user.used_metered_storage) }
-        tbl.column("Unmetered Storage") {|user| Api::BaseHelper::time_definition(user.used_unmetered_storage) }
+        tbl.column("Metered Storage") {|user| Api::BaseHelper::time_definition(user.used_metered_storage||0) }
+        tbl.column("Unmetered Storage") {|user| Api::BaseHelper::time_definition(user.used_unmetered_storage||0) }
         tbl.column("Plan Name") {|user| user.plan.name }
       end
     end

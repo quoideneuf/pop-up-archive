@@ -7,7 +7,7 @@ ActiveAdmin.register User do
     column :email
     column :last_sign_in_at
     column 'Metered Use', :used_metered_storage_cache, sortable: :used_metered_storage_cache do |user|
-      Api::BaseHelper::time_definition(user.used_metered_storage_cache)
+      Api::BaseHelper::time_definition(user.used_metered_storage_cache||0)
     end
   end
 
