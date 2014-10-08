@@ -33,10 +33,10 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.transcriptExpanded = false;
 
-  $scope.isTransciptProcessing = function() {
+  $scope.isTranscriptProcessing = function() {
     var item = $scope.item;
     var user = $scope.currentUser;
-    return (user && item && user.canEdit(item) && (item.audioFiles.length > 0) && (item.audioFiles[0].transcript == 0));
+    return (user && item && user.canEdit(item) && (item.audioFiles.length > 0) && (item.audioFiles[0].transcript == null));
   };
 
   $scope.allowEditButton = function(file) {

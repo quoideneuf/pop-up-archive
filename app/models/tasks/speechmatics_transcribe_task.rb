@@ -92,7 +92,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
             tt = nil
           else
             tt[:end_time] = row_end
-            space = (row['name'] =~ /[[:punct:]]/) ? '' : ' '
+            space = (row['name'] =~ /(?!')[[:punct:]]/) ? '' : ' '
             tt[:text] += "#{space}#{row['name']}"
           end
         end
