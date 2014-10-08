@@ -110,6 +110,7 @@ gem 'mixpanel-ruby'
 
 gem 'activeadmin', github: 'activeadmin', branch: '0-6-stable'
 gem 'coffee-script'
+gem 'ansi'
 
 group :assets do
   gem 'sprockets'
