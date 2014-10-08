@@ -40,7 +40,7 @@ class Customer
   def subscribe_to_community
     cust = stripe_customer
     if cust.respond_to? :deleted and cust.deleted == true
-      puts "**TODO** customer #{cust.id} exists but has been deleted -- cannot subscribe to community but treating as if we can"
+      Rail.logger.warn "**TODO** customer #{cust.id} exists but has been deleted -- cannot subscribe to community but treating as if we can"
       Rails.cache.delete([:customer, :individual, cust.id])
       return SubscriptionPlanCached.community
     end
