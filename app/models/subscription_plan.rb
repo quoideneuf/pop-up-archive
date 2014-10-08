@@ -20,27 +20,27 @@ class SubscriptionPlan < ActiveRecord::Base
       # compare and update if necessary
       needs_update = false
       if spc.name != sp.name
-        puts "sp name has changed from #{sp.name} to #{spc.name}"
+        Rails.logger.warn("sp id '#{sp.id} name has changed from '#{sp.name}' to '#{spc.name}'")
         sp.name = spc.name 
         needs_update = true 
       end
       if spc.interval != sp.interval
-        puts "sp interval has changed from #{sp.interval} to #{spc.interval}"
+        Rails.logger.warn("sp id '#{sp.id}' interval has changed from '#{sp.interval}' to '#{spc.interval}'")
         sp.interval = spc.interval
         needs_update = true 
       end
       if spc.hours.to_i != sp.hours.to_i
-        puts "sp hours has changed from #{sp.hours} to #{spc.hours}"
+        Rails.logger.warn("sp id '#{sp.id}' hours has changed from '#{sp.hours}' to '#{spc.hours}'")
         sp.hours = spc.hours
         needs_update = true
       end
       if spc.hours.to_i != sp.pop_up_hours
-        puts "sp pop_up_hours has changed from #{sp.pop_up_hours} to #{spc.hours.to_i}"
+        Rails.logger.warn("sp id '#{sp.id}' pop_up_hours has changed from '#{sp.pop_up_hours}' to '#{spc.hours.to_i}'")
         sp.pop_up_hours = spc.hours.to_i
         needs_update = true 
       end
       if spc.amount.to_i != sp.amount.to_i
-        puts "sp amount has changed from #{sp.amount} to #{spc.amount}"
+        Rails.logger.warn("sp id '#{sp.id}' amount has changed from '#{sp.amount}' to '#{spc.amount}'")
         sp.amount = spc.amount
         needs_update = true 
       end
