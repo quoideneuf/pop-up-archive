@@ -34,7 +34,8 @@ class SubscriptionPlanCached
 
   def self.community
     Rails.cache.fetch([:plans, :group, :community], expires_in: 30.minutes) do
-      ungrandfathered.find { |p| p.amount == 0 && p != organization && p.name != 'Organization'} || create(id: '2_community', name: 'Community', amount: 0)
+      # TODO name is different in stripe test-vs-prod; reconcile them (standardize on prod names)
+      ungrandfathered.find { |p| p.id.match(/community$/) and p.name == 'Community'} || create(id: '2_community', name: 'Community', amount: 0)
     end
   end
 
