@@ -38,7 +38,7 @@ describe Tasks::SpeechmaticsTranscribeTask do
       },
       { 
         "duration" => "0.070",
-        "name" => "World",
+        "name" => "World's",
         "time" => "0.960",
         "confidence" => "0.995"
       },
@@ -82,7 +82,7 @@ describe Tasks::SpeechmaticsTranscribeTask do
       trans = task.process_transcript(response)
 
       trans.timed_texts.count.should == 1
-      trans.timed_texts.first.text.should == "Hello World."
+      trans.timed_texts.first.text.should == "Hello World's."
 
       trans.speakers.count.should == 1
       trans.speakers.first.name.should == "M1"
