@@ -1,3 +1,5 @@
+require 'ansi/progressbar'
+
 namespace :reports do
 
   desc "User account usage reports"
