@@ -5,6 +5,8 @@ require 'pp'
 #
 # example of running this in production (at heroku)
 # % heroku run --size=2X rake search:mindex NEWRELIC_ENABLE=false NPROCS=2 BATCH=200 -a pop-up-archive
+#
+# add the FORCE=y option to nuke the whole index prior to re-building it
 
 namespace :search do
   desc 're-index all items'
