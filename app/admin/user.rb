@@ -35,6 +35,15 @@ ActiveAdmin.register User do
       end
     end
 
+    panel "Monthly Usage" do
+      table_for user.monthly_usages do|tbl|
+        tbl.column :month
+        tbl.column :year
+        tbl.column :use
+        tbl.column :value
+      end
+    end
+
     panel "Collections" do
       table_for user.collections do|tbl|
         tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
