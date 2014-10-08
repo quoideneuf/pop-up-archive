@@ -30,24 +30,48 @@ describe Tasks::SpeechmaticsTranscribeTask do
       }
       ],
       "words" => [
-      { 
-        "duration" => "0.230",
-        "name" => "Hello",
-        "time" => "0.590",
-        "confidence" => "0.995"
+      {
+        "duration" => "0.160", 
+        "confidence" => "0.995", 
+        "name" => "Why", 
+        "time" => "0.470"
+      }, 
+      {
+        "duration" => "0.290", 
+        "confidence" => "0.995", 
+        "name" => "hidy-ho", 
+        "time" => "0.630"
+      },  
+      {
+        "duration" => "0.100", 
+        "confidence" => "0.995", 
+        "name" => "says", 
+        "time" => "0.920"
+      }, 
+      {
+        "duration" => "0.180", 
+        "confidence" => "0.995", 
+        "name" => "world's", 
+        "time" => "1.020"
+      }, 
+      {
+        "duration" => "0.120", 
+        "confidence" => "0.995", 
+        "name" => "C.E.O.", 
+        "time" => "1.040"
+      }, 
+      {
+        "duration" => "0.120", 
+        "confidence" => "0.995", 
+        "name" => "overlord", 
+        "time" => "1.060"
       },
-      { 
-        "duration" => "0.070",
-        "name" => "World's",
-        "time" => "0.960",
-        "confidence" => "0.995"
-      },
-      { 
-        "duration" => "0.000",
-        "name" => ".",
-        "time" => "1.270",
-        "confidence" => "NaN"
-      }
+      {
+        "duration" => "0.000", 
+        "confidence" => "NaN", 
+        "name" => ".", 
+        "time" => "1.060"
+      }, 
       ]
     }
     m.speakers = m.body.speakers
@@ -80,9 +104,10 @@ describe Tasks::SpeechmaticsTranscribeTask do
     it "processes transcript result" do
       
       trans = task.process_transcript(response)
+      # puts trans.timed_texts.to_yaml
 
       trans.timed_texts.count.should == 1
-      trans.timed_texts.first.text.should == "Hello World's."
+      trans.timed_texts.first.text.should == "Why hidy-ho says world's C.E.O. overlord."
 
       trans.speakers.count.should == 1
       trans.speakers.first.name.should == "M1"
