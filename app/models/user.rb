@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable, :omniauthable
+  :recoverable, :rememberable, :trackable, :validatable, :omniauthable
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :provider, :uid, :name
@@ -156,17 +156,18 @@ class User < ActiveRecord::Base
   end
 
   def plan_json
-      {
-        name: plan.name,
-        id: plan.id,
-        amount: plan.amount,
-        pop_up_hours: plan.hours,
-        trial: customer.trial,
-        interval: plan.interval
-      }
+    {
+      name: plan.name,
+      id: plan.id,
+      amount: plan.amount,
+      pop_up_hours: plan.hours,
+      trial: customer.trial,  # TODO cache this better to avoid needing to call customer() at all.
+      interval: plan.interval
+    }
   end
 
   def customer
+    return @_customer if !@_customer.nil?
     begin
       cache_ttl = Rails.application.config.stripe_cache
     rescue
@@ -177,23 +178,23 @@ class User < ActiveRecord::Base
         cus = nil
         begin
           cus = Customer.new(Stripe::Customer.retrieve(customer_id))
+          # update our local cache to point at the current plan
+          sp = SubscriptionPlan.find_by_stripe_plan_id(cus.plan.id)
+          update_attribute :subscription_plan_id, sp.id if persisted?
         rescue Stripe::InvalidRequestError => err
           #puts "Error: #{err.message} #{err.http_status}"
           if err.http_status == 404 and err.message.match(/object exists in live mode, but a test mode key/)
-            Rails.logger.warn("404 for #{customer_id} running in Stripe test mode")
+            Rails.logger.warn("Stripe returned 404 for #{customer_id} [user #{self.id}] running in Stripe test mode")
+            #Rails.logger.warn(Thread.current.backtrace.join("\n"))
             # use generic Customer object here so dev/stage still work with prod snapshots
             cus = Customer.generic_community
-          else 
+          else
             raise err
           end
         rescue => err
           raise "Caught Stripe error #{err}"
-        end 
-
-        # update our local cache to point at the current plan
-        sp = SubscriptionPlan.find_by_stripe_plan_id(cus.plan.id)
-        update_attribute :subscription_plan_id, sp.id if persisted?
-
+        end
+        @_customer = cus
         return cus
       end
     else
@@ -203,6 +204,7 @@ class User < ActiveRecord::Base
         Rails.cache.write([:customer, :individual, cus.id], cus, expires_in: cache_ttl)
         sp = SubscriptionPlan.find_by_stripe_plan_id(cus.plan.id)
         update_attribute :subscription_plan_id, sp.id if persisted?
+        @_customer = cus
       end
     end
   end
