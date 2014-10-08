@@ -48,7 +48,9 @@ ActiveAdmin.register User do
       table_for user.collections do|tbl|
         tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
         tbl.column("Created") {|coll| coll.created_at }
-        tbl.column("Storage") {|coll| coll.storage }
+        tbl.column("Storage Type") {|coll| coll.storage }
+        tbl.column("Metered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_metered_storage||0) }
+        tbl.column("Unmetered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_unmetered_storage||0) }
       end
     end
 
