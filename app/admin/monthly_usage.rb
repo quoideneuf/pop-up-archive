@@ -13,7 +13,6 @@ ActiveAdmin.register MonthlyUsage do
 
   filter :month
   filter :year
-  filter :entity_id
   filter :entity_type
 
 end
