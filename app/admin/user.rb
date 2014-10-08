@@ -22,8 +22,8 @@ ActiveAdmin.register User do
         row("Name") { user.name }
         row("Email") { user.email }
         row("Organization") { user.organization_id ? (link_to user.organization.name, superadmin_organization_path(user.organization)) : '(none)' }
-        row("Metered Storage") { Api::BaseHelper::time_definition(user.used_metered_storage) }
-        row("Unmetered Storage") { Api::BaseHelper::time_definition(user.used_unmetered_storage) }
+        row("Metered Storage") { Api::BaseHelper::time_definition(user.used_metered_storage||0) }
+        row("Unmetered Storage") { Api::BaseHelper::time_definition(user.used_unmetered_storage||0) }
         row("Plan Name") { user.plan.name }
         #row("Plan Hours") { user.plan.hours.to_s + 'h (' + user.pop_up_hours_cache.to_s + 'h)' }
         #row("Plan Amount") { user.plan.amount }
