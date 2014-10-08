@@ -7,7 +7,9 @@ ActiveAdmin.register MonthlyUsage do
     column :month
     column :year
     column :use
-    column :value
+    column 'Time', :value, sortable: :value do |mu|
+      Api::BaseHelper::time_definition(mu.value)
+    end
   end
 
   filter :month
