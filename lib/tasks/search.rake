@@ -44,6 +44,12 @@ namespace :search do
     end
     puts "total=#{total_expected} nprocs=#{nprocs} pool_size=#{pool_size} offsets=#{offsets} "
 
+    if ENV['FORCE']
+      puts "Force creating new index"
+      Item.__elasticsearch__.create_index! force: true
+      Item.__elasticsearch__.refresh_index!
+    end
+
     offsets.each do |start_at|
       ActiveRecord::Base.connection.disconnect! # IMPORTANT before fork
       fork do
