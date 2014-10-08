@@ -42,6 +42,8 @@ class Search
   end
 
   def url
+    $stderr.puts "Search.Configuration"
+    $stderr.puts pp Configuration
     Configuration.url + @path
   end
 
@@ -81,6 +83,7 @@ class Search
 
   def suggest(name, &block)
     @suggest ||= {}
+    raise "Tire no longer active"
     @suggest.update Tire::Suggest::Suggestion.new(name, &block).to_hash
     self
   end
@@ -151,7 +154,7 @@ class Search
 
   def to_curl
     to_json_escaped = to_json.gsub("'",'\u0027')
-    %Q|curl -X GET '#{url}#{params.empty? ? '?' : params.to_s + '&'}pretty' -d '#{to_json_escaped}'|
+    #%Q|curl -X GET '#{url}#{params.empty? ? '?' : params.to_s + '&'}pretty' -d '#{to_json_escaped}'|
   end
 
   def to_hash
