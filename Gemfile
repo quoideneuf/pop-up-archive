@@ -134,6 +134,7 @@ group :development, :test do
   gem 'pry-debugger'
   gem 'pry-remote'
   gem 'rspec-rails', '~> 2.4'
+  gem 'rspec-mocks'
   gem 'listen'
   gem 'terminal-notifier-guard'
   gem 'growl', require: false

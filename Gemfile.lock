@@ -620,6 +620,7 @@ DEPENDENCIES
   rmagick
   rolify
   routing_concerns
+  rspec-mocks
   rspec-rails (~> 2.4)
   ruby_gntp
   sanitize

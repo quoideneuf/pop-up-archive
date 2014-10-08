@@ -16,6 +16,7 @@ require File.expand_path("../../config/environment", __FILE__)
 require "rails/application"
 require 'factory_girl'
 require 'rspec/rails'
+require 'rspec/mocks'
 require 'capybara/rspec'
 require 'capybara/rails'
 require 'capybara/poltergeist'
