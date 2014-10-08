@@ -40,7 +40,7 @@ ActiveAdmin.register User do
         tbl.column :month
         tbl.column :year
         tbl.column :use
-        tbl.column :value
+        tbl.column('Value') {|mu| Api::BaseHelper::time_definition(mu.value||0) }
       end
     end
 
