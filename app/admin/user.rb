@@ -21,7 +21,7 @@ ActiveAdmin.register User do
         row("ID") { user.id }
         row("Name") { user.name }
         row("Email") { user.email }
-        row("Organization") { user.organization_id ? (link_to user.organization.name, superadmin_organization_path(user.organization)) : '(none)' }
+        row("Organization") { user.organization_id ? (link_to user.organization.name, superadmin_organization_path(user.organization)) : span(I18n.t('active_admin.empty'), class: "empty") }
         row("Metered Storage") { Api::BaseHelper::time_definition(user.used_metered_storage||0) }
         row("Unmetered Storage") { Api::BaseHelper::time_definition(user.used_unmetered_storage||0) }
         row("Plan Name") { user.plan.name }

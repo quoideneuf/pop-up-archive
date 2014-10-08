@@ -18,8 +18,8 @@ ActiveAdmin.register Organization do
       attributes_table_for organization do
         row("ID") { organization.id }
         row("Name") { organization.name }
-        row("Owner") { organization.owner_id ? (link_to organization.owner.name, superadmin_user_path(organization.owner)) : '(none)' }
-        row("Plan Name") { organization.owner_id ? organization.owner.plan.name : '(none)' }
+        row("Owner") { organization.owner_id ? (link_to organization.owner.name, superadmin_user_path(organization.owner)) : span(I18n.t('active_admin.empty'), class: "empty") }
+        row("Plan Name") { organization.owner_id ? organization.owner.plan.name : span(I18n.t('active_admin.empty'), class: "empty") }
         row("Metered Storage") { Api::BaseHelper::time_definition(organization.used_metered_storage||0) }
         row("Unmetered Storage") { Api::BaseHelper::time_definition(organization.used_unmetered_storage||0) }
         row("Created") { organization.created_at }
