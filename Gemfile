@@ -135,6 +135,7 @@ group :development, :test do
   gem 'pry-remote'
   gem 'rspec-rails', '~> 2.4'
   gem 'rspec-mocks'
+  gem 'database_cleaner'
   gem 'listen'
   gem 'terminal-notifier-guard'
   gem 'growl', require: false

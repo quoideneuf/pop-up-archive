@@ -21,8 +21,9 @@ require 'capybara/rspec'
 require 'capybara/rails'
 require 'capybara/poltergeist'
 require 'elasticsearch/extensions/test/cluster'
-require 'elasticsearch/extensions/test/cluster'
-# require 'webmock/rspec'
+require 'database_cleaner'
+
+DatabaseCleaner.strategy = :transaction
 
 Capybara.register_driver :chrome do |app|
   Capybara::Selenium::Driver.new(app, :browser => :chrome)
@@ -33,6 +34,27 @@ Capybara.register_driver :poltergeist do |app|
 end
 
 Capybara.default_driver = :poltergeist
+
+def create_es_index(klass)
+  errors = []
+  completed = 0
+  puts "Creating Index for class #{klass}"
+  klass.__elasticsearch__.create_index! force: true
+  klass.__elasticsearch__.refresh_index!
+  klass.__elasticsearch__.import  :return => 'errors', :batch_size => 200    do |resp|
+    # show errors immediately (rather than buffering them)
+    errors += resp['items'].select { |k, v| k.values.first['error'] }
+    completed += resp['items'].size
+    puts "Finished #{completed} items"
+    STDERR.flush
+    STDOUT.flush
+    if errors.size > 0
+      STDOUT.puts "ERRORS in #{$$}:"
+      STDOUT.puts pp(errors)
+    end
+  end
+  puts "Completed #{completed} records of class #{klass}"
+end
 
 RSpec.configure do |config|
   config.include Capybara::DSL
@@ -45,6 +67,14 @@ RSpec.configure do |config|
 
   config.before :suite, elasticsearch: true do
     Elasticsearch::Extensions::Test::Cluster.start(nodes: 1) unless Elasticsearch::Extensions::Test::Cluster.running?
+
+    # indexes require data, but start clean.
+    DatabaseCleaner.clean_with(:truncation)
+    load Rails.root + "db/seeds.rb" 
+
+    # create index(s) to test against.
+    create_es_index(Item)
+
   end
 
   config.after :suite, elasticsearch: true do

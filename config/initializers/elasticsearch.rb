@@ -1,4 +1,5 @@
 require 'elasticsearch/model'
+require 'ansi'
 
 RESULTS_PER_PAGE = 10 unless defined?(RESULTS_PER_PAGE)
 
@@ -10,6 +11,10 @@ if ENV['BONSAI_URL'] || ENV['ELASTICSEARCH_URL']
   # Tire-based code.
   ENV['BONSAI_URL'] = es_url
   ENV['ELASTICSEARCH_URL'] = es_url
+end
+
+if Rails.env.test?
+  es_url = "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9250)}"
 end
 
 es_args = {
@@ -25,9 +30,12 @@ es_args = {
 
 if ENV['ES_DEBUG'].to_i > 0
   logger = Logger.new(STDOUT)
-  logger.level =  Logger::DEBUG
+  logger.level = Logger::DEBUG
+  tracer = Logger.new(STDERR)
+  tracer.formatter = lambda { |s, d, p, m| "#{m.gsub(/^.*$/) { |n| '   ' + n }.ansi(:faint)}\n" }
   es_args[:log] = true
   es_args[:logger] = logger
+  es_args[:tracer] = tracer
   puts "[#{Time.now.utc.iso8601}] Elasticsearch logging set to DEBUG mode"
 end
 
