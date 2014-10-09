@@ -54,6 +54,15 @@ ActiveAdmin.register User do
       end
     end
 
+    panel "Owned Organizations" do
+      table_for user.owned_organizations do|tbl|
+        tbl.column :id
+        tbl.column("Name") {|org| link_to org.name, superadmin_organization_path(org) }
+        tbl.column("Metered Storage") {|org| Api::BaseHelper::time_definition(org.used_metered_storage||0) }
+        tbl.column("Unmetered Storage") {|org| Api::BaseHelper::time_definition(org.used_unmetered_storage||0) }
+      end
+    end
+
     active_admin_comments
   end
 
