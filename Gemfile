@@ -36,6 +36,7 @@ gem 'cancan'
 # search with elasticsearch
 gem 'elasticsearch-model', '~> 0.1.5'
 gem 'elasticsearch-rails', '~> 0.1.5'
+gem 'ansi'
 
 # server-side templates
 gem 'slim-rails', '~> 1.0'

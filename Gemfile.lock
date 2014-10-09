@@ -548,6 +548,7 @@ DEPENDENCIES
   acts_as_paranoid (~> 0.4.2)
   amara (~> 0.1.1)
   angularjs-rails-resource
+  ansi
   autoscaler (~> 0.2.0)
   better_errors
   binding_of_caller
