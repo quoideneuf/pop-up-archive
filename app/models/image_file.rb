@@ -4,6 +4,10 @@ class ImageFile < ActiveRecord::Base
 
   attr_accessible :file, :original_file_url, :storage_id, :is_uploaded, :remote_file_url, :imageable_id, :imageable_type
   belongs_to :imageable, :polymorphic => true
+  belongs_to :item,         :class_name => 'Item',
+                                      :foreign_key => 'imageable_id'
+  belongs_to :collection, :class_name => 'Collection',
+                                      :foreign_key => 'collection_id'
   belongs_to :storage_configuration, class_name: "StorageConfiguration", foreign_key: :storage_id
 
   mount_uploader :file, ImageUploader
