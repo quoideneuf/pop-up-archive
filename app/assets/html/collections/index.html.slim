@@ -9,8 +9,8 @@
   .alert.alert-error ng-show="collections.length < 2 && selectedItems.length > 0"
     | It looks like you haven't created any collections yet. Create a collection to get started.
   div
-    span tutorial-step="tour.upload" data-placement="top"
-    span tutorial-step="tour.collection" data-placement="top"
+    / span tutorial-step="tour.upload" data-placement="top"
+    / span tutorial-step="tour.collection" data-placement="top"
   .holding-cell 
     ul.inline.items.uploads
       li.add-item ng-click="uploadFile()"        
@@ -39,11 +39,11 @@
 	  | Pop Up Archive collections can be private or shared publicly. 
 	  a href="/faq#privacy" Learn more about privacy.
   div
-    span tutorial-step="tour.welcome" data-placement="top"
-    span tutorial-step="tour.privacy" data-placement="top"
-  	span tutorial-step="tour.privacy2" data-placement="top"
-  	span tutorial-step="tour.collection2" data-placement="top"
-    span tutorial-step="tour.view_item" data-placement="top"
+    / span tutorial-step="tour.welcome" data-placement="top"
+    / span tutorial-step="tour.privacy" data-placement="top"
+    / span tutorial-step="tour.privacy2" data-placement="top"
+    / span tutorial-step="tour.collection2" data-placement="top"
+    / span tutorial-step="tour.view_item" data-placement="top"
   .collections 
     ul.inline.collections
       li.add-collection
