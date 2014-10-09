@@ -34,14 +34,13 @@ class SubscriptionPlanCached
 
   def self.community
     Rails.cache.fetch([:plans, :group, :community], expires_in: 30.minutes) do
-      # TODO name is different in stripe test-vs-prod; reconcile them (standardize on prod names)
-      ungrandfathered.find { |p| p.id.match(/community$/) and p.name == 'Community'} || create(id: '2_community', name: 'Community', amount: 0)
+      ungrandfathered.find { |p| p.id == 'community' and p.name == 'Community'} || raise "Cannot find 'community' plan"
     end
   end
 
   def self.organization
     Rails.cache.fetch([:plans, :group, :organization], expires_in: 30.minutes) do
-      all.find { |p| p.name == 'Organization' } || create(hours: 100, name: 'Organization', amount: 0)
+      all.find { |p| p.id == 'organization' and p.name == 'Organization' } || raise "Cannot find 'organization' plan"
     end
   end
 
@@ -75,9 +74,9 @@ class SubscriptionPlanCached
     SubscriptionPlan.sync_with_stripe(self)
   end
 
-  # if the plan id has _business_ or _enterprise_ in it, we'll do premium transcripts
+  # if the plan id has _business_ or _enterprise_ or _premium_ in it, we'll do premium transcripts
   def has_premium_transcripts?
-    self.id.match(/_(business|enterprise)_/)
+    self.id.match(/_(business|enterprise|premium)_/)
   end
 
   attr_reader :name, :amount, :hours, :id, :interval

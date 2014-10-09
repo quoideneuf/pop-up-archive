@@ -21,13 +21,13 @@ class SubscriptionPlan < ActiveRecord::Base
       needs_update = false
       if spc.name != sp.name
         Rails.logger.warn("sp id '#{sp.id} name has changed from '#{sp.name}' to '#{spc.name}'")
-        sp.name = spc.name 
-        needs_update = true 
+        sp.name = spc.name
+        needs_update = true
       end
       if spc.interval != sp.interval
         Rails.logger.warn("sp id '#{sp.id}' interval has changed from '#{sp.interval}' to '#{spc.interval}'")
         sp.interval = spc.interval
-        needs_update = true 
+        needs_update = true
       end
       if spc.hours.to_i != sp.hours.to_i
         Rails.logger.warn("sp id '#{sp.id}' hours has changed from '#{sp.hours}' to '#{spc.hours}'")
@@ -37,12 +37,12 @@ class SubscriptionPlan < ActiveRecord::Base
       if spc.hours.to_i != sp.pop_up_hours
         Rails.logger.warn("sp id '#{sp.id}' pop_up_hours has changed from '#{sp.pop_up_hours}' to '#{spc.hours.to_i}'")
         sp.pop_up_hours = spc.hours.to_i
-        needs_update = true 
+        needs_update = true
       end
       if spc.amount.to_i != sp.amount.to_i
         Rails.logger.warn("sp id '#{sp.id}' amount has changed from '#{sp.amount}' to '#{spc.amount}'")
         sp.amount = spc.amount
-        needs_update = true 
+        needs_update = true
       end
       sp.save if needs_update
 
@@ -53,6 +53,11 @@ class SubscriptionPlan < ActiveRecord::Base
   # return a SubscriptionPlanCached object
   def as_cached
     return SubscriptionPlanCached.find(self.stripe_plan_id)
+  end
+
+  # if the plan id has _business_ or _enterprise_ or _premium_ in it, we'll do premium transcripts
+  def has_premium_transcripts?
+    self.stripe_plan_id.match(/_(business|enterprise|premium)_/)
   end
 
 end
