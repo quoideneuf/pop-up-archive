@@ -34,13 +34,21 @@ class SubscriptionPlanCached
 
   def self.community
     Rails.cache.fetch([:plans, :group, :community], expires_in: 30.minutes) do
-      ungrandfathered.find { |p| p.id == 'community' and p.name == 'Community'} || raise "Cannot find 'community' plan"
+      spc = ungrandfathered.find { |p| p.id == 'community' and p.name == 'Community'}
+      if !spc
+        raise "Cannot find 'community' plan"
+      end
+      return spc
     end
   end
 
   def self.organization
     Rails.cache.fetch([:plans, :group, :organization], expires_in: 30.minutes) do
-      all.find { |p| p.id == 'organization' and p.name == 'Organization' } || raise "Cannot find 'organization' plan"
+      spc = all.find { |p| p.id == 'organization' and p.name == 'Organization' }
+      if !spc
+        raise "Cannot find 'organization' plan"
+      end
+      return spc
     end
   end
 
