@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141007191320) do
+ActiveRecord::Schema.define(:version => 20141010143534) do
 
   add_extension "hstore"
 
@@ -356,15 +356,26 @@ ActiveRecord::Schema.define(:version => 20141007191320) do
 
   add_index "timed_texts", ["start_time", "transcript_id"], :name => "index_timed_texts_on_start_time_and_transcript_id"
 
+  create_table "transcribers", :force => true do |t|
+    t.string   "name"
+    t.string   "url"
+    t.integer  "cost_per_min"
+    t.text     "description"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
   create_table "transcripts", :force => true do |t|
     t.integer  "audio_file_id"
     t.string   "identifier"
     t.string   "language"
     t.integer  "start_time"
     t.integer  "end_time"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
     t.decimal  "confidence"
+    t.integer  "transcriber_id"
+    t.integer  "cost_per_min"
   end
 
   add_index "transcripts", ["audio_file_id", "identifier"], :name => "index_transcripts_on_audio_file_id_and_identifier"

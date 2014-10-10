@@ -93,7 +93,7 @@ class Tasks::TranscribeTask < Task
     end
 
     trans_json = JSON.parse(json) if json.is_a?(String)
-    trans = audio_file.transcripts.build(language: 'en-US', identifier: identifier, start_time: 0, end_time: 0)
+    trans = audio_file.transcripts.build(language: 'en-US', identifier: identifier, start_time: 0, end_time: 0, transcriber_id: Transcriber.basic.id)
     sum = 0.0
     count = 0.0
     trans_json.each do |row|
