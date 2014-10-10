@@ -74,7 +74,8 @@ class Tasks::SpeechmaticsTranscribeTask < Task
         identifier: identifier, 
         start_time: 0, 
         end_time: 0, 
-        transcriber_id: transcriber.id
+        transcriber_id: transcriber.id,
+        cost_per_min: transcriber.cost_per_min
       )
       speakers = response.speakers
       words    = response.words
