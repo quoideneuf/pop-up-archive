@@ -3,6 +3,7 @@ class Api::BaseController < ApplicationController
   rescue_from RuntimeError, :with => :runtime_error
   rescue_from ActionView::MissingTemplate, :with => :template_error
   rescue_from Stripe::InvalidRequestError, :with => :upstream_error
+  rescue_from Elasticsearch::Transport::Transport::Errors::NotFound, :with => :not_found
 
   def not_found
     respond_to do |format|
