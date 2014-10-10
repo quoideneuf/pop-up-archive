@@ -33,7 +33,7 @@ module Api::BaseHelper
     mm, ss = total_time.divmod(60)            
     hh, mm = mm.divmod(60)           
     dd, hh = hh.divmod(24)         
-    time = "%dd: %dh: %dm: %ds" % [dd, hh, mm, ss]
+    time = "%d hours (%dd: %dh: %dm: %ds)" % [total_time.div(3600), dd, hh, mm, ss]
     return time
   end  	
   module_function :time_definition
