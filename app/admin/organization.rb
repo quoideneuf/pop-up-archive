@@ -26,6 +26,14 @@ ActiveAdmin.register Organization do
         row("Updated") { organization.updated_at }
       end
     end
+    panel "Monthly Usage" do
+      table_for organization.monthly_usages do|tbl|
+        tbl.column :month
+        tbl.column :year
+        tbl.column :use
+        tbl.column('Time') {|mu| Api::BaseHelper::time_definition(mu.value||0) }
+      end
+    end
     panel "Users" do
       table_for organization.users do |tbl|
         tbl.column("Name") {|user| link_to user.name, superadmin_user_path(user) }
