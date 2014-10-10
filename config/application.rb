@@ -79,6 +79,9 @@ module PopUpArchive
 
     # How long should Stripe API responses be cached locally
     config.stripe_cache = 5.minutes
+
+    # quiet deprecated warning
+    I18n.enforce_available_locales = false
     
     require 'sprockets'
     Sprockets.register_engine '.slim', Slim::Template
