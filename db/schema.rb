@@ -79,6 +79,7 @@ ActiveRecord::Schema.define(:version => 20141029204336) do
     t.integer  "upload_storage_id"
     t.datetime "deleted_at"
     t.integer  "creator_id"
+    t.string   "token"
   end
 
   create_table "contributions", :force => true do |t|
