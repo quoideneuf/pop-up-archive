@@ -66,8 +66,16 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       return trans
     end
 
+    transcriber = Transcriber.find_by_name('speechmatics')
+
     Transcript.transaction do
-      trans    = audio_file.transcripts.create!(language: 'en-US', identifier: identifier, start_time: 0, end_time: 0)
+      trans    = audio_file.transcripts.create!(
+        language: 'en-US',  # TODO get this from audio_file?
+        identifier: identifier, 
+        start_time: 0, 
+        end_time: 0, 
+        transcriber_id: transcriber.id
+      )
       speakers = response.speakers
       words    = response.words
 
