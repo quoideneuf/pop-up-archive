@@ -6,6 +6,9 @@ ActiveAdmin.register User do
     end
     column :email
     column :last_sign_in_at
+    column 'Plan', :subscription_plan_id, sortable: :subscription_plan_id do |user|
+      user.plan.name
+    end
     column 'Metered Use', :used_metered_storage_cache, sortable: :used_metered_storage_cache do |user|
       Api::BaseHelper::time_definition(user.used_metered_storage_cache||0)
     end
