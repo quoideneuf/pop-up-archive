@@ -157,7 +157,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
 .controller('PublicCollectionsCtrl', ['$scope', 'Collection', 'Loader', function PublicCollectionsCtrl($scope, Collection, Loader) {
   $scope.collections = Loader(Collection.public());
 }])
-.controller('CollectionFormCtrl', ['$scope', 'Collection', 'Me', 'ImageFile', function FilesCtrl($scope, Collection, Me, ImageFile) {
+.controller('CollectionFormCtrl', ['$window', '$cookies', '$scope', '$http', '$q', '$timeout', '$route', '$routeParams', '$modal', 'Me', 'Loader', 'Alert', 'Collection', 'Item', 'Contribution', 'ImageFile', function FilesCtrl($window, $cookies, $scope, $http, $q, $timeout, $route, $routeParams, $modal, Me, Loader, Alert, Collection, Item, Contribution, ImageFile) {
 
   if (!$scope.collection) {
     $scope.collection = new Collection();
