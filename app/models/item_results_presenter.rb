@@ -12,7 +12,7 @@ class ItemResultsPresenter < BasicObject
   end
 
   def results
-    @_results ||= @results.hits.map {|result| ItemResultPresenter.new(result) }
+    @_results ||= @results.hits.map {|result| ItemResultPresenter.new(result) }.select {|r| r.database_object.present? }
   end
 
   def facets

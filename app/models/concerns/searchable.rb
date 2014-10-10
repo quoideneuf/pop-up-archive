@@ -16,7 +16,7 @@ module Searchable
 
     after_commit lambda { IndexerWorker.perform_async(:delete, self.class.to_s, self.id) },
       on: :destroy,
-      if: Proc.new { |item| item.respond_to?(:deleted_at) && !item.deleted_at.blank? }
+      if: Proc.new { |item| item.respond_to?(:deleted_at) && item.deleted_at.present? }
     
     after_touch  lambda { IndexerWorker.perform_async(:update, self.class.to_s, self.id) },
       if: Proc.new { |item| item.respond_to?(:deleted_at) && item.deleted_at.blank? }
