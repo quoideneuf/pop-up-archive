@@ -11,6 +11,8 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :provider, :uid, :name
 
+  serialize :transcript_usage_cache, HstoreCoder
+
   belongs_to :organization
   belongs_to :subscription_plan
 
