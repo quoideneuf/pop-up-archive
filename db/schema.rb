@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141010143534) do
+ActiveRecord::Schema.define(:version => 20141010194640) do
 
   add_extension "hstore"
 
@@ -277,6 +277,7 @@ ActiveRecord::Schema.define(:version => 20141010143534) do
     t.integer  "owner_id"
     t.integer  "used_unmetered_hours_cache"
     t.integer  "used_metered_hours_cache"
+    t.hstore   "transcript_usage_cache"
   end
 
   create_table "people", :force => true do |t|
@@ -379,6 +380,7 @@ ActiveRecord::Schema.define(:version => 20141010143534) do
   end
 
   add_index "transcripts", ["audio_file_id", "identifier"], :name => "index_transcripts_on_audio_file_id_and_identifier"
+  add_index "transcripts", ["transcriber_id"], :name => "index_transcripts_on_transcriber_id"
 
   create_table "users", :force => true do |t|
     t.string   "email",                                       :default => "", :null => false
@@ -409,6 +411,7 @@ ActiveRecord::Schema.define(:version => 20141010143534) do
     t.integer  "pop_up_hours_cache"
     t.integer  "used_metered_storage_cache"
     t.integer  "subscription_plan_id"
+    t.hstore   "transcript_usage_cache"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

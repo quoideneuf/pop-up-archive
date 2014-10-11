@@ -11,7 +11,7 @@ class CreateTranscribers < ActiveRecord::Migration
       end
       # populate with known transcripts
       execute "insert into transcribers (name, url, cost_per_min, description, created_at, updated_at) values ('google_voice', '', 0, 'unofficial google voice api', now(), now())"
-      execute "insert into transcribers (name, url, cost_per_min, description, created_at, updated_at) values ('speechmatics', 'http://speechmatics.com/', 6, 'speechmatics', now(), now())"
+      execute "insert into transcribers (name, url, cost_per_min, description, created_at, updated_at) values ('speechmatics', 'http://speechmatics.com/', 62, 'speechmatics', now(), now())"
     end
   end
 

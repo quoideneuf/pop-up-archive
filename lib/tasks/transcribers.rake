@@ -11,8 +11,8 @@ namespace :transcribers do
     progress.bar_mark = '='
     progress.__send__ :show
     transcribers = {
-      'Tasks::SpeechmaticsTranscribeTask' => Transcriber.find_by_name('speechmatics').id,
-      'Tasks::TranscribeTask'             => Transcriber.find_by_name('google_voice').id
+      'Tasks::SpeechmaticsTranscribeTask' => Transcriber.find_by_name('speechmatics'),
+      'Tasks::TranscribeTask'             => Transcriber.find_by_name('google_voice'),
     }
     # unscoped to avoid selecting timed_texts, which are JOINed by default.
     Transcript.unscoped.where(:transcriber_id => nil).find_each(:batch_size => 10) do |transcript|
@@ -21,7 +21,8 @@ namespace :transcribers do
       tasks.each do |task|
         if transcribers.has_key?(task.type)
           # we don't want to update the parent item.updated_at so run raw sql
-          transcript.connection.execute("update transcripts set transcriber_id = #{transcribers[task.type]} where id = #{transcript.id}")
+          t = transcribers[task.type]
+          transcript.connection.execute("update transcripts set transcriber_id=#{t.id},cost_per_min=#{t.cost_per_min} where id=#{transcript.id}")
         end
       end
       progress.inc
