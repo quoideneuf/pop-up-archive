@@ -265,7 +265,7 @@ class User < ActiveRecord::Base
     when :premium
       cost_where = '>0'
     end
-    audio_files.each do|af|
+    audio_files.where('audio_files.duration is not null').each do|af|
       if af.transcripts.where("cost_per_min #{cost_where}").count > 0
         total_secs += af.duration
         af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
