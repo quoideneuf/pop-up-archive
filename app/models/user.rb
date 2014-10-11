@@ -221,6 +221,14 @@ class User < ActiveRecord::Base
     @_used_unmetered_storage ||= audio_files.where(metered: false).sum(:duration)
   end
 
+  def used_basic_transcripts
+    @_used_basic_transcripts ||= total_transcripts_report(:basic)
+  end
+
+  def used_premium_transcripts
+    @_used_premium_transcripts ||= total_transcripts_report(:premium)
+  end
+
   def active_credit_card_json
     active_credit_card.as_json.try(:slice, *%w(last4 type exp_month exp_year))
   end
@@ -232,6 +240,45 @@ class User < ActiveRecord::Base
   def update_usage_report!
     update_attribute :used_metered_storage_cache, used_metered_storage
     update_attribute :pop_up_hours_cache, pop_up_hours
+    update_attribute :transcript_usage_cache, transcript_usage_report
+  end
+
+  def transcript_usage_report
+    return {
+      :basic_seconds => used_basic_transcripts[:seconds],
+      :premium_seconds => used_premium_transcripts[:seconds],
+      :basic_cost => used_basic_transcripts[:cost],
+      :premium_cost => used_premium_transcripts[:cost],
+    }
+  end
+
+  def total_transcripts_report(ttype=:basic)
+    total_secs = 0
+    total_cost = 0
+    cost_where = '=0'
+
+    # for now, we have only two types. might make sense
+    # longer term to store the ttype on the transcriber record.
+    case ttype
+    when :basic
+      cost_where = '=0'
+    when :premium
+      cost_where = '>0'
+    end
+    audio_files.each do|af|
+      if af.transcripts.where("cost_per_min #{cost_where}").count > 0
+        total_secs += af.duration
+        af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
+          cpm = tr.cost_per_min
+          mins = af.duration.div(60)
+          ttl = cpm * mins
+          total_cost += ttl
+        end
+      end
+    end
+    # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
+    # but we round to the nearest penny when we cache it in aggregate.
+    return { :seconds => total_secs, :cost => sprintf('%.2f', total_cost.fdiv(1000)) }
   end
 
   private
