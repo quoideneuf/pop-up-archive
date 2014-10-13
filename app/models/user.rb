@@ -40,6 +40,8 @@ class User < ActiveRecord::Base
   OVERAGE_CALC = 'coalesce(used_metered_storage_cache - pop_up_hours_cache * 3600, 0)'
 
   scope :over_limits, -> { select("users.*, #{OVERAGE_CALC} as overage").where("#{OVERAGE_CALC} > 0").order('overage DESC') }
+  scope :premium_usage_desc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) desc"
+  scope :premium_usage_asc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) asc"
 
   delegate :name, :id, :amount, to: :plan, prefix: true
 
@@ -280,7 +282,9 @@ class User < ActiveRecord::Base
     end
     # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
     # but we round to the nearest penny when we cache it in aggregate.
-    return { :seconds => total_secs, :cost => sprintf('%.2f', total_cost.fdiv(1000)) }
+    # we make seconds and cost fixed-width so that sorting a string works
+    # like sorting an integer.
+    return { :seconds => "%010d" % total_secs, :cost => sprintf('%010.2f', total_cost.fdiv(1000)) }
   end
 
   private
