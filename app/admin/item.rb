@@ -1,5 +1,6 @@
 ActiveAdmin.register Item do
   actions :all, :except => [:edit, :destroy]
+  menu false
   index do
     column :title, sortable: :title do |item| link_to item.title, superadmin_item_path(item) end
     column :created_at
