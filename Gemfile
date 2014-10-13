@@ -108,7 +108,7 @@ gem 'text-table'
 
 gem 'mixpanel-ruby'
 
-gem 'activeadmin', github: 'activeadmin', branch: '0-6-stable'
+gem 'activeadmin', github: 'activeadmin', branch: 'master'
 gem 'coffee-script'
 gem 'ansi'
 
