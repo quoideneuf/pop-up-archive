@@ -1,13 +1,18 @@
 ActiveAdmin.register Organization do
   actions :all, :except => [:destroy]
   index do
-    column :name, sortable: :name do |org| link_to org.name, superadmin_organization_path(org) end
-    column :owner
-    column 'Metered Use', :used_metered_hours_cache, sortable: :used_metered_hours_cache do |org|
-      Api::BaseHelper::time_definition(org.used_metered_hours_cache||0)
+    column :name, sortable: :name do |org| 
+      link_to( org.name, superadmin_organization_path(org)) + raw('<br/>') + org.owner_contact
     end
-    column 'Unmetered Use', :used_unmetered_hours_cache, sortable: :used_unmetered_hours_cache do |org|
-      Api::BaseHelper::time_definition(org.used_unmetered_hours_cache||0)
+    column :plan do |org| org.owner_id ? org.owner.plan.name : span('(none)', class: "empty") end
+    column 'Usage', :premium_seconds, sortable: "transcript_usage_cache->'premium_seconds'" do |org|
+      raw 'Premium: ' + \
+      Api::BaseHelper::time_definition(org.transcript_usage_cache['premium_seconds'].to_i||0) + \
+      '&nbsp;' + number_to_currency(org.transcript_usage_cache['premium_cost'].to_f||'0.00') + \
+      '<br/>' + \
+      'Basic: ' + \
+      Api::BaseHelper::time_definition(org.transcript_usage_cache['basic_seconds'].to_i||0) + \
+      '&nbsp;' + number_to_currency(org.transcript_usage_cache['basic_cost'].to_f||'0.00')
     end
   end
 
@@ -20,8 +25,12 @@ ActiveAdmin.register Organization do
         row("Name") { organization.name }
         row("Owner") { organization.owner_id ? (link_to organization.owner.name, superadmin_user_path(organization.owner)) : span(I18n.t('active_admin.empty'), class: "empty") }
         row("Plan Name") { organization.owner_id ? organization.owner.plan.name : span(I18n.t('active_admin.empty'), class: "empty") }
-        row("Metered Storage") { Api::BaseHelper::time_definition(organization.used_metered_storage||0) }
-        row("Unmetered Storage") { Api::BaseHelper::time_definition(organization.used_unmetered_storage||0) }
+        row("Metered Storage") { Api::BaseHelper::time_definition(organization.used_metered_hours_cache||0) }
+        row("Unmetered Storage") { Api::BaseHelper::time_definition(organization.used_unmetered_hours_cache||0) }
+        row("Premium Transcripts") { Api::BaseHelper::time_definition(organization.transcript_usage_cache['premium_seconds'].to_i||0) }
+        row("Premium Cost") { number_to_currency(organization.transcript_usage_cache['premium_cost'].to_f||'0.00') }
+        row("Basic Transcripts") { Api::BaseHelper::time_definition(organization.transcript_usage_cache['basic_seconds'].to_i||0) }
+        row("Basic Cost") { number_to_currency(organization.transcript_usage_cache['basic_cost'].to_f||'0.00') }
         row("Created") { organization.created_at }
         row("Updated") { organization.updated_at }
       end
@@ -39,7 +48,7 @@ ActiveAdmin.register Organization do
         tbl.column("Name") {|user| link_to user.name, superadmin_user_path(user) }
         tbl.column("Email") {|user| user.email }
         tbl.column("Last Sign In") {|user| user.last_sign_in_at }
-        tbl.column("Metered Storage") {|user| Api::BaseHelper::time_definition(user.used_metered_storage||0) }
+        tbl.column("Metered Storage") {|user| Api::BaseHelper::time_definition(user.used_metered_storage_cache||0) }
         tbl.column("Unmetered Storage") {|user| Api::BaseHelper::time_definition(user.used_unmetered_storage||0) }
         tbl.column("Plan Name") {|user| user.plan.name }
       end
@@ -53,7 +62,7 @@ ActiveAdmin.register Organization do
         tbl.column("Unmetered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_unmetered_storage||0) }
       end
     end
-   
+
     active_admin_comments
   end
 

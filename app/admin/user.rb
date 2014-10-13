@@ -11,11 +11,11 @@ ActiveAdmin.register User do
     column 'Usage', :premium_seconds, sortable: "transcript_usage_cache->'premium_seconds'" do |user|
       raw 'Premium: ' + \
       Api::BaseHelper::time_definition(user.transcript_usage_cache['premium_seconds'].to_i||0) + \
-      '&nbsp;$' + (user.transcript_usage_cache['premium_cost'].to_f.to_s||'0.00') + \
+      '&nbsp;' + number_to_currency(user.transcript_usage_cache['premium_cost'].to_f||'0.00') + \
       '<br/>' + \
       'Basic: ' + \
       Api::BaseHelper::time_definition(user.transcript_usage_cache['basic_seconds'].to_i||0) + \
-      '&nbsp;$' + (user.transcript_usage_cache['basic_cost'].to_f.to_s||'0.00')
+      '&nbsp;' + number_to_currency(user.transcript_usage_cache['basic_cost'].to_f||'0.00')
     end
   end
 
@@ -32,15 +32,15 @@ ActiveAdmin.register User do
         row("Organization") {
           user.organization_id \
           ? (link_to user.organization.name, superadmin_organization_path(user.organization)) \
-          : span(I18n.t('active_admin.empty'), class: "empty")
+          : span(('none'), class: "empty")
         }
         row("Metered Storage") { Api::BaseHelper::time_definition(user.used_metered_storage||0) }
         row("Unmetered Storage") { Api::BaseHelper::time_definition(user.used_unmetered_storage||0) }
         row("Plan") { user.plan.name + ' ' + user.plan.hours.to_s + 'h (billed per ' + user.plan.interval + ')' }
         row("Premium Transcripts") { Api::BaseHelper::time_definition(user.transcript_usage_cache['premium_seconds'].to_i||0) }
-        row("Premium Cost") { '$' + (user.transcript_usage_cache['premium_cost'].to_f.to_s||'0.00') }
+        row("Premium Cost") { number_to_currency(user.transcript_usage_cache['premium_cost'].to_f||'0.00') }
         row("Basic Transcripts") { Api::BaseHelper::time_definition(user.transcript_usage_cache['basic_seconds'].to_i||0) }
-        row("Basic Cost") { '$' + (user.transcript_usage_cache['basic_cost'].to_f.to_s||'0.00') }
+        row("Basic Cost") { number_to_currency(user.transcript_usage_cache['basic_cost'].to_f||'0.00') }
         row("Last Sign In") { user.last_sign_in_at }
         row("Sign In Count") { user.sign_in_count }
         row("Created") { user.created_at }
