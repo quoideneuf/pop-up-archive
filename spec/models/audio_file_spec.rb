@@ -105,6 +105,14 @@ describe AudioFile do
       audio_file.tasks.last.class.should == Tasks::TranscodeTask
     end
 
+    it "should check for transcode dupes" do
+      audio_file = FactoryGirl.create :audio_file_private
+      audio_file.storage.should_not be_automatic_transcode
+      audio_file.transcode_audio
+      audio_file.transcode_audio
+      audio_file.tasks.count.should == 1
+    end
+
     it "should check transcode complete" do
       audio_file = FactoryGirl.create :audio_file_private
       audio_file.should_not be_is_transcode_complete
@@ -209,6 +217,18 @@ describe AudioFile do
       @audio_file.transcript_array.collect{|t|t['text']}.join("\n").should eq "three\nfour\nfive"
     end
 
+    it "should check for premium transcribe dupes" do
+      user = FactoryGirl.create :user
+      user.update_card!('void_card_token')
+      plan = SubscriptionPlan.create id: '10_small_business_yr', name: 'Small Business', amount: 150, hours: 10
+      user.subscribe!(plan)
+      puts user.to_yaml
+      puts plan.to_yaml
+      @audio_file.premium_transcribe_audio
+      @audio_file.premium_transcribe_audio
+      puts @audio_file.tasks.to_yaml
+      @audio_file.tasks.count.should == 1
+    end
   end
 
   describe "#update_from_fixer" do
