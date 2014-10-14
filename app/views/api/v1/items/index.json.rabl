@@ -1,1 +1,1 @@
-node(:items) { items }
+node(:items) { collection_items }

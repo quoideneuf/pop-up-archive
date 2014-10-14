@@ -1,7 +1,7 @@
 class Api::V1::ItemsController < Api::V1::BaseController
   expose(:collection)
 
-  expose(:items, ancestor: :collection) do
+  expose(:collection_items) do
     if !params[:collection_id]
       raise ActiveRecord::RecordNotFound
     end
