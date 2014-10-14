@@ -7,7 +7,8 @@ class Ability
       can :manage, :all
     else
 
-      can :read,   Collection
+      can :read,   Collection, :items_visible_by_default => true
+      can :read,   Collection, id: (user ? user.collection_ids : [])
       can :create, Collection
       can :manage, Collection, id: (user ? user.collection_ids : [])
 

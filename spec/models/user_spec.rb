@@ -301,4 +301,16 @@ describe User do
 
   end
 
+  context "has account" do
+
+    it "can view collection when it is_public" do
+      user = FactoryGirl.create :user
+      coll = FactoryGirl.create :collection
+      coll.items_visible_by_default = true
+      ability = Ability.new(user)
+      ability.should be_can(:read, coll)
+    end
+
+  end
+
 end
