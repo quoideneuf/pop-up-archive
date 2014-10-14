@@ -211,17 +211,24 @@ class AudioFile < ActiveRecord::Base
   end  
 
   def transcode_audio(user=self.user)
-    return if transcoded_at
+    return if transcoded_at #skip if audio already has a transcoded at value
 
+    #detect IA file derivatives if audio is stored at IA
     if storage.automatic_transcode?
       start_detect_derivative_job
     else
       AudioFileUploader.version_formats.each do |label, info|
-        next if (label == filename_extension) # skip this version if that is alreay the file's format
-        self.tasks << Tasks::TranscodeTask.new(
-          identifier: "#{label}_transcode",
-          extras: info
-        )
+        identifier = "#{label}_transcode"
+        next if (label == filename_extension) # skip this version if that is already the file's format
+        #log and skip if transcode task already exists
+        if task = tasks.transcode.without_status(:failed).where(identifier: identifier).last
+          logger.debug "transcode task #{identifier} #{task.id} already exists for audio file #{self.id}"
+        else
+          self.tasks << Tasks::TranscodeTask.new(
+            identifier: indentifier,
+            extras: info
+          )
+        end
       end
     end
   end
