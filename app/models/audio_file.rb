@@ -218,14 +218,13 @@ class AudioFile < ActiveRecord::Base
       start_detect_derivative_job
     else
       AudioFileUploader.version_formats.each do |label, info|
-        identifier = "#{label}_transcode"
         next if (label == filename_extension) # skip this version if that is already the file's format
         #log and skip if transcode task already exists
-        if task = tasks.transcode.without_status(:failed).where(identifier: identifier).last
+        if task = tasks.transcode.without_status(:failed).where(identifier: "#{label}_transcode").last
           logger.debug "transcode task #{identifier} #{task.id} already exists for audio file #{self.id}"
         else
           self.tasks << Tasks::TranscodeTask.new(
-            identifier: indentifier,
+            identifier: "#{label}_transcode",
             extras: info
           )
         end
