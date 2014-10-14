@@ -1,3 +1,1 @@
-collection items, root: 'items'
-
-extends 'api/v1/items/show'
+node(:items) { items }

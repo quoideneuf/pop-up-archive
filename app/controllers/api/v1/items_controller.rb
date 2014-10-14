@@ -2,12 +2,31 @@ class Api::V1::ItemsController < Api::V1::BaseController
   expose(:collection)
 
   expose(:items, ancestor: :collection) do
-    collection.items.includes(:collection, :hosts, :creators, :interviewers, :interviewees, :producers, :guests, :contributors, :entities, :storage_configuration).includes(audio_files:[:tasks, :transcripts], contributions:[:person])
+    if !params[:collection_id]
+      raise ActiveRecord::RecordNotFound
+    end
+    searched_collection_items
   end
 
   expose(:item)
   expose(:contributions, ancestor: :item)
   expose(:users_item, ancestor: :current_users_items)
+
+  expose(:searched_collection_items) do
+    max_items = collection.items.count # TODO sane ceiling?
+    query_builder = QueryBuilder.new({query:"collection_id:#{params[:collection_id].to_i}"}, current_user)
+    search_query = Search.new(items_index_name) do
+      query_builder.query do |q| 
+        query &q
+      end 
+      size(max_items)
+      sort do |s|
+        s.by('id', 'asc')
+      end
+    end 
+    response = Item.search(search_query).response
+    ::ItemResultsPresenter.new(response).format_results
+  end
 
   authorize_resource decent_exposure: true
 
