@@ -11,7 +11,8 @@ class Ability
       can :create, Collection
       can :manage, Collection, id: (user ? user.collection_ids : [])
 
-      can :read,   Item
+      can :read,   Item, :is_public => true
+      can :read,   Item, collection: { id: (user ? user.collection_ids : []) }
       can :manage, Item, collection: { id: (user ? user.collection_ids : []) }
 
       can :read,   Entity
