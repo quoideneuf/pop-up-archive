@@ -311,6 +311,51 @@ describe User do
       ability.should be_can(:read, coll)
     end
 
+    it "can view collection when it is not public but when is owner" do
+      user = FactoryGirl.create :user
+      anon_user = FactoryGirl.create :user
+      coll = FactoryGirl.create :collection
+      coll.items_visible_by_default = false
+      user.collections << coll
+
+      # owner can read
+      ability = Ability.new(user)
+      ability.should be_can(:read, coll) 
+
+      # anonymous cannot read
+      anon_ability = Ability.new(anon_user)
+      anon_ability.should_not be_can(:read, coll)
+    end
+
+    it "can view public item" do
+      user = FactoryGirl.create :user
+      coll = FactoryGirl.create :collection
+      coll.items_visible_by_default = true
+      item = FactoryGirl.create :item
+      item.collection = coll
+      ability = Ability.new(user)
+      ability.should be_can(:read, item)
+    end
+
+    it "can view item in private collection when own collection" do
+      user = FactoryGirl.create :user
+      coll = FactoryGirl.create :collection
+      coll.items_visible_by_default = false
+      user.collections << coll
+      item = FactoryGirl.create :item
+      item.is_public = nil  # unset so assigning collection will re-set
+      item.collection = coll
+
+      # owner can read
+      ability = Ability.new(user)
+      ability.should be_can(:read, item)
+
+      # anonymous cannot read
+      anon_user = FactoryGirl.create :user
+      anon_ability = Ability.new(anon_user)
+      anon_ability.should_not be_can(:read, item)
+    end
+
   end
 
 end
