@@ -57,7 +57,7 @@ PopUpArchive::Application.routes.draw do
 
       resource :last_items
       resource :search
-      resources :items do
+      resources :items, only: [] do
         resources :audio_files do
           post '',                     action: 'update'
           get  'transcript_text',      action: 'transcript_text'
