@@ -9,23 +9,6 @@ class Api::V1::ItemsController < Api::V1::BaseController
   expose(:contributions, ancestor: :item)
   expose(:users_item, ancestor: :current_users_items)
 
-  expose(:searched_item) do
-    query_builder = QueryBuilder.new({query:"id:#{params[:id].to_i}"}, current_user)
-    search_query = Search.new(items_index_name) do
-      query_builder.query do |q|
-        query &q
-      end
-      query_builder.filters do |f|
-        filter f.type, f.value
-      end
-    end
-    Item.search(search_query).response.first.tap do |item|
-      if item.blank?
-        raise ActiveRecord::RecordNotFound
-      end 
-    end
-  end
-
   authorize_resource decent_exposure: true
 
   def update
@@ -34,7 +17,7 @@ class Api::V1::ItemsController < Api::V1::BaseController
   end
 
   def show
-    respond_with :api, searched_item
+    respond_with :api, item
   end
 
   def create
