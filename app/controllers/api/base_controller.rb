@@ -4,6 +4,7 @@ class Api::BaseController < ApplicationController
   rescue_from ActionView::MissingTemplate, :with => :template_error
   rescue_from Stripe::InvalidRequestError, :with => :upstream_error
   rescue_from Elasticsearch::Transport::Transport::Errors::NotFound, :with => :not_found
+  rescue_from CanCan::AccessDenied, with => :authz_denied
 
   def not_found
     respond_to do |format|
@@ -13,6 +14,13 @@ class Api::BaseController < ApplicationController
       format.json { render :text => { :error => "not found", :status => 404 }.to_json, :status => :not_found }
     end
 
+  end
+
+  def authz_denied(exception)
+    respond_to do |format|
+      format.html { render :file => File.join(Rails.root, 'public', '403'), :formats => [:html], :status => 403 }
+      format.json { render :text => { :error => "permission denied", :status => 403 }.to_json, :status => 403 }
+    end
   end
 
   def runtime_error(exception)
