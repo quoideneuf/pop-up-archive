@@ -114,6 +114,7 @@ class User < ActiveRecord::Base
     cus.card = card_token
     cus.save
     invalidate_cache
+    @_customer = nil
   end
 
   def subscribe!(plan, offer = nil)
@@ -127,9 +128,10 @@ class User < ActiveRecord::Base
     # must do this manually after update_subscription has successfully completed
     # so that our local caches are in sync.
     sp = SubscriptionPlan.find_by_stripe_plan_id(plan.id)
-    self.update(:subscription_plan_id => sp.id)
+    update_attribute :subscription_plan_id, sp.id if persisted?
 
     invalidate_cache
+    @_customer = nil
   end
 
   def add_invoice_item!(invoice_item)
