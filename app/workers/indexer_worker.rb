@@ -8,8 +8,13 @@ class IndexerWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'elasticsearch', retry: false, backtrace: true
 
-  Logger = Sidekiq.logger.level == Logger::DEBUG ? Sidekiq.logger : nil
-  Client = Elasticsearch::Client.new host: (ENV['ELASTICSEARCH_URL'] || 'http://localhost:9200'), logger: Logger
+  logger = Sidekiq.logger.level == Logger::DEBUG ? Sidekiq.logger : nil
+  tracer = ENV['ES_DEBUG'] ? Logger.new(STDERR) : nil
+  if tracer
+    tracer.formatter = lambda { |s, d, p, m| "#{m.gsub(/^.*$/) { |n| '   ' + n }.ansi(:faint)}\n" }
+  end
+  es_url = ENV['ELASTICSEARCH_URL'] || 'http://localhost:9200'
+  Client = Elasticsearch::Client.new host: es_url, logger: logger, tracer: tracer
 
   def perform(operation, klass, record_id, options={})
     logger.debug [operation, "#{klass}##{record_id} #{options.inspect}"]

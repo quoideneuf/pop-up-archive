@@ -39,7 +39,7 @@ def create_es_index(klass)
   errors = []
   completed = 0
   puts "Creating Index for class #{klass}"
-  klass.__elasticsearch__.create_index! force: true
+  klass.__elasticsearch__.create_index! force: true, index: klass.index_name
   klass.__elasticsearch__.refresh_index!
   klass.__elasticsearch__.import  :return => 'errors', :batch_size => 200    do |resp|
     # show errors immediately (rather than buffering them)
@@ -78,8 +78,6 @@ RSpec.configure do |config|
   end
 
   config.after :suite, elasticsearch: true do
-    puts "Sleeping a little to let tasks finish ..."
-    sleep(5)
     Elasticsearch::Extensions::Test::Cluster.stop if Elasticsearch::Extensions::Test::Cluster.running?
   end
 

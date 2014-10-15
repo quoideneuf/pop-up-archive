@@ -6,16 +6,16 @@ RESULTS_PER_PAGE = 10 unless defined?(RESULTS_PER_PAGE)
 es_url = 'http://localhost:9200'
 if ENV['BONSAI_URL'] || ENV['ELASTICSEARCH_URL']
   es_url = ENV['BONSAI_URL'] || ENV['ELASTICSEARCH_URL']
-
-  # make sure we set all ENV the same, for backcompat with
-  # Tire-based code.
-  ENV['BONSAI_URL'] = es_url
-  ENV['ELASTICSEARCH_URL'] = es_url
 end
 
 if Rails.env.test?
   es_url = "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9250)}"
 end
+
+# make sure we set all ENV the same, for backcompat with
+# Tire-based code.
+ENV['BONSAI_URL'] = es_url
+ENV['ELASTICSEARCH_URL'] = es_url
 
 es_args = {
   url: es_url,
