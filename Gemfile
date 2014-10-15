@@ -127,13 +127,13 @@ group :development do
   gem 'guard-jasmine'
   gem "guard-bundler", ">= 1.0.0"
   gem 'spring'
- end
-
-group :development, :test do
   gem 'pry-rails'
   gem 'pry-stack_explorer'
   gem 'pry-debugger'
   gem 'pry-remote'
+ end
+
+group :development, :test do
   gem 'rspec-rails', '~> 2.4'
   gem 'rspec-mocks'
   gem 'database_cleaner'
