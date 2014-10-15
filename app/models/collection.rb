@@ -140,6 +140,7 @@ class Collection < ActiveRecord::Base
   end
 
   def storage
+    # This is the problematic method for file_storage
     default_storage.provider
   end
 
@@ -182,6 +183,10 @@ class Collection < ActiveRecord::Base
 
   def used_unmetered_storage
     @_used_unmetered_storage ||= (items.map{|item| item.audio_files.where(metered: false).sum(:duration) }.inject(:+) || 0)
+  end
+
+  def token
+    read_attribute(:token) || update_token
   end
 
   @@instance_lock = Mutex.new
