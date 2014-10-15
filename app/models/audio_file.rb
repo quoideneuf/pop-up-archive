@@ -180,8 +180,9 @@ class AudioFile < ActiveRecord::Base
   def start_premium_transcribe_job(user, identifier, options={})
     return if (duration.to_i <= 0)
 
-    if task = tasks.speechmatics_transcribe.without_status(:failed).where(identifier: identifier).last
-      logger.debug "speechmatics transcribe task #{identifier} #{task.id} already exists for audio file #{self.id}"
+    if task = tasks.any?{|task| task.type == 'Tasks::SpeechmaticsTranscribeTask' && task.status != "failed"}
+    # if task = tasks.speechmatics_transcribe.without_status(:failed).where(identifier: identifier).last
+      logger.debug "speechmatics transcribe task #{identifier} already exists for audio file #{self.id}"
     else
       extras = { 'original' => process_file_url, 'user_id' => user.try(:id) }.merge(options)
       task = Tasks::SpeechmaticsTranscribeTask.new(identifier: identifier, extras: extras)
@@ -211,17 +212,23 @@ class AudioFile < ActiveRecord::Base
   end  
 
   def transcode_audio(user=self.user)
-    return if transcoded_at
+    return if transcoded_at #skip if audio already has a transcoded at value
 
+    #detect IA file derivatives if audio is stored at IA
     if storage.automatic_transcode?
       start_detect_derivative_job
     else
       AudioFileUploader.version_formats.each do |label, info|
-        next if (label == filename_extension) # skip this version if that is alreay the file's format
-        self.tasks << Tasks::TranscodeTask.new(
-          identifier: "#{label}_transcode",
-          extras: info
-        )
+        next if (label == filename_extension) # skip this version if that is already the file's format
+        #log and skip if transcode task already exists
+        if task = tasks.transcode.without_status(:failed).where(identifier: "#{label}_transcode").last
+          logger.debug "transcode task #{identifier} #{task.id} already exists for audio file #{self.id}"
+        else
+          self.tasks << Tasks::TranscodeTask.new(
+            identifier: "#{label}_transcode",
+            extras: info
+          )
+        end
       end
     end
   end
