@@ -3,7 +3,10 @@ require "digest/sha1"
 class Api::V1::ImageFilesController < Api::V1::BaseController
 
   expose :item
+  # Probably need to change the ancestor somehow to imageable, and get to the item that way
   expose :image_files, ancestor: :item
+  expose :collection
+  expose :image_files, ancestor: :collection
   expose :image_file
   expose :upload_to_storage
 
