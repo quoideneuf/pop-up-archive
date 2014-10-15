@@ -1,10 +1,10 @@
-[![Stories in Ready](https://badge.waffle.io/prx/pop-up-archive.png)](https://waffle.io/prx/pop-up-archive)  
-# Pop-Up Archive
+[![Stories in Ready](https://badge.waffle.io/popuparchive/pop-up-archive.png)](https://waffle.io/popuparchive/pop-up-archive)  
+# Pop Up Archive
 
-[![Build Status](https://travis-ci.org/PRX/pop-up-archive.png?branch=master)](https://travis-ci.org/PRX/pop-up-archive)
-[![Dependency Status](https://gemnasium.com/PRX/pop-up-archive.png)](https://gemnasium.com/PRX/pop-up-archive)
-[![Coverage Status](https://coveralls.io/repos/PRX/pop-up-archive/badge.png)](https://coveralls.io/r/PRX/pop-up-archive)
-[![Code Climate](https://codeclimate.com/github/PRX/pop-up-archive.png)](https://codeclimate.com/github/PRX/pop-up-archive)
+[![Build Status](https://travis-ci.org/popuparchive/pop-up-archive.png?branch=master)](https://travis-ci.org/popuparchive/pop-up-archive)
+[![Dependency Status](https://gemnasium.com/popuparchive/pop-up-archive.png)](https://gemnasium.com/popuparchive/pop-up-archive)
+[![Coverage Status](https://coveralls.io/repos/popuparchive/pop-up-archive/badge.png)](https://coveralls.io/r/popuparchive/pop-up-archive)
+[![Code Climate](https://codeclimate.com/github/popuparchive/pop-up-archive.png)](https://codeclimate.com/github/popuparchive/pop-up-archive)
 
 <table>
   <tr>
@@ -38,7 +38,7 @@
 This guide expects that you have git and homebrew installed, and have a ruby environment set up with 2.0.0-p247 (using RVM or rbenv). We also assume you are using Pow, and have the development site running at http://pop-up-archive.dev. This is not required, but some aspects of the guide may not be appropriate for different configurations.
 
     brew install redis elasticsearch postgres
-    git clone git@github.com:PRX/pop-up-archive.git
+    git clone git@github.com:popuparchive/pop-up-archive.git
     curl get.pow.cx | sh
     gem install powder bundler
     cd pop-up-archive
