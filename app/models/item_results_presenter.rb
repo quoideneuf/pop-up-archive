@@ -12,7 +12,9 @@ class ItemResultsPresenter < BasicObject
   end
 
   def results
-    @_results ||= @results.hits.map {|result| ItemResultPresenter.new(result) }.select {|r| r.database_object.present? }
+    @_results ||= @results.hits.map {|result|
+      ItemResultPresenter.new(result)
+    }.select {|r| r.database_object.present? }
   end
 
   def facets
@@ -24,8 +26,8 @@ class ItemResultsPresenter < BasicObject
   def format_results
     formatted = []
     attrs = [:title, :description, :date_created, :identifier, :collection_id,
-             :collection_title, :episode_title, :series_title, :date_broadcast,
-             :tags, :notes]
+      :collection_title, :episode_title, :series_title, :date_broadcast,
+    :tags, :notes]
 
     if results and results.size
       results.each do |result|
@@ -38,7 +40,7 @@ class ItemResultsPresenter < BasicObject
 
         # child objects
         fres[:audio_files] = result.audio_files.map do |af|
-          { :url => af.url, :id => af.id, :filename => af.filename } 
+          { :url => af.url, :id => af.id, :filename => af.filename }
         end
         fres[:image_files] = result.image_files.map do |imgf|
           { :file => imgf.file, :upload_id => imgf.upload_id, :original_file_url => imgf.original_file_url }
@@ -60,7 +62,7 @@ class ItemResultsPresenter < BasicObject
       end
     end
     return formatted
-  end 
+  end
 
   def respond_to?(method)
     method == :results || @results.respond_to?(method)
@@ -91,9 +93,9 @@ class ItemResultsPresenter < BasicObject
       @_audio_files ||= ::AudioFile.where(item_id: @result.id)
     end
 
-    def image_files 
+    def image_files
       @_image_files ||= ::ImageFile.where(item_id: @result.id)
-    end  
+    end
 
     def highlighted_audio_files
       @_highlighted_audio_files ||= generate_highlighted_audio_files
