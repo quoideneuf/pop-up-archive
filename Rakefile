@@ -8,3 +8,4 @@ PopUpArchive::Application.load_tasks
 
 
 task :default => [:spec, 'spec:javascript']
+task :test    => [:spec]
