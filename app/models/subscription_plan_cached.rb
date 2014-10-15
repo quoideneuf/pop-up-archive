@@ -2,13 +2,13 @@ require 'subscription_plan'
 
 class SubscriptionPlanCached
 
-# this class does *NOT* front a db table directly.
-# it is more of a write-through caching manager,
-# for keeping the Stripe subscription plans
-# in sync with the local db. The Stripe plan is authoritative.
-# We just sync it locally since (a) plans rarely change
-# and (b) we want to be able to save remote API calls
-# but still use/display user plan data.
+  # this class does *NOT* front a db table directly.
+  # it is more of a write-through caching manager,
+  # for keeping the Stripe subscription plans
+  # in sync with the local db. The Stripe plan is authoritative.
+  # We just sync it locally since (a) plans rarely change
+  # and (b) we want to be able to save remote API calls
+  # but still use/display user plan data.
 
   def self.all
     Rails.cache.fetch([:plans, :group, :all], expires_in: 30.minutes) do
@@ -52,20 +52,20 @@ class SubscriptionPlanCached
     end
   end
 
-  def self.create(options)
-    plan_id = "#{options[:hours]||2}-#{SecureRandom.hex(8)}"
-    interval = options[:interval] || 'month'
-    new(Stripe::Plan.create(id: plan_id,
-      name: options[:name],
-      amount: options[:amount],
-      currency: 'USD',
-      interval: interval)).tap do |plan|
-      Rails.cache.delete([:plans, :group, :all])
-      Rails.cache.delete([:plans, :group, :ungrandfathered])
-      Rails.cache.delete([:plans, :group, :community])
-      Rails.cache.write([:plans, :individual, plan_id], plan, expires_in: 30.minutes)
-    end
-  end
+  #  def self.create(options)
+  #    plan_id = "#{options[:hours]||2}-#{SecureRandom.hex(8)}"
+  #    interval = options[:interval] || 'month'
+  #    new(Stripe::Plan.create(id: plan_id,
+  #      name: options[:name],
+  #      amount: options[:amount],
+  #      currency: 'USD',
+  #      interval: interval)).tap do |plan|
+  #      Rails.cache.delete([:plans, :group, :all])
+  #      Rails.cache.delete([:plans, :group, :ungrandfathered])
+  #      Rails.cache.delete([:plans, :group, :community])
+  #      Rails.cache.write([:plans, :individual, plan_id], plan, expires_in: 30.minutes)
+  #    end
+  #  end
 
   def self.reset_cache
     Rails.cache.delete([:plans, :group, :all])
