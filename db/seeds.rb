@@ -6,6 +6,21 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
+transcribers = Transcriber.create([
+  {
+    name: 'google_voice',
+    url:  '',
+    cost_per_min: 0,
+    description: 'unofficial google voice api',
+  },
+  {
+    name: 'speechmatics',
+    url:  'http://speechmatics.com/',
+    cost_per_min: 62,  # 1000ths of a dollar
+    description: 'speechmatics',
+  }
+])
+
 collections = Collection.create([{"creator_id"=> 1, "title" => "Test Collection", "description" => "This collection will show you how collections work."}, {"creator_id"=> 1, "title" => "A Second Collection", "default_storage_id" => 1}])
 item = Item.create("title" => "Lost Weekend Video finds new ways to entertain in the digital age")
 item.description = "A couple on an evening stroll down Valencia Street comes to a stop outside Lost Weekend Video. They’re peering in through the big front window."
