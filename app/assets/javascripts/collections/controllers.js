@@ -173,48 +173,52 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     $scope.collection = collection;
   }
 
-  $scope.setImageFile = function(event) {
+  $scope.setImageFiles = function(event) {
+    console.log("Inside setImageFile");
     element = angular.element(event.target);
 
     $scope.$apply(function($scope) {
 
-      var newImageFile = element[0].files;
+      var newImageFiles = element[0].files;
       // console.log('image files',element[0].files);
 
       if (!$scope.collection.image) {
-        $scope.collection.image = [];
+        $scope.collection.images = [];
       }
 
       // add image files to the item
-      angular.forEach(newImageFile, function (file) {
-        $scope.collection.image.push(file);
+      angular.forEach(newImageFiles, function (file) {
+        $scope.collection.images.push(file);
       });
 
       element[0].value = "";
 
     });
+    console.log($scope.collection.images);
   }; 
 
-  $scope.addRemoteImageFile = function (saveItem, imageUrl){
-    if (!$scope.urlForImage)
-      return;
-    new ImageFile({remoteFileUrl: imageUrl, itemId: saveItem.id} ).create();      
-    $scope.collection.image.push({ name: 'name', remoteFileUrl: imageUrl, size: ''});
-    console.log("url link", $scope.urlForImage);
-    $scope.urlForImage = "";
-  };
+  // $scope.addRemoteImageFile = function (saveItem, imageUrl){
+  //   if (!$scope.urlForImage)
+  //     return;
+  //   new ImageFile({remoteFileUrl: imageUrl, itemId: saveItem.id} ).create();      
+  //   $scope.collection.image.push({ name: 'name', remoteFileUrl: imageUrl, size: ''});
+  //   console.log("url link", $scope.urlForImage);
+  //   $scope.urlForImage = "";
+  // };
 
   $scope.submit = function () {
 
     // make sure this is a resource object.
-    console.log($scope.collection);
+    console.log($scope.collection.images);
 
     var collection = $scope.collection;
 
     if (collection.id) {
       collection.update().then(function (data) {
-        $scope.addRemoteImageFile(collection, collection.urlForImage);        
-        $scope.uploadImageFiles(collection, collection.image);
+        // $scope.addRemoteImageFile(collection, collection.urlForImage);        
+        console.log(data);
+        console.log($scope.collection.images);
+        $scope.uploadImageFiles(collection, collection.images);
         delete $scope.item;
       });
     } else {
