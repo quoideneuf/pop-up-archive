@@ -35,7 +35,7 @@ class SubscriptionPlan
   end
 
   def self.create(options)
-    plan_id = "#{options[:hours]||2}-#{SecureRandom.hex(8)}"
+    plan_id = options[:plan_id] || "#{options[:hours]||2}-#{SecureRandom.hex(8)}"
     interval = options[:interval] || 'month'
     new(Stripe::Plan.create(id: plan_id,
       name: options[:name],

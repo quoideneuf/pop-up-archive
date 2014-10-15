@@ -218,16 +218,16 @@ describe AudioFile do
     end
 
     it "should check for premium transcribe dupes" do
-      user = FactoryGirl.create :user
-      user.update_card!('void_card_token')
-      plan = SubscriptionPlan.create id: '10_small_business_yr', name: 'Small Business', amount: 150, hours: 10
-      user.subscribe!(plan)
-      puts user.to_yaml
-      puts plan.to_yaml
+      new_user = FactoryGirl.create :user
+      new_user.update_card!('void_card_token')
+      plan = SubscriptionPlan.create name: 'Test Plan', amount: 10000, hours: 200, plan_id: '10_small_business_yr'
+      new_user.subscribe!(plan)
+      @audio_file.user = new_user
+      @audio_file.transcoded_at = '10/10/2014'
+      @audio_file.duration = 100
       @audio_file.premium_transcribe_audio
       @audio_file.premium_transcribe_audio
-      puts @audio_file.tasks.to_yaml
-      @audio_file.tasks.count.should == 1
+      @audio_file.tasks.size.should == 1
     end
   end
 
