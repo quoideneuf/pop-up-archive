@@ -10,8 +10,29 @@ module FileStorage
     attr_accessor :should_trigger_fixer_copy
   end
 
+  def is_collection_image?
+    unless self.class == AudioFile
+      self.try(:imageable_type) == "Collection"
+    end
+  end
+
   def collection
-    item.try(:collection)
+    # binding.remote_pry
+    if is_collection_image?
+      self.imageable
+    else
+      item.try(:collection)
+    end
+  end
+
+  def item
+    if !is_collection_image?
+      if self.class == AudioFile
+        Item.find(self.item_id)
+      else
+        self.imageable
+      end
+    end
   end
 
   def has_file?
@@ -24,18 +45,25 @@ module FileStorage
 
   def storage
     # binding.pry_remote
-    # item = Item.first
-    storage_configuration || item.try(:storage)
+    if is_collection_image?
+      self.imageable.default_storage
+    else
+      storage_configuration || item.try(:storage)
+    end
   end
 
   def store_dir(stor=storage)
     # binding.pry_remote
-    # item = Item.first
     p = self.respond_to?(:path) ? self.path : ''
-    stor.use_folders? ? "#{item.try(:token)}/#{p}" : nil
+    if is_collection_image?
+      stor.use_folders? ? "#{collection.try(:token)}/#{p}" : nil
+    else
+      stor.use_folders? ? "#{item.try(:token)}/#{p}" : nil
+    end
   end
 
   def upload_to
+    # needs change for collection image?
     storage.direct_upload? ? storage : item.upload_to
   end
 
@@ -70,7 +98,7 @@ module FileStorage
   def copy_to_item_storage
     # refresh storage related
     file_storage = self.storage_configuration
-    item_storage = item(true).storage
+    item_storage = is_collection_image? ? collection.default_storage : item.storage
     # file_storage = self.storage_configuration
     # item_storage = item.storage
     # puts "\ncopy_to_item_storage: storage(#{file_storage.inspect}) == item.storage(#{item_storage.inspect})\n"
@@ -143,7 +171,7 @@ module FileStorage
         da[:collections] << 'popuparchive' unless da[:collections].include?('popuparchive')
       end
 
-      default_subject = item.try(:collection).try(:title)
+      default_subject = is_collection_image? ? collection.try(:title) : item.try(:collection).try(:title)
       da[:subjects] = [] unless da.has_key?(:subjects)
       da[:subjects] << default_subject unless da[:subjects].include?(default_subject)
 
@@ -181,7 +209,11 @@ module FileStorage
 
   def destination_directory(options={})
     stor = options[:storage] || storage
-    stor.use_folders? ? stor.bucket : item.token
+    if is_collection_image?
+      stor.use_folders? ? stor.bucket : collection.token
+    else
+      stor.use_folders? ? stor.bucket : item.token
+    end
   end
 
   def destination(options={})
