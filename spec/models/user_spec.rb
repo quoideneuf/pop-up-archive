@@ -102,7 +102,6 @@ describe User do
     let (:plan) { free_plan }
 
     before do
-      SubscriptionPlanCached.create hours: 2, amount: 0, name: 'community'
       @other = SubscriptionPlanCached.create hours: 80, amount: 2000, name: 'big'
     end
 
@@ -126,7 +125,7 @@ describe User do
     end
 
     it 'returns the name of the plan' do
-      user.plan_name.should eq 'community'
+      user.plan_name.should eq 'Community'
     end
 
     it 'can have a card added' do
@@ -175,7 +174,7 @@ describe User do
     end
 
     it 'has community plan number of hours when there is no subscription' do
-      user.pop_up_hours.should eq 2
+      user.pop_up_hours.should eq 1
     end
   end
 
