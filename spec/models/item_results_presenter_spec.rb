@@ -9,6 +9,11 @@ class MockResultsClass
   include Elasticsearch::Model::Response::Base
 end
 def get_es_results(hitdocs=[])
+  hitdocs.each do|h|
+    if h.is_a?(Hash) and !h.has_key?('_source')
+      h['_source'] = { id: 'es-mock-' + (1+rand(100)).to_s }
+    end
+  end
   search = Elasticsearch::Model::Searching::SearchRequest.new MockOriginClass, '*'
   response = Elasticsearch::Model::Response::Response.new MockOriginClass, search
   search.stub(:execute!).and_return({ 'hits' => { 'total' => 123, 'max_score' => 456, 'hits' => hitdocs } })
@@ -31,7 +36,7 @@ describe ItemResultsPresenter do
 
     it 'creates results ItemResultPresenter per row' do
       @irps = ItemResultsPresenter.new(get_es_results([{},{},{}]).response)
-      @irps.results.count.should eq 3
+      @irps.results.size.should eq 3
     end
 
     it 'delegates respond_to?' do

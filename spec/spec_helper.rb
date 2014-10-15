@@ -78,6 +78,8 @@ RSpec.configure do |config|
   end
 
   config.after :suite, elasticsearch: true do
+    puts "Sleeping a little to let tasks finish ..."
+    sleep(5)
     Elasticsearch::Extensions::Test::Cluster.stop if Elasticsearch::Extensions::Test::Cluster.running?
   end
 

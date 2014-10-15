@@ -86,7 +86,14 @@ class ItemResultsPresenter < BasicObject
     end
 
     def database_object
-      @_result ||= ::Item.find_by_id(id)
+      # in test env results can be simple in-memory hashes, not db records
+      if @result && @result.is_a?(::Item)
+        @_result ||= @result
+      elsif ::Rails.env.test? and id.match(/^es-mock/)
+        @_result ||= ::Item.new()
+      else
+        @_result ||= ::Item.find_by_id(id)
+      end
     end
 
     def audio_files
