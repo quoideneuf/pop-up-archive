@@ -153,4 +153,5 @@ class Organization < ActiveRecord::Base
       return send(methname)[:cost].to_f
     end 
   end
+
 end
