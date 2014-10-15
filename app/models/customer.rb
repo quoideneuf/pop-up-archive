@@ -44,9 +44,10 @@ class Customer
       Rails.cache.delete([:customer, :individual, cust.id])
       return SubscriptionPlanCached.community
     end
-    cust.update_subscription(plan: SubscriptionPlanCached.community.id)
+    community_plan = SubscriptionPlanCached.community
+    cust.update_subscription(plan: community_plan.id)
     Rails.cache.delete([:customer, :individual, cust.id])
-    return SubscriptionPlanCached.community
+    return community_plan
   end
 
   def self.generic_community

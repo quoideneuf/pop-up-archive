@@ -12,7 +12,8 @@ class SubscriptionPlanCached
 
   def self.all
     Rails.cache.fetch([:plans, :group, :all], expires_in: 30.minutes) do
-      Stripe::Plan.all(count: 100).map {|p| new(p) }.tap do |plans|
+      stripe_plans = Stripe::Plan.all(count: 100)
+      stripe_plans.map {|p| new(p) }.tap do |plans|
         plans.each do |plan|
           Rails.cache.write([:plans, :individual, plan.id], plan, expires_in: 30.minutes)
         end
@@ -32,7 +33,12 @@ class SubscriptionPlanCached
     end
   end
 
+  # community() and organization() methods are essentially singletons
+  # but for the purposes of testing we create-on-demand.
   def self.community
+    if Rails.env.test?
+      return create(plan_id: 'community', name: 'Community', amount: 0)
+    end
     Rails.cache.fetch([:plans, :group, :community], expires_in: 30.minutes) do
       spc = ungrandfathered.find { |p| p.id == 'community' and p.name == 'Community'}
       if !spc
@@ -43,6 +49,9 @@ class SubscriptionPlanCached
   end
 
   def self.organization
+    if Rails.env.test?
+      return create(plan_id: 'organization', name: 'Organization', amount: 0)
+    end
     Rails.cache.fetch([:plans, :group, :organization], expires_in: 30.minutes) do
       spc = all.find { |p| p.id == 'organization' and p.name == 'Organization' }
       if !spc
@@ -52,20 +61,38 @@ class SubscriptionPlanCached
     end
   end
 
-  #  def self.create(options)
-  #    plan_id = "#{options[:hours]||2}-#{SecureRandom.hex(8)}"
-  #    interval = options[:interval] || 'month'
-  #    new(Stripe::Plan.create(id: plan_id,
-  #      name: options[:name],
-  #      amount: options[:amount],
-  #      currency: 'USD',
-  #      interval: interval)).tap do |plan|
-  #      Rails.cache.delete([:plans, :group, :all])
-  #      Rails.cache.delete([:plans, :group, :ungrandfathered])
-  #      Rails.cache.delete([:plans, :group, :community])
-  #      Rails.cache.write([:plans, :individual, plan_id], plan, expires_in: 30.minutes)
-  #    end
-  #  end
+  # the create() method is really only for testing, since we manage Stripe
+  # plans through the Stripe website.
+  # We implement it here as a way of creating plans via stripe-mock gem
+  # for the purposes of testing. Because we're testing, we avoid caching
+  # because we want each rspec section to live indepedently.
+  def self.create(options)
+    if !Rails.env.test?
+      raise "create() method only available for testing"
+    end
+    plan_id = options[:plan_id] || "#{options[:hours]||2}-#{SecureRandom.hex(8)}"
+    interval = options[:interval] || 'month'
+
+    # do not create it if already exists. instead return it.
+    stripe_plans = Stripe::Plan.all(count: 100)
+    stripe_plan = nil
+    stripe_plans.each do|strplan|
+      if strplan.id == plan_id
+        stripe_plan = strplan
+      end
+    end
+    if !stripe_plan
+      stripe_plan = Stripe::Plan.create(id: plan_id, name: options[:name], amount: options[:amount], currency: 'USD', interval: interval)
+    end
+    #puts "Stripe::Plan = " + stripe_plan.inspect
+    spc = new(stripe_plan)
+
+    # clear any caching. really.
+    self.reset_cache
+
+    #puts "SPC created: " + spc.inspect
+    return spc
+  end
 
   def self.reset_cache
     Rails.cache.delete([:plans, :group, :all])
