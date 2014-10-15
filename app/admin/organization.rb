@@ -7,12 +7,12 @@ ActiveAdmin.register Organization do
     column :plan do |org| org.owner_id ? org.owner.plan.name : span('(none)', class: "empty") end
     column 'Usage', :premium_seconds, sortable: "transcript_usage_cache->'premium_seconds'" do |org|
       raw 'Premium: ' + \
-      Api::BaseHelper::time_definition(org.transcript_usage_cache['premium_seconds'].to_i||0) + \
-      '&nbsp;' + number_to_currency(org.transcript_usage_cache['premium_cost'].to_f||'0.00') + \
+      Api::BaseHelper::time_definition(org.get_total_seconds(:premium)||0) + \
+      '&nbsp;' + number_to_currency(org.get_total_cost(:premium)||'0.00') + \
       '<br/>' + \
       'Basic: ' + \
-      Api::BaseHelper::time_definition(org.transcript_usage_cache['basic_seconds'].to_i||0) + \
-      '&nbsp;' + number_to_currency(org.transcript_usage_cache['basic_cost'].to_f||'0.00')
+      Api::BaseHelper::time_definition(org.get_total_seconds(:basic)||0) + \
+      '&nbsp;' + number_to_currency(org.get_total_cost(:basic)||'0.00')
     end
   end
 
@@ -27,10 +27,10 @@ ActiveAdmin.register Organization do
         row("Plan Name") { organization.owner_id ? organization.owner.plan.name : span(I18n.t('active_admin.empty'), class: "empty") }
         row("Metered Storage") { Api::BaseHelper::time_definition(organization.used_metered_hours_cache||0) }
         row("Unmetered Storage") { Api::BaseHelper::time_definition(organization.used_unmetered_hours_cache||0) }
-        row("Premium Transcripts") { Api::BaseHelper::time_definition(organization.transcript_usage_cache['premium_seconds'].to_i||0) }
-        row("Premium Cost") { number_to_currency(organization.transcript_usage_cache['premium_cost'].to_f||'0.00') }
-        row("Basic Transcripts") { Api::BaseHelper::time_definition(organization.transcript_usage_cache['basic_seconds'].to_i||0) }
-        row("Basic Cost") { number_to_currency(organization.transcript_usage_cache['basic_cost'].to_f||'0.00') }
+        row("Premium Transcripts") { Api::BaseHelper::time_definition(organization.get_total_seconds(:premium)||0) }
+        row("Premium Cost") { number_to_currency(organization.get_total_cost(:premium)||'0.00') }
+        row("Basic Transcripts") { Api::BaseHelper::time_definition(organization.get_total_seconds(:basic)||0) }
+        row("Basic Cost") { number_to_currency(organization.get_total_cost(:basic)||'0.00') }
         row("Created") { organization.created_at }
         row("Updated") { organization.updated_at }
       end

@@ -134,4 +134,23 @@ class Organization < ActiveRecord::Base
     @_used_premium_transcripts ||= total_transcripts_report(:premium)
   end
 
+  def get_total_seconds(ttype)
+    ttype_s = ttype.to_s
+    methname = 'used_' + ttype_s + '_transcripts'
+    if transcript_usage_cache.has_key?(ttype_s+'_seconds')
+      return transcript_usage_cache[ttype_s+'_seconds'].to_i
+    else
+      return send(methname)[:seconds].to_i
+    end 
+  end 
+
+  def get_total_cost(ttype)
+    ttype_s = ttype.to_s
+    methname = 'used_' + ttype_s + '_transcripts'
+    if transcript_usage_cache.has_key?(ttype_s+'_cost')
+      return transcript_usage_cache[ttype_s+'_cost'].to_f
+    else
+      return send(methname)[:cost].to_f
+    end 
+  end
 end
