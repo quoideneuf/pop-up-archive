@@ -14,4 +14,8 @@ notifications:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libmagic-dev
+  - travis_retry gem update --system
+  - travis_retry gem install bundler --pre
+  - gem --version
+  - bundle --version
   - ln -s /usr/share/elasticsearch/bin/elasticsearch.in.sh ~/.elasticsearch.in.sh
