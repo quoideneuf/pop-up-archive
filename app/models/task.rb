@@ -178,4 +178,8 @@ class Task < ActiveRecord::Base
     job_id
   end
 
+  def self.get_mismatched_status(task_status)
+    self.where("status=? and extras->'results' not like ?", task_status, "%_status_:_#{task_status}_%'")
+  end
+
 end
