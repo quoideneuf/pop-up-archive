@@ -11,8 +11,6 @@ class FinishTaskWorker
       begin
         task.finish! if task
       rescue StateMachine::InvalidTransition => err
-        call_locations.each do|loc| puts loc end
-        puts err
         logger.warn "FinishTaskWorker: StateMachine::InvalidTransition: task: #{task_id}, err: #{err.message}"
       end
       true
