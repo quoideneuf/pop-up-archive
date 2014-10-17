@@ -8,8 +8,10 @@
       button.btn.btn-danger ng-click="delete()" ng-show="canEdit"
         i.icon-trash  Delete Collection
 
-    img ng-show="collection.imageFiles" ng-src="{{collection.imageFiles[collection.imageFiles.length - 1].file.file.thumb.url}}"
-    h2 Browsing {{collection.title}}
+    .thumb-and-title    
+      img ng-show="collection.imageFiles" ng-src="{{collection.imageFiles[collection.imageFiles.length - 1].file.file.thumb.url}}"
+      h2 Browsing {{collection.title}}
+      .clear
 
     p ng-show="collection.description" ng-bind-html="collection.description"
 
