@@ -16,20 +16,42 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     data_file = download_audio_file
 
     # create the speechmatics job
-    sm = Speechmatics::Client.new
-    info = sm.user.jobs.create(
+    sm = Speechmatics::Client.new({ :request => { :timeout => 120 } })
+    begin
+      info = sm.user.jobs.create(
       data_file:    data_file.path,
       content_type: 'audio/mpeg; charset=binary',
       notification: 'callback',
       callback:     call_back_url
-    )
+      )
+      # save the speechmatics job reference
+      self.extras['job_id'] = info.id
+      self.save!
 
-    # save the speechmatics job reference
-    self.extras['job_id'] = info.id
-    self.save!
+      # update usage if the new job creatd and saved
+      update_premium_transcript_usage
 
-    # update usage if the new job creatd and saved
-    update_premium_transcript_usage
+    rescue Faraday::Error::TimeoutError => err
+
+      # it is possible that speechmatics got the request
+      # but we failed to get the response.
+      # so check back to see if a record exists for our file.
+      sm_jobs = sm.user.jobs.list
+      sm_jobs.each do|smjob|
+        if smjob.name == data_file.path
+          # yes, it was successful even though SM failed to respond.
+          self.extras['job_id'] = smjob.id
+          self.save!
+          update_premium_transcript_usage
+          break
+        end
+      end
+
+    rescue Exception => err
+      # re-throw
+      raise err
+    end
+
   end
 
   def update_premium_transcript_usage(now=DateTime.now)
@@ -116,7 +138,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     speakers_lookup = {}
     speakers_by_name = speakers.inject({}) {|all, s| all.key?(s['name']) ? all[s['name']] << s : all[s['name']] = [s]; all }
     speakers_by_name.keys.each do |n|
-      times = speakers_by_name[n].collect{|r| [BigDecimal.new(r['time'].to_s), (BigDecimal.new(r['time'].to_s) + BigDecimal.new(r['duration'].to_s))] }        
+      times = speakers_by_name[n].collect{|r| [BigDecimal.new(r['time'].to_s), (BigDecimal.new(r['time'].to_s) + BigDecimal.new(r['duration'].to_s))] }
       speakers_lookup[n] = trans.speakers.create(name: n, times: times)
     end
     speakers_lookup
@@ -159,7 +181,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     self.extras['user_id']
   end
 
-  def duration    
+  def duration
     self.extras['duration'].to_i
   end
 
