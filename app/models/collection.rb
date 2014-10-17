@@ -140,7 +140,6 @@ class Collection < ActiveRecord::Base
   end
 
   def storage
-    # This is the problematic method for file_storage
     default_storage.provider
   end
 
