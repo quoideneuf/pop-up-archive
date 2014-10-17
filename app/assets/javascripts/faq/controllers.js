@@ -59,7 +59,7 @@ angular.module('Directory.faq.controllers', ['Directory.loader', 'Directory.user
 					answer: "Pop Up Archive currently supports the following file formats: 'aac', 'aif', 'aiff', 'alac', 'flac', 'm4a', 'm4p', 'mp2', 'mp3', 'mp4', 'ogg', 'raw', 'spx', 'wav', 'wma'. Email us (edison@popuparchiveorg.zendesk.com) if your file won't upload!",
 				},
 				{
-					question: "What kind of audio file formats can I upload?",
+					question: "What kind of image file formats can I upload?",
 					answer: "Pop Up Archive accepts jpg and png format images.",
 				},
 				{
