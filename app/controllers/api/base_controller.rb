@@ -4,7 +4,7 @@ class Api::BaseController < ApplicationController
   rescue_from ActionView::MissingTemplate, :with => :template_error
   rescue_from Stripe::InvalidRequestError, :with => :upstream_error
   rescue_from Elasticsearch::Transport::Transport::Errors::NotFound, :with => :not_found
-  rescue_from CanCan::AccessDenied, with => :authz_denied
+  rescue_from CanCan::AccessDenied, :with => :authz_denied
 
   def not_found
     respond_to do |format|
