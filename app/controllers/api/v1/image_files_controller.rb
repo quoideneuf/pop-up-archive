@@ -2,11 +2,19 @@ require "digest/sha1"
 
 class Api::V1::ImageFilesController < Api::V1::BaseController
 
-  expose :item
+  # expose :item
+  # expose :image_files, ancestor: :item
   # Probably need to change the ancestor somehow to imageable, and get to the item that way
-  expose :image_files, ancestor: :item
-  expose :collection
-  expose :image_files, ancestor: :collection
+  # expose :collection
+  # expose :image_files, ancestor: :collection
+  expose (:imageable) {
+    if params[:item_id]
+      Item.find(params[:item_id])
+    elsif params[:collection_id]
+      Collection.find(params[:collection_id])
+    end
+  }
+  expose :image_files, ancestor: :imageable
   expose :image_file
   expose :upload_to_storage
 
