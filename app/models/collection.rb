@@ -140,7 +140,8 @@ class Collection < ActiveRecord::Base
   end
 
   def storage
-    default_storage.provider
+    # default_storage.provider
+    default_storage
   end
 
   def validate_storage
