@@ -1,4 +1,4 @@
-worker_processes 4
+worker_processes Integer(ENV["UNICORN_CONCURRENCY"] || 3)
 timeout 30
 preload_app true
 
