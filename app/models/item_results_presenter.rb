@@ -104,7 +104,7 @@ class ItemResultsPresenter < BasicObject
     end
 
     def image_files
-      @_image_files ||= ::ImageFile.where(item_id: @result.id)
+      @_image_files ||= ::ImageFile.where(imageable_id: @result.id, imageable_type: "Item")
     end
 
     def highlighted_audio_files
