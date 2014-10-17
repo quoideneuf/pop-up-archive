@@ -1,4 +1,4 @@
-attributes :id, :title, :description, :items_visible_by_default
+attributes :id, :title, :description, :items_visible_by_default, :token
 
 node(:urls) do |i|
   { self: url_for(api_collection_path(i)) }
