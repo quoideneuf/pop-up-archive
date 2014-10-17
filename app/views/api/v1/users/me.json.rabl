@@ -1,8 +1,15 @@
 object false
 
 if current_user
+  cur_url = request.protocol + request.host
+  if request.port != 80 and request.protocol == 'http://'
+    cur_url += ':' + request.port.to_s
+  end
+  if request.port != 443 and request.protocol == 'https://'
+    cur_url += ':' + request.port.to_s
+  end
   node(:id) { current_user.id }
-  node(:uri) { "http://pop-up-archive.org/api/users/#{current_user.id}" }
+  node(:uri) { "#{cur_url}/api/users/#{current_user.id}" }
   node(:uploads_collection_id) { current_user.uploads_collection.id }
   node(:collection_ids) { current_user.collection_ids }
   node(:role) { current_user.role }

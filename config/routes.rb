@@ -55,6 +55,9 @@ PopUpArchive::Application.routes.draw do
 
       post '/credit_card' => 'credit_cards#save_token'
 
+      get '/test/croak' => 'test#croak'
+      resources :test
+
       resource :last_items
       resource :search
       resources :items do
@@ -119,6 +122,7 @@ PopUpArchive::Application.routes.draw do
     mount Sidekiq::Web => '/admin/sidekiq'
   end
 
+  match '/api/*path', to: 'api/base#not_found'
   match '*path', to: 'directory/dashboard#user'
   root to: 'directory/dashboard#guest', constraints: GuestConstraint.new(true)
   root to: 'directory/dashboard#user', constraints: GuestConstraint.new(false)
