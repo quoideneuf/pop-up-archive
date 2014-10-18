@@ -17,7 +17,6 @@ module FileStorage
   end
 
   def collection
-    # binding.remote_pry
     if is_collection_image?
       self.imageable
     else
@@ -44,7 +43,6 @@ module FileStorage
   end
 
   def storage
-    # binding.pry_remote
     if is_collection_image?
       self.imageable.default_storage
     else
@@ -53,7 +51,6 @@ module FileStorage
   end
 
   def store_dir(stor=storage)
-    # binding.pry_remote
     p = self.respond_to?(:path) ? self.path : ''
     if is_collection_image?
       stor.use_folders? ? "#{collection.try(:token)}/#{p}" : nil
