@@ -48,6 +48,18 @@ class Task < ActiveRecord::Base
     end
   end
 
+  # sanity check when saving a task.
+  # if the current status != complete but it has results which *are* complete,
+  # then kick off the FinishTask so that status gets updated.
+  # this addresses a timing/race condition between external services (e.g. fixer)
+  # and the async nature of our task runner (sidekiq)
+  after_commit :finish_async, on: :update, if: Proc.new {|task| !task.complete?}
+
+  def finish_asynch
+    return unless results && (results['status'] == 'complete')
+    FinishTaskWorker.perform_async(id) unless Rails.env.test?
+  end
+
   def update_from_fixer(params)
 
     # enforce this later
