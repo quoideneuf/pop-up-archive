@@ -32,6 +32,40 @@ namespace :reports do
     Rake::Task["reports:org_usage"].reenable
   end
 
+  desc "All account usage reports: incremental"
+  task usage_increm: [:environment] do
+    Rake::Task["reports:user_usage_increm"].invoke
+    Rake::Task["reports:user_usage_increm"].reenable
+    Rake::Task["reports:org_usage_increm"].invoke
+    Rake::Task["reports:org_usage_increm"].reenable
+  end
+
+  desc "User account usage reports: incremental (set SINCE)"
+  task user_usage_increm: [:environment] do
+    user_ids = User.get_user_ids_for_transcripts_since(ENV['SINCE'])
+    progress = ANSI::Progressbar.new("#{user_ids.size} Users", user_ids.size, STDOUT)
+    progress.bar_mark = '='
+    user_ids.each do|uid|
+      user = User.find(uid)
+      user.update_usage_report!
+      progress.inc
+    end
+    progress.finish
+  end
+
+  desc "Organization account usage reports: incremental (set SINCE)"
+  task org_usage_increm: [:environment] do
+    org_ids = Organization.get_org_ids_for_transcripts_since(ENV['SINCE'])
+    progress = ANSI::Progressbar.new("#{org_ids.size} Orgs", org_ids.size, STDOUT)
+    progress.bar_mark = '='
+    org_ids.each do|oid|
+      org = Organization.find(oid)
+      org.update_usage_report!
+      progress.inc
+    end
+    progress.finish
+  end
+
   desc "audio files most played"
   task play_count: [:environment] do
     afs = AudioFile.order('listens desc').limit(25).includes(:item)

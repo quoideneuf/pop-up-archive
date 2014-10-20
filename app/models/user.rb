@@ -309,6 +309,32 @@ class User < ActiveRecord::Base
     return { :seconds => "%010d" % total_secs, :cost => sprintf('%010.2f', total_cost.fdiv(1000)) }
   end
 
+  def self.get_user_ids_for_transcripts_since(since_dtim=nil)
+    if since_dtim == nil
+      since_dtim = DateTime.now - (1/24.0)  # an hour ago
+    elsif since_dtim.is_a?(DateTime)
+      # no op
+    else
+      since_dtim = DateTime.parse(since_dtim)
+    end
+
+    #puts "Checking transcripts modified since #{since_dtim}"
+
+    transcripts_sql = "select t.audio_file_id from transcripts as t where t.updated_at >= '#{since_dtim.strftime('%Y-%m-%d %H:%M:%S')}'"
+    audio_files_sql = "select a.item_id from audio_files as a where a.deleted_at is null and a.id in (#{transcripts_sql})"
+    items_sql       = "select i.collection_id from items as i where i.deleted_at is null and i.id in (#{audio_files_sql})"
+    colls_sql       = "select c.creator_id from collections as c where c.deleted_at is null and c.id in (#{items_sql})"
+    grants_sql      = "select g.collector_id from collection_grants as g where g.collector_type='User' and g.collection_id in (#{colls_sql})"
+    #puts grants_sql
+
+    user_ids = []
+    pgres = User.connection.execute(grants_sql)
+    pgres.each_row do |row|
+      user_ids << row.first
+    end
+    return user_ids
+  end
+
   private
 
   def delete_customer
