@@ -36,11 +36,11 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       # it is possible that speechmatics got the request
       # but we failed to get the response.
       # so check back to see if a record exists for our file.
-      sm_jobs = sm.user.jobs.list
+      sm_jobs = sm.user.jobs.list.jobs
       sm_jobs.each do|smjob|
-        if smjob.name == data_file.path
+        if smjob['name'] == data_file.path
           # yes, it was successful even though SM failed to respond.
-          self.extras['job_id'] = smjob.id
+          self.extras['job_id'] = smjob['id']
           self.save!
           update_premium_transcript_usage
           break
