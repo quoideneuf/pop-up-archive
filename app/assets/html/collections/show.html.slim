@@ -9,7 +9,7 @@
         i.icon-trash  Delete Collection
 
     .thumb-and-title    
-      img ng-show="collection.imageFiles" ng-src="{{collection.imageFiles[collection.imageFiles.length - 1].file.file.thumb.url}}"
+      img ng-show="collection.imageFiles" ng-src="{{ updateImage() }}"
       h2 Browsing {{collection.title}}
       .clear
 
