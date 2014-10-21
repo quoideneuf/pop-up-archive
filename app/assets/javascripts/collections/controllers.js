@@ -138,11 +138,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
           image = images[i];
         }
       }
-      if (image.remoteFileUrl) {
-        return image.remoteFileUrl;
-      } else {
-        return image.file.file.thumb.url;
-      }
+      return image.file.file.thumb.url;
     }
   };
 
