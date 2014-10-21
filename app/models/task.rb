@@ -55,7 +55,7 @@ class Task < ActiveRecord::Base
   # and the async nature of our task runner (sidekiq)
   after_commit :finish_async, on: :update, if: Proc.new {|task| !task.complete?}
 
-  def finish_asynch
+  def finish_async
     return unless results && (results['status'] == 'complete')
     FinishTaskWorker.perform_async(id) unless Rails.env.test?
   end
@@ -128,6 +128,7 @@ class Task < ActiveRecord::Base
   end
 
   def finish_task
+    puts "finish_task called from #{caller_locations.first.to_s}"
   end
 
   def shared_attributes
