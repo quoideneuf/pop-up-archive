@@ -97,9 +97,9 @@ PopUpArchive::Application.configure do
       ActiveRecord::Base.establish_connection
     end
 
-    config.server_middleware do |chain|
-      chain.add(Autoscaler::Sidekiq::Server, Autoscaler::HerokuScaler.new, 300)
-    end
+    #config.server_middleware do |chain|
+    #  chain.add(Autoscaler::Sidekiq::Server, Autoscaler::HerokuScaler.new, 300)
+    #end
   end
   
   #Prerender.io
