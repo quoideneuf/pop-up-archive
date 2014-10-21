@@ -47,7 +47,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
         end
       end
 
-    else
+    rescue
       # re-throw original exception
       raise 
     end
