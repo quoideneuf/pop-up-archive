@@ -44,8 +44,6 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
   });
 
   Item.beforeResponse(function(data, resource) {
-    // console.log("beforeResponse");
-    console.log(data);
     data.tagList = [];
     data.images = [];    
     angular.forEach((data.tags || []), function (v,k) {

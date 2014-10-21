@@ -203,7 +203,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
         $scope.collection.images = [];
       }
 
-      // add image files to the item
+      // add image files to the collection
       angular.forEach(newImageFiles, function (file) {
         $scope.collection.images.push(file);
       });
@@ -232,9 +232,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
 
     if (collection.id) {
       collection.update().then(function (data) {
-        // $scope.addRemoteImageFile(collection, collection.urlForImage);        
-        console.log(data);
-        console.log($scope.collection.images);
+        $scope.addRemoteImageFile(collection, $scope.urlForImage);
         $scope.uploadImageFiles(collection, collection.images);
         delete $scope.item;
       });
