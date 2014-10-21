@@ -5,6 +5,15 @@ class Tasks::TranscodeTask < Task
   def finish_task
     return unless audio_file
     audio_file.check_transcode_complete
+
+    # optimally the length check should be in an analyze task,
+    # but we check here too just in case it missed on that step.
+    if !audio_file.duration
+      analysis = self.results[:info] || {}
+      if analysis[:length]
+        audio_file.update_attribute(:duration, analysis[:length].to_i)
+      end
+    end
   end
 
   def audio_file
