@@ -84,7 +84,6 @@ class Task < ActiveRecord::Base
     when 'complete'
       self.results = params['result_details']
       save!
-      FinishTaskWorker.perform_async(id) unless Rails.env.test?
     when 'error'
       failure!
     when 'retrying'
