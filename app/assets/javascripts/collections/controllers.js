@@ -199,7 +199,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
       var newImageFiles = element[0].files;
       // console.log('image files',element[0].files);
 
-      if (!$scope.collection.image) {
+      if (!$scope.collection.images) {
         $scope.collection.images = [];
       }
 
