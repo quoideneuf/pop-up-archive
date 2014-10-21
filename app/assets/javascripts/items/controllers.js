@@ -33,6 +33,23 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.transcriptExpanded = false;
 
+    $scope.updateImage = function() {
+    if ($scope.item && $scope.item.imageFiles.length) {
+      var images = $scope.item.imageFiles;
+      var image = images[0];
+      for (var i=1;i<images.length;i++) {
+        if (images[i].id > image.id) {
+          image = images[i];
+        }
+      }
+      if (image.remoteFileUrl) {
+        return image.remoteFileUrl;
+      } else {
+        return image.file.file.thumb.url;
+      }
+    }
+  };
+
   $scope.isTranscriptProcessing = function() {
     var item = $scope.item;
     var user = $scope.currentUser;

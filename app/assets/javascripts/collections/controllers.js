@@ -129,6 +129,23 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     });
   });
 
+  $scope.updateImage = function() {
+    if ($scope.collection && $scope.collection.imageFiles.length) {
+      var images = $scope.collection.imageFiles;
+      var image = images[0];
+      for (var i=1;i<images.length;i++) {
+        if (images[i].id > image.id) {
+          image = images[i];
+        }
+      }
+      if (image.remoteFileUrl) {
+        return image.remoteFileUrl;
+      } else {
+        return image.file.file.thumb.url;
+      }
+    }
+  };
+
   $scope.edit = function () {
     $scope.editItem = true;
   }
