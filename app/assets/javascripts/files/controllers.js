@@ -337,6 +337,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
 
           // let search results know that there is a new item
           $timeout(function () { $scope.$broadcast('datasetChanged')}, 750);
+          $route.reload();
         },
         onError: function () {
           console.log('fileUploaded: addAudioFile: error', item);
