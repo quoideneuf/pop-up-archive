@@ -191,10 +191,6 @@ class Item < ActiveRecord::Base
     collection.try(:title)
   end
 
-  def image_files
-    ImageFile.where(imageable_id: self.id, imageable_type:"Item").empty? ? collection.image_files : ImageFile.where(imageable_id: self.id, imageable_type:"Item")
-  end
-
   def to_indexed_json(params={})
     as_indexed_json(params).to_json 
   end
