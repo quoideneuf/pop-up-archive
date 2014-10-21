@@ -214,14 +214,13 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     console.log($scope.collection.images);
   }; 
 
-  // $scope.addRemoteImageFile = function (saveItem, imageUrl){
-  //   if (!$scope.urlForImage)
-  //     return;
-  //   new ImageFile({remoteFileUrl: imageUrl, itemId: saveItem.id} ).create();      
-  //   $scope.collection.image.push({ name: 'name', remoteFileUrl: imageUrl, size: ''});
-  //   console.log("url link", $scope.urlForImage);
-  //   $scope.urlForImage = "";
-  // };
+  $scope.addRemoteImageFile = function (saveItem, imageUrl){
+    if (!$scope.urlForImage)
+      return;
+    new ImageFile({remoteFileUrl: imageUrl, container: "collections", containerId: saveItem.id} ).create();
+    $scope.collection.imageFiles.push({ name: 'name', remoteFileUrl: imageUrl, size: ''});
+    $scope.urlForImage = "";
+  };
 
   $scope.submit = function () {
 

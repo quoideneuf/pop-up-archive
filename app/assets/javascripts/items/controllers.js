@@ -253,7 +253,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   $scope.addRemoteImageFile = function (saveItem, imageUrl){
     if (!$scope.urlForImage)
       return;
-    new ImageFile({remoteFileUrl: imageUrl, itemId: saveItem.id} ).create();      
+    new ImageFile({remoteFileUrl: imageUrl, container: "items", containerId: saveItem.id} ).create();      
     $scope.item.images.push({ name: 'name', remoteFileUrl: imageUrl, size: ''});
     console.log("url link", $scope.urlForImage);
     $scope.urlForImage = "";
