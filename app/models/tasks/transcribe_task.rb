@@ -168,6 +168,8 @@ class Tasks::TranscribeTask < Task
     elsif audio_file.duration.present? and audio_file.duration > 0
       self.extras['duration'] = audio_file.duration.to_s
       audio_file.duration
+    else
+      self.extras['duration'].to_i
     end
   end
 
