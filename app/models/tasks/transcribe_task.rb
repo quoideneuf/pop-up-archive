@@ -161,16 +161,23 @@ class Tasks::TranscribeTask < Task
   end
 
   def duration
-    # if parent audio_file gets its duration updated after the task was created,
-    # for any reason, prefer it
-    if self.extras['duration'].present? and self.extras['duration'].to_i > 0
-      self.extras['duration'].to_i
+    self.extras['duration'].to_i
+  end
+
+  def usage_duration
+    if start_only?
+      return 0  # first 2 minutes are always free
+    end
+
+    if duration and duration > 0
+      duration
     elsif !audio_file.duration.nil?
       self.extras['duration'] = audio_file.duration.to_s
       audio_file.duration
     else
-      self.extras['duration'].to_i
+      duration
     end
+
   end
 
 end

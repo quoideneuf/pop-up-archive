@@ -169,4 +169,16 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     self.extras['duration'].to_i
   end
 
+  def usage_duration
+    # if parent audio_file gets its duration updated after the task was created, for any reason, prefer it
+    if duration and duration > 0
+      duration
+    elsif !audio_file.duration.nil?
+      self.extras['duration'] = audio_file.duration.to_s
+      audio_file.duration
+    else
+      duration
+    end
+  end
+
 end
