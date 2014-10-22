@@ -81,13 +81,7 @@ namespace :reports do
     progress = ANSI::Progressbar.new("#{nusers} Users", nusers, STDOUT)
     progress.bar_mark = '='
     User.find_each do |user|
-      # get array of date objects, one for each first-day-of-month since the User was created.
-      months = (DateTime.parse(user.created_at.to_s)<<1 .. DateTime.now).select{ |d| d.strftime("%Y-%m-01") if d.day.to_i == 1 }
-      months.each do |dtim|
-        ucalc = UsageCalculator.new(user, dtim)
-        ucalc.calculate(Tasks::TranscribeTask, MonthlyUsage::BASIC_TRANSCRIPTS)
-        ucalc.calculate(Tasks::SpeechmaticsTranscribeTask, MonthlyUsage::PREMIUM_TRANSCRIPTS)
-      end
+      user.calculate_monthly_usages!
       progress.inc
     end 
     progress.finish

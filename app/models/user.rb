@@ -161,6 +161,15 @@ class User < ActiveRecord::Base
     entity.monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).first_or_initialize.update_attributes!(value: value)
   end
 
+  def calculate_monthly_usages!
+    months = (DateTime.parse(created_at.to_s)<<1 .. DateTime.now).select{ |d| d.strftime("%Y-%m-01") if d.day.to_i == 1 } 
+    months.each do |dtim|
+      ucalc = UsageCalculator.new(self, dtim)
+      ucalc.calculate(Tasks::TranscribeTask, MonthlyUsage::BASIC_TRANSCRIPTS)
+      ucalc.calculate(Tasks::SpeechmaticsTranscribeTask, MonthlyUsage::PREMIUM_TRANSCRIPTS)
+    end
+  end
+
   def plan_json
     {
       name: plan.name,
