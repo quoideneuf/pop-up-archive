@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141010194640) do
+ActiveRecord::Schema.define(:version => 20141022033528) do
 
   add_extension "hstore"
 
@@ -341,8 +341,11 @@ ActiveRecord::Schema.define(:version => 20141010194640) do
     t.integer  "storage_id"
   end
 
+  add_index "tasks", ["created_at"], :name => "index_tasks_on_created_at"
   add_index "tasks", ["identifier"], :name => "index_tasks_on_identifier"
   add_index "tasks", ["owner_id", "owner_type"], :name => "index_tasks_on_owner_id_and_owner_type"
+  add_index "tasks", ["status"], :name => "index_tasks_on_status"
+  add_index "tasks", ["type"], :name => "index_tasks_on_type"
 
   create_table "timed_texts", :force => true do |t|
     t.integer  "transcript_id"
