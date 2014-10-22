@@ -165,7 +165,7 @@ class Tasks::TranscribeTask < Task
     # for any reason, prefer it
     if self.extras['duration'].present? and self.extras['duration'].to_i > 0
       self.extras['duration'].to_i
-    elsif audio_file.duration.present? and audio_file.duration > 0
+    elsif !audio_file.duration.nil?
       self.extras['duration'] = audio_file.duration.to_s
       audio_file.duration
     else
