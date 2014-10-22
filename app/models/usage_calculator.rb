@@ -11,7 +11,7 @@ class UsageCalculator
     # get all tasks for the user's entity
     month_start = @dtim.utc.beginning_of_month
     month_end = @dtim.utc.end_of_month
-    tasks = klass.where("extras -> 'entity_id' = ?", @user.entity.id.to_s).where(created_at: month_start..month_end)
+    tasks = klass.where(status: :complete).where("extras -> 'entity_id' = ?", @user.entity.id.to_s).where(created_at: month_start..month_end)
     duration = tasks.inject(0){|sum, t| sum + t.duration }
     user.update_usage_for(usage_type, duration, @dtim)
     duration
