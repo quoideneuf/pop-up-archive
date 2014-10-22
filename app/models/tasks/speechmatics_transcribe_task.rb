@@ -33,11 +33,8 @@ class Tasks::SpeechmaticsTranscribeTask < Task
   end
 
   def update_premium_transcript_usage(now=DateTime.now)
-    # get all tasks for the entity
-    tasks    = Tasks::SpeechmaticsTranscribeTask.where("extras -> 'entity_id' = ?", user.entity.id.to_s).where(created_at: now.utc.beginning_of_month..now.utc.end_of_month)
-    duration = tasks.inject(0){|sum, t| sum + t.duration }
-    user.update_usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS, duration, now)
-    duration
+    ucalc = UsageCalculator.new(user, now)
+    ucalc.calculate(self.class, MonthlyUsage::PREMIUM_TRANSCRIPTS)
   end
 
   def finish_task

@@ -75,11 +75,8 @@ class Tasks::TranscribeTask < Task
   end
 
   def update_transcript_usage(now=DateTime.now)
-    # get all tasks for the entity
-    tasks    = Tasks::TranscribeTask.where("extras -> 'entity_id' = ?", user.entity.id.to_s).where(created_at: now.utc.beginning_of_month..now.utc.end_of_month)
-    duration = tasks.inject(0){|sum, t| sum + t.duration }
-    user.update_usage_for(MonthlyUsage::BASIC_TRANSCRIPTS, duration, now)
-    duration
+    ucalc = UsageCalculator.new(user, now)
+    ucalc.calculate(self.class, MonthlyUsage::BASIC_TRANSCRIPTS)
   end
 
   def process_transcript(json)
