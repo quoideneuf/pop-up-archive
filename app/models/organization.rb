@@ -107,14 +107,13 @@ class Organization < ActiveRecord::Base
     collections.each do |coll|
       coll.items.each do |item|
         item.audio_files.where('audio_files.duration is not null').each do|af|
-          if af.transcripts.where("cost_per_min #{cost_where}").count > 0
-            total_secs += af.duration
-            af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
-              cpm = tr.cost_per_min
-              mins = af.duration.div(60)
-              ttl = cpm * mins
-              total_cost += ttl
-            end
+          af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
+            billable_secs = tr.billable_seconds(af)
+            total_secs += billable_secs
+            cpm = tr.cost_per_min
+            mins = billable_secs.div(60)
+            ttl = cpm * mins
+            total_cost += ttl
           end
         end
       end
@@ -124,6 +123,28 @@ class Organization < ActiveRecord::Base
     # we make seconds and cost fixed-width so that sorting a string works
     # like sorting an integer.
     return { :seconds => "%010d" % total_secs, :cost => sprintf('%010.2f', total_cost.fdiv(1000)) }
+  end
+
+  def transcripts_billable_for_month_of(dtim=DateTime.now, transcriber_id)
+    month_start = dtim.utc.beginning_of_month
+    month_end = dtim.utc.end_of_month
+    total_secs = 0
+    total_cost = 0
+    collections.each do |coll|
+      coll.items.each do |item|
+        item.audio_files.where('audio_files.duration is not null').where(created_at: month_start..month_end).each do |af|
+          af.transcripts.unscoped.where("audio_file_id=? and transcriber_id=?", af.id, transcriber_id).each do|tr|
+            billable_secs = tr.billable_seconds(af)
+            total_secs += billable_secs
+            cpm = tr.cost_per_min
+            mins = billable_secs.div(60)
+            ttl = cpm * mins
+            total_cost += ttl
+          end
+        end
+      end
+    end
+    return { :seconds => total_secs, :cost => total_cost.fdiv(1000) }
   end
 
   def used_basic_transcripts
@@ -141,8 +162,8 @@ class Organization < ActiveRecord::Base
       return transcript_usage_cache[ttype_s+'_seconds'].to_i
     else
       return send(methname)[:seconds].to_i
-    end 
-  end 
+    end
+  end
 
   def get_total_cost(ttype)
     ttype_s = ttype.to_s
@@ -151,17 +172,17 @@ class Organization < ActiveRecord::Base
       return transcript_usage_cache[ttype_s+'_cost'].to_f
     else
       return send(methname)[:cost].to_f
-    end 
+    end
   end
 
   def self.get_org_ids_for_transcripts_since(since_dtim=nil)
-    if since_dtim == nil 
+    if since_dtim == nil
       since_dtim = DateTime.now - (1/24.0)  # an hour ago
     elsif since_dtim.is_a?(DateTime)
       # no op
     else
       since_dtim = DateTime.parse(since_dtim)
-    end 
+    end
 
     #puts "Checking transcripts modified since #{since_dtim}"
 
@@ -176,7 +197,7 @@ class Organization < ActiveRecord::Base
     pgres = User.connection.execute(grants_sql)
     pgres.each_row do |row|
       org_ids << row.first
-    end 
+    end
     return org_ids
   end
 

@@ -72,6 +72,36 @@ class Transcript < ActiveRecord::Base
     srt
   end
 
+  # returns a User or Organization
+  def billable_to
+    audio_file.user.entity 
+  end
+
+  # returns the billable seconds
+  # optional single arg is the audio_file this transcript references,
+  # to avoid the sql load overhead when calculating (see User.transcripts_billable_for_month_of)
+  def billable_seconds(af=audio_file)
+    if end_time == 120 and start_time == 0 and cost_per_min == 0
+
+      # 2min preview is free 
+      # TODO better way to identify these. Perhaps a special Transcriber?
+      return 0
+
+    elsif af.duration
+
+      # prefer audio file over actual transcript time
+      # since we want people to pay for the privilege
+      # of discovering parts of their audio are unintelligible.
+      return af.duration
+
+    else
+
+      # default is the transcript length
+      return end_time - start_time
+
+    end
+  end 
+    
   private
 
   def format_time(seconds)

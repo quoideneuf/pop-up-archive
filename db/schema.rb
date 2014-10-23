@@ -11,9 +11,10 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141023044603) do
+ActiveRecord::Schema.define(:version => 20141023205320) do
 
   add_extension "hstore"
+  add_extension "pg_stat_statements"
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "namespace"
@@ -220,6 +221,7 @@ ActiveRecord::Schema.define(:version => 20141023044603) do
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
     t.string   "yearmonth"
+    t.decimal  "cost"
   end
 
   add_index "monthly_usages", ["entity_id", "entity_type", "use", "month", "year"], :name => "index_entity_use_date", :unique => true

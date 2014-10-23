@@ -28,9 +28,6 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       self.extras['job_id'] = info.id
       self.save!
 
-      # update usage if the new job creatd and saved
-      update_premium_transcript_usage
-
     rescue Faraday::Error::TimeoutError => err
 
       # it is possible that speechmatics got the request
@@ -42,7 +39,6 @@ class Tasks::SpeechmaticsTranscribeTask < Task
           # yes, it was successful even though SM failed to respond.
           self.extras['job_id'] = smjob['id']
           self.save!
-          update_premium_transcript_usage
           break
         end
       end
@@ -56,7 +52,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
   def update_premium_transcript_usage(now=DateTime.now)
     ucalc = UsageCalculator.new(user, now)
-    ucalc.calculate(self.class, MonthlyUsage::PREMIUM_TRANSCRIPTS)
+    ucalc.calculate(Transcriber.find_by_name('speechmatics'), MonthlyUsage::PREMIUM_TRANSCRIPTS)
   end
 
   def finish_task
@@ -69,6 +65,15 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     # if new transcript resulted, then call analyze
     if new_trans
       audio_file.analyze_transcript
+
+      # show usage immediately
+      update_premium_transcript_usage
+
+      # create audit xref
+      self.extras[:transcript_id] = new_trans.id
+      self.save!
+
+      # share the glad tidings
       notify_user
     end
   end

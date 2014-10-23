@@ -10,4 +10,8 @@ class Transcriber < ActiveRecord::Base
     self.find_by_name('google_voice')
   end
 
+  def self.premium
+    self.find_by_name('speechmatics')
+  end
+
 end
