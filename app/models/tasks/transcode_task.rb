@@ -16,6 +16,16 @@ class Tasks::TranscodeTask < Task
     end
   end
 
+  def recover!
+    if !audio_file
+      cancel!
+    else
+      # most often status is working but job has completed,
+      # and there's just a timing issue in the db save and the worker running.
+      finish!
+    end
+  end
+
   def audio_file
     self.owner
   end

@@ -5,6 +5,7 @@ class Tasks::UploadTask < Task
   before_validation :set_upload_task_defaults, :on => :create
 
   def finish_task
+    super
     # logger.debug "Tasks::UploadTask: after_transition: any => :complete start !!!!"
 
     if self.owner.nil?

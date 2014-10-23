@@ -5,19 +5,47 @@ class Tasks::AnalyzeTask < Task
   after_commit :create_analyze_job, :on => :create
 
   def finish_task
-    connection = Fog::Storage.new(storage.credentials)
-    uri        = URI.parse(destination)
-
-    analysis   = get_file(connection, uri)    
-    process_analysis(analysis)
+    return if cancelled?
+    puts "in finish_task task.status == '#{self.status}'"
+    if destination && destination.length > 0
+      connection = Fog::Storage.new(storage.credentials)
+      uri        = URI.parse(destination)
+      analysis   = get_file(connection, uri)    
+      process_analysis(analysis)
+    else
+      raise "No destination so cannot finish task #{id}"
+    end
   end
+
+  def recover!
+    if !owner
+      cancel!
+    else
+      finish!
+    end
+  end 
 
   def process_analysis(analysis)
     item = owner.item
     return unless item
 
     existing_names = item.entities.collect{|e| e.name || ''}.sort.uniq
-    analysis = JSON.parse(analysis) if analysis.is_a?(String)
+    analysis = nil
+    begin
+      if analysis.is_a?(String) and analysis.length > 0
+        analysis = JSON.parse(analysis)
+      end
+    rescue JSON::ParserError => err
+      # log it and skip
+      self.results[:error] = err.to_s
+      self.cancel!
+      return
+    rescue
+      raise # re-throw whatever it was
+    end
+
+    return unless analysis
+
     ["entities", "locations", "relations", "tags", "topics"].each do |category|
       analysis[category].each{|analysis_entity|
         name = analysis_entity.delete('name')

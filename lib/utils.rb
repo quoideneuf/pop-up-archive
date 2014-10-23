@@ -1,4 +1,5 @@
 require 'excon'
+require 'private_file_not_found'
 
 class Utils
 
@@ -62,7 +63,7 @@ class Utils
       end
 
       if !file_exists
-        raise "File not found on s3: #{bucket}: #{key}"
+        raise Exceptions::PrivateFileNotFound.new, "File not found on s3: #{bucket}: #{key}"
       end
 
       result = directory.files.get(key).body
