@@ -49,9 +49,8 @@ ActiveAdmin.register User do
     end
 
     panel "Monthly Usage" do
-      table_for user.monthly_usages do|tbl|
-        tbl.column :month
-        tbl.column :year
+      table_for user.monthly_usages.order('yearmonth desc') do|tbl|
+        tbl.column :yearmonth
         tbl.column :use
         tbl.column('Time') {|mu| Api::BaseHelper::time_definition(mu.value||0) }
       end

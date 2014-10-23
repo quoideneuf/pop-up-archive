@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141022041612) do
+ActiveRecord::Schema.define(:version => 20141023044603) do
 
   add_extension "hstore"
 
@@ -219,11 +219,13 @@ ActiveRecord::Schema.define(:version => 20141022041612) do
     t.decimal  "value"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+    t.string   "yearmonth"
   end
 
   add_index "monthly_usages", ["entity_id", "entity_type", "use", "month", "year"], :name => "index_entity_use_date", :unique => true
   add_index "monthly_usages", ["entity_id", "entity_type", "use"], :name => "index_monthly_usages_on_entity_id_and_entity_type_and_use"
   add_index "monthly_usages", ["entity_id", "entity_type"], :name => "index_monthly_usages_on_entity_id_and_entity_type"
+  add_index "monthly_usages", ["yearmonth"], :name => "index_monthly_usages_on_yearmonth"
 
   create_table "oauth_access_grants", :force => true do |t|
     t.integer  "resource_owner_id", :null => false
