@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+require 'dotenv'
+require 'pp'
+require 'speechmatics'
+
+Dotenv.load 'config/env_vars'
+
+Speechmatics.configure do |sm|
+  sm.auth_token = ENV["SPEECHMATICS_AUTH_TOKEN"]
+  sm.user_id    = ENV["SPEECHMATICS_USER_ID"]
+end
+
+sm = Speechmatics::Client.new({ :request => { :timeout => 120 } })
+
+#pp sm
+if !sm.user_id or !sm.auth_token
+  raise "Check your SPEECHMATICS_AUTH_TOKEN and SPEECHMATICS_USER_ID values in config/env_vars"
+end
+
+if !ARGV.empty?
+  job_id = ARGV.first.to_i
+  job = sm.user.jobs(job_id).get
+  pp job.job
+
+  #transcript = sm.user.jobs(job_id).transcript
+  #pp transcript.job
+
+else
+  jobs = sm.user.jobs.list.jobs
+  pp jobs
+end
