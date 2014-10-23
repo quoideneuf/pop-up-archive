@@ -3,16 +3,14 @@ ActiveAdmin.register MonthlyUsage do
   index do
     column :entity
     column :entity_type
-    column :month
-    column :year
+    column :yearmonth
     column :use
     column 'Time', :value, sortable: :value do |mu|
       Api::BaseHelper::time_definition(mu.value||0)
     end
   end
 
-  filter :month
-  filter :year
+  filter :yearmonth
   filter :entity_type
 
 end
