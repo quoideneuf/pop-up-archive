@@ -14,6 +14,15 @@ class Tasks::TranscribeTask < Task
     # if new transcript resulted, then call analyze
     if new_trans
       audio_file.analyze_transcript
+
+      # show usage immediately
+      update_transcipt_usage
+
+      # create audit xref
+      self.extras[:transcript_id] = new_trans.id
+      self.save!
+
+      # share the glad tidings
       notify_user unless start_only?
     end
   end
@@ -71,12 +80,11 @@ class Tasks::TranscribeTask < Task
       end
     end
 
-    update_transcript_usage
   end
 
   def update_transcript_usage(now=DateTime.now)
     ucalc = UsageCalculator.new(user, now)
-    ucalc.calculate(self.class, MonthlyUsage::BASIC_TRANSCRIPTS)
+    ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPTS)
   end
 
   def process_transcript(json)

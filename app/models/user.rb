@@ -157,16 +157,16 @@ class User < ActiveRecord::Base
     entity.monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).sum(:value)
   end
 
-  def update_usage_for(use, value, now=DateTime.now)
-    entity.monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).first_or_initialize.update_attributes!(value: value)
+  def update_usage_for(use, rep, now=DateTime.now)
+    entity.monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).first_or_initialize.update_attributes!(value: rep[:seconds], cost: rep[:cost])
   end
 
   def calculate_monthly_usages!
-    months = (DateTime.parse(created_at.to_s)<<1 .. DateTime.now).select{ |d| d.strftime("%Y-%m-01") if d.day.to_i == 1 } 
+    months = (DateTime.parse(created_at.to_s)<<1 .. DateTime.now).select{ |d| d.strftime("%Y-%m-01") if d.day.to_i == 1 }
     months.each do |dtim|
       ucalc = UsageCalculator.new(self, dtim)
-      ucalc.calculate(Tasks::TranscribeTask, MonthlyUsage::BASIC_TRANSCRIPTS)
-      ucalc.calculate(Tasks::SpeechmaticsTranscribeTask, MonthlyUsage::PREMIUM_TRANSCRIPTS)
+      ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPTS)
+      ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPTS)
     end
   end
 
@@ -301,14 +301,13 @@ class User < ActiveRecord::Base
       cost_where = '>0'
     end
     audio_files.where('audio_files.duration is not null').each do|af|
-      if af.transcripts.where("cost_per_min #{cost_where}").count > 0
-        total_secs += af.duration
-        af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
-          cpm = tr.cost_per_min
-          mins = af.duration.div(60)
-          ttl = cpm * mins
-          total_cost += ttl
-        end
+      af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
+        billable_secs = tr.billable_seconds(af)
+        total_secs += billable_secs
+        cpm = tr.cost_per_min
+        mins = billable_secs.div(60)
+        ttl = cpm * mins
+        total_cost += ttl
       end
     end
     # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
@@ -316,6 +315,24 @@ class User < ActiveRecord::Base
     # we make seconds and cost fixed-width so that sorting a string works
     # like sorting an integer.
     return { :seconds => "%010d" % total_secs, :cost => sprintf('%010.2f', total_cost.fdiv(1000)) }
+  end
+
+  def transcripts_billable_for_month_of(dtim=DateTime.now, transcriber_id)
+    month_start = dtim.utc.beginning_of_month
+    month_end = dtim.utc.end_of_month
+    total_secs = 0
+    total_cost = 0
+    audio_files.where('audio_files.duration is not null').where(created_at: month_start..month_end).each do |af|
+      af.transcripts.unscoped.where("audio_file_id=? and transcriber_id=?", af.id, transcriber_id).each do|tr|
+        billable_secs = tr.billable_seconds(af)
+        total_secs += billable_secs
+        cpm = tr.cost_per_min
+        mins = billable_secs.div(60)
+        ttl = cpm * mins
+        total_cost += ttl
+      end
+    end
+    return { :seconds => total_secs, :cost => total_cost.fdiv(1000) }
   end
 
   def self.get_user_ids_for_transcripts_since(since_dtim=nil)
