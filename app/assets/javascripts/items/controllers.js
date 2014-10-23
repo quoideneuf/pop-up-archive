@@ -33,10 +33,42 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.transcriptExpanded = false;
 
-  $scope.isTranscriptProcessing = function() {
+  $scope.isFileProcessing = function(file) {
     var item = $scope.item;
     var user = $scope.currentUser;
-    return (user && item && user.canEdit(item) && (item.audioFiles.length > 0) && (item.audioFiles[0].transcript == null));
+    return (user && item && user.canEdit(item) && (file.transcript == null));
+  };
+
+  $scope.taskStatus = function(file) {
+    if (!file) { return false; }
+    console.log(file.tasks);
+    var status = "uploading";
+    var upload, start, full;
+    for (var i=0; i<file.tasks.length; i++) {
+      var task = file.tasks[i];
+      switch (task.identifier) {
+        case "upload":
+          upload = task.status;
+          break;
+        case "ts_start":
+          start = task.status;
+          break;
+        case "ts_all":
+        case "ts_paid":
+          full = task.status;
+          break;
+      }
+    }
+    if (start == "working") {
+      status = "start";
+    } else if (start == "complete" && full == "working") {
+      status = "full";
+    } else if (full == "complete") {
+      status = "finished";
+    // } else if ()
+    }
+    console.log(upload, start, full, status);
+    return status;
   };
 
   $scope.allowEditButton = function(file) {
