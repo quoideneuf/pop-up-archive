@@ -31,7 +31,7 @@ PopUpArchive::Application.configure do
   # config.force_ssl = true
 
   # See everything in the log (default is :info)
-  config.log_level = :debug
+  config.log_level = :info
 
   # Prepend all log lines with the following tags
   # config.log_tags = [ :subdomain, :uuid ]
@@ -49,7 +49,7 @@ PopUpArchive::Application.configure do
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
-  config.assets.precompile += ['directory/base.css', 'directory/application.js', 'login/base.css', 'login.js', 'jplayer.popup.css', 'jquery.jplayer.js']
+  config.assets.precompile += ['directory/base.css', 'directory/application.js', 'login/base.css', 'login.js', 'jplayer.popup.css', 'jquery.jplayer.js', 'pua_aa_stylesheet.css']
 
   # Disable delivery errors, bad email addresses will be ignored
   config.action_mailer.raise_delivery_errors = true

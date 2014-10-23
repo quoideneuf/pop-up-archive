@@ -55,11 +55,8 @@ class Tasks::SpeechmaticsTranscribeTask < Task
   end
 
   def update_premium_transcript_usage(now=DateTime.now)
-    # get all tasks for the entity
-    tasks    = Tasks::SpeechmaticsTranscribeTask.where("extras -> 'entity_id' = ?", user.entity.id.to_s).where(created_at: now.utc.beginning_of_month..now.utc.end_of_month)
-    duration = tasks.inject(0){|sum, t| sum + t.duration }
-    user.update_usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS, duration, now)
-    duration
+    ucalc = UsageCalculator.new(user, now)
+    ucalc.calculate(self.class, MonthlyUsage::PREMIUM_TRANSCRIPTS)
   end
 
   def finish_task
@@ -88,8 +85,17 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       return trans
     end
 
+    transcriber = Transcriber.find_by_name('speechmatics')
+
     Transcript.transaction do
-      trans    = audio_file.transcripts.create!(language: 'en-US', identifier: identifier, start_time: 0, end_time: 0)
+      trans    = audio_file.transcripts.create!(
+        language: 'en-US',  # TODO get this from audio_file?
+        identifier: identifier, 
+        start_time: 0, 
+        end_time: 0, 
+        transcriber_id: transcriber.id,
+        cost_per_min: transcriber.cost_per_min
+      )
       speakers = response.speakers
       words    = response.words
 
@@ -183,6 +189,18 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
   def duration
     self.extras['duration'].to_i
+  end
+
+  def usage_duration
+    # if parent audio_file gets its duration updated after the task was created, for any reason, prefer it
+    if duration and duration > 0
+      duration
+    elsif !audio_file.duration.nil?
+      self.extras['duration'] = audio_file.duration.to_s
+      audio_file.duration
+    else
+      duration
+    end
   end
 
 end

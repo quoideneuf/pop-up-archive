@@ -10,4 +10,12 @@ class ApplicationController < ActionController::Base
     redirect_to root_url
   end
 
+  def authenticate_superadmin_user!
+    authenticate_user!
+    unless current_user.super_admin?
+      flash[:alert] = "Unauthorized Access!"
+      redirect_to root_path
+    end
+  end
+
 end

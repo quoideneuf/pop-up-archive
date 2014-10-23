@@ -1,7 +1,8 @@
 class Transcript < ActiveRecord::Base
-  attr_accessible :language, :audio_file_id, :identifier, :start_time, :end_time, :confidence
+  attr_accessible :language, :audio_file_id, :identifier, :start_time, :end_time, :confidence, :transcriber_id, :cost_per_min
 
   belongs_to :audio_file
+  belongs_to :transcriber
   has_one :item, through: :audio_file
   has_many :timed_texts, order: 'start_time ASC'
   has_many :speakers

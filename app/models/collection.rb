@@ -78,4 +78,11 @@ class Collection < ActiveRecord::Base
     uploads_collection_grants.present?
   end
 
+  def used_metered_storage
+    @_used_metered_storage ||= (items.map{|item| item.audio_files.where(metered: true).sum(:duration) }.inject(:+) || 0)
+  end
+
+  def used_unmetered_storage
+    @_used_unmetered_storage ||= (items.map{|item| item.audio_files.where(metered: false).sum(:duration) }.inject(:+) || 0)
+  end
 end

@@ -11,9 +11,24 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140808172043) do
+ActiveRecord::Schema.define(:version => 20141022041612) do
 
   add_extension "hstore"
+
+  create_table "active_admin_comments", :force => true do |t|
+    t.string   "namespace"
+    t.text     "body"
+    t.string   "resource_id",   :null => false
+    t.string   "resource_type", :null => false
+    t.integer  "author_id"
+    t.string   "author_type"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  add_index "active_admin_comments", ["author_type", "author_id"], :name => "index_active_admin_comments_on_author_type_and_author_id"
+  add_index "active_admin_comments", ["namespace"], :name => "index_active_admin_comments_on_namespace"
+  add_index "active_admin_comments", ["resource_type", "resource_id"], :name => "index_active_admin_comments_on_resource_type_and_resource_id"
 
   create_table "audio_files", :force => true do |t|
     t.integer  "item_id"
@@ -29,13 +44,14 @@ ActiveRecord::Schema.define(:version => 20140808172043) do
     t.integer  "storage_id"
     t.string   "path"
     t.time     "deleted_at"
-    t.datetime "transcoded_at"
     t.integer  "duration"
+    t.datetime "transcoded_at"
     t.boolean  "metered"
     t.integer  "user_id"
     t.integer  "listens",                        :default => 0, :null => false
   end
 
+  add_index "audio_files", ["item_id", "deleted_at"], :name => "index_audio_files_on_item_id_and_deleted_at"
   add_index "audio_files", ["item_id"], :name => "index_audio_files_on_item_id"
 
   create_table "collection_grants", :force => true do |t|
@@ -174,6 +190,7 @@ ActiveRecord::Schema.define(:version => 20140808172043) do
     t.text     "music_sound_used"
     t.text     "date_peg"
     t.text     "notes"
+    t.text     "transcription"
     t.string   "tags",                              :array => true
     t.integer  "geolocation_id"
     t.hstore   "extra"
@@ -184,7 +201,6 @@ ActiveRecord::Schema.define(:version => 20140808172043) do
     t.string   "token"
     t.integer  "storage_id"
     t.boolean  "is_public"
-    t.text     "transcription"
     t.string   "language"
     t.datetime "deleted_at"
     t.string   "image"
@@ -205,7 +221,7 @@ ActiveRecord::Schema.define(:version => 20140808172043) do
     t.datetime "updated_at",  :null => false
   end
 
-  add_index "monthly_usages", ["entity_id", "entity_type", "use", "month", "year"], :name => "index_entity_use_date"
+  add_index "monthly_usages", ["entity_id", "entity_type", "use", "month", "year"], :name => "index_entity_use_date", :unique => true
   add_index "monthly_usages", ["entity_id", "entity_type", "use"], :name => "index_monthly_usages_on_entity_id_and_entity_type_and_use"
   add_index "monthly_usages", ["entity_id", "entity_type"], :name => "index_monthly_usages_on_entity_id_and_entity_type"
 
@@ -235,6 +251,7 @@ ActiveRecord::Schema.define(:version => 20140808172043) do
 
   add_index "oauth_access_tokens", ["refresh_token"], :name => "index_oauth_access_tokens_on_refresh_token", :unique => true
   add_index "oauth_access_tokens", ["resource_owner_id"], :name => "index_oauth_access_tokens_on_resource_owner_id"
+  add_index "oauth_access_tokens", ["token"], :name => "index_oauth_access_tokens_on_token", :unique => true
 
   create_table "oauth_applications", :force => true do |t|
     t.string   "name",         :null => false
@@ -252,12 +269,15 @@ ActiveRecord::Schema.define(:version => 20140808172043) do
 
   create_table "organizations", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
     t.string   "amara_key"
     t.string   "amara_username"
     t.string   "amara_team"
     t.integer  "owner_id"
+    t.integer  "used_unmetered_hours_cache"
+    t.integer  "used_metered_hours_cache"
+    t.hstore   "transcript_usage_cache"
   end
 
   create_table "people", :force => true do |t|
@@ -302,6 +322,10 @@ ActiveRecord::Schema.define(:version => 20140808172043) do
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
     t.string   "stripe_plan_id"
+    t.string   "name"
+    t.string   "amount"
+    t.string   "hours"
+    t.string   "interval"
   end
 
   create_table "tasks", :force => true do |t|
@@ -317,8 +341,11 @@ ActiveRecord::Schema.define(:version => 20140808172043) do
     t.integer  "storage_id"
   end
 
+  add_index "tasks", ["created_at"], :name => "index_tasks_on_created_at"
   add_index "tasks", ["identifier"], :name => "index_tasks_on_identifier"
   add_index "tasks", ["owner_id", "owner_type"], :name => "index_tasks_on_owner_id_and_owner_type"
+  add_index "tasks", ["status"], :name => "index_tasks_on_status"
+  add_index "tasks", ["type"], :name => "index_tasks_on_type"
 
   create_table "timed_texts", :force => true do |t|
     t.integer  "transcript_id"
@@ -333,18 +360,30 @@ ActiveRecord::Schema.define(:version => 20140808172043) do
 
   add_index "timed_texts", ["start_time", "transcript_id"], :name => "index_timed_texts_on_start_time_and_transcript_id"
 
+  create_table "transcribers", :force => true do |t|
+    t.string   "name"
+    t.string   "url"
+    t.integer  "cost_per_min"
+    t.text     "description"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
   create_table "transcripts", :force => true do |t|
     t.integer  "audio_file_id"
     t.string   "identifier"
     t.string   "language"
     t.integer  "start_time"
     t.integer  "end_time"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
     t.decimal  "confidence"
+    t.integer  "transcriber_id"
+    t.integer  "cost_per_min"
   end
 
   add_index "transcripts", ["audio_file_id", "identifier"], :name => "index_transcripts_on_audio_file_id_and_identifier"
+  add_index "transcripts", ["transcriber_id"], :name => "index_transcripts_on_transcriber_id"
 
   create_table "users", :force => true do |t|
     t.string   "email",                                       :default => "", :null => false
@@ -374,6 +413,8 @@ ActiveRecord::Schema.define(:version => 20140808172043) do
     t.string   "customer_id"
     t.integer  "pop_up_hours_cache"
     t.integer  "used_metered_storage_cache"
+    t.integer  "subscription_plan_id"
+    t.hstore   "transcript_usage_cache"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

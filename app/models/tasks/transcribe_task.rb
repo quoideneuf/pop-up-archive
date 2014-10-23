@@ -75,11 +75,8 @@ class Tasks::TranscribeTask < Task
   end
 
   def update_transcript_usage(now=DateTime.now)
-    # get all tasks for the entity
-    tasks    = Tasks::TranscribeTask.where("extras -> 'entity_id' = ?", user.entity.id.to_s).where(created_at: now.utc.beginning_of_month..now.utc.end_of_month)
-    duration = tasks.inject(0){|sum, t| sum + t.duration }
-    user.update_usage_for(MonthlyUsage::BASIC_TRANSCRIPTS, duration, now)
-    duration
+    ucalc = UsageCalculator.new(user, now)
+    ucalc.calculate(self.class, MonthlyUsage::BASIC_TRANSCRIPTS)
   end
 
   def process_transcript(json)
@@ -93,7 +90,15 @@ class Tasks::TranscribeTask < Task
     end
 
     trans_json = JSON.parse(json) if json.is_a?(String)
-    trans = audio_file.transcripts.build(language: 'en-US', identifier: identifier, start_time: 0, end_time: 0)
+    transcriber = Transcriber.basic
+    trans = audio_file.transcripts.build(
+      language: 'en-US', 
+      identifier: identifier, 
+      start_time: 0, 
+      end_time: 0, 
+      transcriber_id: transcriber.id, 
+      cost_per_min: transcriber.cost_per_min
+    )
     sum = 0.0
     count = 0.0
     trans_json.each do |row|
@@ -155,8 +160,24 @@ class Tasks::TranscribeTask < Task
     extras['duration']      = audio_file.duration.to_i if audio_file
   end
 
-  def duration    
+  def duration
     self.extras['duration'].to_i
+  end
+
+  def usage_duration
+    if start_only?
+      return 0  # first 2 minutes are always free
+    end
+
+    if duration and duration > 0
+      duration
+    elsif !audio_file.duration.nil?
+      self.extras['duration'] = audio_file.duration.to_s
+      audio_file.duration
+    else
+      duration
+    end
+
   end
 
 end

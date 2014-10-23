@@ -172,7 +172,7 @@ class AudioFile < ActiveRecord::Base
     # don't bother if this is premium plan
     return if (user && user.plan.has_premium_transcripts?)
 
-    if (storage.at_internet_archive? || (user && (user.plan != SubscriptionPlan.community)))
+    if (storage.at_internet_archive? || (user && (user.plan != SubscriptionPlanCached.community)))
       start_transcribe_job(user, 'ts_all')
     end
   end
