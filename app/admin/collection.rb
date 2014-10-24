@@ -14,6 +14,13 @@ ActiveAdmin.register Collection do
         row("ID") { collection.id }
         row("Title") { collection.title }
         row("Creator") { collection.creator ? (link_to collection.creator.name, superadmin_user_path(collection.creator)) : '(none)' }
+        row("Billable To") { 
+          if collection.billable_to.is_a?(User)
+            link_to collection.billable_to.name, superadmin_user_path(collection.billable_to)
+          else
+            link_to collection.billable_to.name, superadmin_organization_path(collection.billable_to)
+          end
+        }
         row("Storage") { collection.storage }
         row("Created") { collection.created_at }
         row("Updated") { collection.updated_at }
