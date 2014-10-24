@@ -11,14 +11,14 @@ require 'pp'
 namespace :search do
   desc 're-index all items'
   task index: [:environment] do
+    klass = eval( ENV['CLASS'] ||= 'Item' )
     if ENV['DEBUG']
-      errs = Item.__elasticsearch__.import :return => 'errors'
+      errs = klass.__elasticsearch__.import :return => 'errors'
       if errs.size
         STDERR.puts "ERRORS: "
         STDERR.puts pp(errs)
       end
     else
-      ENV['CLASS'] = 'Item'
       Rake::Task["elasticsearch:import:model"].invoke
       Rake::Task["elasticsearch:import:model"].reenable
     end
@@ -29,17 +29,18 @@ namespace :search do
     nprocs     = ENV['NPROCS'] || 1
     batch_size = ENV['BATCH']  || 100
     max        = ENV['MAX']    || nil
+    kclass     = eval( ENV['CLASS']  || 'Item' )
     nprocs     = nprocs.to_i
     batch_size = batch_size.to_i
 
     # calculate array of offsets based on nprocs
-    total_expected = Item.count
+    total_expected = klass.count
     pool_size = (total_expected / nprocs).round
     offsets = []
 
     # get all ids since we can't assume there are no holes in the PK sequencing
     # because of the deleted_at paranoia feature.
-    ids = Item.order('id ASC').pluck(:id)
+    ids = klass.order('id ASC').pluck(:id)
     ids.each_slice(pool_size) do |chunk|
       #puts "chunk: size=#{chunk.size} #{chunk.first}..#{chunk.last}"
       offsets.push( chunk.first )
@@ -48,8 +49,8 @@ namespace :search do
 
     if ENV['FORCE']
       puts "Force creating new index"
-      Item.__elasticsearch__.create_index! force: true
-      Item.__elasticsearch__.refresh_index!
+      klass.__elasticsearch__.create_index! force: true
+      klass.__elasticsearch__.refresh_index!
     end
 
     offsets.each do |start_at|
@@ -62,7 +63,7 @@ namespace :search do
         completed = 0
         errors    = []
         puts "Start worker #{$$} at offset #{start_at}"
-        pbar = ANSI::Progressbar.new("Item [#{$$}]", pool_size, STDOUT) rescue nil
+        pbar = ANSI::Progressbar.new("#{klass} [#{$$}]", pool_size, STDOUT) rescue nil
         checkpoint = false
         if pbar
           pbar.__send__ :show
@@ -71,7 +72,7 @@ namespace :search do
           checkpoint = true
         end
 
-        Item.__elasticsearch__.import :return => 'errors', 
+        klass.__elasticsearch__.import :return => 'errors', 
         :start => start_at,
         :batch_size => batch_size    do |resp|
           # show errors immediately (rather than buffering them)
@@ -91,7 +92,7 @@ namespace :search do
             exit # exit child worker
           end
         end
-        # end Item callback
+        # end callback
       end
     end
     Process.waitall
