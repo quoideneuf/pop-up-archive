@@ -30,7 +30,13 @@ class AudioFile < ActiveRecord::Base
 
   delegate :collection_title, to: :item
 
-  TRANSCRIBE_RATE_PER_MINUTE = 2.00;
+  TRANSCRIBE_RATE_PER_MINUTE = 2.00;  # TODO used?
+
+  # returns object to which this audio_file should be accounted.
+  # should be a User or Organization
+  def billable_to
+    collection.billable_to  # delegate, for now
+  end
 
   def collection
     instance.try(:item).try(:collection) || item.try(:collection)
@@ -137,6 +143,7 @@ class AudioFile < ActiveRecord::Base
     result
   end
 
+  # TODO used anymore?
   def amount_for_transcript
     (duration.to_i / 60.0).ceil * TRANSCRIBE_RATE_PER_MINUTE
   end

@@ -8,11 +8,11 @@ class Collection < ActiveRecord::Base
   belongs_to :default_storage, class_name: "StorageConfiguration"
   belongs_to :upload_storage, class_name: "StorageConfiguration"
   belongs_to :creator, class_name: "User"
-  belongs_to :organization
+  belongs_to :organization # TODO this is broken
 
   has_many :collection_grants, dependent: :destroy
   has_many :uploads_collection_grants, class_name: 'CollectionGrant', conditions: {uploads_collection: true}
-  has_many :users, through: :collection_grants
+  has_many :users, through: :collection_grants # TODO this is broken
   has_many :items, dependent: :destroy
 
   validates_presence_of :title
@@ -33,6 +33,22 @@ class Collection < ActiveRecord::Base
   #     is_public
   #   end
   # end
+
+  # returns object to which this audio_file should be accounted.
+  # should be a User or Organization
+  def billable_to
+    # memoize, given caveats in http://cmme.org/tdumitrescu/blog/2014/01/careful-what-you-memoize/
+    return @_billable_to if @_billable_to
+
+    # same logic as grant_to_creator
+    if creator
+      @_billable_to = creator.organization || creator
+    else
+      # find oldest grantee -- TODO this feels too naive. Maybe prefer oldest (Org || User) ?
+      @_billable_to = collection_grants.order('created_at asc').first.collector
+    end
+    return @_billable_to
+  end
 
   def storage=(provider)
     if (provider == 'InternetArchive') && (!default_storage || (default_storage.provider != 'InternetArchive'))
