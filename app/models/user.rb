@@ -154,11 +154,11 @@ class User < ActiveRecord::Base
   end
 
   def usage_for(use, now=DateTime.now)
-    entity.monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).sum(:value)
+    monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).sum(:value)
   end
 
   def update_usage_for(use, rep, now=DateTime.now)
-    entity.monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).first_or_initialize.update_attributes!(value: rep[:seconds], cost: rep[:cost])
+    monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).first_or_initialize.update_attributes!(value: rep[:seconds], cost: rep[:cost])
   end
 
   def calculate_monthly_usages!
@@ -300,11 +300,19 @@ class User < ActiveRecord::Base
     when :premium
       cost_where = '>0'
     end
-    audio_files.includes(:item).where('audio_files.duration is not null').each do|af|
-      next unless af.billable_to == self.entity
-      af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
-        total_secs += tr.billable_secs(af)
-        total_cost += tr.cost(af)
+
+    # 'audio_files' relationship is equivalent to collections->items->audio_files
+    # but we are only interested in billable audio_files, so loop like an organization
+    # does: the long way, skipping any collections where this User != coll.billable_to
+    collections.each do |coll|
+      next unless coll.billable_to == self
+      coll.items.each do |item|
+        item.audio_files.includes(:item).where('audio_files.duration is not null').each do|af|
+          af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
+            total_secs += tr.billable_seconds(af)
+            total_cost += tr.cost(af)
+          end
+        end
       end
     end
     # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
@@ -314,16 +322,21 @@ class User < ActiveRecord::Base
     return { :seconds => "%010d" % total_secs, :cost => sprintf('%010.2f', total_cost.fdiv(1000)) }
   end
 
+  # unlike total_transcripts_report, transcripts_billable_for_month_of returns hash of numbers not strings.
   def transcripts_billable_for_month_of(dtim=DateTime.now, transcriber_id)
     month_start = dtim.utc.beginning_of_month
     month_end = dtim.utc.end_of_month
     total_secs = 0
     total_cost = 0
-    audio_files.includes(:item).where('audio_files.duration is not null').where(created_at: month_start..month_end).each do |af|
-      next unless af.billable_to == self.entity
-      af.transcripts.unscoped.where("audio_file_id=? and transcriber_id=?", af.id, transcriber_id).each do|tr|
-        total_secs += tr.billable_seconds(af)
-        total_cost += tr.cost(af)
+    collections.each do |coll|
+      next unless coll.billable_to == self
+      coll.items.each do |item|
+        item.audio_files.includes(:item).where('audio_files.duration is not null').where(created_at: month_start..month_end).each do |af|
+          af.transcripts.unscoped.where("audio_file_id=? and transcriber_id=?", af.id, transcriber_id).each do|tr|
+            total_secs += tr.billable_seconds(af)
+            total_cost += tr.cost(af)
+          end
+        end
       end
     end
     return { :seconds => total_secs, :cost => total_cost.fdiv(1000) }

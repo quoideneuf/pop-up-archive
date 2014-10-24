@@ -91,6 +91,23 @@ class Organization < ActiveRecord::Base
     }
   end
 
+  def usage_for(use, now=DateTime.now)
+    monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).sum(:value)
+  end 
+
+  def update_usage_for(use, rep, now=DateTime.now)
+    monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).first_or_initialize.update_attributes!(value: rep[:seconds], cost: rep[:cost])
+  end 
+
+  def calculate_monthly_usages!
+    months = (DateTime.parse(created_at.to_s)<<1 .. DateTime.now).select{ |d| d.strftime("%Y-%m-01") if d.day.to_i == 1 } 
+    months.each do |dtim|
+      ucalc = UsageCalculator.new(self, dtim)
+      ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPTS)
+      ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPTS)
+    end 
+  end 
+
   def total_transcripts_report(ttype=:basic)
     total_secs = 0
     total_cost = 0
@@ -109,7 +126,7 @@ class Organization < ActiveRecord::Base
       coll.items.each do |item|
         item.audio_files.where('audio_files.duration is not null').each do|af|
           af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
-            total_secs += tr.billable_secs(af)
+            total_secs += tr.billable_seconds(af)
             total_cost += tr.cost(af)
           end
         end
@@ -132,7 +149,7 @@ class Organization < ActiveRecord::Base
       coll.items.each do |item|
         item.audio_files.where('audio_files.duration is not null').where(created_at: month_start..month_end).each do |af|
           af.transcripts.unscoped.where("audio_file_id=? and transcriber_id=?", af.id, transcriber_id).each do|tr|
-            total_secs += tr.billable_secs(af)
+            total_secs += tr.billable_seconds(af)
             total_cost += tr.cost(af)
           end
         end
