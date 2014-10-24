@@ -303,12 +303,8 @@ class User < ActiveRecord::Base
     audio_files.includes(:item).where('audio_files.duration is not null').each do|af|
       next unless af.billable_to == self.entity
       af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
-        billable_secs = tr.billable_seconds(af)
-        total_secs += billable_secs
-        cpm = tr.cost_per_min
-        mins = billable_secs.div(60)
-        ttl = cpm * mins
-        total_cost += ttl
+        total_secs += tr.billable_secs(af)
+        total_cost += tr.cost(af)
       end
     end
     # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
@@ -326,12 +322,8 @@ class User < ActiveRecord::Base
     audio_files.includes(:item).where('audio_files.duration is not null').where(created_at: month_start..month_end).each do |af|
       next unless af.billable_to == self.entity
       af.transcripts.unscoped.where("audio_file_id=? and transcriber_id=?", af.id, transcriber_id).each do|tr|
-        billable_secs = tr.billable_seconds(af)
-        total_secs += billable_secs
-        cpm = tr.cost_per_min
-        mins = billable_secs.div(60)
-        ttl = cpm * mins
-        total_cost += ttl
+        total_secs += tr.billable_seconds(af)
+        total_cost += tr.cost(af)
       end
     end
     return { :seconds => total_secs, :cost => total_cost.fdiv(1000) }

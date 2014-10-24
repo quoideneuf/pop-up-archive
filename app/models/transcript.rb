@@ -101,6 +101,12 @@ class Transcript < ActiveRecord::Base
 
     end
   end 
+
+  def cost(af=audio_file)
+    secs = billable_seconds(af)
+    mins = secs.div(60)
+    return cost_per_min * mins
+  end
     
   private
 
