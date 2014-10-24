@@ -40,6 +40,19 @@ class Person < ActiveRecord::Base
     end
   end
 
+  def to_indexed_json(params={})
+    as_indexed_json(params).to_json
+  end
+
+  def as_indexed_json(params={})
+    {
+      collection_ids: collection_ids,
+      name: name,
+      slug: slug,
+      id: id
+    } 
+  end
+
   def self.search_within_collection(collection_id, query)
     Person.search do
       query { string "name:#{query}" }
