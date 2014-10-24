@@ -36,6 +36,8 @@ class Collection < ActiveRecord::Base
 
   # returns object to which this audio_file should be accounted.
   # should be a User or Organization
+
+  # TODO use grants + role==owner
   def billable_to
     # memoize, given caveats in http://cmme.org/tdumitrescu/blog/2014/01/careful-what-you-memoize/
     return @_billable_to if @_billable_to
