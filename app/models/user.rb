@@ -150,7 +150,7 @@ class User < ActiveRecord::Base
   end
 
   def entity
-    organization || self
+    @_entity ||= organization || self
   end
 
   def usage_for(use, now=DateTime.now)
@@ -300,7 +300,8 @@ class User < ActiveRecord::Base
     when :premium
       cost_where = '>0'
     end
-    audio_files.where('audio_files.duration is not null').each do|af|
+    audio_files.includes(:item).where('audio_files.duration is not null').each do|af|
+      next unless af.billable_to == self.entity
       af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
         billable_secs = tr.billable_seconds(af)
         total_secs += billable_secs
@@ -322,7 +323,8 @@ class User < ActiveRecord::Base
     month_end = dtim.utc.end_of_month
     total_secs = 0
     total_cost = 0
-    audio_files.where('audio_files.duration is not null').where(created_at: month_start..month_end).each do |af|
+    audio_files.includes(:item).where('audio_files.duration is not null').where(created_at: month_start..month_end).each do |af|
+      next unless af.billable_to == self.entity
       af.transcripts.unscoped.where("audio_file_id=? and transcriber_id=?", af.id, transcriber_id).each do|tr|
         billable_secs = tr.billable_seconds(af)
         total_secs += billable_secs

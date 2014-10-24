@@ -74,7 +74,7 @@ class Transcript < ActiveRecord::Base
 
   # returns a User or Organization
   def billable_to
-    audio_file.user.entity 
+    audio_file.billable_to
   end
 
   # returns the billable seconds

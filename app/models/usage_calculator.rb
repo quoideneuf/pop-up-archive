@@ -10,6 +10,7 @@ class UsageCalculator
   def calculate(transcriber, usage_type)
 
     # finds all the transcripts for the time period and returns the total seconds and cost
+    #puts "calculate usage for entity #{entity} for #{dtim} transcriber #{transcriber.id} type #{usage_type}"
     report = @entity.transcripts_billable_for_month_of(@dtim, transcriber.id)
     @entity.update_usage_for(usage_type, report, @dtim)
     report[:seconds]

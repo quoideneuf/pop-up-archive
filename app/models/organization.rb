@@ -105,6 +105,7 @@ class Organization < ActiveRecord::Base
       cost_where = '>0'
     end
     collections.each do |coll|
+      next unless coll.billable_to == self
       coll.items.each do |item|
         item.audio_files.where('audio_files.duration is not null').each do|af|
           af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
@@ -131,6 +132,7 @@ class Organization < ActiveRecord::Base
     total_secs = 0
     total_cost = 0
     collections.each do |coll|
+      next unless coll.billable_to == self
       coll.items.each do |item|
         item.audio_files.where('audio_files.duration is not null').where(created_at: month_start..month_end).each do |af|
           af.transcripts.unscoped.where("audio_file_id=? and transcriber_id=?", af.id, transcriber_id).each do|tr|
