@@ -29,7 +29,7 @@ namespace :search do
     nprocs     = ENV['NPROCS'] || 1
     batch_size = ENV['BATCH']  || 100
     max        = ENV['MAX']    || nil
-    kclass     = eval( ENV['CLASS']  || 'Item' )
+    klass      = eval( ENV['CLASS']  || 'Item' )
     nprocs     = nprocs.to_i
     batch_size = batch_size.to_i
 
