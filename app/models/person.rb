@@ -36,6 +36,7 @@ class Person < ActiveRecord::Base
     mappings dynamic: 'false' do
       indexes :id, index: :not_analyzed
       indexes :name, type: 'string', index_analyzer: 'index_ngram_analyzer', search_analyzer: 'search_ngram_analyzer'
+      indexes :slug, type: 'string'
       indexes :collection_id, type: 'string', as: 'collection_ids', index_name: 'collection_id'
     end
   end
@@ -46,7 +47,7 @@ class Person < ActiveRecord::Base
 
   def as_indexed_json(params={})
     {
-      collection_ids: collection_ids,
+      collection_id: collection_ids,
       name: name,
       slug: slug,
       id: id
@@ -54,19 +55,18 @@ class Person < ActiveRecord::Base
   end
 
   def self.search_within_collection(collection_id, query)
-    resp = Person.__elasticsearch__.search(
+    Person.__elasticsearch__.search(
     query: {
       filtered: {
         query: {
           term: { name: query },
         },
-       # filter: {
-       #   terms: { collection_id:[collection_id.to_i] }
-       # }
+        filter: {
+          terms: { collection_id: [collection_id.to_i] }
+        }
       }
     }
     )
-    resp
   end
 
   def collection_ids
