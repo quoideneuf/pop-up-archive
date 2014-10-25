@@ -11,28 +11,28 @@ class Person < ActiveRecord::Base
   index_name { Rails.env.test? ? "test_#{people}" : ENV['PEOPLE_INDEX_NAME'] || 'people'}
 
   settings index: { number_of_shards: 1 },
-    analysis: {
-      filter: {
-        ngram_filter: {
-          type: "edgeNGram",
-          min_gram: 2,
-          max_gram: 8,
-          side: "front"
-        }
-      },
-      analyzer: {
-        index_ngram_analyzer: {
-          type: "custom",
-          tokenizer: "standard",
-          filter: ["lowercase", "ngram_filter"]
-        },
-        search_ngram_analyzer: {
-          type: "custom",
-          tokenizer: "standard",
-          filter: ["standard", "lowercase", "ngram_filter"]
-        }
+  analysis: {
+    filter: {
+      ngram_filter: {
+        type: "edgeNGram",
+        min_gram: 2,
+        max_gram: 8,
+        side: "front"
       }
-    } do
+    },
+    analyzer: {
+      index_ngram_analyzer: {
+        type: "custom",
+        tokenizer: "standard",
+        filter: ["lowercase", "ngram_filter"]
+      },
+      search_ngram_analyzer: {
+        type: "custom",
+        tokenizer: "standard",
+        filter: ["standard", "lowercase", "ngram_filter"]
+      }
+    }
+  } do
     mappings dynamic: 'false' do
       indexes :id, index: :not_analyzed
       indexes :name, type: 'string', index_analyzer: 'index_ngram_analyzer', search_analyzer: 'search_ngram_analyzer'
@@ -50,14 +50,23 @@ class Person < ActiveRecord::Base
       name: name,
       slug: slug,
       id: id
-    } 
+    }
   end
 
   def self.search_within_collection(collection_id, query)
-    Person.search do
-      query { string "name:#{query}" }
-      filter :terms, collection_id:[collection_id.to_i]
-    end
+    resp = Person.__elasticsearch__.search(
+    query: {
+      filtered: {
+        query: {
+          term: { name: query },
+        },
+       # filter: {
+       #   terms: { collection_id:[collection_id.to_i] }
+       # }
+      }
+    }
+    )
+    resp
   end
 
   def collection_ids

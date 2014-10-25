@@ -111,16 +111,6 @@ class Item < ActiveRecord::Base
 
   accepts_nested_attributes_for :contributions
 
-  # meta_search and elasticsearch both try and inject a class search() method,
-  # so we declare our own and Try To Do the Right Thing
-  def self.search(*args, &block)
-    if args.first.is_a?(Search)
-      return self.__elasticsearch__.search(*args, &block)
-    else
-      return metasearch(*args, &block)
-    end
-  end
-  
   def duration
     read_attribute(:duration) || audio_files.inject(0){|s,a| s + a.duration.to_i}
   end
@@ -281,11 +271,6 @@ class Item < ActiveRecord::Base
       end
     end
     true
-  end
-
-  # shortcut
-  def reindex 
-    self.__elasticsearch__.index_document
   end
 
   private
