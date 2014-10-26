@@ -29,9 +29,9 @@ angular.module('Directory.analytics.controllers', ['Directory.loader', 'Director
 
   $scope.toggleCollection = function (collection) {
     if (collection.selected) {
-      $scope.analyticsData.selectCollection(collection);
-    } else {
       $scope.analyticsData.deselectCollection(collection);
+    } else {
+      $scope.analyticsData.selectCollection(collection);
     }
   }
 }])

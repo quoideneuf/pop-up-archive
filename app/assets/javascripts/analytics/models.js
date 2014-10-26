@@ -7,21 +7,19 @@ angular.module('Directory.analytics.models', ['RailsModel', 'Directory.collectio
     this.search = search;
     this.results = this.search.results;
     this.setCurrentFacet(facetName);
-  }
+  };
 
   AnalyticsDataCollection.prototype.setCurrentFacet = function (facetName) {
     this.currentFacet = this.search.getFacet(facetName);
     this.calculateData();
-  }
+  };
 
   //Count up the entries for display for the current facet
   AnalyticsDataCollection.prototype.calculateData = function () {
-    var data = {
-      tag: {},
-      entity: {}
-    };
+    var data;
 
     if (this.currentFacet.name === 'tag') {
+      data = {'tag': {}, 'entity': {}};
       angular.forEach(this.currentFacet.entries(), function (entry) {
         var count = data['tag'][entry.nameForPresenting()] || 0;
         data['tag'][entry.nameForPresenting()] = count + 1;
@@ -29,6 +27,7 @@ angular.module('Directory.analytics.models', ['RailsModel', 'Directory.collectio
 
       angular.forEach(this.results, function (result) {
         angular.forEach(result['entities'], function (entity) {
+          //don't duplicate a tag name
           if (!data['tag'][entity.name]) {
             var count = data['entity'][entity.name] || 0;
             data['entity'][entity.name] = count + 1;
@@ -36,9 +35,8 @@ angular.module('Directory.analytics.models', ['RailsModel', 'Directory.collectio
         })
       }, this)
     }
-
     this.currentData = data;
-  }
+  };
 
   //An aggregate wrapper for all the individual AnalyticsDataCollection objects
   function AnalyticsData(facetName) {
@@ -52,7 +50,7 @@ angular.module('Directory.analytics.models', ['RailsModel', 'Directory.collectio
     var dataCollection = new AnalyticsDataCollection(collection, data, this.facetName);
     this.dataCollections.push(dataCollection);
     this.selectCollection(dataCollection);
-  }
+  };
 
   AnalyticsData.prototype.selectCollection = function (dataCollection) {
 
@@ -67,7 +65,7 @@ angular.module('Directory.analytics.models', ['RailsModel', 'Directory.collectio
 
     dataCollection.selected = true;
     this.calculateData();
-  }
+  };
 
   AnalyticsData.prototype.deselectCollection = function (dataCollection) {
 
@@ -81,10 +79,9 @@ angular.module('Directory.analytics.models', ['RailsModel', 'Directory.collectio
       }, this)
     }, this)
 
-
     dataCollection.selected = false;
     this.calculateData();
-  }
+  };
 
   //Format the aggregate count for use in the d3 vis directive
   AnalyticsData.prototype.calculateData = function () {
@@ -105,7 +102,7 @@ angular.module('Directory.analytics.models', ['RailsModel', 'Directory.collectio
     })
 
     this.dataForVis = _dataForVis.slice(0, 25);
-  }
+  };
 
   return AnalyticsData;
-})
+});
