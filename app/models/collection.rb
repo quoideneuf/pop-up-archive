@@ -1,4 +1,5 @@
 class Collection < ActiveRecord::Base
+  resourcify :is_resource_of
 
   acts_as_paranoid
 
@@ -8,11 +9,10 @@ class Collection < ActiveRecord::Base
   belongs_to :default_storage, class_name: "StorageConfiguration"
   belongs_to :upload_storage, class_name: "StorageConfiguration"
   belongs_to :creator, class_name: "User"
-  belongs_to :organization # TODO this is broken
 
   has_many :collection_grants, dependent: :destroy
   has_many :uploads_collection_grants, class_name: 'CollectionGrant', conditions: {uploads_collection: true}
-  has_many :users, through: :collection_grants # TODO this is broken
+  #has_many :users, through: :collection_grants # TODO this is broken
   has_many :items, dependent: :destroy
 
   validates_presence_of :title
@@ -35,20 +35,31 @@ class Collection < ActiveRecord::Base
   # end
 
   # returns object to which this audio_file should be accounted.
-  # should be a User or Organization
-
-  # TODO use grants + role==owner
+  # should be a User or Organization that has role 'owner' on the Collection
   def billable_to
     # memoize, given caveats in http://cmme.org/tdumitrescu/blog/2014/01/careful-what-you-memoize/
     return @_billable_to if @_billable_to
 
-    # same logic as grant_to_creator
-    if creator
-      @_billable_to = creator.organization || creator
+    # find the first owner via roles. 
+    # croak if there is more than one.
+    owner_roles = is_resource_of.where(:name => :owner)
+    num_owner_roles = owner_roles.size
+    if num_owner_roles > 1
+      raise "More than one owner role defined for collection #{id}"
+    elsif num_owner_roles == 0
+      # create one, assigning to the creator or oldest grantee
+      owner = creator ? creator.entity : collection_grants.order('created_at asc').first.collector.entity
+      owner_role = Role.new
+      owner_role.name = :owner
+      owner_role.resource = self
+      owner_role.save!
+      owner.add_role :owner, self
+      owner.save!
+      @_billable_to = owner
     else
-      # find oldest grantee -- TODO this feels too naive. Maybe prefer oldest (Org || User) ?
-      @_billable_to = collection_grants.order('created_at asc').first.collector
+      @_billable_to = owner_roles.first.single_designee
     end
+
     return @_billable_to
   end
 

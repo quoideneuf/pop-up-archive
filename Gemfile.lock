@@ -470,7 +470,7 @@ GEM
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rmagick (2.13.2)
-    rolify (3.2.0)
+    rolify (3.4.1)
     routing_concerns (0.1.0)
       actionpack (>= 3.2.0)
       activemodel (>= 3.2.0)
@@ -679,7 +679,7 @@ DEPENDENCIES
   rb-inotify
   redis-rails
   rmagick
-  rolify
+  rolify (~> 3.4.1)
   routing_concerns
   rspec-mocks
   rspec-rails (~> 2.4)
