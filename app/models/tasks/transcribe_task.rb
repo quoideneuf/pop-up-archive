@@ -16,7 +16,7 @@ class Tasks::TranscribeTask < Task
       audio_file.analyze_transcript
 
       # show usage immediately
-      update_transcipt_usage
+      update_transcript_usage
 
       # create audit xref
       self.extras[:transcript_id] = new_trans.id
