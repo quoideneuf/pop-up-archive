@@ -73,7 +73,7 @@ gem 'newrelic_rpm'
 
 gem 'feedzirra', github: 'pauldix/feedzirra'
 
-gem 'rolify'
+gem 'rolify', "~> 3.4.1"
 
 gem 'sanitize'
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141023205320) do
+ActiveRecord::Schema.define(:version => 20141025050306) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
@@ -283,6 +283,13 @@ ActiveRecord::Schema.define(:version => 20141023205320) do
     t.integer  "used_metered_hours_cache"
     t.hstore   "transcript_usage_cache"
   end
+
+  create_table "organizations_roles", :id => false, :force => true do |t|
+    t.integer "organization_id"
+    t.integer "role_id"
+  end
+
+  add_index "organizations_roles", ["organization_id", "role_id"], :name => "index_organizations_roles_on_organization_id_and_role_id"
 
   create_table "people", :force => true do |t|
     t.string   "name"

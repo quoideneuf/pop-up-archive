@@ -1,5 +1,11 @@
 class Organization < ActiveRecord::Base
-  resourcify
+  resourcify :is_resource_of
+
+  # known bug with resourcify and rolify together
+  # https://github.com/RolifyCommunity/rolify/issues/244
+  # so we pass explicit association name to resourcify and let
+  # rolify use the 'roles' association name.
+  rolify
 
   attr_accessible :name
 
@@ -22,6 +28,10 @@ class Organization < ActiveRecord::Base
   scope :premium_usage_asc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) asc"
 
   ROLES = [:admin, :member]
+
+  def owns_collection?(coll)
+    has_role?(:owner, coll)
+  end
 
   def add_uploads_collection
     self.uploads_collection = Collection.new(title: "Uploads", items_visible_by_default: false)
