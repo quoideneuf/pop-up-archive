@@ -42,11 +42,8 @@ class Collection < ActiveRecord::Base
 
     # find the first owner via roles. 
     # croak if there is more than one.
-    owner_roles = is_resource_of.where(:name => :owner)
-    num_owner_roles = owner_roles.size
-    if num_owner_roles > 1
-      raise "More than one owner role defined for collection #{id}"
-    elsif num_owner_roles == 0
+    owner_role = get_owner_role
+    if !owner_role
       # create one, assigning to the creator or oldest grantee
       owner = creator ? creator.entity : collection_grants.order('created_at asc').first.collector.entity
       owner_role = Role.new
@@ -57,10 +54,31 @@ class Collection < ActiveRecord::Base
       owner.save!
       @_billable_to = owner
     else
-      @_billable_to = owner_roles.first.single_designee
+      @_billable_to = owner_role.single_designee
     end
 
     return @_billable_to
+  end
+
+  def get_owner_role
+    owner_roles = is_resource_of.where(:name => :owner)
+    if owner_roles.size > 1 
+      raise "More than one owner role defined for collection #{id}"
+    end
+    return owner_roles.first
+  end
+
+  def set_owner(user_or_org)
+    cur_owner = billable_to
+    cur_owner_role = get_owner_role
+    if cur_owner_role
+      cur_owner.remove_role :owner, self
+    end
+    user_or_org.add_role :owner, self
+    user_or_org.save!
+    # nullify cache
+    @_billable_to = nil
+    return user_or_org
   end
 
   def storage=(provider)

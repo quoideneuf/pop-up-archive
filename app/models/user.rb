@@ -291,6 +291,10 @@ class User < ActiveRecord::Base
     }
   end
 
+  def billable_collections
+    Collection.with_role(:owner, self)
+  end
+
   def total_transcripts_report(ttype=:basic)
     total_secs = 0
     total_cost = 0
@@ -308,7 +312,7 @@ class User < ActiveRecord::Base
     # 'audio_files' relationship is equivalent to collections->items->audio_files
     # but we are only interested in billable audio_files, so loop like an organization
     # does: the long way, skipping any collections where this User != coll.billable_to
-    collections.each do |coll|
+    billable_collections.each do |coll|
       next unless coll.billable_to == self
       coll.items.each do |item|
         item.audio_files.includes(:item).where('audio_files.duration is not null').each do|af|
@@ -332,7 +336,7 @@ class User < ActiveRecord::Base
     month_end = dtim.utc.end_of_month
     total_secs = 0
     total_cost = 0
-    collections.each do |coll|
+    billable_collections.each do |coll|
       next unless coll.billable_to == self
       coll.items.each do |item|
         item.audio_files.includes(:item).where('audio_files.duration is not null').where(created_at: month_start..month_end).each do |af|

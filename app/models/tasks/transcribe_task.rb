@@ -83,7 +83,12 @@ class Tasks::TranscribeTask < Task
   end
 
   def update_transcript_usage(now=DateTime.now)
-    ucalc = UsageCalculator.new(user, now)
+    billed_user = user
+    if !billed_user
+      raise "Failed to find billable user with id #{user_id} (#{self.extras.inspect})"
+    end
+    # TODO should we call this on the Org if billed_user.entity != billed_user ??
+    ucalc = UsageCalculator.new(billed_user, now)
     ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPTS)
   end
 

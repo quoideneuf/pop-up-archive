@@ -52,6 +52,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
   def update_premium_transcript_usage(now=DateTime.now)
     ucalc = UsageCalculator.new(user, now)
+    # TODO if user.entity != user, should we call it on user.entity?
     ucalc.calculate(Transcriber.find_by_name('speechmatics'), MonthlyUsage::PREMIUM_TRANSCRIPTS)
   end
 

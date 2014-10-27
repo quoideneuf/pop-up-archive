@@ -117,12 +117,18 @@ describe Tasks::SpeechmaticsTranscribeTask do
     it 'updates paid transcript usage' do
       now = DateTime.now
 
+      # test user must own the collection, since usage is limited to billable ownership.
+      audio_file.item.collection.set_owner(user)
+
       user.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS).should == 0
       extras = { 'original' => audio_file.process_file_url, 'user_id' => user.id }
       t = Tasks::SpeechmaticsTranscribeTask.create!(owner: audio_file, identifier: 'test', extras: extras)
+      
+      # audio_file must have the transcript, since transcripts are the billable items.
+      audio_file.transcripts << t.process_transcript(response)
+
       t.user_id.should == user.id.to_s
       t.extras['entity_id'].should == user.entity.id.to_s
-
       t.update_premium_transcript_usage(now).should == 60
       user.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS).should == 60
 
