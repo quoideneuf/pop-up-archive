@@ -102,6 +102,13 @@ class User < ActiveRecord::Base
     !!organization_id
   end
 
+  # rolify gem version > 3.2.0 "conveniently" caches roles instead of going back to the db each time,
+  # and the caching algorithm does not include any invalidation when add_role() is called.
+  # so we just skip their caching altogether by overriding has_role?() method here.
+  def has_role?(role_name, resource = nil)
+    has_role_helper(role_name, resource)
+  end
+
   # everyone is considered an admin on their own, role varies for those in orgs
   def role
     return :admin unless organization
@@ -151,10 +158,6 @@ class User < ActiveRecord::Base
       return customer.plan
     end
   end
-
-  def owns_collection?(coll)
-    has_role?(:owner, coll)
-  end 
 
   def entity
     @_entity ||= organization || self
