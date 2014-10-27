@@ -56,12 +56,13 @@ def create_es_index(klass)
   puts "Completed #{completed} records of class #{klass}"
 end
 
-def start_es_server
-  Elasticsearch::Extensions::Test::Cluster.start(nodes: 1) unless Elasticsearch::Extensions::Test::Cluster.running?
-
-  # indexes require data, but start clean.
+def seed_test_db
   DatabaseCleaner.clean_with(:truncation)
   load Rails.root + "db/seeds.rb"
+end
+
+def start_es_server
+  Elasticsearch::Extensions::Test::Cluster.start(nodes: 1) unless Elasticsearch::Extensions::Test::Cluster.running?
 
   # create index(s) to test against.
   create_es_index(Item)
@@ -81,6 +82,7 @@ RSpec.configure do |config|
   FactoryGirl.reload
 
   config.before :suite, elasticsearch: true do
+    seed_test_db
     start_es_server
   end
 
