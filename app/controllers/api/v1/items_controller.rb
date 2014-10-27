@@ -1,29 +1,31 @@
 class Api::V1::ItemsController < Api::V1::BaseController
   expose(:collection)
 
-  expose(:items, ancestor: :collection) do
-    collection.items.includes(:collection, :hosts, :creators, :interviewers, :interviewees, :producers, :guests, :contributors, :entities, :storage_configuration).includes(audio_files:[:tasks, :transcripts], contributions:[:person])
+  expose(:collection_items) do
+    if !params[:collection_id]
+      raise ActiveRecord::RecordNotFound
+    end
+    searched_collection_items
   end
 
   expose(:item)
   expose(:contributions, ancestor: :item)
   expose(:users_item, ancestor: :current_users_items)
 
-  expose(:searched_item) do
-    query_builder = QueryBuilder.new({query:"id:#{params[:id].to_i}"}, current_user)
+  expose(:searched_collection_items) do
+    max_items = collection.items.count # TODO sane ceiling?
+    query_builder = QueryBuilder.new({query:"collection_id:#{params[:collection_id].to_i}"}, current_user)
     search_query = Search.new(items_index_name) do
-      query_builder.query do |q|
+      query_builder.query do |q| 
         query &q
-      end
-      query_builder.filters do |f|
-        filter f.type, f.value
-      end
-    end
-    Item.search(search_query).response.first.tap do |item|
-      if item.blank?
-        raise ActiveRecord::RecordNotFound
       end 
-    end
+      size(max_items)
+      sort do |s|
+        s.by('id', 'asc')
+      end
+    end 
+    response = Item.search(search_query).response
+    ::ItemResultsPresenter.new(response).format_results
   end
 
   authorize_resource decent_exposure: true
@@ -34,7 +36,7 @@ class Api::V1::ItemsController < Api::V1::BaseController
   end
 
   def show
-    respond_with :api, searched_item
+    respond_with :api, item
   end
 
   def create
