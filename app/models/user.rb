@@ -152,6 +152,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def owns_collection?(coll)
+    has_role?(:owner, coll)
+  end 
+
   def entity
     @_entity ||= organization || self
   end
