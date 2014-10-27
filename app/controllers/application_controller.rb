@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  force_ssl if: :ssl_configured?
+
   protect_from_forgery
 
   # decent_configuration do
@@ -16,6 +18,12 @@ class ApplicationController < ActionController::Base
       flash[:alert] = "Unauthorized Access!"
       redirect_to root_path
     end
+  end
+
+  private
+
+  def ssl_configured?
+    !Rails.env.development?
   end
 
 end
