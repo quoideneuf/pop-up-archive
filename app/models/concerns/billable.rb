@@ -6,34 +6,22 @@ module Billable
     Collection.with_role(:owner, self)
   end
 
+  # returns a hash with string values suitable for hstore
   def total_transcripts_report(ttype=:basic)
-    total_secs = 0
-    total_cost = 0
-    cost_where = '=0'
 
     # for now, we have only two types. might make sense
     # longer term to store the ttype on the transcriber record.
     case ttype
     when :basic
-      cost_where = '=0'
+      use_types = [MonthlyUsage::BASIC_TRANSCRIPTS, MonthlyUsage::BASIC_TRANSCRIPT_USAGE]
     when :premium
-      cost_where = '>0'
+      use_types = [MonthlyUsage::PREMIUM_TRANSCRIPTS, MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE]
     end
 
-    # 'audio_files' relationship is equivalent to collections->items->audio_files
-    # but we are only interested in billable audio_files, so loop like an organization
-    # does: the long way, skipping any collections where this User != coll.billable_to
-    billable_collections.each do |coll|
-      next unless coll.billable_to == self
-      coll.items.each do |item|
-        item.audio_files.includes(:item).where('audio_files.duration is not null').each do|af|
-          af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
-            total_secs += tr.billable_seconds(af)
-            total_cost += tr.cost(af)
-          end
-        end
-      end
-    end
+    # sum all the monthly usage
+    total_secs = monthly_usages.where(use: use_types).sum(:value)
+    total_cost = monthly_usages.where(use: use_types).sum(:cost)
+
     # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
     # but we round to the nearest penny when we cache it in aggregate.
     # we make seconds and cost fixed-width so that sorting a string works
