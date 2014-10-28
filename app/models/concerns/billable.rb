@@ -48,9 +48,11 @@ module Billable
     total_secs = 0
     total_cost = 0
     billable_collections.each do |coll|
-      next unless coll.billable_to == self
+      next unless coll.billable_to == self # TODO redundant?
       coll.items.each do |item|
-        item.audio_files.includes(:item).where('audio_files.duration is not null').where(created_at: month_start..month_end).each do |af|
+        item.audio_files.includes(:item)\
+          .where('audio_files.duration is not null')\
+          .where(created_at: month_start..month_end).each do |af|
           af.transcripts.unscoped.where("audio_file_id=? and transcriber_id=?", af.id, transcriber_id).each do|tr|
             total_secs += tr.billable_seconds(af)
             total_cost += tr.cost(af)
@@ -60,6 +62,33 @@ module Billable
     end
     return { :seconds => total_secs, :cost => total_cost.fdiv(1000) }
   end
+
+  # unlike transcripts_billable_for_month_of, this method looks at usage only, ignoring billable_to.
+  # we do, however, pay attention to whether the audio_file is linked directly, so this method is really
+  # only useful (at the moment) for User objects.
+  def transcripts_usage_for_month_of(dtim=DateTime.now, transcriber_id)
+    if self.is_a?(Organization)
+      raise "Currently transcripts_usage_for_month_of() only available to User class. You called on #{self.inspect}"
+    end
+    month_start = dtim.utc.beginning_of_month
+    month_end = dtim.utc.end_of_month
+    total_secs = 0 
+    total_cost = 0 
+    collections.each do |coll|
+      coll.items.each do |item|
+        item.audio_files.includes(:item)\
+          .where('audio_files.duration is not null')\
+          .where('audio_files.user_id=?', self.id)\
+          .where(created_at: month_start..month_end).each do |af|
+          af.transcripts.unscoped.where("audio_file_id=? and transcriber_id=?", af.id, transcriber_id).each do|tr|
+            total_secs += tr.billable_seconds(af)
+            total_cost += tr.cost(af)
+          end 
+        end 
+      end 
+    end 
+    return { :seconds => total_secs, :cost => total_cost.fdiv(1000) }
+  end 
 
   def usage_for(use, now=DateTime.now)
     monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).sum(:value)
@@ -75,6 +104,12 @@ module Billable
       ucalc = UsageCalculator.new(self, dtim)
       ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPTS)
       ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPTS)
+
+      # calculate non-billable usage if the current actor is a User in an Org
+      if self.is_a?(User) and self.entity != self
+        ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPT_USAGE)
+        ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
+      end
     end 
   end 
 

@@ -5,6 +5,8 @@ class MonthlyUsage < ActiveRecord::Base
 
   PREMIUM_TRANSCRIPTS = 'premium transcripts'
   BASIC_TRANSCRIPTS   = 'basic transcripts'
+  PREMIUM_TRANSCRIPT_USAGE = 'premium (usage only)'
+  BASIC_TRANSCRIPT_USAGE   = 'basic (usage only)'
 
   before_save :set_yearmonth
 

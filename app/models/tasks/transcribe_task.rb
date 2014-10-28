@@ -87,9 +87,18 @@ class Tasks::TranscribeTask < Task
     if !billed_user
       raise "Failed to find billable user with id #{user_id} (#{self.extras.inspect})"
     end
-    # TODO should we call this on the Org if billed_user.entity != billed_user ??
-    ucalc = UsageCalculator.new(billed_user, now)
-    ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPTS)
+
+    # we call user.entity because that will return the billable object
+    ucalc = UsageCalculator.new(billed_user.entity, now)
+    billed_duration = ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPTS)
+
+    # call again on the user if user != entity, just to record usage.
+    if billed_user.entity != billed_user
+      user_ucalc = UsageCalculator.new(billed_user, now)
+      user_ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPT_USAGE)
+    end
+
+    return billed_duration
   end
 
   def process_transcript(json)
