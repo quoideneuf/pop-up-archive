@@ -26,15 +26,14 @@ class ItemResultsPresenter < BasicObject
   def format_results
     formatted = []
     attrs = [:title, :description, :date_created, :identifier, :collection_id,
-      :collection_title, :episode_title, :series_title, :date_broadcast,
-    :tags, :notes]
+      :collection_title, :episode_title, :series_title, :date_broadcast, :tags, :notes]
 
     if results and results.size
       results.each do |result|
         fres = { :id => result.id }
         attrs.each do |attr|
-          if result[attr].present?
-            fres[attr] = result[attr]
+          if result.search_attrs[attr].present?
+            fres[attr] = result.search_attrs[attr]
           end
         end
 
@@ -81,6 +80,10 @@ class ItemResultsPresenter < BasicObject
       @highlight = result.highlight
     end
 
+    def search_attrs
+      @result
+    end
+
     def loaded_from_database?
       !!@_result
     end
@@ -117,6 +120,10 @@ class ItemResultsPresenter < BasicObject
     end
 
     def method_missing(method, *args)
+      if @_result && @result != @_result && search_attrs[method].present?
+        return search_attrs[method]
+      end
+
       if loaded_from_database? && database_object.respond_to?(method)
         return database_object.send method, *args
       end
