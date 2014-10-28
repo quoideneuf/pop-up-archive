@@ -24,7 +24,14 @@ ActiveAdmin.register Organization do
         row("ID") { organization.id }
         row("Name") { organization.name }
         row("Owner") { organization.owner_id ? (link_to organization.owner.name, superadmin_user_path(organization.owner)) : span(I18n.t('active_admin.empty'), class: "empty") }
-        row("Plan Name") { organization.owner_id ? organization.owner.plan.name : span(I18n.t('active_admin.empty'), class: "empty") }
+        row("Plan") do |org|
+          if org.owner
+            plan = org.owner.plan
+            plan.name + ' ' + plan.hours.to_s + 'h (billed per ' + plan.interval + ')'
+          else
+            span(I18n.t('active_admin.empty'), class: "empty")
+          end
+        end
         row("Metered Storage") { Api::BaseHelper::time_definition(organization.used_metered_storage_cache||0) }
         row("Unmetered Storage") { Api::BaseHelper::time_definition(organization.used_unmetered_storage_cache||0) }
         row("Total Premium Transcripts (Billable)") { Api::BaseHelper::time_definition(organization.transcript_usage_report[:premium_billable_seconds].to_i||0) }
