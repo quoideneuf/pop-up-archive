@@ -34,8 +34,8 @@ ActiveAdmin.register User do
           ? (link_to user.organization.name, superadmin_organization_path(user.organization)) \
           : span(('none'), class: "empty")
         }
-        row("Metered Storage") { Api::BaseHelper::time_definition(user.used_metered_storage||0) }
-        row("Unmetered Storage") { Api::BaseHelper::time_definition(user.used_unmetered_storage||0) }
+        row("Metered Storage") { Api::BaseHelper::time_definition(user.used_metered_storage_cache||0) }
+        row("Unmetered Storage") { Api::BaseHelper::time_definition(user.used_unmetered_storage_cache||0) }
         row("Plan") { user.plan.name + ' ' + user.plan.hours.to_s + 'h (billed per ' + user.plan.interval + ')' }
         row("Premium Transcripts") { Api::BaseHelper::time_definition(user.get_total_seconds(:premium)||0) }
         row("Premium Cost") { number_to_currency(user.get_total_cost(:premium)||'0.00') }
@@ -62,6 +62,7 @@ ActiveAdmin.register User do
         tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
         tbl.column("Created") {|coll| coll.created_at }
         tbl.column("Storage Type") {|coll| coll.storage }
+        tbl.column("Items") {|coll| link_to "#{coll.items.count} Items", :action => 'index', :controller => "items", q: { collection_id_equals: coll.id.to_s } }
         tbl.column("Metered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_metered_storage||0) }
         tbl.column("Unmetered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_unmetered_storage||0) }
       end

@@ -5,6 +5,7 @@ ActiveAdmin.register Item do
     column :title, sortable: :title do |item| link_to item.title, superadmin_item_path(item) end
     column :created_at
     column :duration
+    column('Collection') do |item| link_to item.collection.title, superadmin_collection_path(item.collection) end
   end
 
   filter :title

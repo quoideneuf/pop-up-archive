@@ -58,6 +58,7 @@ ActiveAdmin.register Organization do
         tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
         tbl.column("Created") {|coll| coll.created_at }
         tbl.column("Storage Type") {|coll| coll.storage }
+        tbl.column("Items") {|coll| link_to "#{coll.items.count} Items", :action => 'index', :controller => "items", q: { collection_id_equals: coll.id.to_s } }
         tbl.column("Metered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_metered_storage||0) }
         tbl.column("Unmetered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_unmetered_storage||0) }
       end
