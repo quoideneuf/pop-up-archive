@@ -10,12 +10,12 @@ ActiveAdmin.register User do
     end
     column 'Usage', :premium_seconds, sortable: "transcript_usage_cache->'premium_seconds'" do |user|
       raw 'Premium: ' + \
-      Api::BaseHelper::time_definition(user.get_total_seconds(:premium)||0) + \
-      '&nbsp;' + number_to_currency(user.get_total_cost(:premium)||'0.00') + \
+      Api::BaseHelper::time_definition(user.transcript_usage_report[:premium_billable_seconds].to_i||0) + \
+      '&nbsp;' + number_to_currency(user.transcript_usage_report[:premium_billable_cost].to_f||'0.00') + \
       '<br/>' + \
       'Basic: ' + \
-      Api::BaseHelper::time_definition(user.get_total_seconds(:basic)||0) + \
-      '&nbsp;' + number_to_currency(user.get_total_cost(:basic)||'0.00')
+      Api::BaseHelper::time_definition(user.transcript_usage_report[:basic_billable_seconds].to_i||0) + \
+      '&nbsp;' + number_to_currency(user.transcript_usage_report[:basic_billable_cost].to_f||'0.00')
     end
   end
 
@@ -37,10 +37,10 @@ ActiveAdmin.register User do
         row("Metered Storage") { Api::BaseHelper::time_definition(user.used_metered_storage_cache||0) }
         row("Unmetered Storage") { Api::BaseHelper::time_definition(user.used_unmetered_storage_cache||0) }
         row("Plan") { user.plan.name + ' ' + user.plan.hours.to_s + 'h (billed per ' + user.plan.interval + ')' }
-        row("Premium Transcripts") { Api::BaseHelper::time_definition(user.get_total_seconds(:premium)||0) }
-        row("Premium Cost") { number_to_currency(user.get_total_cost(:premium)||'0.00') }
-        row("Basic Transcripts") { Api::BaseHelper::time_definition(user.get_total_seconds(:basic)||0) }
-        row("Basic Cost") { number_to_currency(user.get_total_cost(:basic)||'0.00') }
+        row("Total Premium Transcripts (Billable)") { Api::BaseHelper::time_definition(user.transcript_usage_report[:premium_billable_seconds].to_i||0) }
+        row("Total Premium Cost (Billable)") { number_to_currency(user.transcript_usage_report[:premium_billable_cost].to_f||'0.00') }
+        row("Total Basic Transcripts (Billable)") { Api::BaseHelper::time_definition(user.transcript_usage_report[:basic_billable_seconds].to_i||0) }
+        row("Total Basic Cost (Billable)") { number_to_currency(user.transcript_usage_report[:basic_billable_cost].to_f||'0.00') }
         row("Last Sign In") { user.last_sign_in_at }
         row("Sign In Count") { user.sign_in_count }
         row("Created") { user.created_at }

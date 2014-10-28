@@ -39,18 +39,31 @@ module Billable
     # longer term to store the ttype on the transcriber record.
     case ttype
     when :basic
-      use_types = [MonthlyUsage::BASIC_TRANSCRIPTS, MonthlyUsage::BASIC_TRANSCRIPT_USAGE]
+      usage_type = MonthlyUsage::BASIC_TRANSCRIPT_USAGE
+      billable_type = MonthlyUsage::BASIC_TRANSCRIPTS
     when :premium
-      use_types = [MonthlyUsage::PREMIUM_TRANSCRIPTS, MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE]
+      usage_type = MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE
+      billable_type = MonthlyUsage::PREMIUM_TRANSCRIPTS
     end
 
     # sum all the monthly usage
-    total_secs = monthly_usages.where(use: use_types).sum(:value)
-    total_cost = monthly_usages.where(use: use_types).sum(:cost)
+    total_secs          = monthly_usages.sum(:value)
+    total_billable_secs = monthly_usages.where(use: billable_type).sum(:value)
+    total_usage_secs    = monthly_usages.where(use: usage_type).sum(:value)
+    total_cost          = monthly_usages.sum(:cost)
+    total_billable_cost = monthly_usages.where(use: billable_type).sum(:cost)
+    total_usage_cost    = monthly_usages.where(use: usage_type).sum(:cost)
 
     # we make seconds and cost fixed-width so that sorting a string works
     # like sorting an integer.
-    return { :seconds => "%010d" % total_secs, :cost => sprintf('%010.2f', total_cost) }
+    return { 
+      :seconds          => "%010d" % total_secs, 
+      :cost             => sprintf('%010.2f', total_cost),
+      :billable_seconds => "%010d" % total_billable_secs,
+      :billable_cost    => sprintf('%010.2f', total_billable_cost),
+      :usage_seconds    => "%010d" % total_usage_secs,
+      :usage_cost       => sprintf('%010.2f', total_usage_cost),
+    }
   end
 
   # unlike total_transcripts_report, transcripts_billable_for_month_of returns hash of numbers not strings.
@@ -164,9 +177,17 @@ module Billable
   def transcript_usage_report
     return {
       :basic_seconds => used_basic_transcripts[:seconds],
-      :premium_seconds => used_premium_transcripts[:seconds],
       :basic_cost => used_basic_transcripts[:cost],
+      :basic_billable_seconds => used_basic_transcripts[:billable_seconds],
+      :basic_billable_cost => used_basic_transcripts[:billable_cost],
+      :basic_usage_seconds => used_basic_transcripts[:usage_seconds],
+      :basic_usage_cost => used_basic_transcripts[:usage_cost],
+      :premium_seconds => used_premium_transcripts[:seconds],
       :premium_cost => used_premium_transcripts[:cost],
+      :premium_billable_seconds => used_premium_transcripts[:billable_seconds],
+      :premium_billable_cost => used_premium_transcripts[:billable_cost],
+      :premium_usage_seconds => used_premium_transcripts[:usage_seconds],
+      :premium_usage_cost => used_premium_transcripts[:usage_cost],
     }   
   end 
 
