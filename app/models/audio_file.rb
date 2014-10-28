@@ -8,6 +8,7 @@ class AudioFile < ActiveRecord::Base
   acts_as_paranoid
 
   before_validation :set_metered
+  before_save       :check_user_id
 
   belongs_to :item, :with_deleted => true
   belongs_to :user
@@ -42,6 +43,31 @@ class AudioFile < ActiveRecord::Base
     instance.try(:item).try(:collection) || item.try(:collection)
   end
 
+  # verify that user_id is set, calling set_user_id if it is not.
+  # called via before_save callback
+  def check_user_id
+    if self.user_id.nil?
+      set_user_id
+    end
+  end
+
+  def set_user_id(uid=nil)
+    if uid.nil?
+      # find a valid user
+      if collection.creator_id
+        self.user_id = collection.creator_id
+      elsif collection.billable_to.is_a?(User)
+        self.user_id = collection.billable_to.id
+      elsif collection.billable_to.is_a?(Organization)
+        self.user_id = collection.billable_to.users.first.id
+      else
+        raise "Failed to find a valid User to assign to AudioFile"
+      end
+    else
+      self.user_id = uid
+    end
+  end
+  
   def copy_media?
     item.collection.copy_media
   end
