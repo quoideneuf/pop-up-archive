@@ -39,7 +39,7 @@ ActiveAdmin.register Organization do
       table_for organization.monthly_usages.order('yearmonth desc') do|tbl|
         tbl.column :yearmonth
         tbl.column :use
-        tbl.column('Cost') {|mu| number_to_currency(mu.cost) }
+        tbl.column('Cost') {|mu| div :class => "cost" do number_to_currency(mu.cost); end }
         tbl.column('Time') {|mu| Api::BaseHelper::time_definition(mu.value||0) }
       end
     end
