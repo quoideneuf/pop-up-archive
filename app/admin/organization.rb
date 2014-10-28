@@ -25,8 +25,8 @@ ActiveAdmin.register Organization do
         row("Name") { organization.name }
         row("Owner") { organization.owner_id ? (link_to organization.owner.name, superadmin_user_path(organization.owner)) : span(I18n.t('active_admin.empty'), class: "empty") }
         row("Plan Name") { organization.owner_id ? organization.owner.plan.name : span(I18n.t('active_admin.empty'), class: "empty") }
-        row("Metered Storage") { Api::BaseHelper::time_definition(organization.used_metered_hours_cache||0) }
-        row("Unmetered Storage") { Api::BaseHelper::time_definition(organization.used_unmetered_hours_cache||0) }
+        row("Metered Storage") { Api::BaseHelper::time_definition(organization.used_metered_storage_cache||0) }
+        row("Unmetered Storage") { Api::BaseHelper::time_definition(organization.used_unmetered_storage_cache||0) }
         row("Premium Transcripts") { Api::BaseHelper::time_definition(organization.get_total_seconds(:premium)||0) }
         row("Premium Cost") { number_to_currency(organization.get_total_cost(:premium)||'0.00') }
         row("Basic Transcripts") { Api::BaseHelper::time_definition(organization.get_total_seconds(:basic)||0) }
@@ -49,7 +49,7 @@ ActiveAdmin.register Organization do
         tbl.column("Email") {|user| user.email }
         tbl.column("Last Sign In") {|user| user.last_sign_in_at }
         tbl.column("Metered Storage") {|user| Api::BaseHelper::time_definition(user.used_metered_storage_cache||0) }
-        tbl.column("Unmetered Storage") {|user| Api::BaseHelper::time_definition(user.used_unmetered_storage||0) }
+        tbl.column("Unmetered Storage") {|user| Api::BaseHelper::time_definition(user.used_unmetered_storage_cache||0) }
         tbl.column("Plan Name") {|user| user.plan.name }
       end
     end
@@ -59,8 +59,6 @@ ActiveAdmin.register Organization do
         tbl.column("Created") {|coll| coll.created_at }
         tbl.column("Storage Type") {|coll| coll.storage }
         tbl.column("Items") {|coll| link_to "#{coll.items.count} Items", :action => 'index', :controller => "items", q: { collection_id_equals: coll.id.to_s } }
-        tbl.column("Metered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_metered_storage||0) }
-        tbl.column("Unmetered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_unmetered_storage||0) }
       end
     end
 

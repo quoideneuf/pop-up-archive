@@ -222,11 +222,11 @@ class User < ActiveRecord::Base
   end
 
   def used_metered_storage
-    @_used_metered_storage ||= audio_files.where(metered: true).sum(:duration)
+    @_used_metered_storage ||= billable_collections.map{|coll| coll.used_metered_storage}.inject(:+)
   end
 
   def used_unmetered_storage
-    @_used_unmetered_storage ||= audio_files.where(metered: false).sum(:duration)
+    @_used_unmetered_storage ||= billable_collections.map{|coll| coll.used_unmetered_storage}.inject(:+)
   end
 
   def active_credit_card_json
@@ -239,6 +239,7 @@ class User < ActiveRecord::Base
 
   def update_usage_report!
     update_attribute :used_metered_storage_cache, used_metered_storage
+    update_attribute :used_unmetered_storage_cache, used_unmetered_storage
     update_attribute :pop_up_hours_cache, pop_up_hours
     update_attribute :transcript_usage_cache, transcript_usage_report
   end

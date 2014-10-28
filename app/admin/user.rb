@@ -63,8 +63,6 @@ ActiveAdmin.register User do
         tbl.column("Created") {|coll| coll.created_at }
         tbl.column("Storage Type") {|coll| coll.storage }
         tbl.column("Items") {|coll| link_to "#{coll.items.count} Items", :action => 'index', :controller => "items", q: { collection_id_equals: coll.id.to_s } }
-        tbl.column("Metered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_metered_storage||0) }
-        tbl.column("Unmetered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_unmetered_storage||0) }
       end
     end
 
@@ -72,8 +70,8 @@ ActiveAdmin.register User do
       table_for user.owned_organizations do|tbl|
         tbl.column :id
         tbl.column("Name") {|org| link_to org.name, superadmin_organization_path(org) }
-        tbl.column("Metered Storage") {|org| Api::BaseHelper::time_definition(org.used_metered_storage||0) }
-        tbl.column("Unmetered Storage") {|org| Api::BaseHelper::time_definition(org.used_unmetered_storage||0) }
+        tbl.column("Metered Storage") {|org| Api::BaseHelper::time_definition(org.used_metered_storage_cache||0) }
+        tbl.column("Unmetered Storage") {|org| Api::BaseHelper::time_definition(org.used_unmetered_storage_cache||0) }
       end
     end
 

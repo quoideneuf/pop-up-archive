@@ -6,6 +6,32 @@ module Billable
     Collection.with_role(:owner, self)
   end
 
+  # returns Array of AudioFile records
+  def billable_audio_files
+    billable_collection_ids = billable_collections.map { |c| c.id.to_s }
+    return [] unless billable_collection_ids.size > 0
+    items_sql = "select i.id from items as i where i.deleted_at is null and i.collection_id in (#{billable_collection_ids.join(',')})"
+    audio_files_sql = "select * from audio_files as af where af.deleted_at is null and af.duration is not null"
+    AudioFile.find_by_sql(audio_files_sql)
+  end
+
+  # unlike normal audio_files association, which includes all records the User/Org is authorized to see,
+  # my_audio_files limits to only those files where user_id=user.id
+  # currently only supports User.
+  def my_audio_files
+    if self.is_a?(Organization)
+      raise "Currently my_audio_files() only available to User class. You called on #{self.inspect}"
+    end
+    collection_ids = collections.map { |c| c.id.to_s }
+    return [] unless collection_ids.size > 0
+
+    items_sql = "select i.id from items as i where i.deleted_at is null and i.collection_id in (#{collection_ids.join(',')})"
+
+    # NOTE we ignore whether duration is set or not. This is different than in transcript_usage definition below.
+    audio_files_sql = "select * from audio_files as af where af.deleted_at is null and af.user_id=#{self.id}"
+    AudioFile.find_by_sql(audio_files_sql)
+  end
+
   # returns a hash with string values suitable for hstore
   def total_transcripts_report(ttype=:basic)
 
@@ -95,6 +121,17 @@ module Billable
     # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
     # but we round to the nearest penny when we cache it in aggregate.
     return { :seconds => total_secs, :cost => total_cost.fdiv(1000) }
+  end 
+
+  def my_audio_file_storage(metered=true)
+    total_secs = 0
+    my_audio_files.each do |af|
+      next unless af.duration
+      if af.metered == metered
+        total_secs += af.duration
+      end
+    end
+    return total_secs
   end 
 
   def usage_for(use, now=DateTime.now)

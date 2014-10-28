@@ -82,16 +82,16 @@ class Organization < ActiveRecord::Base
   end
 
   def used_metered_storage
-    @_used_metered_storage ||= collections.map{|coll| coll.used_metered_storage}.inject(:+)
+    @_used_metered_storage ||= billable_collections.map{|coll| coll.used_metered_storage}.inject(:+)
   end
 
   def used_unmetered_storage
-    @_used_unmetered_storage ||= collections.map{|coll| coll.used_unmetered_storage}.inject(:+)
+    @_used_unmetered_storage ||= billable_collections.map{|coll| coll.used_unmetered_storage}.inject(:+)
   end
 
   def update_usage_report!
-    update_attribute :used_metered_hours_cache, used_metered_storage
-    update_attribute :used_unmetered_hours_cache, used_unmetered_storage
+    update_attribute :used_metered_storage_cache, used_metered_storage
+    update_attribute :used_unmetered_storage_cache, used_unmetered_storage
     update_attribute :transcript_usage_cache, transcript_usage_report
   end
 
