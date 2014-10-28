@@ -3,7 +3,11 @@ class Api::V1::PeopleController < Api::V1::BaseController
   expose(:person)
 
   expose(:search_people) do
-    params[:q].blank? ? []: Person.search_within_collection(collection.id, params[:q]).collect{|p|p}
+    if params[:q].blank?
+      []
+    else 
+      Person.search_within_collection(collection.id, params[:q]).to_a
+    end
   end
 
   # caches_action :index, :expires_in => 1.hour
