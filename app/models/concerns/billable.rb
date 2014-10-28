@@ -22,32 +22,40 @@ module Billable
     total_secs = monthly_usages.where(use: use_types).sum(:value)
     total_cost = monthly_usages.where(use: use_types).sum(:cost)
 
-    # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
-    # but we round to the nearest penny when we cache it in aggregate.
     # we make seconds and cost fixed-width so that sorting a string works
     # like sorting an integer.
-    return { :seconds => "%010d" % total_secs, :cost => sprintf('%010.2f', total_cost.fdiv(1000)) }
+    return { :seconds => "%010d" % total_secs, :cost => sprintf('%010.2f', total_cost) }
   end
 
   # unlike total_transcripts_report, transcripts_billable_for_month_of returns hash of numbers not strings.
   def transcripts_billable_for_month_of(dtim=DateTime.now, transcriber_id)
     month_start = dtim.utc.beginning_of_month
     month_end = dtim.utc.end_of_month
+    start_dtim = month_start.strftime('%Y-%m-%d %H:%M:%S')
+    end_dtim   = month_end.strftime('%Y-%m-%d %H:%M:%S')
     total_secs = 0
     total_cost = 0
-    billable_collections.each do |coll|
-      next unless coll.billable_to == self # TODO redundant?
-      coll.items.each do |item|
-        item.audio_files.includes(:item)\
-          .where('audio_files.duration is not null')\
-          .where(created_at: month_start..month_end).each do |af|
-          af.transcripts.unscoped.where("audio_file_id=? and transcriber_id=?", af.id, transcriber_id).each do|tr|
-            total_secs += tr.billable_seconds(af)
-            total_cost += tr.cost(af)
-          end
-        end
-      end
+
+    # hand-roll sql to optimize query.
+    # there might be a way to do this all with activerecord but my activerecord-fu is weak.
+    billable_collection_ids = billable_collections.map { |c| c.id.to_s }
+
+    # abort early if we have no billable collections
+    return { :seconds => 0, :cost => 0 } if billable_collection_ids.size == 0
+
+    items_sql = "select i.id from items as i where i.deleted_at is null and i.collection_id in (#{billable_collection_ids.join(',')})"
+    audio_files_sql = "select af.id from audio_files as af "
+    audio_files_sql += "where af.deleted_at is null and af.duration is not null "
+    audio_files_sql += " and created_at between '#{start_dtim}' and '#{end_dtim}' and af.item_id in (#{items_sql})"
+    transcripts_sql = "select * from transcripts as t where t.transcriber_id=#{transcriber_id} and t.audio_file_id in (#{audio_files_sql})"
+    Transcript.find_by_sql(transcripts_sql).each do |tr|
+      af = tr.audio_file
+      total_secs += tr.billable_seconds(af)
+      total_cost += tr.cost(af)
     end
+
+    # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
+    # but we round to the nearest penny when we cache it in aggregate.
     return { :seconds => total_secs, :cost => total_cost.fdiv(1000) }
   end
 
@@ -60,21 +68,32 @@ module Billable
     end
     month_start = dtim.utc.beginning_of_month
     month_end = dtim.utc.end_of_month
+    start_dtim = month_start.strftime('%Y-%m-%d %H:%M:%S')
+    end_dtim   = month_end.strftime('%Y-%m-%d %H:%M:%S')
     total_secs = 0 
     total_cost = 0 
-    collections.each do |coll|
-      coll.items.each do |item|
-        item.audio_files.includes(:item)\
-          .where('audio_files.duration is not null')\
-          .where('audio_files.user_id=?', self.id)\
-          .where(created_at: month_start..month_end).each do |af|
-          af.transcripts.unscoped.where("audio_file_id=? and transcriber_id=?", af.id, transcriber_id).each do|tr|
-            total_secs += tr.billable_seconds(af)
-            total_cost += tr.cost(af)
-          end 
-        end 
-      end 
-    end 
+
+    # hand-roll sql to optimize query.
+    # there might be a way to do this all with activerecord but my activerecord-fu is weak.
+    collection_ids = collections.map { |c| c.id.to_s }
+
+    # abort early if we have no collections
+    return { :seconds => 0, :cost => 0 } if collection_ids.size == 0
+
+    items_sql = "select i.id from items as i where i.deleted_at is null and i.collection_id in (#{collection_ids.join(',')})"
+    audio_files_sql = "select af.id from audio_files as af "
+    audio_files_sql += "where af.deleted_at is null and af.duration is not null "
+    audio_files_sql += " and af.user_id=#{self.id}"
+    audio_files_sql += " and created_at between '#{start_dtim}' and '#{end_dtim}' and af.item_id in (#{items_sql})"
+    transcripts_sql = "select * from transcripts as t where t.transcriber_id=#{transcriber_id} and t.audio_file_id in (#{audio_files_sql})"
+    Transcript.find_by_sql(transcripts_sql).each do |tr|
+      af = tr.audio_file
+      total_secs += tr.billable_seconds(af)
+      total_cost += tr.cost(af)
+    end
+
+    # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
+    # but we round to the nearest penny when we cache it in aggregate.
     return { :seconds => total_secs, :cost => total_cost.fdiv(1000) }
   end 
 
