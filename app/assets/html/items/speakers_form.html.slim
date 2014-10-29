@@ -1,0 +1,13 @@
+.modal-header
+	button type="button" class="close" data-dismiss="modal" aria-hidden="true" x
+	h3 ng-show="collection.id" Assign Speakers for {{item.title}}
+
+.modal-body
+	table 
+		tr ng-repeat="speaker in audioFile.transcript.speakers"
+			td {{speaker.name}}
+			td 
+				select ng-model="contributor.id" ng-options="contributor.id as contributor.person.name for contributor in item.contributions" ng-change="assignSpeaker()"
+
+.modal-footer
+  button.btn type="button" ng-click="dismiss()" Close
