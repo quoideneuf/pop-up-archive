@@ -14,6 +14,7 @@ class Collection < ActiveRecord::Base
   has_many :uploads_collection_grants, class_name: 'CollectionGrant', conditions: {uploads_collection: true}
   #has_many :users, through: :collection_grants # TODO this is broken
   has_many :items, dependent: :destroy
+  has_many :audio_files, through: :items
 
   validates_presence_of :title
 
