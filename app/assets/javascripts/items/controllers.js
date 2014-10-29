@@ -102,12 +102,8 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       var found = false;
     }
     else {
-      for(var i = 0; i < file.tasks.length; i++) {
-        task = file.tasks[i];
-        if ((task.identifier == 'ts_all' || task.identifier == 'ts_paid') && (task.status== 'complete')) {
+      if ($scope.status == "finished") {
           var found = false;
-          break;
-        }
       }
     }
     return found;
