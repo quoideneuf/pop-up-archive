@@ -54,7 +54,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       if ($scope.upgradeMessage) {
         statusHTML += "<a href='/pricing'>Upgrade your plan for full transcripts.</a></p>";
       } else {
-        statusHTML += "The rest will process in real time (a 30-minute file will take at least 30 minutes.) We'll email you when it's ready.</p>"
+        statusHTML += "The rest will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.</p>";
       }
     } else if ($scope.status == "ts_failed") {
       statusHTML += "TRANSCRIPTION FAILED - please email us for support at edison@popuparchive.com";
