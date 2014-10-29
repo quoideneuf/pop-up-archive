@@ -59,13 +59,11 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     } else if ($scope.status == "ts_failed") {
       statusHTML += "TRANSCRIPTION FAILED - please email us for support at edison@popuparchive.com";
     }
-    console.log(statusHTML);
     return statusHTML;
   };
 
   $scope.taskStatus = function(file) {
     if (!file) { return false; }
-    console.log(file.tasks);
     var upload, start, full;
     for (var i=0; i<file.tasks.length; i++) {
       var task = file.tasks[i];
@@ -91,8 +89,6 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     if (!full) {
       $scope.upgradeMessage = true;
     }
-    console.log(upload, start, full, $scope.status);
-
   };
 
   $scope.allowEditButton = function(file) {
