@@ -123,24 +123,11 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     $scope.editTable = false;
   }
 
-  // $scope.speakers = [];
-
-  // $scope.assignSpeaker = function(contributor, speaker) {
-  //   console.log(speaker);
-  //   console.log(contributor);
-  //   speaker.name = contributor.id.person.name;
-  //  $scope.speakers.push(speaker); 
-  //   console.log(speaker);
-  //   console.log($scope.speakers);
-  // }
-
-  $scope.submitSpeaker = function(contributor, speaker) {
-    // console.log(speaker);
-    // console.log(contributor);
+// Update placeholder speaker names with contributor names
+  $scope.assignSpeaker = function(contributor, speaker) {
     speaker.name = contributor.id.person.name;
     var speaker = new Speaker(speaker);
     speaker.update();
-    console.log(speaker);
   }
 
   $scope.my_path= $window.location.protocol + "//" + $window.location.host;

@@ -8,7 +8,7 @@
 			label.control-label {{speaker.name}}
 			
 			.controls
-				select ng-model="contributor.id" ng-options="contributor.person.name for contributor in item.contributions track by contributor.id" ng-change="submitSpeaker(contributor, speaker)"
+				select ng-model="contributor.id" ng-options="contributor.person.name for contributor in item.contributions track by contributor.id" ng-change="assignSpeaker(contributor, speaker)"
 
 .modal-footer
   button.btn type="button" ng-click="dismiss()" Close 
