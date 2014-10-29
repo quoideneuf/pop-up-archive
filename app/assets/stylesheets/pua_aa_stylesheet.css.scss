@@ -14,3 +14,12 @@ body {
   width: auto;
 }
 
+#active_admin_content #sidebar {
+  float: none;
+  width: auto;
+  margin-left: 0;
+}
+
+#active_admin_content #main_content_wrapper #main_content {
+  margin-right: 0;
+}
