@@ -15,6 +15,7 @@ class Collection < ActiveRecord::Base
   #has_many :users, through: :collection_grants # TODO this is broken
   has_many :items, dependent: :destroy
   has_many :audio_files, through: :items
+  has_many :transcripts, through: :audio_files
 
   validates_presence_of :title
 
