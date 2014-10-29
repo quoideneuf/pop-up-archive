@@ -16,7 +16,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   }
 
 }])
-.controller('ItemCtrl', ['$scope', '$timeout', '$q', '$modal', 'Item', 'Loader', 'Me', '$routeParams', 'Collection', 'Entity', '$location', 'SearchResults', 'Storage', '$window', function ItemCtrl($scope, $timeout, $q, $modal, Item, Loader, Me, $routeParams, Collection, Entity, $location, SearchResults, Storage, $window) {
+.controller('ItemCtrl', ['$scope', '$timeout', '$q', '$modal', 'Item', 'Loader', 'Me', '$routeParams', 'Collection', 'Entity', '$location', 'SearchResults', 'Storage', '$window', 'Speaker', function ItemCtrl($scope, $timeout, $q, $modal, Item, Loader, Me, $routeParams, Collection, Entity, $location, SearchResults, Storage, $window, Speaker) {
 
   $scope.Storage = Storage;
 
@@ -121,6 +121,26 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   $scope.callSave = function() {
     $scope.$broadcast('CallSave');
     $scope.editTable = false;
+  }
+
+  // $scope.speakers = [];
+
+  // $scope.assignSpeaker = function(contributor, speaker) {
+  //   console.log(speaker);
+  //   console.log(contributor);
+  //   speaker.name = contributor.id.person.name;
+  //  $scope.speakers.push(speaker); 
+  //   console.log(speaker);
+  //   console.log($scope.speakers);
+  // }
+
+  $scope.submitSpeaker = function(contributor, speaker) {
+    // console.log(speaker);
+    // console.log(contributor);
+    speaker.name = contributor.id.person.name;
+    var speaker = new Speaker(speaker);
+    speaker.update();
+    console.log(speaker);
   }
 
   $scope.my_path= $window.location.protocol + "//" + $window.location.host;

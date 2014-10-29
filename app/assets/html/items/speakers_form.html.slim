@@ -3,11 +3,13 @@
 	h3 ng-show="collection.id" Assign Speakers for {{item.title}}
 
 .modal-body
-	table 
-		tr ng-repeat="speaker in audioFile.transcript.speakers"
-			td {{speaker.name}}
-			td 
-				select ng-model="contributor.id" ng-options="contributor.id as contributor.person.name for contributor in item.contributions" ng-change="assignSpeaker()"
+	form.form-horizontal
+		.control-group ng-repeat="speaker in audioFile.transcript.speakers"
+			label.control-label {{speaker.name}}
+			
+			.controls
+				select ng-model="contributor.id" ng-options="contributor.person.name for contributor in item.contributions track by contributor.id" ng-change="submitSpeaker(contributor, speaker)"
 
 .modal-footer
-  button.btn type="button" ng-click="dismiss()" Close
+  button.btn type="button" ng-click="dismiss()" Close 
+
