@@ -347,11 +347,16 @@
       priority: -1000,
       template: '<div class="file-transcript">' +
                   '<table class="table">' +
-                    '<tr ng-repeat="text in transcript" ng-class="{current: transcriptStart== {{text.startTime | round}}}">' +
+                    '<tr ng-repeat="text in transcript" ng-class="{current: transcriptStart== {{text.startTime | round}}}" ng-init="originalSpeaker=text.speakerId">' +
                       '<td class="play"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
                       '<td class ="timestamp" ng-class="{keytime: $index % 5 != 0}" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
                       '<td class="speaker" title="{{assignSpeaker(text.speakerId)}}" ng-bind="speakerChange(transcript[$index-1].speakerId, text.speakerId)"></td>' +
+                      '<td class="speaker">' +
+                          '<select ng-show="speakerChange(transcript[$index-1].speakerId, text.speakerId)" ng-change="updateSpeaker(text, originalSpeaker, $index)" ng-model="text.speakerId" ng-options="speaker.id as speaker.name for speaker in speakers">' +
+                          '</select>' +
+                      '</td>' +
+                      '<td>{{text.speakerId}}</td>' +
                       '<td ng-show="!editorEnabled"><a ng-click="editOrPlay(text.startTime)"><div class="file-transcript-text" ng-bind-html="text.text | highlight:transcriptFilter"></div></a></td>' +
                       '<td ng-show="editorEnabled"><input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)"></td>' +
                     '</tr>' +
@@ -359,6 +364,25 @@
                 '</div>',
       link: function (scope, el, attrs) {
         var lastSecond = -1;
+
+        scope.updateSpeaker = function (text, originalSpeaker, index) {
+          speakerId= text.speakerId;
+          this.disableEditor();
+          this.saveText({text: text});
+          //checks to see if the next line of text has the same speaker, if yes updates that speaker as well
+          index=index+1;
+          if (index < scope.transcript.length && scope.transcript[index].speakerId == originalSpeaker) {
+            text = scope.transcript[index];
+            text.speakerId= speakerId;
+            scope.updateSpeaker(text, originalSpeaker, index);
+          }
+        };
+
+        scope.updateText = function (text) {
+          text.text = this.editableTranscript;
+          this.disableEditor();
+          this.saveText({text: text});
+        };
 
         scope.player = Player;
 
@@ -380,16 +404,17 @@
           scope.showStart = true;
           scope.showRange = false;
         }
+
         scope.updateText = function (text) {
+          console.log(text);
           text.text = this.editableTranscript;
+          console.log(text.text);
           this.disableEditor();
           this.saveText({text: text});
         };
 
         scope.updateTextKeyCommand = function (text) {
-          text.text = this.editableTranscript;
-          this.disableEditor();
-          this.saveText({text: text});
+          scope.updateText(text);
           if (this.$last !== true){
             nextField = this.$$nextSibling;
             this.enableEditorNextField(nextField);
@@ -508,16 +533,16 @@
           }
         }
 
-        //set unique color for each speaker
-        scope.speakerColor = function () {
-          var speakers = scope.speakers;
-          var colors = ['#FFFFFF', '#CAD9FF', '#D9F3FF', '#FFDA9A', '#FFEDC6', '#E5E5E5'];
-          for (var i = 0; i < speakers.length; i++) {
-            var speaker = speakers[i].id;
-            var color = colors[i % colors.length]; // loop through color assignment
-            // console.log(speaker + ' = ' + color);
-          }
-        }
+        // //set unique color for each speaker
+        // scope.speakerColor = function () {
+        //   var speakers = scope.speakers;
+        //   var colors = ['#FFFFFF', '#CAD9FF', '#D9F3FF', '#FFDA9A', '#FFEDC6', '#E5E5E5'];
+        //   for (var i = 0; i < speakers.length; i++) {
+        //     var speaker = speakers[i].id;
+        //     var color = colors[i % colors.length]; // loop through color assignment
+        //     // console.log(speaker + ' = ' + color);
+        //   }
+        // }
 
         //only show speaker if different from the previous speaker
         scope.speakerChange = function (previousSpeaker, currentSpeaker) {
