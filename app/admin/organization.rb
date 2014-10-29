@@ -1,5 +1,5 @@
 ActiveAdmin.register Organization do
-  actions :all, :except => [:destroy]
+  actions :index, :show
   index do
     column :name, sortable: :name do |org| 
       link_to( org.name, superadmin_organization_path(org)) + raw('<br/>') + org.owner_contact

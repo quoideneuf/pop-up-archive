@@ -1,5 +1,5 @@
 ActiveAdmin.register MonthlyUsage do
-  actions :all, :except => [:edit, :destroy]
+  actions :index, :show
   index do
     column :entity
     column :entity_type

@@ -1,5 +1,5 @@
 ActiveAdmin.register Task do
-  actions :all, :except => [:edit, :destroy]
+  actions :index, :show
   menu false
   index do
     column :type do |t| link_to t.type, superadmin_task_path(t) end

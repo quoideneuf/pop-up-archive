@@ -1,11 +1,9 @@
 ActiveAdmin.register AudioFile do
-  actions :all, :except => [:edit, :destroy]
+  actions :index, :show
   menu false
   index do
     column :filename, sortable: :file do |af| link_to af.filename, superadmin_audio_file_path(af) end
     column :created_at
-    column :transcoded_at
-    column :format
     column :duration
     column :metered
     column('Collection') do |af| link_to af.collection.title, superadmin_collection_path(af.collection) end

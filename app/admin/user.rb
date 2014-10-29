@@ -1,5 +1,5 @@
 ActiveAdmin.register User do
-  actions :all, :except => [:edit, :destroy]
+  actions :index, :show
   index do
     column :name, sortable: :name do |user|
       link_to( user.name, superadmin_user_path(user) ) + raw( '<br/>' + user.email )
