@@ -85,8 +85,8 @@
                   | Edit Transcript
                 button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave()"
                   | Save Transcript
-                / button.btn ng-show="currentUser.canEdit(item)" ng-click="assignSpeakers()"
-                /   | Assign Speakers
+                button.btn ng-show="currentUser.canEdit(item)" bs-modal="'#{asset_path 'items/speakers_form.html'}'"
+                  | Assign Speakers
                 button.btn#expand-transcript ng-click="toggleTranscript()"
                   |{{!transcriptExpanded && 'Expand Transcript' || 'Collapse Transcript' }}
 
@@ -112,6 +112,7 @@
                 a href="#" &nbsp;
                 
             .transcript speakers="audioFile.transcript.speakers" transcript-text="audioFile.transcript.parts | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
+
         div ng-show="isTranscriptProcessing()" 
           .alert.alert-info ng-show="currentUser.hasCommunityPlan()" 
             strong TRANSCRIPT PROCESSING
