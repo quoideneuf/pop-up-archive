@@ -83,15 +83,16 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       $scope.status = "ts_failed";
     } else if (start == "working" || start == "created") {
       $scope.status = "started";
-    } else if (start == "complete" && full == "working") {
+    } else if (start == "complete" && full != "complete") {
       $scope.status = "full";
     } else if (full == "complete") {
       $scope.status = "finished";
-    } else if (!full) {
-      $scope.status = "upgrade";
+    }
+    if (!full) {
       $scope.upgradeMessage = true;
     }
     console.log(upload, start, full, $scope.status);
+
   };
 
   $scope.allowEditButton = function(file) {
