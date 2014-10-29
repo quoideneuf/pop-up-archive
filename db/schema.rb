@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141028185726) do
+ActiveRecord::Schema.define(:version => 20141029204336) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
@@ -32,7 +32,7 @@ ActiveRecord::Schema.define(:version => 20141028185726) do
   add_index "active_admin_comments", ["resource_type", "resource_id"], :name => "index_active_admin_comments_on_resource_type_and_resource_id"
 
   create_table "audio_files", :force => true do |t|
-    t.integer  "item_id"
+    t.integer  "item_id",                                       :null => false
     t.string   "file"
     t.datetime "created_at",                                    :null => false
     t.datetime "updated_at",                                    :null => false
@@ -198,7 +198,7 @@ ActiveRecord::Schema.define(:version => 20141028185726) do
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
     t.integer  "csv_import_id"
-    t.integer  "collection_id"
+    t.integer  "collection_id",     :null => false
     t.string   "token"
     t.integer  "storage_id"
     t.boolean  "is_public"
@@ -340,7 +340,7 @@ ActiveRecord::Schema.define(:version => 20141028185726) do
   end
 
   create_table "tasks", :force => true do |t|
-    t.integer  "owner_id"
+    t.integer  "owner_id",   :null => false
     t.string   "owner_type"
     t.text     "identifier"
     t.string   "name"
@@ -381,7 +381,7 @@ ActiveRecord::Schema.define(:version => 20141028185726) do
   end
 
   create_table "transcripts", :force => true do |t|
-    t.integer  "audio_file_id"
+    t.integer  "audio_file_id",  :null => false
     t.string   "identifier"
     t.string   "language"
     t.integer  "start_time"
