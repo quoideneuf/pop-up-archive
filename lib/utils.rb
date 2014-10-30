@@ -186,6 +186,8 @@ class Utils
           if redirect_url
             # this is imperfect, but deals with odd case where we have spaces in some redirects
             redirect_url = URI.escape(redirect_url) if redirect_url =~ /\s+/
+            logger.warn "Got redirect for #{uri} to #{redirect_url}"
+            logger.warn "Recursing with limit==#{limit - 1}"
             temp_file = download_public_file(URI.parse(redirect_url), retry_count, limit - 1)
           end
         rescue StandardError => err
