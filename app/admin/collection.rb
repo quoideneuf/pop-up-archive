@@ -3,7 +3,7 @@ ActiveAdmin.register Collection do
   index do
     column :title, sortable: :title do |coll| link_to coll.title, superadmin_collection_path(coll) end
     column :default_storage, sortable: :default_storage do |coll| coll.storage end
-    column :creator
+    column :creator do |coll| coll.creator ? link_to(coll.creator) : '(none)' end
   end
 
   filter :title
