@@ -351,38 +351,26 @@
                       '<td class="play"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
                       '<td class ="timestamp" ng-class="{keytime: $index % 5 != 0}" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
-                      '<td class="speaker" title="{{assignSpeaker(text.speakerId)}}" ng-bind="speakerChange(transcript[$index-1].speakerId, text.speakerId)"></td>' +
-                      '<td class="speaker">' +
-                          '<select ng-show="speakerChange(transcript[$index-1].speakerId, text.speakerId)" ng-change="updateSpeaker(text, originalSpeaker, $index)" ng-model="text.speakerId" ng-options="speaker.id as speaker.name for speaker in speakers">' +
-                          '</select>' +
+                      '<td ng-hide="editTable" class="speaker" title="{{assignSpeaker(text.speakerId)}}" ng-bind="speakerChange(transcript[$index-1].speakerId, text.speakerId)"></td>' +
+                      '<td ng-show="editTable">' +
+                          '<a bs-popover="speakerPopover"  data-placement="right" data-unique="1">' +
+                            '<span ng-bind="abbreviateSpeaker(text.speakerId)"></span>' +
+                            '<i class="icon-chevron-down"></i>' +
+                          ' </a>' +
                       '</td>' +
-                      '<td>{{text.speakerId}}</td>' +
-                      '<td ng-show="!editorEnabled"><a ng-click="editOrPlay(text.startTime)"><div class="file-transcript-text" ng-bind-html="text.text | highlight:transcriptFilter"></div></a></td>' +
-                      '<td ng-show="editorEnabled"><input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)"></td>' +
+                      '<td ng-show="!editorEnabled">' +
+                        '<a ng-click="editOrPlay(text.startTime)">' +
+                          '<div class="file-transcript-text" ng-bind-html="text.text | highlight:transcriptFilter"></div>' +
+                        '</a>' +
+                      '</td>' +
+                      '<td ng-show="editorEnabled">' + 
+                        '<input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)">' +
+                      '</td>' +
                     '</tr>' +
                   '</table>' +
                 '</div>',
       link: function (scope, el, attrs) {
         var lastSecond = -1;
-
-        scope.updateSpeaker = function (text, originalSpeaker, index) {
-          speakerId= text.speakerId;
-          this.disableEditor();
-          this.saveText({text: text});
-          //checks to see if the next line of text has the same speaker, if yes updates that speaker as well
-          index=index+1;
-          if (index < scope.transcript.length && scope.transcript[index].speakerId == originalSpeaker) {
-            text = scope.transcript[index];
-            text.speakerId= speakerId;
-            scope.updateSpeaker(text, originalSpeaker, index);
-          }
-        };
-
-        scope.updateText = function (text) {
-          text.text = this.editableTranscript;
-          this.disableEditor();
-          this.saveText({text: text});
-        };
 
         scope.player = Player;
 
@@ -406,9 +394,8 @@
         }
 
         scope.updateText = function (text) {
-          console.log(text);
+          // console.log(text);
           text.text = this.editableTranscript;
-          console.log(text.text);
           this.disableEditor();
           this.saveText({text: text});
         };
@@ -521,15 +508,15 @@
         }
 
         //abbreviate speaker names to initials
-        abbreviateSpeaker = function (speakerId) {
+        scope.abbreviateSpeaker = function (speakerId) {
           var name = scope.assignSpeaker(speakerId);
           //if speaker is in the format F1 or M1 or S1 do not abbreviate
           re = /^M|F|S\d+/;
           if (re.test(name)){
-            return name;
+            return name;            
           //else attempt to get initials for the name
           } else {
-            return name.replace(/[^A-Z]/g, '');
+            return name.replace(/\W*(\w)\w*/g, '$1').toUpperCase();
           }
         }
 
@@ -547,9 +534,27 @@
         //only show speaker if different from the previous speaker
         scope.speakerChange = function (previousSpeaker, currentSpeaker) {
           if (currentSpeaker != previousSpeaker) {
-            return abbreviateSpeaker(currentSpeaker);
+            return scope.abbreviateSpeaker(currentSpeaker);
           }
         }
+
+        //update the speaker id of a given line(s) of transcript
+        scope.updateSpeaker = function (text, originalSpeaker, index) {
+          speakerId= text.speakerId;
+          this.saveText({text: text});
+          //checks to see if the next line of text has the same speaker, if yes updates that speaker as well
+          index=index+1;
+          if (index < scope.transcript.length && scope.transcript[index].speakerId == originalSpeaker) {
+            text = scope.transcript[index];
+            text.speakerId= speakerId;
+            scope.updateSpeaker(text, originalSpeaker, index);
+          }
+        };
+
+        scope.speakerPopover = { 
+          "title": "Select Speaker" + "<button onclick=\"$(this).closest('div.popover').popover('hide');\" type=\"button\" class=\"close\" aria-hidden=\"true\">&times;</button>",
+          "content": "<select ng-change='updateSpeaker(text, originalSpeaker, $index)' ng-model='text.speakerId' ng-options='speaker.id as speaker.name for speaker in speakers'></select>"
+        };
 
         //edit transcripts
         scope.editorEnabled = false;
