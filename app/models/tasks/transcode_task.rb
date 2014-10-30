@@ -8,9 +8,9 @@ class Tasks::TranscodeTask < Task
 
     # optimally the length check should be in an analyze task,
     # but we check here too just in case it missed on that step.
-    if !audio_file.duration
+    if !audio_file.duration or audio_file.duration == 0
       analysis = self.results[:info] || {}
-      if analysis[:length]
+      if analysis[:length] and analysis[:length].to_i > 0
         audio_file.update_attribute(:duration, analysis[:length].to_i)
       end
     end
