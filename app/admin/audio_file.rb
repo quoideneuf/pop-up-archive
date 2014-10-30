@@ -29,7 +29,7 @@ ActiveAdmin.register AudioFile do
       end     
     end
     panel "Tasks" do
-      table_for audio_file.tasks do |tbl|
+      table_for audio_file.tasks.order('created_at desc') do |tbl|
         tbl.column("Type") {|task| link_to task.type, superadmin_task_path(task) }
         tbl.column("Identifier") {|task| task.identifier }
         tbl.column("Created") {|task| task.created_at }
