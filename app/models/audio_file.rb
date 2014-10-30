@@ -214,8 +214,7 @@ class AudioFile < ActiveRecord::Base
     return if (duration.to_i <= 0)
 
     if task = tasks.any?{|task| task.type == 'Tasks::SpeechmaticsTranscribeTask' && task.status != "failed"}
-    # if task = tasks.speechmatics_transcribe.without_status(:failed).where(identifier: identifier).last
-      logger.debug "speechmatics transcribe task #{identifier} already exists for audio file #{self.id}"
+      logger.warn "speechmatics transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
     else
       extras = { 'original' => process_file_url, 'user_id' => user.try(:id) }.merge(options)
       task = Tasks::SpeechmaticsTranscribeTask.new(identifier: identifier, extras: extras)
