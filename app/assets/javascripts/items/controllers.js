@@ -57,7 +57,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         statusHTML += "The rest will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.</p>";
       }
     } else if ($scope.status == "ts_failed") {
-      statusHTML += "TRANSCRIPTION FAILED - please email us for support at edison@popuparchive.com";
+      statusHTML += "TRANSCRIPTION FAILED - please <a href='mailto:edison@popuparchive.com?Subject=Transcription%20Failed%20-%20My%20User%20ID:%20"+ $scope.currentUser.id +"'>email us for support</a>";
     }
     return statusHTML;
   };
