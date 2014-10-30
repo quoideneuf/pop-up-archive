@@ -1,9 +1,5 @@
 class Api::V1::ItemsController < Api::V1::BaseController
-
-  # this controller serves /api/collection/:coll_id/items
-
   expose(:collection)
-  expose(:items, ancestor: :collection)
 
   expose(:collection_items) do
     if !params[:collection_id]

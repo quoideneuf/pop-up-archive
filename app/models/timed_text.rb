@@ -1,5 +1,5 @@
 class TimedText < ActiveRecord::Base
-  attr_accessible :start_time, :end_time, :text, :confidence, :speaker_id
+  attr_accessible :start_time, :end_time, :text, :confidence, :speaker
   belongs_to :transcript
   belongs_to :speaker
 

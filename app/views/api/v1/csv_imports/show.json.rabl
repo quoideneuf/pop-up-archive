@@ -18,5 +18,5 @@ node :preview_rows do |import|
 end
 
 node(:urls) do |import|
-  { self: url_for(api_csv_import_path(import)) }
+  { self: url_for(api_item_path(import)) }
 end

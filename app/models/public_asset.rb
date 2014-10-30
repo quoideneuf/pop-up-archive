@@ -66,8 +66,7 @@ module PublicAsset
 
   def filename_base
     fn = self.filename || ''
-    # dots in the filename can throw off the routing regex match
-    File.basename(fn, File.extname(fn)).gsub(/\./,'-')
+    File.basename(fn, File.extname(fn))
   end
 
   def filename_extension

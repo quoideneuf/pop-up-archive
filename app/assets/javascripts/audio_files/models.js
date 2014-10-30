@@ -133,10 +133,6 @@ angular.module('Directory.audioFiles.models', ['RailsModel', 'S3Upload'])
   return AudioFile;
 }])
 .factory('TimedText', ['Model', '$http', function (Model, $http) {
-  var TimedText = Model({url:'/api/timed_texts/{{id}}', name: 'timed_text', only: ['text', 'speakerId']});
+  var TimedText = Model({url:'/api/timed_texts/{{id}}', name: 'timed_text', only: ['text']});
   return TimedText;
-}])
-.factory('Speaker', ['Model', function (Model) {
-  var Speaker = Model({url:'/api/speakers/{{id}}', name: 'speaker', only: ['name']});
-  return Speaker;
 }]);
