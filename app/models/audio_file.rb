@@ -43,6 +43,11 @@ class AudioFile < ActiveRecord::Base
     instance.try(:item).try(:collection) || item.try(:collection)
   end
 
+  # shortcut for superadmin view
+  def name
+    self.filename
+  end
+
   # verify that user_id is set, calling set_user_id if it is not.
   # called via before_save callback
   def check_user_id

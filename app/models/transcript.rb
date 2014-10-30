@@ -102,10 +102,16 @@ class Transcript < ActiveRecord::Base
     end
   end 
 
+  # returns a float representing 1000ths of a dollar
   def cost(af=audio_file)
     secs = billable_seconds(af)
     mins = secs.div(60)
-    return cost_per_min * mins
+    return cost_per_min.to_f * mins.to_f
+  end
+
+  # returns a float in dollars
+  def cost_dollars(af=audio_file)
+    return cost(af) / 1000
   end
     
   private
