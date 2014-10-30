@@ -32,6 +32,11 @@ class Organization < ActiveRecord::Base
 
   ROLES = [:admin, :member]
 
+  # entity method makes an Org act like a User for billable concern
+  def entity
+    self
+  end
+
   def owns_collection?(coll)
     has_role?(:owner, coll)
   end
