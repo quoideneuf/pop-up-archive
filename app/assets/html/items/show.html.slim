@@ -85,7 +85,7 @@
                   | Edit Transcript
                 button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave()"
                   | Save Transcript
-                button.btn ng-show="currentUser.canEdit(item)" bs-modal="'#{asset_path 'items/speakers_form.html'}'"
+                button.btn ng-show="currentUser.canEdit(item)" bs-modal="'#{asset_path 'items/assign_speakers_form.html'}'"
                   | Assign Speakers
                 button.btn#expand-transcript ng-click="toggleTranscript()"
                   |{{!transcriptExpanded && 'Expand Transcript' || 'Collapse Transcript' }}
