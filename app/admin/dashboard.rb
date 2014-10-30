@@ -10,7 +10,7 @@ ActiveAdmin.register_page "Dashboard" do
             Collection.order('created_at DESC').limit(20).map do |coll|
               tr do
                 td link_to(coll.title, superadmin_collection_path(coll))
-                td link_to(coll.creator.name, superadmin_user_path(coll.creator))
+                td coll.creator ? link_to(coll.creator.name, superadmin_user_path(coll.creator)) : '(empty)'
               end 
             end
           end
