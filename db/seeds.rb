@@ -22,7 +22,7 @@ transcribers = Transcriber.create([
 ])
 
 collections = Collection.create([{"creator_id"=> 1, "title" => "Test Collection", "description" => "This collection will show you how collections work."}, {"creator_id"=> 1, "title" => "A Second Collection", "default_storage_id" => 1}])
-item = Item.create("title" => "Lost Weekend Video finds new ways to entertain in the digital age")
+item = Item.new("title" => "Lost Weekend Video finds new ways to entertain in the digital age")
 item.description = "A couple on an evening stroll down Valencia Street comes to a stop outside Lost Weekend Video. They’re peering in through the big front window."
 item.collection_id = collections.first.id
 item.save!
@@ -571,6 +571,6 @@ transcript.save!
 file.duration = timed_texts.last[:end_time]
 file.save!
 
-item2 = Item.create("title" => "Happy holidays!", "description" => "Today, on a very special Cory Doctorow podcast, the podcasting debut of Ms Poesy Emmeline Fibonacci Nautilus Taylor Doctorow!. This item belongs to: audio/podcast_corydoctorow. This item has files of the following types: Metadata, VBR MP3")
+item2 = Item.new("title" => "Happy holidays!", "description" => "Today, on a very special Cory Doctorow podcast, the podcasting debut of Ms Poesy Emmeline Fibonacci Nautilus Taylor Doctorow!. This item belongs to: audio/podcast_corydoctorow. This item has files of the following types: Metadata, VBR MP3")
 item2.collection_id = collections.first.id
 item2.save!
