@@ -195,6 +195,14 @@ class Utils
         end
       end
 
+      if !temp_file or !file_downloaded
+        raise "File download failed, could not download #{uri}."
+      end
+
+      if temp_file.size == 0
+        raise "Zero length file: #{temp_file}"
+      end
+
       temp_file
     end
 
