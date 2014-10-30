@@ -33,6 +33,7 @@ ActiveAdmin.register MonthlyUsage do
       table_for monthly_usage.transcripts do |tbl|
         tbl.column("ID") {|tr| link_to tr.identifier, superadmin_transcript_path(tr) }
         tbl.column("Cost") {|tr| number_to_currency(tr.cost_dollars) }
+        tbl.column("User") {|tr| user = tr.audio_file.user; user ? link_to(user.name, superadmin_user_path(user)) : '(nil)' }
         tbl.column("Transcriber") {|tr| link_to tr.transcriber.name, superadmin_transcriber_path(tr.transcriber) }
         tbl.column("Created") {|tr| tr.created_at }
       end
