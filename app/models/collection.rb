@@ -46,8 +46,32 @@ class Collection < ActiveRecord::Base
     # croak if there is more than one.
     owner_role = get_owner_role
     if !owner_role
-      # create one, assigning to the creator or oldest grantee
-      owner = creator ? creator.entity : collection_grants.order('created_at asc').first.collector.entity
+      # create one
+      # if the creator has an organization, the org owns the collection
+      if creator
+        if creator.is_a?(User)
+          if creator.organization
+            owner = creator.organization
+          else
+            owner = creator
+          end
+        else
+          owner = creator
+        end
+      else
+      # no creator. prefer any Org granted authz
+        org = collection_grants.where(collector_type: 'Organization').first.collector
+        if org
+          owner = org
+        else
+          # otherwise, the oldest grantee
+          owner = collection_grants.order('created_at asc').first.collector.entity
+        end
+      end
+      # sanity check. make sure we have an owner identified
+      if !owner
+        raise "Failed to identify a candidate to own Collection #{self.id}"
+      end
       owner_role = Role.new
       owner_role.name = :owner
       owner_role.resource = self
@@ -56,7 +80,7 @@ class Collection < ActiveRecord::Base
       owner.save!
       @_billable_to = owner
     else
-      @_billable_to = owner_role.single_designee
+      @_billable_to = owner_role.single_designee  # prefers Organization over User
     end
 
     return @_billable_to
