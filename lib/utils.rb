@@ -175,6 +175,7 @@ class Utils
           response = new_connection(request_uri).get(:response_block => streamer)
           temp_file.fsync
 
+          logger.debug "#{uri} responded with #{response.status.to_s}"
           if response.status.to_s.start_with?('2')
             file_downloaded = true
           elsif response.status.to_s.start_with?('3')
@@ -189,6 +190,9 @@ class Utils
             logger.warn "Got redirect for #{uri} to #{redirect_url}"
             logger.warn "Recursing with limit==#{limit - 1}"
             temp_file = download_public_file(URI.parse(redirect_url), retry_count, limit - 1)
+            if temp_file.size == 0
+              file_downloaded = true
+            end
           end
         rescue StandardError => err
           logger.error "File failed to be retrieved: '#{file_name}': #{err.message}"
