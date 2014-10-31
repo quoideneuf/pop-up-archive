@@ -52,8 +52,13 @@
               span ng-show="item.duration" &#47; {{item.getDurationString()}}
             .clearfix
 
-          .row-fluid ng-show="audioFile.transcript.parts.length"
+          .row-fluid id="ts-info-row" ng-show="audioFile.transcript.parts.length"
             .span6
+              #transcript-label ng-hide="editTable"
+                span id="ts-type" {{audioFile.transcriptType}} Transcript
+                span id="ts-upgrade" ng-show="audioFile.transcriptType == 'Basic'" 
+                  br
+                  | Upgrade to Premium
               .key-commands ng-show="editTable"
                 table
                   tr
