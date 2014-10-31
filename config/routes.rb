@@ -29,7 +29,7 @@ PopUpArchive::Application.routes.draw do
     resources :accounts
   end
 
-  get 'media/:token/:expires/:use/:class/:id/:name.:extension', controller: 'media', action: 'show'
+  get 'media/:token/:expires/:use/:class/:id/:name.:extension', controller: 'media', action: 'show', constraints: {name: /[^\/]+/}
   
   get 'embed_player/:name/:file_id/:item_id/:collection_id', to: 'embed_player', action: 'show'
 
