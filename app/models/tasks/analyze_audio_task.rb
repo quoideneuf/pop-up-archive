@@ -6,7 +6,7 @@ class Tasks::AnalyzeAudioTask < Task
     super
     return unless audio_file
     return if cancelled?
-    analys = analysis || {}
+    analys = self.analysis || {}
     raise "Analysis does not include length: #{self.id}, results: #{analys.inspect}" unless analys[:length]
     audio_file.update_attribute(:duration, analys[:length].to_i)
   end
@@ -22,9 +22,9 @@ class Tasks::AnalyzeAudioTask < Task
 
       # if there is no analysis or analysis.length then finish_task will fail,
       # so just cancel and log error
-      analys = analysis
+      analys = self.analysis
       if !analys or !analys[:length]
-        if !original
+        if !self.original
           self.extras[:error] = "No original URL and no analysis"
           self.cancel!
           return
