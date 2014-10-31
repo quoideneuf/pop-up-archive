@@ -190,7 +190,7 @@ class Utils
             logger.warn "Got redirect for #{uri} to #{redirect_url}"
             logger.warn "Recursing with limit==#{limit - 1}"
             temp_file = download_public_file(URI.parse(redirect_url), retry_count, limit - 1)
-            if temp_file.size == 0
+            if temp_file and temp_file.size > 0
               file_downloaded = true
             end
           end
