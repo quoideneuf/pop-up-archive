@@ -32,6 +32,15 @@ section ng-controller="ItemFormCtrl"
                 td.file-remove
                   a href="#" ng-click="removeAudioFile(audioFile)" style='text-decoration: none; color: #da4f49;'
                     i.icon-remove-sign
+          .alert.alert-danger ng-show="(item.files.length > 1) && showFilesAlert"
+            a ng-click="hideAlert()" style='text-decoration: none; color: #da4f49; float: right; margin-right: -20px;' 
+              i.icon-remove
+            p 
+              | Are you sure? Uploading multiple audio files at once means they'll be saved onto the same item page.
+            
+          p.alert.alert-info.pull-right 
+            | Drop multiple files or click 'Add Files to Item' if uploading multi-part interviews and recordings.
+
           .clearfix.controls
             span.pull-right file-button=""
               button.btn Add Files to Item
