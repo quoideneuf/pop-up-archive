@@ -25,7 +25,17 @@ class Collection < ActiveRecord::Base
 
   before_validation :set_defaults
 
-  after_commit :grant_to_creator, on: :create
+  after_commit :after_create_hooks, on: :create
+  after_commit :after_update_hooks, on: :update
+
+  def after_create_hooks
+    grant_to_creator
+    check_billable_to!
+  end
+
+  def after_update_hooks
+    check_billable_to!
+  end
 
   # def self.visible_to_user(user)
   #   if user.present?
@@ -35,6 +45,16 @@ class Collection < ActiveRecord::Base
   #     is_public
   #   end
   # end
+
+  # calls and discards response from billable_to. Will create owner if one does not exist.
+  # if no owner can be found, logs error and moves on.
+  def check_billable_to!
+    begin
+      billable_to
+    rescue Exception => err
+      Rails.logger.error(err)
+    end
+  end
 
   # returns object to which this audio_file should be accounted.
   # should be a User or Organization that has role 'owner' on the Collection
@@ -60,24 +80,24 @@ class Collection < ActiveRecord::Base
         end
       else
       # no creator. prefer any Org granted authz
-        org = collection_grants.where(collector_type: 'Organization').first.collector
-        if org
-          owner = org
+        grant = collection_grants.where(collector_type: 'Organization').first
+        if grant and grant.collector
+          owner = grant.collector
         else
-          # otherwise, the oldest grantee
-          owner = collection_grants.order('created_at asc').first.collector.entity
+          # otherwise, the oldest grantee, if any.
+          grant = collection_grants.order('created_at asc').first
+          if grant and grant.collector
+            owner = grant.collector.entity
+          else
+            raise "Collection #{self.id} has no creator and no collection_grants. Poor orphan!"
+          end
         end
       end
       # sanity check. make sure we have an owner identified
       if !owner
-        raise "Failed to identify a candidate to own Collection #{self.id}"
+        raise "Failed to identify an owner for Collection #{self.id}"
       end
-      owner_role = Role.new
-      owner_role.name = :owner
-      owner_role.resource = self
-      owner_role.save!
       owner.add_role :owner, self
-      owner.save!
       @_billable_to = owner
     else
       @_billable_to = owner_role.single_designee  # prefers Organization over User
@@ -95,16 +115,20 @@ class Collection < ActiveRecord::Base
   end
 
   def set_owner(user_or_org)
-    cur_owner = billable_to
-    cur_owner_role = get_owner_role
-    if cur_owner_role
-      cur_owner.remove_role :owner, self
+    begin
+      cur_owner = billable_to
+      cur_owner_role = get_owner_role
+      if cur_owner_role
+        cur_owner.remove_role :owner, self
+      end
+      user_or_org.add_role :owner, self
+      user_or_org.save!
+      # nullify cache
+      @_billable_to = nil
+      return user_or_org
+    rescue => err
+      raise "Failed to set_owner of collection #{self.id} to #{user_or_org.inspect}: #{err}"
     end
-    user_or_org.add_role :owner, self
-    user_or_org.save!
-    # nullify cache
-    @_billable_to = nil
-    return user_or_org
   end
 
   def storage=(provider)

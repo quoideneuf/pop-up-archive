@@ -2,6 +2,23 @@ require 'ansi/progressbar'
 
 namespace :reports do
 
+  desc "Check all Collections are billable"
+  task bill_collections: [:environment] do
+    ncolls = Collection.count
+    puts "Check Collections are billable"
+    progress = ANSI::Progressbar.new("#{ncolls} Colls", ncolls, STDOUT)
+    progress.bar_mark = '=' 
+    progress.style(:title => [:blue], :bar=>[:blue])
+    progress.send(:show)
+    Collection.find_in_batches do |cgroup|
+      cgroup.each do |coll|
+        coll.check_billable_to!
+        progress.inc
+      end 
+    end
+    progress.finish
+  end
+
   desc "User account usage reports"
   task user_usage: [:environment] do
     nusers = User.count

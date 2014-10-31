@@ -3,6 +3,8 @@ module Billable
 
   # mixin methods for User and Organization for billing/usage
   def billable_collections
+    # assumes every Collection is already assigned an owner.
+    # this is done on Collection.create
     Collection.with_role(:owner, self)
   end
 
