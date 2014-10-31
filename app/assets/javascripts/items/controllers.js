@@ -143,6 +143,12 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
 .controller('ItemFormCtrl', ['$window', '$cookies', '$scope', '$http', '$q', '$timeout', '$route', '$routeParams', '$modal', 'Me', 'Loader', 'Alert', 'Collection', 'Item', 'Contribution', 'ImageFile', function FilesCtrl($window, $cookies, $scope, $http, $q, $timeout, $route, $routeParams, $modal, Me, Loader, Alert, Collection, Item, Contribution, ImageFile) {
 
+  $scope.showFilesAlert = true;
+  
+  $scope.hideAlert = function() {
+    $scope.showFilesAlert = false;
+  };
+
   $scope.$watch('item', function (is) {
     if (!angular.isUndefined(is) && (is.id > 0) && angular.isUndefined(is.adoptToCollection)) {
       is.adoptToCollection = is.collectionId;
