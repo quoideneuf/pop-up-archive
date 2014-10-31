@@ -11,6 +11,7 @@ class Tasks::TranscodeTask < Task
     if !audio_file.duration or audio_file.duration == 0
       analysis = self.results[:info] || {}
       if analysis[:length] and analysis[:length].to_i > 0
+        Rails.logger.warn "setting audio_file.duration on #{audio_file.id} from transcode task #{self.id}"
         audio_file.update_attribute(:duration, analysis[:length].to_i)
       end
     end
@@ -21,7 +22,7 @@ class Tasks::TranscodeTask < Task
       cancel!
     else
       # most often status is working but job has completed,
-      # and there's just a timing issue in the db save and the worker running.
+      # and there's just a timing issue between the db commit and the worker running.
       finish!
     end
   end

@@ -1,20 +1,31 @@
+require 'pp'
+
 namespace :fixer do
 
   desc "check fixer status mismatches"
   task check: [:environment] do
 
-    recover_too = ENV['RECOVER']
+    verbose = ENV['VERBOSE']
+    debug   = ENV['DEBUG']
+    recover_types = Hash[ ENV['RECOVER'] ? ENV['RECOVER'].split(/\ *,\ */).map{|t| [t, true]} : [] ]
+    debug and pp recover_types.inspect
     puts "Finding all tasks with status mismatch..."
-    puts "Will try to recover them too..." if recover_too
+    puts "Will try to recover these types: #{ recover_types.keys.inspect }"
     mismatched_tasks = Task.get_mismatched_status('working')
+    mismatched_report = Hash.new{ |h,k| h[k] = 1 }
     mismatched_tasks.each do |task|
-      puts "Task #{task.type} #{task.id} has status '#{task.status}' with results: " + task.results.inspect
-      if recover_too 
+      mismatched_report[task.type] += 1
+      debug and puts "Task #{task.type} #{task.id} has status '#{task.status}' with results: " + task.results.inspect
+      if recover_types.has_key?(task.type)
+        verbose and puts "Calling task.recover on task #{task.id}"
         task.recover!
-        puts "Task #{task.type} #{task.id} new status == #{task.status}"
+        verbose and puts "Task #{task.type} #{task.id} new status == #{task.status}"
+        mismatched_report[task.status] += 1
       end
     end
 
+    puts "These tasks with mismatched status were found:"
+    pp mismatched_report
   end
 
   desc "set duration from any complete transcoding"
@@ -43,7 +54,8 @@ namespace :fixer do
 
   desc "speechmatics sanity check"
   task speechmatics_poll: [:environment] do
-
+    # find all status=created older than N hours
+    # and verify they exist at SM. If not, cancel them.
 
   end
 
