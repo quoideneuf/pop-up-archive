@@ -302,6 +302,16 @@ class AudioFile < ActiveRecord::Base
     Rails.application.routes.url_helpers.api_item_audio_file_transcript_text_url(item_id, id)
   end
 
+  def transcript_type
+    type = "Basic"
+    transcripts.unscoped.each do |ts|
+      if ts.transcriber == Transcriber.premium
+        type = "Premium"
+      end
+    end
+    return type
+  end
+
   private
 
   def set_metered
