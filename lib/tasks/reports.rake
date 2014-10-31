@@ -51,8 +51,12 @@ namespace :reports do
 
   desc "All account usage reports"
   task usage: [:environment] do
+    Rake::Task["reports:bill_collections"].invoke
+    Rake::Task["reports:bill_collections"].reenable
     Rake::Task["reports:calculate_users_monthly"].invoke
+    Rake::Task["reports:calculate_users_monthly"].reenable
     Rake::Task["reports:calculate_orgs_monthly"].invoke
+    Rake::Task["reports:calculate_orgs_monthly"].reenable
     Rake::Task["reports:user_usage"].invoke
     Rake::Task["reports:user_usage"].reenable
     Rake::Task["reports:org_usage"].invoke
