@@ -57,13 +57,22 @@ ActiveAdmin.register User do
       end
     end
 
-    panel "Collections" do
+    panel "Authorized Collections" do
       table_for user.collections do|tbl|
         tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
         tbl.column("Created") {|coll| coll.created_at }
         tbl.column("Storage Type") {|coll| coll.storage }
         tbl.column("Items") {|coll| link_to "#{coll.items.count} Items", :action => 'index', :controller => "items", q: { collection_id_equals: coll.id.to_s } }
       end
+    end
+
+    panel "Billable Collections" do
+      table_for user.billable_collections do|tbl|
+        tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
+        tbl.column("Created") {|coll| coll.created_at }
+        tbl.column("Storage Type") {|coll| coll.storage }
+        tbl.column("Items") {|coll| link_to "#{coll.items.count} Items", :action => 'index', :controller => "items", q: { collection_id_equals: coll.id.to_s } } 
+      end 
     end
 
     panel "Owned Organizations" do
