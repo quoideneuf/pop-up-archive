@@ -52,8 +52,13 @@
               span ng-show="item.duration" &#47; {{item.getDurationString()}}
             .clearfix
 
-          .row-fluid ng-show="audioFile.transcript.parts.length"
+          .row-fluid id="ts-info-row" ng-show="audioFile.transcript.parts.length"
             .span6
+              #transcript-label ng-hide="editTable"
+                span id="ts-type" {{audioFile.transcriptType}} Transcript
+                span id="ts-upgrade" ng-show="audioFile.transcriptType == 'Basic'" 
+                  br
+                  | Upgrade to Premium
               .key-commands ng-show="editTable"
                 table
                   tr
@@ -91,7 +96,7 @@
                   |{{!transcriptExpanded && 'Expand Transcript' || 'Collapse Transcript' }}
 
           div ng-class="transcriptClass()"
-            ul.arrow-buttons
+            ul.arrow-buttons  ng-show="showOnAmara()"
               / li ng-show="showOrderTranscript()"
               /   a class='perfect' href="#" ng-click='orderTranscript()'
               /     | Perfect your transcript
@@ -104,7 +109,7 @@
               /   a class='amara' href="#" ng-click='addToAmara()'
               /     | Submit to Amara
               /     img src='#{asset_path("amarasmall.png")}'
-              li ng-show="showOnAmara()"
+              li
                 a class='crafted' ng-href='{{addToAmaraTask().transcriptUrl}}' target="blank"
                   | View on Amara
                   img src='#{asset_path("amarasmall.png")}'

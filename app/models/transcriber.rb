@@ -7,7 +7,11 @@ class Transcriber < ActiveRecord::Base
   has_many :transcripts
 
   def self.basic
-    self.find_by_name('google_voice')
+    @_basic ||= self.find_by_name('google_voice')
+  end
+
+  def self.premium
+    @_premium ||= self.find_by_name('speechmatics')
   end
 
 end
