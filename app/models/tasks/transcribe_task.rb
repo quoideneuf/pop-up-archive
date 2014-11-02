@@ -25,7 +25,7 @@ class Tasks::TranscribeTask < Task
         if self.created_at < DateTime.now-3
           self.extras[:error] = "#{err}"
           self.cancel!
-          return
+          return true
         end
 
         # otherwise, re-throw and we'll try again later
