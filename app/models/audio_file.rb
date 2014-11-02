@@ -348,6 +348,14 @@ class AudioFile < ActiveRecord::Base
     self.is_premium? ? "Premium" : "Basic"
   end
 
+  def premium_wholesale_cost(transcriber=Transcriber.premium)
+    transcriber.wholesale_cost(self.duration)
+  end
+
+  def premium_retail_cost(transcriber=Transcriber.premium)
+    transcriber.retail_cost(self.duration)
+  end
+
   private
 
   def set_metered
