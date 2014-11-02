@@ -63,10 +63,11 @@ class Task < ActiveRecord::Base
   # then kick off the FinishTask so that status gets updated.
   # this addresses a timing/race condition between external services (e.g. fixer)
   # and the async nature of our task runner (sidekiq)
-  after_commit :finish_async, on: :update, if: Proc.new {|task| !task.complete?}
+  after_commit :finish_async, on: :update, if: Proc.new {|task| !task.complete? and !task.cancelled?}
 
   def finish_async
     return unless results && (results['status'] == COMPLETE)
+    #Rails.logger.debug("firing FinishTaskWorker.perform_async(#{id})")
     FinishTaskWorker.perform_async(id) unless Rails.env.test?
   end
 
@@ -230,7 +231,7 @@ class Task < ActiveRecord::Base
   end
 
   def cancel_task
-    puts "#{self.class.name}.cancel_task called from #{caller_locations.first.to_s}"
+    Rails.logger.warn "#{self.class.name}.cancel_task called by task #{self.id}"
   end
   
 end
