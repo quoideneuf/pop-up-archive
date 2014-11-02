@@ -7,6 +7,7 @@ namespace :fixer do
 
     verbose = ENV['VERBOSE']
     debug   = ENV['DEBUG']
+    limit   = ENV['LIMIT']
     recover_types = Hash[ ENV['RECOVER'] ? ENV['RECOVER'].split(/\ *,\ */).map{|t| [t, true]} : [] ]
     debug and pp recover_types.inspect
     puts "Finding all tasks with status mismatch..."
@@ -15,11 +16,15 @@ namespace :fixer do
     mismatched_report = Hash.new{ |h,k| h[k] = 1 }
     mismatched_tasks.each do |task|
       mismatched_report[task.type] += 1
+      if limit and limit.to_i >= mismatched_report[task.type]
+        debug and puts "Limit #{limit} reached. Skipping eval of task #{task.id}"
+        next
+      end
       debug and puts "Task #{task.type} #{task.id} has status '#{task.status}' with results: " + task.results.inspect
       if recover_types.has_key?(task.type)
-        verbose and puts "Calling task.recover on task #{task.id}"
+        verbose and puts "Calling #{task.type}.find(#{task.id}).recover!"
         task.recover!
-        verbose and puts "Task #{task.type} #{task.id} new status == #{task.status}"
+        verbose and puts "#{task.type}.find(#{task.id}) new status == #{task.status}"
         mismatched_report[task.status] += 1
       end
     end
