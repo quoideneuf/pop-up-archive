@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141029204336) do
+ActiveRecord::Schema.define(:version => 20141102121449) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
@@ -376,8 +376,9 @@ ActiveRecord::Schema.define(:version => 20141029204336) do
     t.string   "url"
     t.integer  "cost_per_min"
     t.text     "description"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
+    t.integer  "retail_cost_per_min", :default => 0, :null => false
   end
 
   create_table "transcripts", :force => true do |t|
