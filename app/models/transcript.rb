@@ -72,6 +72,10 @@ class Transcript < ActiveRecord::Base
     srt
   end
 
+  def is_premium?
+    self.transcriber_id == Transcriber.premium.id
+  end 
+
   private
 
   def format_time(seconds)

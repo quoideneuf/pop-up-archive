@@ -302,14 +302,13 @@ class AudioFile < ActiveRecord::Base
     Rails.application.routes.url_helpers.api_item_audio_file_transcript_text_url(item_id, id)
   end
 
+  def is_premium?
+    # call unscoped w/explicit 'where' to avoid loading timed texts too.
+    self.transcripts.unscoped.where(:audio_file_id => self.id).any?{|t| t.is_premium?}
+  end
+
   def transcript_type
-    type = "Basic"
-    transcripts.unscoped.each do |ts|
-      if ts.transcriber == Transcriber.premium
-        type = "Premium"
-      end
-    end
-    return type
+    self.is_premium? ? "Premium" : "Basic"
   end
 
   private
