@@ -9,9 +9,9 @@ describe Transcriber do
 
   it "should calculate wholesale and retail costs" do
 
-    @audio.duration = 123 # 2:03 rounds to 2 min
-    @audio.premium_retail_cost(@transcriber).should eq 0.2
-    @audio.premium_wholesale_cost(@transcriber).should eq 0.1
+    @audio.duration = 123 
+    @audio.premium_retail_cost(@transcriber).should eq 0.20
+    @audio.premium_wholesale_cost(@transcriber).should eq 0.10
 
   end
 
