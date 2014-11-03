@@ -8,6 +8,10 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
   expose :upload_to_storage
   expose :task
 
+  def index
+    respond_with :api, audio_files
+  end 
+
   def update
     if params[:task].present?
       audio_file.update_from_fixer(params[:task])
@@ -27,7 +31,17 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
   end
 
   def show
-    redirect_to audio_file.url
+    # respond w/json only if explicitly asked.
+    # otherwise, redirect to physical asset.
+    # because of how our routing is configured, everything defaults to 'json'
+    # so we have to examine the original request URL to discover
+    # if .json was actually present on the request.
+    req_format_was_json = request.fullpath.match(/(\.json)$/)
+    if req_format_was_json
+      respond_with :api, audio_file
+    else
+      redirect_to audio_file.url
+    end
   end
 
   def destroy
