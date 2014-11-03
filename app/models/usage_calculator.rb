@@ -2,31 +2,51 @@ class UsageCalculator
 
   attr_accessor :entity, :dtim
 
+  MONTHLY_USE_METHOD = {
+    MonthlyUsage::PREMIUM_TRANSCRIPTS      => :calculate_billable,
+    MonthlyUsage::BASIC_TRANSCRIPTS        => :calculate_billable,
+    MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE => :calculate_usage,
+    MonthlyUsage::BASIC_TRANSCRIPT_USAGE   => :calculate_usage,
+  }
+
   def initialize(entity, dtim)
     @entity = entity
     @dtim = dtim
   end
 
-  def calculate(klass, usage_type)
-    # get all tasks for the user's entity
-    month_start = @dtim.utc.beginning_of_month
-    month_end = @dtim.utc.end_of_month
-    if @entity.is_a?(User) and @entity.entity.is_a?(User)
-      # user solo (no org)
-      tasks = klass.where(status: :complete).where("extras -> 'user_id' = ?", @entity.id.to_s).where(created_at: month_start..month_end)
-    elsif @entity.is_a?(User) and @entity.entity.is_a?(Organization)
-      # user acting on behalf of Organization
-      tasks = klass.where(status: :complete).where("extras -> 'entity_id' = ?", @entity.entity.id.to_s).where(created_at: month_start..month_end)
-    elsif @entity.is_a?(Organization)
-      # org (can this happen?)
-      tasks = klass.where(status: :complete).where("extras -> 'entity_id' = ?", @entity.id.to_s).where(created_at: month_start..month_end)
+  def calculate(transcriber, usage_type)
+
+    # finds all the transcripts for the time period and returns the total seconds and cost
+    #puts "calculate usage for entity #{entity} for #{dtim} transcriber #{transcriber.id} type #{usage_type}"
+    # whether the calculation is billable or not triggers which method is called on the @entity.
+    if MONTHLY_USE_METHOD.has_key?(usage_type)
+      methd = MONTHLY_USE_METHOD[usage_type]
+      #STDERR.puts("calculating with #{methd}")
+      self.send(methd, transcriber, usage_type)
     else
-      raise "entity #{@entity.inspect} is neither an Organization nor a User"
+      raise "No calculation method defined for usage type #{usage_type}"
     end
-    duration = tasks.inject(0){|sum, t| sum + t.usage_duration }
-    @entity.update_usage_for(usage_type, duration, @dtim)
-    duration
+
   end
 
+  def calculate_billable(transcriber, usage_type)
+
+    # finds all the transcripts for the time period and returns the total seconds and cost
+    #puts "calculate usage for entity #{entity} for #{dtim} transcriber #{transcriber.id} type #{usage_type}"
+    report = @entity.transcripts_billable_for_month_of(@dtim, transcriber.id)
+    @entity.update_usage_for(usage_type, report, @dtim)
+    #STDERR.puts "calculate_billable for entity #{entity} for #{dtim} transcriber #{transcriber.id} type #{usage_type} = #{report.inspect}"
+    report[:seconds]
+
+  end
+
+  def calculate_usage(transcriber, usage_type)
+
+    report = @entity.transcripts_usage_for_month_of(@dtim, transcriber.id)
+    @entity.update_usage_for(usage_type, report, @dtim)
+    #STDERR.puts "calculate_usage for entity #{entity} for #{dtim} transcriber #{transcriber.id} type #{usage_type} = #{report.inspect}"
+    report[:seconds]
+
+  end 
 
 end

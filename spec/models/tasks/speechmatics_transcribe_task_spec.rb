@@ -117,14 +117,69 @@ describe Tasks::SpeechmaticsTranscribeTask do
     it 'updates paid transcript usage' do
       now = DateTime.now
 
+      # test user must own the collection, since usage is limited to billable ownership.
+      audio_file.item.collection.set_owner(user)
+
       user.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS).should == 0
       extras = { 'original' => audio_file.process_file_url, 'user_id' => user.id }
       t = Tasks::SpeechmaticsTranscribeTask.create!(owner: audio_file, identifier: 'test', extras: extras)
+      
+      # audio_file must have the transcript, since transcripts are the billable items.
+      audio_file.transcripts << t.process_transcript(response)
+
       t.user_id.should == user.id.to_s
       t.extras['entity_id'].should == user.entity.id.to_s
-
       t.update_premium_transcript_usage(now).should == 60
       user.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS).should == 60
+
+    end
+
+    it 'delineates usage for User vs Org' do
+      now = DateTime.now
+
+      # assign user to an org
+      org = FactoryGirl.create :organization
+      user.organization = org
+      user.save!  # because Task will do a User.find(user_id)
+
+      # org must own the collection, since usage is limited to billable ownership.
+      audio_file.item.collection.set_owner(org)
+
+      # user must have access to the collection to act on it
+      user.collections << audio_file.item.collection
+
+      # user must own the audio_file, since usage is tied to user_id
+      audio_file.set_user_id(user.id)
+      audio_file.save!  # because usage calculator queries db
+
+      # make sure we start clean
+      user.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS).should == 0
+      extras = { 'original' => audio_file.process_file_url, 'user_id' => user.id }
+      t = Tasks::SpeechmaticsTranscribeTask.create!(owner: audio_file, identifier: 'test', extras: extras)
+    
+      # audio_file must have the transcript, since transcripts are the billable items.
+      audio_file.transcripts << t.process_transcript(response)
+
+      #STDERR.puts "task.extras = #{t.extras.inspect}"
+      #STDERR.puts "audio       = #{audio_file.inspect}"
+      #STDERR.puts "org         = #{org.inspect}"
+      #STDERR.puts "user        = #{user.inspect}"
+      #STDERR.puts "user.entity = #{user.entity.inspect}"
+      t.user_id.should == user.id.to_s
+      t.extras['entity_id'].should == user.entity.id.to_s
+      t.update_premium_transcript_usage(now).should == 60
+
+      #STDERR.puts "user.monthly_usages == #{user.monthly_usages.inspect}"
+      #STDERR.puts "org.monthly_usages  == #{org.monthly_usages.inspect}"
+
+      # user has non-billable usage
+      user.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE).should == 60
+
+      # user has zero billable usage
+      user.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS).should == 0
+
+      # org has all the billable usage
+      org.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS).should == 60
 
     end
 

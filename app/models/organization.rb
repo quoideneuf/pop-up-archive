@@ -1,5 +1,14 @@
 class Organization < ActiveRecord::Base
-  resourcify
+
+  include Billable
+
+  resourcify :is_resource_of
+
+  # known bug with resourcify and rolify together
+  # https://github.com/RolifyCommunity/rolify/issues/244
+  # so we pass explicit association name to resourcify and let
+  # rolify use the 'roles' association name.
+  rolify
 
   attr_accessible :name
 
@@ -22,6 +31,15 @@ class Organization < ActiveRecord::Base
   scope :premium_usage_asc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) asc"
 
   ROLES = [:admin, :member]
+
+  # entity method makes an Org act like a User for billable concern
+  def entity
+    self
+  end
+
+  def owns_collection?(coll)
+    has_role?(:owner, coll)
+  end
 
   def add_uploads_collection
     self.uploads_collection = Collection.new(title: "Uploads", items_visible_by_default: false)
@@ -69,99 +87,27 @@ class Organization < ActiveRecord::Base
   end
 
   def used_metered_storage
-    @_used_metered_storage ||= collections.map{|coll| coll.used_metered_storage}.inject(:+)
+    @_used_metered_storage ||= billable_collections.map{|coll| coll.used_metered_storage}.inject(:+) || 0
   end
 
   def used_unmetered_storage
-    @_used_unmetered_storage ||= collections.map{|coll| coll.used_unmetered_storage}.inject(:+)
+    @_used_unmetered_storage ||= billable_collections.map{|coll| coll.used_unmetered_storage}.inject(:+) || 0
   end
 
   def update_usage_report!
-    update_attribute :used_metered_hours_cache, used_metered_storage
-    update_attribute :used_unmetered_hours_cache, used_unmetered_storage
+    update_attribute :used_metered_storage_cache, used_metered_storage
+    update_attribute :used_unmetered_storage_cache, used_unmetered_storage
     update_attribute :transcript_usage_cache, transcript_usage_report
   end
 
-  def transcript_usage_report
-    return {
-      :basic_seconds => used_basic_transcripts[:seconds],
-      :premium_seconds => used_premium_transcripts[:seconds],
-      :basic_cost => used_basic_transcripts[:cost],
-      :premium_cost => used_premium_transcripts[:cost],
-    }
-  end
-
-  def total_transcripts_report(ttype=:basic)
-    total_secs = 0
-    total_cost = 0
-    cost_where = '=0'
-
-    # for now, we have only two types. might make sense
-    # longer term to store the ttype on the transcriber record.
-    case ttype
-    when :basic
-      cost_where = '=0'
-    when :premium
-      cost_where = '>0'
-    end
-    collections.each do |coll|
-      coll.items.each do |item|
-        item.audio_files.where('audio_files.duration is not null').each do|af|
-          if af.transcripts.where("cost_per_min #{cost_where}").count > 0
-            total_secs += af.duration
-            af.transcripts.unscoped.where("audio_file_id=#{af.id} and cost_per_min #{cost_where}").each do |tr|
-              cpm = tr.cost_per_min
-              mins = af.duration.div(60)
-              ttl = cpm * mins
-              total_cost += ttl
-            end
-          end
-        end
-      end
-    end
-    # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
-    # but we round to the nearest penny when we cache it in aggregate.
-    # we make seconds and cost fixed-width so that sorting a string works
-    # like sorting an integer.
-    return { :seconds => "%010d" % total_secs, :cost => sprintf('%010.2f', total_cost.fdiv(1000)) }
-  end
-
-  def used_basic_transcripts
-    @_used_basic_transcripts ||= total_transcripts_report(:basic)
-  end
-
-  def used_premium_transcripts
-    @_used_premium_transcripts ||= total_transcripts_report(:premium)
-  end
-
-  def get_total_seconds(ttype)
-    ttype_s = ttype.to_s
-    methname = 'used_' + ttype_s + '_transcripts'
-    if transcript_usage_cache.has_key?(ttype_s+'_seconds')
-      return transcript_usage_cache[ttype_s+'_seconds'].to_i
-    else
-      return send(methname)[:seconds].to_i
-    end 
-  end 
-
-  def get_total_cost(ttype)
-    ttype_s = ttype.to_s
-    methname = 'used_' + ttype_s + '_transcripts'
-    if transcript_usage_cache.has_key?(ttype_s+'_cost')
-      return transcript_usage_cache[ttype_s+'_cost'].to_f
-    else
-      return send(methname)[:cost].to_f
-    end 
-  end
-
   def self.get_org_ids_for_transcripts_since(since_dtim=nil)
-    if since_dtim == nil 
+    if since_dtim == nil
       since_dtim = DateTime.now - (1/24.0)  # an hour ago
     elsif since_dtim.is_a?(DateTime)
       # no op
     else
       since_dtim = DateTime.parse(since_dtim)
-    end 
+    end
 
     #puts "Checking transcripts modified since #{since_dtim}"
 
@@ -176,7 +122,7 @@ class Organization < ActiveRecord::Base
     pgres = User.connection.execute(grants_sql)
     pgres.each_row do |row|
       org_ids << row.first
-    end 
+    end
     return org_ids
   end
 

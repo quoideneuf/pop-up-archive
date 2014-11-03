@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Tasks::UploadTask do
   before { StripeMock.start }
   after { StripeMock.stop }
-  
+
   it "should set defaults" do
     task = Tasks::UploadTask.new(extras: {'user_id' => 1, 'filename' => 'test.wav', 'filesize' => 10000, 'last_modified' => '12345'})
     task.should be_valid
@@ -26,7 +26,8 @@ describe Tasks::UploadTask do
   end
 
   it "should not mark completed on update of chunk" do
-    task = Tasks::UploadTask.new(extras: {'num_chunks' => 2, 'chunks_uploaded' => "1\n", 'key' => 'this/is/a/key.mp3'})
+    audio_file = FactoryGirl.create :audio_file_private
+    task = Tasks::UploadTask.new(extras: {'num_chunks' => 2, 'chunks_uploaded' => "1\n", 'key' => 'this/is/a/key.mp3'}, owner: audio_file)
     task.save!
     task.should be_created
     task.run_callbacks(:commit)

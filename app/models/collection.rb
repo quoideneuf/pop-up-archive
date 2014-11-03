@@ -1,4 +1,5 @@
 class Collection < ActiveRecord::Base
+  resourcify :is_resource_of
 
   acts_as_paranoid
 
@@ -8,12 +9,13 @@ class Collection < ActiveRecord::Base
   belongs_to :default_storage, class_name: "StorageConfiguration"
   belongs_to :upload_storage, class_name: "StorageConfiguration"
   belongs_to :creator, class_name: "User"
-  belongs_to :organization
 
   has_many :collection_grants, dependent: :destroy
   has_many :uploads_collection_grants, class_name: 'CollectionGrant', conditions: {uploads_collection: true}
-  has_many :users, through: :collection_grants
+  #has_many :users, through: :collection_grants # TODO this is broken
   has_many :items, dependent: :destroy
+  has_many :audio_files, through: :items
+  has_many :transcripts, through: :audio_files
 
   validates_presence_of :title
 
@@ -23,7 +25,17 @@ class Collection < ActiveRecord::Base
 
   before_validation :set_defaults
 
-  after_commit :grant_to_creator, on: :create
+  after_commit :after_create_hooks, on: :create
+  after_commit :after_update_hooks, on: :update
+
+  def after_create_hooks
+    grant_to_creator
+    check_billable_to!
+  end
+
+  def after_update_hooks
+    check_billable_to!
+  end
 
   # def self.visible_to_user(user)
   #   if user.present?
@@ -33,6 +45,91 @@ class Collection < ActiveRecord::Base
   #     is_public
   #   end
   # end
+
+  # calls and discards response from billable_to. Will create owner if one does not exist.
+  # if no owner can be found, logs error and moves on.
+  def check_billable_to!
+    begin
+      billable_to
+    rescue Exception => err
+      Rails.logger.error(err)
+    end
+  end
+
+  # returns object to which this audio_file should be accounted.
+  # should be a User or Organization that has role 'owner' on the Collection
+  def billable_to
+    # memoize, given caveats in http://cmme.org/tdumitrescu/blog/2014/01/careful-what-you-memoize/
+    return @_billable_to if @_billable_to
+
+    # find the first owner via roles. 
+    # croak if there is more than one.
+    owner_role = get_owner_role
+    if !owner_role
+      # create one
+      # if the creator has an organization, the org owns the collection
+      if creator
+        if creator.is_a?(User)
+          if creator.organization
+            owner = creator.organization
+          else
+            owner = creator
+          end
+        else
+          owner = creator
+        end
+      else
+      # no creator. prefer any Org granted authz
+        grant = collection_grants.where(collector_type: 'Organization').first
+        if grant and grant.collector
+          owner = grant.collector
+        else
+          # otherwise, the oldest grantee, if any.
+          grant = collection_grants.order('created_at asc').first
+          if grant and grant.collector
+            owner = grant.collector.entity
+          else
+            raise "Collection #{self.id} has no creator and no collection_grants. Poor orphan!"
+          end
+        end
+      end
+      # sanity check. make sure we have an owner identified
+      if !owner
+        raise "Failed to identify an owner for Collection #{self.id}"
+      end
+      owner.add_role :owner, self
+      @_billable_to = owner
+    else
+      @_billable_to = owner_role.single_designee  # prefers Organization over User
+    end
+
+    return @_billable_to
+  end
+
+  def get_owner_role
+    owner_roles = is_resource_of.where(:name => :owner)
+    if owner_roles.size > 1 
+      raise "More than one owner role defined for collection #{id}"
+    end
+    return owner_roles.first
+  end
+
+  def set_owner(user_or_org)
+    begin
+      cur_owner = billable_to
+      cur_owner_role = get_owner_role
+      if cur_owner_role
+        cur_owner.remove_role :owner, self
+      end
+      user_or_org.add_role :owner, self
+      user_or_org.save!
+      # nullify cache
+      @_billable_to = nil
+      return user_or_org
+    rescue => err
+      raise "Failed to set_owner of collection #{self.id} to #{user_or_org.inspect}: #{err}"
+    end
+  end
 
   def storage=(provider)
     if (provider == 'InternetArchive') && (!default_storage || (default_storage.provider != 'InternetArchive'))

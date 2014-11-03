@@ -21,8 +21,12 @@ transcribers = Transcriber.create([
   }
 ])
 
-collections = Collection.create([{"creator_id"=> 1, "title" => "Test Collection", "description" => "This collection will show you how collections work."}, {"creator_id"=> 1, "title" => "A Second Collection", "default_storage_id" => 1}])
-item = Item.create("title" => "Lost Weekend Video finds new ways to entertain in the digital age")
+# collections require a valid owner (billable_to)
+user = User.new({name: 'seed user', email: 'seeduser@nosuchemail.org', password: 'sekrit'})
+user.save!
+
+collections = Collection.create([{"creator_id"=> user.id, "title" => "Test Collection", "description" => "This collection will show you how collections work."}, {"creator_id"=> user.id, "title" => "A Second Collection", "default_storage_id" => 1}])
+item = Item.new("title" => "Lost Weekend Video finds new ways to entertain in the digital age")
 item.description = "A couple on an evening stroll down Valencia Street comes to a stop outside Lost Weekend Video. They’re peering in through the big front window."
 item.collection_id = collections.first.id
 item.save!
@@ -33,7 +37,7 @@ file.file = "LostWeekend.mp3"
 file.original_file_url = "http://archive.org/download/lost-weekend-video-finds-new-ways-to-entertain-in.EU5iLJ.popuparchive.org/WEB.LostWeekend.mp3"
 file.identifier = "http://cpa.ds.npr.org/kalw/audio/2014/05/WEB.LostWeekend.mp3"
 file.transcoded_at = "2014-06-04 19:39:20"
-file.user_id = 1
+file.user_id = user.id
 file.save!
 
 transcript = Transcript.new()
@@ -571,6 +575,6 @@ transcript.save!
 file.duration = timed_texts.last[:end_time]
 file.save!
 
-item2 = Item.create("title" => "Happy holidays!", "description" => "Today, on a very special Cory Doctorow podcast, the podcasting debut of Ms Poesy Emmeline Fibonacci Nautilus Taylor Doctorow!. This item belongs to: audio/podcast_corydoctorow. This item has files of the following types: Metadata, VBR MP3")
+item2 = Item.new("title" => "Happy holidays!", "description" => "Today, on a very special Cory Doctorow podcast, the podcasting debut of Ms Poesy Emmeline Fibonacci Nautilus Taylor Doctorow!. This item belongs to: audio/podcast_corydoctorow. This item has files of the following types: Metadata, VBR MP3")
 item2.collection_id = collections.first.id
 item2.save!

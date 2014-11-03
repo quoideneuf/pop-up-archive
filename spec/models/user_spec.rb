@@ -35,8 +35,12 @@ describe User do
       user.usage_for('test').should == 0
     end
 
+    it 'does not confuse Org with User usage' do
+      org_user.usage_for('test').should == 0
+    end
+
     it 'gets org usage for current month' do
-      org_user.usage_for('test').should == 10
+      org_user.organization.usage_for('test').should == 10
     end
 
     it 'gets usage for different month' do
@@ -46,9 +50,9 @@ describe User do
     it 'updates usage' do
       time = DateTime.now
       user.usage_for('test', time).to_i.should == 0
-      user.update_usage_for('test', 100, time)
+      user.update_usage_for('test', {:seconds => 100, :cost => 0}, time)
       user.usage_for('test', time).should eq 100
-      user.update_usage_for('test', 1000, time)
+      user.update_usage_for('test', {:seconds => 1000, :cost => 1234}, time)
       user.usage_for('test', time).should eq 1000
     end
 
