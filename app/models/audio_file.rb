@@ -357,7 +357,14 @@ class AudioFile < ActiveRecord::Base
   end
 
   def order_premium_transcript(cur_user)
-    raise "TODO"
+    # TODO create named exception classes for these errors
+    if !transcoded_at
+      raise "Cannot order premium transcript for audio that has not been transcoded"
+    end
+    if !cur_user.active_credit_card
+      raise "Cannot order premium transcript without an active credit card"
+    end
+    start_premium_transcribe_job(cur_user, 'ts_paid', { ondemand: true })
   end
 
   private
