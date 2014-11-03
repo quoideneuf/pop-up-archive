@@ -1,6 +1,7 @@
 require "digest/sha1"
 
 class Api::V1::AudioFilesController < Api::V1::BaseController
+  include ActionView::Helpers::NumberHelper
 
   expose :item
   expose :audio_files, ancestor: :item
@@ -56,7 +57,13 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
 
   def premium_transcript_cost
     cost = audio_file.premium_retail_cost
-    render status: 200, json: {cost: number_to_currency(cost)}
+    render status: 200, json: {
+      id: audio_file.id,
+      type: 'premium',
+      filename: audio_file.filename,
+      duration: audio_file.duration,
+      cost: number_to_currency(cost)
+    }
   end
 
   def order_premium_transcript
