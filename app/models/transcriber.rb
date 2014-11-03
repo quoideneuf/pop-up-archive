@@ -18,13 +18,15 @@ class Transcriber < ActiveRecord::Base
   # NOTE cost_per_min is wholesale cost, not retail cost.
   def wholesale_cost(seconds)
     mins = seconds.to_i.fdiv(60)
-    (cost_per_min.to_f * mins.to_f) / 1000
+    c = (cost_per_min.to_f * mins.to_f) / 1000
+    c.round(2)
   end
 
   # returns float for retail cost of N seconds of transcription.
   def retail_cost(seconds)
     mins = seconds.to_i.fdiv(60)
-    (retail_cost_per_min.to_f * mins.to_f) / 1000
+    c = (retail_cost_per_min.to_f * mins.to_f) / 1000
+    c.round(2)
   end
 
 end
