@@ -108,6 +108,14 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
     transcriber = Transcriber.find_by_name('speechmatics')
 
+    # if this was an ondemand transcript, the cost is retail, not wholesale
+    transcript_cpm = transcriber.cost_per_min
+    cost_type      = Task::WHOLESALE
+    if self.extras['ondemand']
+      transcript_cpm = transcriber.retail_cost_per_min
+      cost_type      = Task::RETAIL
+    end
+
     Transcript.transaction do
       trans    = audio_file.transcripts.create!(
         language: 'en-US',  # TODO get this from audio_file?
@@ -115,7 +123,8 @@ class Tasks::SpeechmaticsTranscribeTask < Task
         start_time: 0,
         end_time: 0,
         transcriber_id: transcriber.id,
-        cost_per_min: transcriber.cost_per_min
+        cost_per_min: transcript_cpm,
+        cost_type: cost_type,
       )
       speakers = response.speakers
       words    = response.words
