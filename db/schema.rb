@@ -11,10 +11,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141102121449) do
+ActiveRecord::Schema.define(:version => 20141103195143) do
 
   add_extension "hstore"
-  add_extension "pg_stat_statements"
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "namespace"
@@ -382,16 +381,17 @@ ActiveRecord::Schema.define(:version => 20141102121449) do
   end
 
   create_table "transcripts", :force => true do |t|
-    t.integer  "audio_file_id",  :null => false
+    t.integer  "audio_file_id",                 :null => false
     t.string   "identifier"
     t.string   "language"
     t.integer  "start_time"
     t.integer  "end_time"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
     t.decimal  "confidence"
     t.integer  "transcriber_id"
     t.integer  "cost_per_min"
+    t.integer  "cost_type",      :default => 1, :null => false
   end
 
   add_index "transcripts", ["audio_file_id", "identifier"], :name => "index_transcripts_on_audio_file_id_and_identifier"
