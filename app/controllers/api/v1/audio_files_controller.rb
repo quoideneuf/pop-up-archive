@@ -70,7 +70,7 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
     authorize! :order_premium_transcript, audio_file
     logger.debug "order_premium_transcript for audio_file: #{audio_file}"
     self.task = audio_file.order_premium_transcript(current_user)
-    respond_with :api
+    respond_with :api, audio_file
   end
 
   def order_transcript
