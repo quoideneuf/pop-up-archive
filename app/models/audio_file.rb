@@ -356,6 +356,10 @@ class AudioFile < ActiveRecord::Base
     transcriber.retail_cost(self.duration)
   end
 
+  def order_premium_transcript(cur_user)
+    raise "TODO"
+  end
+
   private
 
   def set_metered

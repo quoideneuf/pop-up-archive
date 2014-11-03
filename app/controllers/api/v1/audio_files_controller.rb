@@ -40,6 +40,18 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
     render text: audio_file.transcript_text, content_type: 'text/plain'
   end
 
+  def premium_transcript_cost
+    cost = audio_file.premium_retail_cost
+    render status: 200, json: {cost: number_to_currency(cost)}
+  end
+
+  def order_premium_transcript
+    authorize! :order_premium_transcript, audio_file
+    logger.debug "order_premium_transcript for audio_file: #{audio_file}"
+    self.task = audio_file.order_premium_transcript(current_user)
+    respond_with :api
+  end
+
   def order_transcript
     authorize! :order_transcript, audio_file
     
