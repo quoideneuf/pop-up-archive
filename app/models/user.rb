@@ -271,6 +271,11 @@ class User < ActiveRecord::Base
     return user_ids
   end
 
+  def invalidate_cache
+    Rails.cache.delete(customer_cache_id)
+    @_customer = nil
+  end 
+
   private
 
   def delete_customer
@@ -297,10 +302,6 @@ class User < ActiveRecord::Base
 
   def customer_cache_id
     [:customer, :individual, customer_id]
-  end
-
-  def invalidate_cache
-    Rails.cache.delete(customer_cache_id)
   end
 
   def add_default_collection
