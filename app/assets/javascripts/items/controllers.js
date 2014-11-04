@@ -16,7 +16,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   }
 
 }])
-.controller('ItemCtrl', ['$scope', '$timeout', '$q', '$modal', 'Item', 'Loader', 'Me', '$routeParams', 'Collection', 'Entity', '$location', 'SearchResults', 'Storage', '$window', function ItemCtrl($scope, $timeout, $q, $modal, Item, Loader, Me, $routeParams, Collection, Entity, $location, SearchResults, Storage, $window) {
+.controller('ItemCtrl', ['$scope', '$timeout', '$q', '$modal', '$http', 'Item', 'Loader', 'Me', '$routeParams', 'Collection', 'Entity', '$location', 'SearchResults', 'Storage', '$window', function ItemCtrl($scope, $timeout, $q, $modal, $http, Item, Loader, Me, $routeParams, Collection, Entity, $location, SearchResults, Storage, $window) {
 
   $scope.Storage = Storage;
 
@@ -66,6 +66,52 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       return "expanded";
     }
     return "collapsed";
+  };
+
+  $scope.orderPremiumTranscript = function(af, $ev) {
+    console.log("orderPremiumTranscript", af, $ev);
+    var audioFile = $scope.item.newAudioFile(af);
+    var costUrl = audioFile.getPremiumCostUrl();
+
+    // disable all 'upgrade to premium' buttons if the task is in-process
+    // might not strictly be needed, but keep things ultra sane.
+    $scope.premiumTranscriptOrderProcessing = true;
+
+    // if the user does not have an active credit card,
+    // redirect them to the /pricing page.
+    // TODO take CC in-place.
+    if (!$scope.currentUser.hasCreditCard()) {
+      if (confirm("You do not seem to have a credit card on file with us. Would you like to add one now?")) {
+        // TODO redirect
+        //return;
+      }
+      else {
+        // user cancelled
+        $scope.premiumTranscriptOrderProcessing = false;
+        return;
+      }
+    }
+    // fetch the estimated price and present user with confirmation.
+    //console.log("cost url", costUrl);
+    $http.get(costUrl).success(function(data, headers, config) {
+      //console.log(data);
+      var cost = data.cost;
+      var msg = "Your premium transcript will cost about " + cost + ".\n";
+      msg += 'Click OK to place your order.';
+      if (confirm(msg)) {
+        audioFile.orderPremiumTranscript($scope.currentUser, function() {
+          // TODO confirm message
+          $scope.premiumTranscriptOrderProcessing = false;
+        });
+      }
+      else {
+        $scope.premiumTranscriptOrderProcessing = false;
+      }
+    }).
+    error(function(data, status, headers, config) {
+      console.log("ERROR!: ", data, status, headers);
+    });
+
   };
 
   $scope.itemStorage = function() {

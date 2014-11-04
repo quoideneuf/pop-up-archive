@@ -108,6 +108,23 @@ angular.module('Directory.audioFiles.models', ['RailsModel', 'S3Upload'])
     });
   };
 
+  AudioFile.prototype.getPremiumCostUrl = function() {
+    var self = this;
+    return self.$url() + '/transcript/premium/cost';
+  };
+
+  AudioFile.prototype.orderPremiumTranscript = function(user, onSuccess) {
+    var self = this;
+    var url = self.$url() + '/transcript/premium/order';
+    //console.log('order url:', url);
+    $http.post(url).success(function(data, headers, config) {
+      onSuccess(data, headers, config);
+    }).
+    error(function(data, status, headers, config) {
+      console.log("ERROR! ", data, status, headers);
+    });
+  };
+
   AudioFile.prototype.addToAmara = function (user) {
     var self = this;
     // console.log('addToAmara', this);

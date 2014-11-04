@@ -193,6 +193,11 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     return audioFile;
   }
 
+  Item.prototype.newAudioFile = function(af) {
+    af.itemId = this.id;
+    return new AudioFile(af);
+  }
+
   // update existing audioFiles
   Item.prototype.updateAudioFiles = function () {
     var item = this;

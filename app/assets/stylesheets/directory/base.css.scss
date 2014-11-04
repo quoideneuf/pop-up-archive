@@ -1722,39 +1722,39 @@ ul.great-list {
 
 .ui-match { background: #8ED3F2; }
 
-#download-btn {
+.download-btn {
   padding-left: 12px;
   padding-right: 12px;
 }
 
-#expand-transcript {
+.expand-transcript {
   width:121px;
 }
 
-#ts-info-row {
+.ts-info-row {
   margin-bottom: 10px;
 }
 
-#transcript-label {
+.transcript-label {
   width: 137px;
-  border-radius: 8px;
-  padding: 3px;
+  /* border-radius: 8px; */
+  /* padding: 4px 12px; */
   text-align: center;
-  font-family: soleil;
+  font-family: soleil,helvetica,"sans serif";
   line-height: 1.2;
-  background-color: #F5F5F5;
+  /* background-color: #F5F5F5; */
+  display:inline;
 }
 
-#ts-type {
+.ts-type {
   font-size: 14px;
   color: #F25A4C;
 }
 
-#ts-upgrade {
-  // Hide the link text until this feature is ready
-  display: none;
+.ts-upgrade {
   //  Let's change the color when we get the link working so it doesn't look offensive
   color: #2ca5da;
   font-size: 12px;
   font-weight: bold;
+  display:inline;
 }

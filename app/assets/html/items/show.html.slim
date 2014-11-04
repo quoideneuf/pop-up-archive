@@ -36,7 +36,7 @@
         section ng-repeat="audioFile in item.audioFiles" ng-controller="AudioFileCtrl"
           .btn-group.pull-right
             button.btn.icon-link ng-show="collection.itemsVisibleByDefault" type="button" bs-popover="embedCode"  data-placement="bottom" Embed Code
-            button.btn.icon-download-alt.dropdown-toggle#download-btn type="button" bs-dropdown="downloadLinks" data-toggle="dropdown"  Download
+            button.btn.icon-download-alt.dropdown-toggle.download-btn type="button" bs-dropdown="downloadLinks" data-toggle="dropdown"  Download
           h4 ng-show="item.audioFiles.length > 1" {{audioFile.filename || 'no audio file'}}
           .player
             button.player-button ng-disabled="player.time == 0" ng-click="player.rewind()"
@@ -52,13 +52,12 @@
               span ng-show="item.duration" &#47; {{item.getDurationString()}}
             .clearfix
 
-          .row-fluid id="ts-info-row" ng-show="audioFile.transcript.parts.length"
+          .row-fluid.ts-info-row ng-show="audioFile.transcript.parts.length"
             .span6
-              #transcript-label ng-hide="editTable"
-                span id="ts-type" {{audioFile.transcriptType}} Transcript
-                span id="ts-upgrade" ng-show="audioFile.transcriptType == 'Basic'" 
-                  br
-                  | Upgrade to Premium
+              .transcript-label ng-hide="editTable"
+                span.ts-type {{audioFile.transcriptType}} Transcript
+              button.btn.ts-upgrade ng-show="audioFile.transcriptType == 'Basic'" ng-click="orderPremiumTranscript(audioFile, $event)" ng-disabled="premiumTranscriptOrderProcessing"
+                | Upgrade to Premium
               .key-commands ng-show="editTable"
                 table
                   tr
@@ -92,7 +91,7 @@
                   | Save Transcript
                 / button.btn ng-show="currentUser.canEdit(item)" ng-click="assignSpeakers()"
                 /   | Assign Speakers
-                button.btn#expand-transcript ng-click="toggleTranscript()"
+                button.btn.expand-transcript ng-click="toggleTranscript()"
                   |{{!transcriptExpanded && 'Expand Transcript' || 'Collapse Transcript' }}
 
           div ng-class="transcriptClass()"
