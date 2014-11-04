@@ -2,6 +2,7 @@ require "digest/sha1"
 
 class Api::V1::AudioFilesController < Api::V1::BaseController
   include ActionView::Helpers::NumberHelper
+  include Api::BaseHelper
 
   expose :item
   expose :audio_files, ancestor: :item
@@ -62,6 +63,7 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
       type: 'premium',
       filename: audio_file.filename,
       duration: audio_file.duration,
+      duration_hms: format_time( audio_file.duration ),
       cost: number_to_currency(cost)
     }
   end
