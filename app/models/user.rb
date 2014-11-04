@@ -204,7 +204,7 @@ class User < ActiveRecord::Base
           raise "Caught Stripe error #{err}"
         end
         @_customer = cus
-        return cus
+        cus
       end
     else
       Customer.new(Stripe::Customer.create(email: email, description: name)).tap do |cus|
