@@ -1,0 +1,28 @@
+section ng-controller="OrderPremiumTranscriptFormCtrl"
+
+  .modal-header
+    button type="button" class="close" data-dismiss="modal" aria-hidden="true" x
+
+    h3 Upgrade your transcript to our premium model
+
+  .modal-body
+    form.form-horizontal name='orderTranscriptForm'
+      p
+       |Bells? Whistles? We've got you covered.
+       ul
+         li
+           | improved accuracy
+         li
+           | speaker differentiation
+         li
+           | punctuation and capitalization
+      .alert
+        | For this file of
+        b  {{ audioCost.duration_hms }}
+        |, a charge of
+        b  {{ audioCost.cost }}
+        |  will be added to your monthly bill.
+
+  .modal-footer
+    button.btn type="button" ng-click="clear()" Close
+    button.btn.btn-success ng-click='submit()' Order Premium Transcript

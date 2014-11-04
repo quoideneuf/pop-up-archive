@@ -69,48 +69,46 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   };
 
   $scope.orderPremiumTranscript = function(af, $ev) {
-    console.log("orderPremiumTranscript", af, $ev);
     var audioFile = $scope.item.newAudioFile(af);
     var costUrl = audioFile.getPremiumCostUrl();
 
     // disable all 'upgrade to premium' buttons if the task is in-process
     // might not strictly be needed, but keep things ultra sane.
+    // TODO better to mask the whole page immediately with a 'Calculating cost...' msg.
     $scope.premiumTranscriptOrderProcessing = true;
 
-    // if the user does not have an active credit card,
-    // redirect them to the /pricing page.
-    // TODO take CC in-place.
-    if (!$scope.currentUser.hasCreditCard()) {
-      if (confirm("You do not seem to have a credit card on file with us. Would you like to add one now?")) {
-        // TODO redirect
-        //return;
-      }
-      else {
-        // user cancelled
-        $scope.premiumTranscriptOrderProcessing = false;
-        return;
-      }
-    }
-    // fetch the estimated price and present user with confirmation.
-    //console.log("cost url", costUrl);
-    $http.get(costUrl).success(function(data, headers, config) {
-      //console.log(data);
-      var cost = data.cost;
-      var msg = "Your premium transcript will cost about " + cost + ".\n";
-      msg += 'Click OK to place your order.';
-      if (confirm(msg)) {
-        audioFile.orderPremiumTranscript($scope.currentUser, function() {
-          // TODO confirm message
-          $scope.premiumTranscriptOrderProcessing = false;
-        });
-      }
-      else {
-        $scope.premiumTranscriptOrderProcessing = false;
-      }
-    }).
-    error(function(data, status, headers, config) {
-      console.log("ERROR!: ", data, status, headers);
+    $scope.$on('premiumTranscriptOrdered', function(event, data) {
+      $scope.premiumTranscriptOrderProcessing = false;
     });
+    $scope.$on('premiumTranscriptCancelled', function(event, data) {
+      $scope.premiumTranscriptOrderProcessing = false;
+    });
+
+    // order handler called immediately or after user activates credit card.
+    var transcriptOrderer = function() {
+      $http.get(costUrl).success(function(data, headers, config) {
+        console.log('got cost: ', data);
+        $scope.audioCost = data;
+        $scope.audioFile = audioFile;
+        $scope.orderPremiumTranscriptModal = $modal({template: '/assets/audio_files/order_premium_transcript.html', persist: true, show: true, backdrop: 'static', scope: $scope});
+      }). 
+      error(function(data, status, headers, config) {
+        console.log("ERROR!: ", data, status, headers);
+      });
+    };
+    $scope.$on('userHasValidCreditCard', function(event, data) {
+      //console.log('userHasValidCreditCard event fired', data);
+      transcriptOrderer();
+    });
+
+    // if the user does not have an active credit card, ask for one.
+    if (!$scope.currentUser.hasCreditCard()) {
+      $scope.onDemandRequiresCC = true;
+      $scope.orderPremiumCCModal = $modal({template: '/assets/account/credit_card.html', persist: true, show: true, backdrop: 'static', scope: $scope});
+    }
+    else {
+      $scope.$emit('userHasValidCreditCard', audioFile);
+    }
 
   };
 

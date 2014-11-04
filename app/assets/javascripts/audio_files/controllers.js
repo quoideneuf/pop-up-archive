@@ -162,6 +162,31 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
   } 
 
 }])
+.controller("OrderPremiumTranscriptFormCtrl", ['$scope', '$window', '$q', 'Me', 'AudioFile', function($scope, $window, $q, Me, AudioFile) {
+
+  Me.authenticated(function (me) {
+
+    $scope.submit = function () {
+      $scope.audioFile.orderPremiumTranscript(me);
+      $scope.clear();
+      $scope.$emit('premiumTranscriptOrdered');
+      return;
+    }   
+
+  }); 
+
+  $scope.clear = function () {
+    $scope.hideOrderPremiumTranscriptModal();
+    $scope.$emit('premiumTranscriptCancelled');
+  }
+
+  $scope.hideOrderPremiumTranscriptModal = function () {
+    $q.when($scope.orderPremiumTranscriptModal).then( function (modalEl) {
+      modalEl.modal('hide');
+    }); 
+  }
+
+}])
 .controller("PersistentPlayerCtrl", ["$scope", 'Player', function ($scope, Player) {
   $scope.player = Player;
   $scope.collapsed = false;
