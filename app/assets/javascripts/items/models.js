@@ -119,9 +119,19 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     return "/collections/" + this.collectionId + "/items/" + this.id; 
   }
 
+  Item.prototype.prependZero = function(i) {
+    if (i < 10) {
+      return "0" + i;
+    }
+    return i;
+  }
+
   Item.prototype.getDurationString = function () {
+    var self = this;
     var d = new Date(this.duration * 1000);
-    return d.getUTCHours() + ":" + d.getUTCMinutes() + ":" + d.getUTCSeconds();
+    return self.prependZero(d.getUTCHours()) + ":" 
+         + self.prependZero(d.getUTCMinutes()) + ":" 
+         + self.prependZero(d.getUTCSeconds());
   }
 
   Item.prototype.adopt = function (collectionId) {
