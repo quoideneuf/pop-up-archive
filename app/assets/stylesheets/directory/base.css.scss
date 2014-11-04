@@ -793,6 +793,19 @@ form.with-tags {
   .controls {
     margin-left: 160px;
   }
+  .radio-group {
+    margin-top: 4px;
+  }
+  .radio-label {
+    width: auto;
+    display: inline;
+    margin-left: 8px;
+    margin-right: 16px;
+  }
+  .radio_button {
+    vertical-align: middle;
+    margin-top: -1px;
+  }
 
   select {
     width: 284px;
