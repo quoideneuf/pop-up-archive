@@ -1,89 +1,63 @@
-class SubscriptionPlan
+class SubscriptionPlan < ActiveRecord::Base
+  attr_accessible :name, :hours, :amount, :interval, :stripe_plan_id, :pop_up_hours
 
-  def self.all
-    Rails.cache.fetch([:plans, :group, :all], expires_in: 30.minutes) do
-      Stripe::Plan.all(count: 100).map {|p| new(p) }.tap do |plans|
-        plans.each do |plan|
-          Rails.cache.write([:plans, :individual, plan.id], plan, expires_in: 30.minutes)
-        end
-      end
-    end
-  end
-
-  def self.ungrandfathered
-    Rails.cache.fetch([:plans, :group, :ungrandfathered], expires_in: 30.minutes) do
-      all.select { |p| (p.name ||'')[0] != '*' && p != organization }
-    end
-  end
-
-  def self.find(id)
-    Rails.cache.fetch([:plans, :individual, id], expires_in: 30.minutes) do
-      all.find { |p| p.id == id }
-    end
-  end
-
-  def self.community
-    Rails.cache.fetch([:plans, :group, :community], expires_in: 30.minutes) do
-      ungrandfathered.find { |p| p.amount == 0 && p != organization && p.name != 'Organization'} || create(id: '2_community', name: 'Community', amount: 0)
-    end
-  end
-
-  def self.organization
-    Rails.cache.fetch([:plans, :group, :organization], expires_in: 30.minutes) do
-      all.find { |p| p.name == 'Organization' } || create(hours: 100, name: 'Organization', amount: 0)
-    end
-  end
-
-  def self.create(options)
-    plan_id = options[:plan_id] || "#{options[:hours]||2}-#{SecureRandom.hex(8)}"
-    interval = options[:interval] || 'month'
-    new(Stripe::Plan.create(id: plan_id,
-      name: options[:name],
-      amount: options[:amount],
-      currency: 'USD',
-      interval: interval)).tap do |plan|
-      Rails.cache.delete([:plans, :group, :all])
-      Rails.cache.delete([:plans, :group, :ungrandfathered])
-      Rails.cache.delete([:plans, :group, :community])
-      Rails.cache.write([:plans, :individual, plan_id], plan, expires_in: 30.minutes)
-    end
-  end
-
-  def self.reset_cache
-    Rails.cache.delete([:plans, :group, :all])
-    Rails.cache.delete([:plans, :group, :ungrandfathered])
-    Rails.cache.delete([:plans, :group, :community])
-  end
-
-  def initialize(plan)
-    @id = plan.id
-    @hours = calculate_plan_hours(plan.id)
-    @name = plan.name
-    @amount = plan.amount
-    @interval = plan.interval
-  end
-
-  # if the plan id has _business_ or _enterprise_ in it, we'll do premium transcripts
-  def has_premium_transcripts?
-    self.id.match(/_(business|enterprise)_/)
-  end
-
-  attr_reader :name, :amount, :hours, :id, :interval
-
-  def eql?(plan)
-    plan.id == id
-  end
-
-  alias_method :==, :eql?
-
-  private
-
-  def calculate_plan_hours(id)
-    hours = id.split(/\-|_/)[0].to_i
-    if hours == 0
-      1
+  def self.sync_with_stripe(spc)
+    # spc is SubscriptionPlanCached (simple object)
+    # we verify our local copy, if it exists, is identical to Stripe's.
+    sp = find_by_stripe_plan_id(spc.id)
+    if sp.nil?
+      # we don't yet have a local copy. create one.
+      sp = self.create(
+      :stripe_plan_id => spc.id,
+      :name => spc.name,
+      :interval => spc.interval,
+      :hours => spc.hours,
+      :pop_up_hours => spc.hours.to_i,
+      :amount => spc.amount
+      )
     else
-      hours
+
+      # compare and update if necessary
+      needs_update = false
+      if spc.name != sp.name
+        Rails.logger.warn("sp id '#{sp.id} name has changed from '#{sp.name}' to '#{spc.name}'")
+        sp.name = spc.name
+        needs_update = true
+      end
+      if spc.interval != sp.interval
+        Rails.logger.warn("sp id '#{sp.id}' interval has changed from '#{sp.interval}' to '#{spc.interval}'")
+        sp.interval = spc.interval
+        needs_update = true
+      end
+      if spc.hours.to_i != sp.hours.to_i
+        Rails.logger.warn("sp id '#{sp.id}' hours has changed from '#{sp.hours}' to '#{spc.hours}'")
+        sp.hours = spc.hours
+        needs_update = true
+      end
+      if spc.hours.to_i != sp.pop_up_hours
+        Rails.logger.warn("sp id '#{sp.id}' pop_up_hours has changed from '#{sp.pop_up_hours}' to '#{spc.hours.to_i}'")
+        sp.pop_up_hours = spc.hours.to_i
+        needs_update = true
+      end
+      if spc.amount.to_i != sp.amount.to_i
+        Rails.logger.warn("sp id '#{sp.id}' amount has changed from '#{sp.amount}' to '#{spc.amount}'")
+        sp.amount = spc.amount
+        needs_update = true
+      end
+      sp.save if needs_update
+
     end
+    return sp
   end
+
+  # return a SubscriptionPlanCached object
+  def as_cached
+    return SubscriptionPlanCached.find(self.stripe_plan_id)
+  end
+
+  # if the plan id has _business_ or _enterprise_ or _premium_ in it, we'll do premium transcripts
+  def has_premium_transcripts?
+    self.stripe_plan_id.match(/_(business|enterprise|premium)_/)
+  end
+
 end

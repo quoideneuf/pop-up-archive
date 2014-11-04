@@ -1717,3 +1717,31 @@ ul.great-list {
 #expand-transcript {
   width:121px;
 }
+
+#ts-info-row {
+  margin-bottom: 10px;
+}
+
+#transcript-label {
+  width: 137px;
+  border-radius: 8px;
+  padding: 3px;
+  text-align: center;
+  font-family: soleil;
+  line-height: 1.2;
+  background-color: #F5F5F5;
+}
+
+#ts-type {
+  font-size: 14px;
+  color: #F25A4C;
+}
+
+#ts-upgrade {
+  // Hide the link text until this feature is ready
+  display: none;
+  //  Let's change the color when we get the link working so it doesn't look offensive
+  color: #2ca5da;
+  font-size: 12px;
+  font-weight: bold;
+}

@@ -14,6 +14,15 @@ class Tasks::TranscribeTask < Task
     # if new transcript resulted, then call analyze
     if new_trans
       audio_file.analyze_transcript
+
+      # show usage immediately
+      update_transcript_usage
+
+      # create audit xref
+      self.extras[:transcript_id] = new_trans.id
+      self.save!
+
+      # share the glad tidings
       notify_user unless start_only?
     end
   end
@@ -71,15 +80,25 @@ class Tasks::TranscribeTask < Task
       end
     end
 
-    update_transcript_usage
   end
 
   def update_transcript_usage(now=DateTime.now)
-    # get all tasks for the entity
-    tasks    = Tasks::TranscribeTask.where("extras -> 'entity_id' = ?", user.entity.id.to_s).where(created_at: now.utc.beginning_of_month..now.utc.end_of_month)
-    duration = tasks.inject(0){|sum, t| sum + t.duration }
-    user.update_usage_for(MonthlyUsage::BASIC_TRANSCRIPTS, duration, now)
-    duration
+    billed_user = user
+    if !billed_user
+      raise "Failed to find billable user with id #{user_id} (#{self.extras.inspect})"
+    end
+
+    # we call user.entity because that will return the billable object
+    ucalc = UsageCalculator.new(billed_user.entity, now)
+    billed_duration = ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPTS)
+
+    # call again on the user if user != entity, just to record usage.
+    if billed_user.entity != billed_user
+      user_ucalc = UsageCalculator.new(billed_user, now)
+      user_ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPT_USAGE)
+    end
+
+    return billed_duration
   end
 
   def process_transcript(json)
@@ -93,7 +112,15 @@ class Tasks::TranscribeTask < Task
     end
 
     trans_json = JSON.parse(json) if json.is_a?(String)
-    trans = audio_file.transcripts.build(language: 'en-US', identifier: identifier, start_time: 0, end_time: 0)
+    transcriber = Transcriber.basic
+    trans = audio_file.transcripts.build(
+      language: 'en-US', 
+      identifier: identifier, 
+      start_time: 0, 
+      end_time: 0, 
+      transcriber_id: transcriber.id, 
+      cost_per_min: transcriber.cost_per_min
+    )
     sum = 0.0
     count = 0.0
     trans_json.each do |row|
@@ -155,8 +182,24 @@ class Tasks::TranscribeTask < Task
     extras['duration']      = audio_file.duration.to_i if audio_file
   end
 
-  def duration    
+  def duration
     self.extras['duration'].to_i
+  end
+
+  def usage_duration
+    if start_only?
+      return 0  # first 2 minutes are always free
+    end
+
+    if duration and duration > 0
+      duration
+    elsif audio_file and !audio_file.duration.nil?
+      self.extras['duration'] = audio_file.duration.to_s
+      audio_file.duration
+    else
+      duration
+    end
+
   end
 
 end

@@ -175,6 +175,7 @@ class Utils
           response = new_connection(request_uri).get(:response_block => streamer)
           temp_file.fsync
 
+          logger.debug "#{uri} responded with #{response.status.to_s}"
           if response.status.to_s.start_with?('2')
             file_downloaded = true
           elsif response.status.to_s.start_with?('3')
@@ -186,12 +187,25 @@ class Utils
           if redirect_url
             # this is imperfect, but deals with odd case where we have spaces in some redirects
             redirect_url = URI.escape(redirect_url) if redirect_url =~ /\s+/
+            logger.warn "Got redirect for #{uri} to #{redirect_url}"
+            logger.warn "Recursing with limit==#{limit - 1}"
             temp_file = download_public_file(URI.parse(redirect_url), retry_count, limit - 1)
+            if temp_file and temp_file.size > 0
+              file_downloaded = true
+            end
           end
         rescue StandardError => err
           logger.error "File failed to be retrieved: '#{file_name}': #{err.message}"
           sleep(1)
         end
+      end
+
+      if !temp_file or !file_downloaded
+        raise "File download failed, could not download #{uri}."
+      end
+
+      if temp_file.size == 0
+        raise "Zero length file: #{temp_file}"
       end
 
       temp_file

@@ -56,6 +56,22 @@ def create_es_index(klass)
   puts "Completed #{completed} records of class #{klass}"
 end
 
+def seed_test_db
+  DatabaseCleaner.clean_with(:truncation)
+  load Rails.root + "db/seeds.rb"
+end
+
+def start_es_server
+  Elasticsearch::Extensions::Test::Cluster.start(nodes: 1) unless Elasticsearch::Extensions::Test::Cluster.running?
+
+  # create index(s) to test against.
+  create_es_index(Item)
+end
+
+def stop_es_server
+  Elasticsearch::Extensions::Test::Cluster.stop if Elasticsearch::Extensions::Test::Cluster.running?
+end
+
 RSpec.configure do |config|
   config.include Capybara::DSL
   config.mock_with :rspec
@@ -66,19 +82,12 @@ RSpec.configure do |config|
   FactoryGirl.reload
 
   config.before :suite, elasticsearch: true do
-    Elasticsearch::Extensions::Test::Cluster.start(nodes: 1) unless Elasticsearch::Extensions::Test::Cluster.running?
-
-    # indexes require data, but start clean.
-    DatabaseCleaner.clean_with(:truncation)
-    load Rails.root + "db/seeds.rb" 
-
-    # create index(s) to test against.
-    create_es_index(Item)
-
+    seed_test_db
+    start_es_server unless ENV['ES_SKIP']
   end
 
   config.after :suite, elasticsearch: true do
-    Elasticsearch::Extensions::Test::Cluster.stop if Elasticsearch::Extensions::Test::Cluster.running?
+    stop_es_server unless ENV['ES_SKIP']
   end
 
 end

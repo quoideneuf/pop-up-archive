@@ -35,8 +35,12 @@ describe User do
       user.usage_for('test').should == 0
     end
 
+    it 'does not confuse Org with User usage' do
+      org_user.usage_for('test').should == 0
+    end
+
     it 'gets org usage for current month' do
-      org_user.usage_for('test').should == 10
+      org_user.organization.usage_for('test').should == 10
     end
 
     it 'gets usage for different month' do
@@ -46,9 +50,9 @@ describe User do
     it 'updates usage' do
       time = DateTime.now
       user.usage_for('test', time).to_i.should == 0
-      user.update_usage_for('test', 100, time)
+      user.update_usage_for('test', {:seconds => 100, :cost => 0}, time)
       user.usage_for('test', time).should eq 100
-      user.update_usage_for('test', 1000, time)
+      user.update_usage_for('test', {:seconds => 1000, :cost => 1234}, time)
       user.usage_for('test', time).should eq 1000
     end
 
@@ -102,11 +106,10 @@ describe User do
     let (:plan) { free_plan }
 
     before do
-      SubscriptionPlan.create hours: 2, amount: 0, name: 'community'
-      @other = SubscriptionPlan.create hours: 80, amount: 2000, name: 'big'
+      @other = SubscriptionPlanCached.create hours: 80, amount: 2000, name: 'big'
     end
 
-    let (:free_plan) { SubscriptionPlan.community }
+    let (:free_plan) { SubscriptionPlanCached.community }
     let (:paid_plan) { @other }
 
     it 'has an amount' do
@@ -122,11 +125,11 @@ describe User do
     end
 
     it 'has the community plan if it is not subscribed' do
-      user.plan.should eq SubscriptionPlan.community
+      user.plan.should eq SubscriptionPlanCached.community
     end
 
     it 'returns the name of the plan' do
-      user.plan_name.should eq 'community'
+      user.plan_name.should eq 'Community'
     end
 
     it 'can have a card added' do
@@ -175,7 +178,7 @@ describe User do
     end
 
     it 'has community plan number of hours when there is no subscription' do
-      user.pop_up_hours.should eq 2
+      user.pop_up_hours.should eq 1
     end
   end
 

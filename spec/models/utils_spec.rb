@@ -26,6 +26,11 @@ describe Utils do
     pf.size.should == 58432
   end
 
+  it "croaks when unable to download a public file" do
+    url = 'http://www.prx.org/noway.txt'
+    expect{ Utils.download_public_file(URI.parse(url), 2) }.to raise_error(Exception)
+  end
+
   it "checks for when a url is for an audio file" do
     base = 'http://prx.org/file.'
     Utils::AUDIO_EXTENSIONS.each do |ext|

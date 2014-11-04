@@ -110,7 +110,7 @@ class Item < ActiveRecord::Base
   delegate :title, to: :collection, prefix: true
 
   accepts_nested_attributes_for :contributions
-  
+
   def duration
     read_attribute(:duration) || audio_files.inject(0){|s,a| s + a.duration.to_i}
   end
@@ -271,11 +271,6 @@ class Item < ActiveRecord::Base
       end
     end
     true
-  end
-
-  # shortcut
-  def reindex 
-    self.__elasticsearch__.index_document
   end
 
   private

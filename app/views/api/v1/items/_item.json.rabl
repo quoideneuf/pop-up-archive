@@ -27,7 +27,7 @@ node :extra do |i|
 end
 
 node(:urls) do |i|
-  { self: url_for(api_item_path(i)) }
+  { self: url_for(sprintf("/api/collection/%s/items/%s", i.collection_id, i.id)) }
 end
 
 child :contributions do |c|

@@ -18,7 +18,9 @@ PopUpArchive::Application.routes.draw do
   root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'popuparchive.com' }
   root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'popuparchive.org' }
 
+  #devise_for ActiveAdmin::Devise.config
   devise_for :users, controllers: { registrations: 'users/registrations', invitations: 'users/invitations', omniauth_callbacks: 'users/omniauth_callbacks', sessions: 'users/sessions' }
+  ActiveAdmin.routes(self)
 
   namespace :admin do
     resources :task_list
@@ -27,7 +29,7 @@ PopUpArchive::Application.routes.draw do
     resources :accounts
   end
 
-  get 'media/:token/:expires/:use/:class/:id/:name.:extension', controller: 'media', action: 'show'
+  get 'media/:token/:expires/:use/:class/:id/:name.:extension', controller: 'media', action: 'show', constraints: {name: /[^\/]+/}
   
   get 'embed_player/:name/:file_id/:item_id/:collection_id', to: 'embed_player', action: 'show'
 
@@ -60,7 +62,7 @@ PopUpArchive::Application.routes.draw do
 
       resource :last_items
       resource :search
-      resources :items do
+      resources :items, only: [] do
         resources :audio_files do
           post '',                     action: 'update'
           get  'transcript_text',      action: 'transcript_text'

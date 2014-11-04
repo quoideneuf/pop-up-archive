@@ -28,9 +28,6 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       self.extras['job_id'] = info.id
       self.save!
 
-      # update usage if the new job creatd and saved
-      update_premium_transcript_usage
-
     rescue Faraday::Error::TimeoutError => err
 
       # it is possible that speechmatics got the request
@@ -42,24 +39,36 @@ class Tasks::SpeechmaticsTranscribeTask < Task
           # yes, it was successful even though SM failed to respond.
           self.extras['job_id'] = smjob['id']
           self.save!
-          update_premium_transcript_usage
           break
         end
       end
 
     rescue
       # re-throw original exception
-      raise 
+      raise
     end
 
   end
 
   def update_premium_transcript_usage(now=DateTime.now)
-    # get all tasks for the entity
-    tasks    = Tasks::SpeechmaticsTranscribeTask.where("extras -> 'entity_id' = ?", user.entity.id.to_s).where(created_at: now.utc.beginning_of_month..now.utc.end_of_month)
-    duration = tasks.inject(0){|sum, t| sum + t.duration }
-    user.update_usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS, duration, now)
-    duration
+    billed_user = user
+    if !billed_user
+      raise "Failed to find billable user with id #{user_id} (#{self.extras.inspect})"
+    end
+
+    # call on user.entity so billing goes to org if necessary
+    ucalc = UsageCalculator.new(billed_user.entity, now)
+
+    # call on user.entity so billing goes to org if necessary
+    billed_duration = ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPTS)
+
+    # call again on the user if user != entity, just to record usage.
+    if billed_user.entity != billed_user
+      user_ucalc = UsageCalculator.new(billed_user, now)
+      user_ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
+    end
+
+    return billed_duration
   end
 
   def finish_task
@@ -72,6 +81,15 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     # if new transcript resulted, then call analyze
     if new_trans
       audio_file.analyze_transcript
+
+      # show usage immediately
+      update_premium_transcript_usage
+
+      # create audit xref
+      self.extras[:transcript_id] = new_trans.id
+      self.save!
+
+      # share the glad tidings
       notify_user
     end
   end
@@ -88,8 +106,17 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       return trans
     end
 
+    transcriber = Transcriber.find_by_name('speechmatics')
+
     Transcript.transaction do
-      trans    = audio_file.transcripts.create!(language: 'en-US', identifier: identifier, start_time: 0, end_time: 0)
+      trans    = audio_file.transcripts.create!(
+        language: 'en-US',  # TODO get this from audio_file?
+        identifier: identifier,
+        start_time: 0,
+        end_time: 0,
+        transcriber_id: transcriber.id,
+        cost_per_min: transcriber.cost_per_min
+      )
       speakers = response.speakers
       words    = response.words
 
@@ -183,6 +210,18 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
   def duration
     self.extras['duration'].to_i
+  end
+
+  def usage_duration
+    # if parent audio_file gets its duration updated after the task was created, for any reason, prefer it
+    if duration and duration > 0
+      duration
+    elsif !audio_file.duration.nil?
+      self.extras['duration'] = audio_file.duration.to_s
+      audio_file.duration
+    else
+      duration
+    end
   end
 
 end

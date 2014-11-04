@@ -62,9 +62,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def get_plan
     if plan_id.present?
-      SubscriptionPlan.find(plan_id)
+      SubscriptionPlanCached.find(plan_id)
     else
-      SubscriptionPlan.community
+      SubscriptionPlanCached.community
     end
   end
 
@@ -83,7 +83,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
     if session[:plan_id].present?
       plan_id = session.delete(:plan_id)
-      user.subscribe!(SubscriptionPlan.find(plan_id), session.delete(:offer_code))
+      user.subscribe!(SubscriptionPlanCached.find(plan_id), session.delete(:offer_code))
       gb = Gibbon::API.new
       gb.lists.subscribe(:id => "39650ec21b",
                    :email => {:email=> user.email},

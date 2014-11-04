@@ -28,7 +28,7 @@ gem 'omniauth-oauth2', '~> 1.1.0'
 gem 'omniauth-prx', github: 'PRX/omniauth-prx'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
-gem 'devise'
+gem 'devise', '~> 3.2'
 gem 'devise_invitable', github: 'scambra/devise_invitable'
 gem 'bootstrap_form'
 gem 'cancan'
@@ -36,7 +36,6 @@ gem 'cancan'
 # search with elasticsearch
 gem 'elasticsearch-model', '~> 0.1.5'
 gem 'elasticsearch-rails', '~> 0.1.5'
-gem 'ansi'
 
 # server-side templates
 gem 'slim-rails', '~> 1.0'
@@ -74,7 +73,7 @@ gem 'newrelic_rpm'
 
 gem 'feedzirra', github: 'pauldix/feedzirra'
 
-gem 'rolify'
+gem 'rolify', "~> 3.4.1"
 
 gem 'sanitize'
 
@@ -107,6 +106,11 @@ gem 'dbpedia'
 gem 'text-table'
 
 gem 'mixpanel-ruby'
+
+gem 'activeadmin', github: 'activeadmin', branch: 'master'
+gem 'active_admin_sidebar'
+gem 'coffee-script'
+gem 'ansi'
 
 group :assets do
   gem 'sprockets'

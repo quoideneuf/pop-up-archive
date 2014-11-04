@@ -3,7 +3,7 @@ require 'spec_helper'
 describe FileStorage do
 
   before {
-    SubscriptionPlan.reset_cache
+    SubscriptionPlanCached.reset_cache
     StripeMock.start
   }
   after { StripeMock.stop }

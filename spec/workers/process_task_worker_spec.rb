@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe ProcessTaskWorker do
   before { StripeMock.start }
+  #before { StripeMock.start && StripeMock.toggle_debug(true) }
   after { StripeMock.stop }
 
   it "process a task" do

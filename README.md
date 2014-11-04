@@ -95,6 +95,9 @@ All that should be required is running `guard` in the project root. You can also
 
 We have the project on Travis-CI. If you submit a pull request, I assume it should check on that. I don't know.
 
+NOTE that the Elasticsearch tests require that port 9250 is available on localhost. If you are running tests
+on a Linux box, for example, you may need to alter iptables or other firewall service to open that port.
+
 
 ### Copyright & License
 

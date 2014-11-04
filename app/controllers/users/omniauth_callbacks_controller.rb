@@ -68,7 +68,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
     if session[:plan_id].present?
       plan_id = session.delete(:plan_id)
-      @user.subscribe!(SubscriptionPlan.find(plan_id), session.delete(:offer_code))
+      @user.subscribe!(SubscriptionPlanCached.find(plan_id), session.delete(:offer_code))
     end
   end
 end
