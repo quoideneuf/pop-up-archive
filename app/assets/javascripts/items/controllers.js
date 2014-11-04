@@ -238,7 +238,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       return;
     new ImageFile({remoteFileUrl: imageUrl, itemId: saveItem.id} ).create();      
     $scope.item.images.push({ name: 'name', remoteFileUrl: imageUrl, size: ''});
-    console.log("url link", $scope.urlForImage);
+    //console.log("url link", $scope.urlForImage);
     $scope.urlForImage = "";
   };
 
@@ -262,6 +262,8 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       }
 
       // set default transcriptType based on subscriber plan
+      // NOTE that we only want them to change the transcriptType
+      // when user is directly uploading files.
       $scope.defaultTranscriptType = $scope.currentUser.hasPremiumTranscripts() ? "premium" : "basic";
       $scope.item.transcriptType = $scope.defaultTranscriptType;
 

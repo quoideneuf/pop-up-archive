@@ -88,10 +88,10 @@ section ng-controller="ItemFormCtrl"
             | Type
             i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom"
           .controls.radio-group
-            input.radio_button ng-change="console.log(item.transcriptType)" type='radio' name="transcriptType" value="basic" ng-model='item.transcriptType' 
+            input.radio_button type='radio' name="transcriptType" value="basic" ng-model='item.transcriptType' 
             label.radio-label
               | Basic
-            input.radio_button type='radio' ng-change="console.log(item.transcriptType)" name="transcriptType" value="premium" ng-model='item.transcriptType' 
+            input.radio_button type='radio' name="transcriptType" value="premium" ng-model='item.transcriptType' 
             label.radio-label
               | Premium
         .control-group
