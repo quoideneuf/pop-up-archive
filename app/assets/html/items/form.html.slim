@@ -83,7 +83,7 @@ section ng-controller="ItemFormCtrl"
             i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['title']" data-placement="bottom"
           .controls
             input.text.input-xlarge#title type='text' ng-model='item.title'
-        .control-group
+        .control-group ng-show="defaultTranscriptType == 'basic'"
           label.control-label
             | Type
             i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom"

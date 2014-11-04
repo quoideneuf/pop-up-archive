@@ -59,7 +59,7 @@ angular.module('Directory.users.models', ['RailsModel'])
   };
 
   User.prototype.hasPremiumTranscripts = function() {
-    return this.plan.is_premium;
+    return this.plan.isPremium;
   };
 
   User.prototype.subscribe = function (planId, offerCode) {
