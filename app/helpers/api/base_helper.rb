@@ -30,6 +30,9 @@ module Api::BaseHelper
   end        
 
   def time_definition(total_time)
+    if !total_time.is_a? Integer
+      total_time = total_time.to_i
+    end
     mm, ss = total_time.divmod(60)            
     hh, mm = mm.divmod(60)           
     dd, hh = hh.divmod(24)         

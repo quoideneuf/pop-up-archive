@@ -12,7 +12,7 @@ describe Tasks::TranscodeTask do
   end
 
   it "should set defaults" do
-    task = Tasks::TranscodeTask.new()
+    task = Tasks::TranscodeTask.new(owner: @audio_file)
     task.should be_valid
     task.save!
   end

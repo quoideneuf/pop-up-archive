@@ -1,10 +1,11 @@
 ActiveAdmin.register Item do
-  actions :all, :except => [:edit, :destroy]
+  actions :index, :show
   menu false
   index do
     column :title, sortable: :title do |item| link_to item.title, superadmin_item_path(item) end
     column :created_at
     column :duration
+    column('Collection') do |item| link_to item.collection.title, superadmin_collection_path(item.collection) end
   end
 
   filter :title
@@ -22,8 +23,12 @@ ActiveAdmin.register Item do
     end
     panel "Audio Files" do
       table_for item.audio_files do |tbl|
-        tbl.column("ID") {|af| af.id }
-        tbl.column("URL") {|af| af.url }
+        tbl.column("File") {|af| link_to af.filename, superadmin_audio_file_path(af) }
+        tbl.column("Transcoded") {|af| af.transcoded_at }
+        tbl.column("Duration") {|af| af.duration }
+        tbl.column("Tasks") do |af| 
+          link_to "#{af.tasks.count} tasks", :action => 'index', :controller => "tasks", q: { owner_id_equals: af.id.to_s, owner_type_equals: 'AudioFile' } 
+        end 
       end     
     end
     panel "Image Files" do

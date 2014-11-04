@@ -11,9 +11,10 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141023044603) do
+ActiveRecord::Schema.define(:version => 20141029204336) do
 
   add_extension "hstore"
+  add_extension "pg_stat_statements"
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "namespace"
@@ -31,7 +32,7 @@ ActiveRecord::Schema.define(:version => 20141023044603) do
   add_index "active_admin_comments", ["resource_type", "resource_id"], :name => "index_active_admin_comments_on_resource_type_and_resource_id"
 
   create_table "audio_files", :force => true do |t|
-    t.integer  "item_id"
+    t.integer  "item_id",                                       :null => false
     t.string   "file"
     t.datetime "created_at",                                    :null => false
     t.datetime "updated_at",                                    :null => false
@@ -197,7 +198,7 @@ ActiveRecord::Schema.define(:version => 20141023044603) do
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
     t.integer  "csv_import_id"
-    t.integer  "collection_id"
+    t.integer  "collection_id",     :null => false
     t.string   "token"
     t.integer  "storage_id"
     t.boolean  "is_public"
@@ -220,6 +221,7 @@ ActiveRecord::Schema.define(:version => 20141023044603) do
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
     t.string   "yearmonth"
+    t.decimal  "cost"
   end
 
   add_index "monthly_usages", ["entity_id", "entity_type", "use", "month", "year"], :name => "index_entity_use_date", :unique => true
@@ -271,16 +273,23 @@ ActiveRecord::Schema.define(:version => 20141023044603) do
 
   create_table "organizations", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
     t.string   "amara_key"
     t.string   "amara_username"
     t.string   "amara_team"
     t.integer  "owner_id"
-    t.integer  "used_unmetered_hours_cache"
-    t.integer  "used_metered_hours_cache"
+    t.integer  "used_unmetered_storage_cache"
+    t.integer  "used_metered_storage_cache"
     t.hstore   "transcript_usage_cache"
   end
+
+  create_table "organizations_roles", :id => false, :force => true do |t|
+    t.integer "organization_id"
+    t.integer "role_id"
+  end
+
+  add_index "organizations_roles", ["organization_id", "role_id"], :name => "index_organizations_roles_on_organization_id_and_role_id"
 
   create_table "people", :force => true do |t|
     t.string   "name"
@@ -331,7 +340,7 @@ ActiveRecord::Schema.define(:version => 20141023044603) do
   end
 
   create_table "tasks", :force => true do |t|
-    t.integer  "owner_id"
+    t.integer  "owner_id",   :null => false
     t.string   "owner_type"
     t.text     "identifier"
     t.string   "name"
@@ -372,7 +381,7 @@ ActiveRecord::Schema.define(:version => 20141023044603) do
   end
 
   create_table "transcripts", :force => true do |t|
-    t.integer  "audio_file_id"
+    t.integer  "audio_file_id",  :null => false
     t.string   "identifier"
     t.string   "language"
     t.integer  "start_time"
@@ -417,6 +426,7 @@ ActiveRecord::Schema.define(:version => 20141023044603) do
     t.integer  "used_metered_storage_cache"
     t.integer  "subscription_plan_id"
     t.hstore   "transcript_usage_cache"
+    t.integer  "used_unmetered_storage_cache"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

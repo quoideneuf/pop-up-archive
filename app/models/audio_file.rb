@@ -8,6 +8,7 @@ class AudioFile < ActiveRecord::Base
   acts_as_paranoid
 
   before_validation :set_metered
+  before_save       :check_user_id
 
   belongs_to :item, :with_deleted => true
   belongs_to :user
@@ -30,12 +31,48 @@ class AudioFile < ActiveRecord::Base
 
   delegate :collection_title, to: :item
 
-  TRANSCRIBE_RATE_PER_MINUTE = 2.00;
+  TRANSCRIBE_RATE_PER_MINUTE = 2.00;  # TODO used?
+
+  # returns object to which this audio_file should be accounted.
+  # should be a User or Organization
+  def billable_to
+    collection.billable_to  # delegate, for now
+  end
 
   def collection
     instance.try(:item).try(:collection) || item.try(:collection)
   end
 
+  # shortcut for superadmin view
+  def name
+    self.filename
+  end
+
+  # verify that user_id is set, calling set_user_id if it is not.
+  # called via before_save callback
+  def check_user_id
+    if self.user_id.nil?
+      set_user_id
+    end
+  end
+
+  def set_user_id(uid=nil)
+    if uid.nil?
+      # find a valid user
+      if collection.creator_id
+        self.user_id = collection.creator_id
+      elsif collection.billable_to.is_a?(User)
+        self.user_id = collection.billable_to.id
+      elsif collection.billable_to.is_a?(Organization)
+        self.user_id = collection.billable_to.users.first.id
+      else
+        raise "Failed to find a valid User to assign to AudioFile"
+      end
+    else
+      self.user_id = uid
+    end
+  end
+  
   def copy_media?
     item.collection.copy_media
   end
@@ -137,6 +174,7 @@ class AudioFile < ActiveRecord::Base
     result
   end
 
+  # TODO used anymore?
   def amount_for_transcript
     (duration.to_i / 60.0).ceil * TRANSCRIBE_RATE_PER_MINUTE
   end
@@ -180,9 +218,8 @@ class AudioFile < ActiveRecord::Base
   def start_premium_transcribe_job(user, identifier, options={})
     return if (duration.to_i <= 0)
 
-    if task = tasks.any?{|task| task.type == 'Tasks::SpeechmaticsTranscribeTask' && task.status != "failed"}
-    # if task = tasks.speechmatics_transcribe.without_status(:failed).where(identifier: identifier).last
-      logger.debug "speechmatics transcribe task #{identifier} already exists for audio file #{self.id}"
+    if task = tasks.select{|task| task.type == 'Tasks::SpeechmaticsTranscribeTask' && task.status != "failed"}.first
+      logger.warn "speechmatics transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
     else
       extras = { 'original' => process_file_url, 'user_id' => user.try(:id) }.merge(options)
       task = Tasks::SpeechmaticsTranscribeTask.new(identifier: identifier, extras: extras)

@@ -83,11 +83,11 @@ RSpec.configure do |config|
 
   config.before :suite, elasticsearch: true do
     seed_test_db
-    start_es_server
+    start_es_server unless ENV['ES_SKIP']
   end
 
   config.after :suite, elasticsearch: true do
-    stop_es_server
+    stop_es_server unless ENV['ES_SKIP']
   end
 
 end

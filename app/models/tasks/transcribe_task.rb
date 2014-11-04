@@ -14,6 +14,15 @@ class Tasks::TranscribeTask < Task
     # if new transcript resulted, then call analyze
     if new_trans
       audio_file.analyze_transcript
+
+      # show usage immediately
+      update_transcript_usage
+
+      # create audit xref
+      self.extras[:transcript_id] = new_trans.id
+      self.save!
+
+      # share the glad tidings
       notify_user unless start_only?
     end
   end
@@ -71,12 +80,25 @@ class Tasks::TranscribeTask < Task
       end
     end
 
-    update_transcript_usage
   end
 
   def update_transcript_usage(now=DateTime.now)
-    ucalc = UsageCalculator.new(user, now)
-    ucalc.calculate(self.class, MonthlyUsage::BASIC_TRANSCRIPTS)
+    billed_user = user
+    if !billed_user
+      raise "Failed to find billable user with id #{user_id} (#{self.extras.inspect})"
+    end
+
+    # we call user.entity because that will return the billable object
+    ucalc = UsageCalculator.new(billed_user.entity, now)
+    billed_duration = ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPTS)
+
+    # call again on the user if user != entity, just to record usage.
+    if billed_user.entity != billed_user
+      user_ucalc = UsageCalculator.new(billed_user, now)
+      user_ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPT_USAGE)
+    end
+
+    return billed_duration
   end
 
   def process_transcript(json)

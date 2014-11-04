@@ -1,5 +1,5 @@
 ActiveAdmin.register User do
-  actions :all, :except => [:edit, :destroy]
+  actions :index, :show
   index do
     column :name, sortable: :name do |user|
       link_to( user.name, superadmin_user_path(user) ) + raw( '<br/>' + user.email )
@@ -10,12 +10,12 @@ ActiveAdmin.register User do
     end
     column 'Usage', :premium_seconds, sortable: "transcript_usage_cache->'premium_seconds'" do |user|
       raw 'Premium: ' + \
-      Api::BaseHelper::time_definition(user.get_total_seconds(:premium)||0) + \
-      '&nbsp;' + number_to_currency(user.get_total_cost(:premium)||'0.00') + \
+      Api::BaseHelper::time_definition(user.transcript_usage_report[:premium_billable_seconds].to_i||0) + \
+      '&nbsp;' + number_to_currency(user.transcript_usage_report[:premium_billable_cost].to_f||'0.00') + \
       '<br/>' + \
       'Basic: ' + \
-      Api::BaseHelper::time_definition(user.get_total_seconds(:basic)||0) + \
-      '&nbsp;' + number_to_currency(user.get_total_cost(:basic)||'0.00')
+      Api::BaseHelper::time_definition(user.transcript_usage_report[:basic_billable_seconds].to_i||0) + \
+      '&nbsp;' + number_to_currency(user.transcript_usage_report[:basic_billable_cost].to_f||'0.00')
     end
   end
 
@@ -34,13 +34,13 @@ ActiveAdmin.register User do
           ? (link_to user.organization.name, superadmin_organization_path(user.organization)) \
           : span(('none'), class: "empty")
         }
-        row("Metered Storage") { Api::BaseHelper::time_definition(user.used_metered_storage||0) }
-        row("Unmetered Storage") { Api::BaseHelper::time_definition(user.used_unmetered_storage||0) }
+        row("Metered Storage") { Api::BaseHelper::time_definition(user.used_metered_storage_cache||0) }
+        row("Unmetered Storage") { Api::BaseHelper::time_definition(user.used_unmetered_storage_cache||0) }
         row("Plan") { user.plan.name + ' ' + user.plan.hours.to_s + 'h (billed per ' + user.plan.interval + ')' }
-        row("Premium Transcripts") { Api::BaseHelper::time_definition(user.get_total_seconds(:premium)||0) }
-        row("Premium Cost") { number_to_currency(user.get_total_cost(:premium)||'0.00') }
-        row("Basic Transcripts") { Api::BaseHelper::time_definition(user.get_total_seconds(:basic)||0) }
-        row("Basic Cost") { number_to_currency(user.get_total_cost(:basic)||'0.00') }
+        row("Total Premium Transcripts (Billable)") { Api::BaseHelper::time_definition(user.transcript_usage_report[:premium_billable_seconds].to_i||0) }
+        row("Total Premium Cost (Billable)") { number_to_currency(user.transcript_usage_report[:premium_billable_cost].to_f||'0.00') }
+        row("Total Basic Transcripts (Billable)") { Api::BaseHelper::time_definition(user.transcript_usage_report[:basic_billable_seconds].to_i||0) }
+        row("Total Basic Cost (Billable)") { number_to_currency(user.transcript_usage_report[:basic_billable_cost].to_f||'0.00') }
         row("Last Sign In") { user.last_sign_in_at }
         row("Sign In Count") { user.sign_in_count }
         row("Created") { user.created_at }
@@ -52,26 +52,35 @@ ActiveAdmin.register User do
       table_for user.monthly_usages.order('yearmonth desc') do|tbl|
         tbl.column :yearmonth
         tbl.column :use
+        tbl.column('Cost') {|mu| div :class => "cost" do number_to_currency(mu.cost); end }
         tbl.column('Time') {|mu| Api::BaseHelper::time_definition(mu.value||0) }
       end
     end
 
-    panel "Collections" do
+    panel "Authorized Collections" do
       table_for user.collections do|tbl|
         tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
         tbl.column("Created") {|coll| coll.created_at }
         tbl.column("Storage Type") {|coll| coll.storage }
-        tbl.column("Metered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_metered_storage||0) }
-        tbl.column("Unmetered Storage") {|coll| Api::BaseHelper::time_definition(coll.used_unmetered_storage||0) }
+        tbl.column("Items") {|coll| link_to "#{coll.items.count} Items", :action => 'index', :controller => "items", q: { collection_id_equals: coll.id.to_s } }
       end
+    end
+
+    panel "Billable Collections" do
+      table_for user.billable_collections do|tbl|
+        tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
+        tbl.column("Created") {|coll| coll.created_at }
+        tbl.column("Storage Type") {|coll| coll.storage }
+        tbl.column("Items") {|coll| link_to "#{coll.items.count} Items", :action => 'index', :controller => "items", q: { collection_id_equals: coll.id.to_s } } 
+      end 
     end
 
     panel "Owned Organizations" do
       table_for user.owned_organizations do|tbl|
         tbl.column :id
         tbl.column("Name") {|org| link_to org.name, superadmin_organization_path(org) }
-        tbl.column("Metered Storage") {|org| Api::BaseHelper::time_definition(org.used_metered_storage||0) }
-        tbl.column("Unmetered Storage") {|org| Api::BaseHelper::time_definition(org.used_unmetered_storage||0) }
+        tbl.column("Metered Storage") {|org| Api::BaseHelper::time_definition(org.used_metered_storage_cache||0) }
+        tbl.column("Unmetered Storage") {|org| Api::BaseHelper::time_definition(org.used_unmetered_storage_cache||0) }
       end
     end
 

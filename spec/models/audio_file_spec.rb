@@ -220,7 +220,7 @@ describe AudioFile do
     it "should check for premium transcribe dupes" do
       new_user = FactoryGirl.create :user
       new_user.update_card!('void_card_token')
-      plan = SubscriptionPlan.create name: 'Test Plan', amount: 10000, hours: 200, plan_id: '10_small_business_yr'
+      plan = SubscriptionPlanCached.create name: 'Test Plan', amount: 10000, hours: 200, plan_id: '10_small_business_yr'
       new_user.subscribe!(plan)
       @audio_file.user = new_user
       @audio_file.transcoded_at = '10/10/2014'
