@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141103195143) do
+ActiveRecord::Schema.define(:version => 20141104052524) do
 
   add_extension "hstore"
 
@@ -191,19 +191,20 @@ ActiveRecord::Schema.define(:version => 20141103195143) do
     t.text     "date_peg"
     t.text     "notes"
     t.text     "transcription"
-    t.string   "tags",                              :array => true
+    t.string   "tags",                                                   :array => true
     t.integer  "geolocation_id"
     t.hstore   "extra"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.integer  "csv_import_id"
-    t.integer  "collection_id",     :null => false
+    t.integer  "collection_id",                          :null => false
     t.string   "token"
     t.integer  "storage_id"
     t.boolean  "is_public"
     t.string   "language"
     t.datetime "deleted_at"
     t.string   "image"
+    t.string   "transcript_type",   :default => "basic", :null => false
   end
 
   add_index "items", ["collection_id"], :name => "index_items_on_collection_id"

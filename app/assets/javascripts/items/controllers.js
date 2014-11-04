@@ -261,6 +261,10 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         $scope.item.title = newFiles[0].name;
       }
 
+      // set default transcriptType based on subscriber plan
+      $scope.defaultTranscriptType = $scope.currentUser.hasPremiumTranscripts() ? "premium" : "basic";
+      $scope.item.transcriptType = $scope.defaultTranscriptType;
+
       if (!$scope.item.files) {
         $scope.item.files = [];
       }

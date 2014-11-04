@@ -58,6 +58,10 @@ angular.module('Directory.users.models', ['RailsModel'])
     return !!(!this.plan || !this.plan.id || this.plan.name.match(/Community/));
   };
 
+  User.prototype.hasPremiumTranscripts = function() {
+    return this.plan.is_premium;
+  };
+
   User.prototype.subscribe = function (planId, offerCode) {
     var sub = new Subscription({planId: planId});
     var self = this;

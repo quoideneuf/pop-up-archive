@@ -1,7 +1,7 @@
 angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.models', 'Directory.imageFiles.models'])
 .factory('Item', ['Model', '$http', '$q', 'Contribution', 'Person', 'AudioFile', 'Player', 'ImageFile', function (Model, $http, $q, Contribution, Person, AudioFile, Player, ImageFile) {
 
-  var attrAccessible = "dateBroadcast dateCreated datePeg description digitalFormat digitalLocation episodeTitle identifier language musicSoundUsed notes physicalFormat physicalLocation rights seriesTitle tags title transcription adoptToCollection tagList text id originalFileUrl".split(' ');
+  var attrAccessible = "dateBroadcast dateCreated datePeg description digitalFormat digitalLocation episodeTitle identifier language musicSoundUsed notes physicalFormat physicalLocation rights seriesTitle tags title transcription adoptToCollection tagList text id originalFileUrl transcriptType".split(' ');
 
   var Item = Model({url:'/api/collections/{{collectionId}}/items/{{id}}', name: 'item', only: attrAccessible});
 

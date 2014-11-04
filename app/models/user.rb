@@ -170,7 +170,8 @@ class User < ActiveRecord::Base
       amount: plan.amount,
       pop_up_hours: plan.hours,
       trial: customer.trial,  # TODO cache this better to avoid needing to call customer() at all.
-      interval: plan.interval
+      interval: plan.interval,
+      is_premium: plan.has_premium_transcripts? ? true : false,
     }
   end
 
