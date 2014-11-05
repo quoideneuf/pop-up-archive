@@ -33,10 +33,15 @@
   .row-fluid.item-detail ng-show="item.audioFiles.length"
     .span12
       .well
-        section ng-repeat="audioFile in item.audioFiles" ng-controller="AudioFileCtrl"
+        section.audio-file ng-repeat="audioFile in item.audioFiles" ng-controller="AudioFileCtrl"
           .btn-group.pull-right
-            button.btn.icon-link ng-show="collection.itemsVisibleByDefault" type="button" bs-popover="embedCode"  data-placement="bottom" Embed Code
-            button.btn.icon-download-alt.dropdown-toggle.download-btn type="button" bs-dropdown="downloadLinks" data-toggle="dropdown"  Download
+            button.btn ng-show="collection.itemsVisibleByDefault" type="button" bs-popover="embedCode"  data-placement="bottom" 
+              i.icon-link
+              |  Embed Code
+            button.btn.dropdown-toggle.download-btn type="button" bs-dropdown="downloadLinks" data-toggle="dropdown"  
+              i.icon-download-alt 
+              |  Download  
+              span.icon-caret-down
           h4 ng-show="item.audioFiles.length > 1" {{audioFile.filename || 'no audio file'}}
           .player
             button.player-button ng-disabled="player.time == 0" ng-click="player.rewind()"
@@ -57,7 +62,8 @@
               .transcript-label ng-hide="editTable"
                 span.ts-type {{audioFile.transcriptType}} Transcript
               button.btn.ts-upgrade ng-show="audioFile.transcriptType == 'Basic'" ng-click="orderPremiumTranscript(audioFile, $event)" ng-disabled="premiumTranscriptOrderProcessing"
-                | Upgrade to Premium
+                i.icon-star-empty
+                |  Upgrade to Premium
               .key-commands ng-show="editTable"
                 table
                   tr
@@ -86,13 +92,18 @@
 
               .btn-group ng-show="item.audioFiles[0].transcript"
                 button.btn ng-disabled="allowEditButton(audioFile)" ng-show="currentUser.canEdit(item) && !editTable" ng-click="callEditor()"
-                  | Edit Transcript
+                  i.icon-pencil
+                  |   Edit Transcript
                 button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave()"
                   | Save Transcript
                 / button.btn ng-show="currentUser.canEdit(item)" ng-click="assignSpeakers()"
                 /   | Assign Speakers
-                button.btn.expand-transcript ng-click="toggleTranscript()"
-                  |{{!transcriptExpanded && 'Expand Transcript' || 'Collapse Transcript' }}
+                button.btn.expand-transcript ng-click="toggleTranscript()" ng-show="transcriptExpanded"
+                  i.icon-double-angle-up
+                  |  Collapse Transcript
+                button.btn.expand-transcript ng-click="toggleTranscript()" ng-show="!transcriptExpanded"
+                  i.icon-double-angle-down
+                  |  Expand Transcript
 
           div ng-class="transcriptClass()"
             ul.arrow-buttons  ng-show="showOnAmara()"
