@@ -253,7 +253,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
                 "User": $scope.currentUser.name + ' ' + $scope.currentUser.email}
             );
           } else {
-            msg = msg + '<a data-dismiss="alert" data-target=":parent" ng-href="' + item.link() + '"> View and edit the item!</a>';
+            msg = msg + '<a ng-href="' + item.link() + '"> View and edit the item!</a>';
             mixpanel.track(
               "Audio Upload Complete", {
                 "Collection": item.collectionId + ' ' +item.collectionTitle,
@@ -323,7 +323,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
           } else if (item.collectionId == $scope.currentUser.uploadsCollectionId && $route.current.controller != 'CollectionsCtrl'){
             msg = msg + ' To see transcripts and tags, move the item from My Uploads to a collection. <a href="/collections">Click here to get back to My Collections.</a>';
           } else {
-            msg = msg + '<a data-dismiss="alert" data-target=":parent" ng-href="' + item.link() + '"> View and edit the item!</a>';
+            msg = msg + '<a ng-href="' + item.link() + '"> View and edit the item!</a>';
           }
 
           $scope.addMessage({
