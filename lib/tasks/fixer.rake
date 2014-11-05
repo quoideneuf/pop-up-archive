@@ -59,8 +59,45 @@ namespace :fixer do
 
   desc "speechmatics sanity check"
   task speechmatics_poll: [:environment] do
+    # No tasks are recovered by default, since that means notifying the user on success,
+    # which we might not want to do in testing/dev. Set RECOVER env var to trigger task.recover!
+    ok_to_recover = ENV['RECOVER']
+ 
     # find all status=created older than N hours
     # and verify they exist at SM. If not, cancel them.
+    sm_tasks = Task.where(type: 'Tasks::SpeechmaticsTranscribeTask')\
+                   .where('status not in (?)', [Task::CANCELLED,Task::COMPLETE])\
+                   .where('created_at < ?', DateTime.now-1)
+    sm_tasks_count = sm_tasks.count
+    puts "Found #{sm_tasks_count} unfinished Speechmatics tasks older than 1 day"
+
+    # fetch all SM jobs at once to save HTTP overhead.
+    # TODO ask them to implement sorting, searching, paging.
+    sm = Speechmatics::Client.new({ :request => { :timeout => 120 } })
+    sm_jobs = sm.user.jobs.list.jobs
+    # create lookup hash by job id
+    sm_jobs_lookup = Hash[ sm_jobs.map{ |smjob| [smjob['id'].to_s, smjob] } ]
+    sm_tasks.find_in_batches do |taskgroup|
+      taskgroup.each do |task|
+        # if we don't have a job_id then it never was created at SM
+        if !task.extras['job_id']
+          puts "Task.find(#{task.id}) has no job_id: #{task.inspect}"
+          task.recover!  # should cancel it with err msg
+          next
+        end
+
+        # lookup SM status
+        sm_job = sm_jobs_lookup[task.extras['job_id']]
+        if !sm_job
+          puts "No SM job found for task: #{task.inspect}"
+          next
+        end
+
+        puts "Task.find(#{task.id}) looks like this at SM: #{sm_job.inspect}"
+        task.recover! if ok_to_recover
+
+      end
+    end
 
   end
 
