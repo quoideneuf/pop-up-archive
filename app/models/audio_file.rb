@@ -204,11 +204,11 @@ class AudioFile < ActiveRecord::Base
   end
 
   def transcribe_audio(user=self.user)
-    # always do the first 2 minutes
-    start_transcribe_job(user, 'ts_start', {start_only: true})
-
     # don't bother if this is premium plan
     return if (user && user.plan.has_premium_transcripts?)
+    
+    # always do the first 2 minutes
+    start_transcribe_job(user, 'ts_start', {start_only: true})
 
     if (storage.at_internet_archive? || (user && (user.plan != SubscriptionPlanCached.community)))
       start_transcribe_job(user, 'ts_all')

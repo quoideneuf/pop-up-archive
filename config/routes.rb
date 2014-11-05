@@ -101,6 +101,8 @@ PopUpArchive::Application.routes.draw do
 
       resources :timed_texts
 
+      resources :speakers
+
       resources :organizations
 
       resources :plans
