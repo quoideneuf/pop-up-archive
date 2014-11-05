@@ -79,6 +79,7 @@ ActiveRecord::Schema.define(:version => 20141029204336) do
     t.integer  "upload_storage_id"
     t.datetime "deleted_at"
     t.integer  "creator_id"
+    t.string   "token"
   end
 
   create_table "contributions", :force => true do |t|
@@ -151,6 +152,8 @@ ActiveRecord::Schema.define(:version => 20141029204336) do
     t.datetime "updated_at",        :null => false
     t.string   "original_file_url"
     t.string   "storage_id"
+    t.integer  "imageable_id"
+    t.string   "imageable_type"
   end
 
   create_table "import_mappings", :force => true do |t|

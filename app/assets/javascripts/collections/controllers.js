@@ -129,6 +129,19 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     });
   });
 
+  $scope.updateImage = function() {
+    if ($scope.collection && $scope.collection.imageFiles.length) {
+      var images = $scope.collection.imageFiles;
+      var image = images[0];
+      for (var i=1;i<images.length;i++) {
+        if (images[i].id > image.id) {
+          image = images[i];
+        }
+      }
+      return image.file.file.thumb.url;
+    }
+  };
+
   $scope.edit = function () {
     $scope.editItem = true;
   }
@@ -157,7 +170,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
 .controller('PublicCollectionsCtrl', ['$scope', 'Collection', 'Loader', function PublicCollectionsCtrl($scope, Collection, Loader) {
   $scope.collections = Loader(Collection.public());
 }])
-.controller('CollectionFormCtrl', ['$scope', 'Collection', 'Me', function CollectionFormCtrl($scope, Collection, Me) {
+.controller('CollectionFormCtrl', ['$window', '$cookies', '$scope', '$http', '$q', '$timeout', '$route', '$routeParams', '$modal', 'Me', 'Loader', 'Alert', 'Collection', 'Item', 'Contribution', 'ImageFile', function FilesCtrl($window, $cookies, $scope, $http, $q, $timeout, $route, $routeParams, $modal, Me, Loader, Alert, Collection, Item, Contribution, ImageFile) {
 
   if (!$scope.collection) {
     $scope.collection = new Collection();
@@ -173,15 +186,51 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     $scope.collection = collection;
   }
 
+  $scope.setImageFiles = function(event) {
+    console.log("Inside setImageFile");
+    element = angular.element(event.target);
+
+    $scope.$apply(function($scope) {
+
+      var newImageFiles = element[0].files;
+      // console.log('image files',element[0].files);
+
+      if (!$scope.collection.images) {
+        $scope.collection.images = [];
+      }
+
+      // add image files to the collection
+      angular.forEach(newImageFiles, function (file) {
+        $scope.collection.images.push(file);
+      });
+
+      element[0].value = "";
+
+    });
+    console.log($scope.collection.images);
+  }; 
+
+  $scope.addRemoteImageFile = function (saveItem, imageUrl){
+    if (!$scope.urlForImage)
+      return;
+    new ImageFile({remoteFileUrl: imageUrl, container: "collections", containerId: saveItem.id} ).create();
+    $scope.collection.imageFiles.push({ name: 'name', remoteFileUrl: imageUrl, size: ''});
+    $scope.urlForImage = "";
+  };
+
   $scope.submit = function () {
 
     // make sure this is a resource object.
-    console.log($scope.collection);
+    console.log($scope.collection.images);
 
     var collection = $scope.collection;
 
     if (collection.id) {
-      collection.update();
+      collection.update().then(function (data) {
+        $scope.addRemoteImageFile(collection, $scope.urlForImage);
+        $scope.uploadImageFiles(collection, collection.images);
+        delete $scope.item;
+      });
     } else {
       collection.create().then(function (data) {
         $scope.collections.push(collection);

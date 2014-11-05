@@ -44,7 +44,6 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
   });
 
   Item.beforeResponse(function(data, resource) {
-    // console.log("beforeResponse");
     data.tagList = [];
     data.images = [];    
     angular.forEach((data.tags || []), function (v,k) {
@@ -157,7 +156,7 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     if (angular.isDefined(file.url)) {
       originalFileUrl = file.url;
     }
-    var imageFile = new ImageFile({itemId: item.id, originalFileUrl: originalFileUrl});
+    var imageFile = new ImageFile({container: "items", containerId: item.id, originalFileUrl: originalFileUrl});
 
     imageFile.create().then( function() {
       imageFile.filename = imageFile.cleanFileName(file.name);      

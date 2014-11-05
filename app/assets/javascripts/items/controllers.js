@@ -33,6 +33,28 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.transcriptExpanded = false;
 
+  $scope.updateImage = function() {
+    if ($scope.item && $scope.item.imageFiles.length) {
+      var images = $scope.item.imageFiles;
+      var image = images[0];
+      for (var i=1;i<images.length;i++) {
+        if (images[i].id > image.id) {
+          image = images[i];
+        }
+      }
+      return image.file.file.thumb.url;
+    } else if ($scope.collection && $scope.collection.imageFiles.length) {
+      var images = $scope.collection.imageFiles;
+      var image = images[0];
+      for (var i=1;i<images.length;i++) {
+        if (images[i].id > image.id) {
+          image = images[i];
+        }
+      }
+      return image.file.file.thumb.url;
+    }
+  };
+
   $scope.isFileProcessing = function(file) {
     var item = $scope.item;
     var user = $scope.currentUser;
@@ -297,7 +319,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   $scope.addRemoteImageFile = function (saveItem, imageUrl){
     if (!$scope.urlForImage)
       return;
-    new ImageFile({remoteFileUrl: imageUrl, itemId: saveItem.id} ).create();      
+    new ImageFile({remoteFileUrl: imageUrl, container: "items", containerId: saveItem.id} ).create();      
     $scope.item.images.push({ name: 'name', remoteFileUrl: imageUrl, size: ''});
     console.log("url link", $scope.urlForImage);
     $scope.urlForImage = "";
