@@ -9,7 +9,7 @@ section ng-controller="OrderPremiumTranscriptFormCtrl"
 
   .modal-body
     form.form-horizontal name='orderTranscriptForm'
-      h4 Upgrade your transcript to our premium model
+      h4 Try our premium transcripts
       p
        |Bells? Whistles? We've got you covered.
        ul
@@ -25,6 +25,10 @@ section ng-controller="OrderPremiumTranscriptFormCtrl"
         |, a charge of
         b  {{ audioCost.cost }}
         |  will be added to your monthly bill.
+        hr
+        a href="/pricing"
+          |  Sign up for a premium subscription plan
+        |  and get top-quality transcripts like this at a reduced rate.
 
   .modal-footer
     button.btn type="button" ng-click="clear()" Close
