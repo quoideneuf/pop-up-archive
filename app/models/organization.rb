@@ -47,7 +47,7 @@ class Organization < ActiveRecord::Base
   end
 
   def plan
-    owner ? owner.plan : SubscriptionPlanCached.organization
+    owner ? owner.plan : SubscriptionPlanCached.community
   end
 
   def owner_contact
