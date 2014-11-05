@@ -92,7 +92,7 @@
 
               .btn-group ng-show="item.audioFiles[0].transcript"
                 button.btn ng-disabled="allowEditButton(audioFile)" ng-show="currentUser.canEdit(item) && !editTable" ng-click="callEditor()"
-                  i.icon-pencil
+                  i.icon-edit
                   |   Edit Transcript
                 button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave()"
                   | Save Transcript
