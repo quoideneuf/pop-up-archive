@@ -1,0 +1,21 @@
+section ng-controller="EnterpriseCtrl"
+  .modal-header
+    button type="button" class="close" data-dismiss="modal" aria-hidden="true" x
+    h3 Send a Request
+  form enterprise-form="save"
+    .loading-shield ng-show="sending"
+      i.icon-refresh.icon-spin
+    .modal-body
+      .form-horizontal
+        .control-group
+          label.control-label for="name" Name
+          .controls
+            input type="text" size="20" name="name"
+        .control-group
+          label.control-label for="text" Inquiry
+          .controls
+            textarea.form-control rows="4" name="text"
+
+    .modal-footer
+      button.btn.pull-left ng-disabled="sending" ng-click="hide(); $event.stopPropagation()" Cancel
+      button.btn.btn-primary ng-disabled="sending" type="submit" Send
