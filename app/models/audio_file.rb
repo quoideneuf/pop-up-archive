@@ -352,7 +352,13 @@ class AudioFile < ActiveRecord::Base
 
   def has_premium_transcribe_task?
     self.tasks.select{|task| task.type == 'Tasks::SpeechmaticsTranscribeTask' && task.status != "failed"}.first
-  end    
+  end
+
+  def has_premium_transcribe_task_in_progress?
+    self.tasks.where('type in (?)', ['Tasks::SpeechmaticsTranscribeTask']).\
+               where('status not in (?)', ['complete', 'cancelled']).count > 0 \
+               ? true : false
+  end
 
   def transcript_type
     (self.is_premium? or self.item.is_premium?) ? "Premium" : "Basic"
