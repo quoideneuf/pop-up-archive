@@ -13,8 +13,12 @@
     .span12
       .well
         .btn-group.pull-right
-          button.btn.btn-info ng-show="currentUser.canEdit(item)" ng-click="uploadFile()" Edit
-          button.btn.btn-danger ng-show="currentUser.canEdit(item)" ng-click="deleteItem()" Delete
+          button.btn ng-show="currentUser.canEdit(item)" ng-click="uploadFile()"
+            i.icon-edit
+            |  Edit Item
+          button.btn.btn-danger ng-show="currentUser.canEdit(item)" ng-click="deleteItem()"
+            i.icon-trash
+            |  Delete Item
 
         a.lower-right ng-show="currentUser.canEdit(item)" ng-click="itemStorage()"
           span.storage ng-class="Storage.storageClass(item.storage)"
