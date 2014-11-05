@@ -71,6 +71,61 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     return billed_duration
   end
 
+  def stuck?
+    # cancelled jobs are final.
+    return false if status == CANCELLED
+
+    # older than a day and incomplete
+    if status != COMPLETE && (DateTime.now - 1) > created_at
+      return true
+
+    # we failed to register a SM job_id
+    elsif !extras['job_id']
+      return true
+
+    end
+
+    # if we get here, not stuck
+    return false
+  end
+
+  def recover!
+
+    # couple easy cases first.
+    if !owner
+      self.extras[:error] = "No owner/audio_file found"
+      cancel!
+      return
+    elsif !self.extras['job_id']
+      self.extras[:error] = "No Speechmatics job_id found"
+      cancel!
+      return
+    end
+
+    # call out to SM and find out what our status is
+    sm = Speechmatics::Client.new({ :request => { :timeout => 120 } })
+    sm_job = sm.user.jobs(extras['job_id']).get
+    self.extras['sm_job_status'] = sm_job.job['job_status']
+
+    # cancel any rejected jobs.
+    if self.extras['sm_job_status'] == 'rejected'
+      self.extras[:error] = 'Speechmatics job rejected'
+      cancel!
+      return
+    end
+
+    # jobs marked 'expired' may still have a transcript. Only the audio is expired from their cache.
+    if self.extras['sm_job_status'] == 'expired' or self.extras['sm_job_status'] == 'done'
+      finish!
+      return
+    end
+
+    # if we get here, unknown status, so log and try to finish anyway.
+    logger.warn("Task #{self.id} for Speechmatics job #{self.extras['job_id']} has status '#{self.extras['sm_job_status']}'")
+    finish!  # attempt to finish. Who knows, we might get lucky.
+
+  end
+
   def finish_task
     return unless audio_file
 

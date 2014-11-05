@@ -41,8 +41,8 @@ PopUpArchive::Application.configure do
   config.stripe_cache = 5.months
 
   # Required configuration for Devise
-  config.action_mailer.default_url_options = { :host => 'pop-up-archive.dev' }
+  config.action_mailer.default_url_options = { :host => (ENV['SERVER_HOSTNAME'] || 'pop-up-archive.dev') }
 
   # And fixer (for testing)
-  Rails.application.routes.default_url_options = { host: 'pop-up-archive.dev' } 
+  Rails.application.routes.default_url_options = { host: (ENV['SERVER_HOSTNAME'] || 'pop-up-archive.dev') } 
 end

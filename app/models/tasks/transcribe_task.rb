@@ -5,26 +5,48 @@ class Tasks::TranscribeTask < Task
 
   def finish_task
     return unless audio_file
-    connection = Fog::Storage.new(storage.credentials)
-    uri        = URI.parse(destination)
+    return if cancelled?
+    if destination and destination.length > 0
+      connection = Fog::Storage.new(storage.credentials)
+      uri        = URI.parse(destination)
+      begin
+        transcript = get_file(connection, uri)
+        new_trans  = process_transcript(transcript)
 
-    transcript = get_file(connection, uri)
-    new_trans  = process_transcript(transcript)
+        # if new transcript resulted, then call analyze
+        if new_trans
+          audio_file.analyze_transcript
+          notify_user unless start_only?
+        end
 
-    # if new transcript resulted, then call analyze
-    if new_trans
-      audio_file.analyze_transcript
+      rescue Exceptions::PrivateFileNotFound => err
+        # can't find the file.
+        # if the task is older than 3 days, consider the file gone for good.
+        if self.created_at < DateTime.now-3
+          self.extras[:error] = "#{err}"
+          self.cancel!
+          return true
+        end
 
-      # show usage immediately
-      update_transcript_usage
+        # otherwise, re-throw and we'll try again later
+        raise err
 
-      # create audit xref
-      self.extras[:transcript_id] = new_trans.id
-      self.save!
+      rescue
+        raise # re-throw whatever it was
 
-      # share the glad tidings
-      notify_user unless start_only?
+      end 
+    else
+      raise "No destination so cannot finish task #{id}"
     end
+  end
+
+  def recover!
+    if !owner
+      self.extras[:error] = "No owner/audio_file found"
+      cancel!
+    else
+      finish!
+    end 
   end
 
   def notify_user

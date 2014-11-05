@@ -1,4 +1,5 @@
 require 'excon'
+require 'private_file_not_found'
 
 class Utils
 
@@ -54,7 +55,13 @@ class Utils
       file_exists = false
       while !file_exists && try_count < retry_count
         try_count += 1
-        file_exists = directory.files.head(key)
+        begin
+          file_exists = directory.files.head(key)
+        rescue Excon::Errors::SocketError => err
+          logger.warn "Excon error: #{err} - retrying..."
+        rescue => err
+          raise err # re-throw it if we did not recognize it
+        end
 
         if !file_exists
           sleep(1)
@@ -62,7 +69,7 @@ class Utils
       end
 
       if !file_exists
-        raise "File not found on s3: #{bucket}: #{key}"
+        raise Exceptions::PrivateFileNotFound.new, "File not found on s3: #{bucket}: #{key}"
       end
 
       result = directory.files.get(key).body

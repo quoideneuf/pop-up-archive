@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'ansi/code'
 
 describe FinishTaskWorker do
   before { StripeMock.start }
@@ -16,6 +17,7 @@ describe FinishTaskWorker do
     @task = FactoryGirl.create :analyze_task
     @worker = FinishTaskWorker.new
     Task.should_receive(:find_by_id).and_return(@task)
+    puts ANSI.blue{ "\nThe following StateMachine::InvalidTransition warning is expected" }
     @task.should_receive(:finish!).and_raise(StateMachine::InvalidTransition.new(@task, Task.state_machines[:status], :finish))
     @worker.perform(@task.id).should eq true
   end
