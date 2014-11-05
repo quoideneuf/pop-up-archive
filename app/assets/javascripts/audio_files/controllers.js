@@ -167,9 +167,14 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
   Me.authenticated(function (me) {
 
     $scope.submit = function () {
-      $scope.audioFile.orderPremiumTranscript(me);
+      $scope.audioFile.orderPremiumTranscript(me).then(function(respTask) {
+        //console.log("then, got respTask: ", respTask); 
+        $scope.$emit('premiumTranscriptOrdered', $scope.audioFile);
+      }).
+      catch(function(data) {
+        console.log("caught error on orderPremiumTranscript", data);
+      });
       $scope.clear();
-      $scope.$emit('premiumTranscriptOrdered');
       return;
     }   
 
@@ -177,7 +182,6 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
 
   $scope.clear = function () {
     $scope.hideOrderPremiumTranscriptModal();
-    $scope.$emit('premiumTranscriptCancelled');
   }
 
   $scope.hideOrderPremiumTranscriptModal = function () {

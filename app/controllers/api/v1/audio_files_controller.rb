@@ -70,9 +70,14 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
 
   def order_premium_transcript
     authorize! :order_premium_transcript, audio_file
-    logger.debug "order_premium_transcript for audio_file: #{audio_file}"
-    self.task = audio_file.order_premium_transcript(current_user)
-    respond_with :api, audio_file
+    logger.debug "order_premium_transcript for audio_file: #{audio_file.inspect}"
+    task = audio_file.order_premium_transcript(current_user)
+    render status: 202, json: {
+      task: task.id,
+      status: task.status,
+      type: 'premium',
+      id: audio_file.id
+    }
   end
 
   def order_transcript

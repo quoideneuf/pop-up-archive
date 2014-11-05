@@ -61,7 +61,7 @@
             .span6
               .transcript-label ng-hide="editTable"
                 span.ts-type {{audioFile.transcriptType}} Transcript
-              button.btn.ts-upgrade ng-show="audioFile.transcriptType == 'Basic'" ng-click="orderPremiumTranscript(audioFile, $event)" ng-disabled="premiumTranscriptOrderProcessing"
+              button.btn.ts-upgrade id="premium-ondemand-{{audioFile.id}}" ng-show="audioFile.transcriptType == 'Basic'" ng-click="orderPremiumTranscript(audioFile, $event)"
                 i.icon-star-empty
                 |  Upgrade to Premium
               .key-commands ng-show="editTable"
