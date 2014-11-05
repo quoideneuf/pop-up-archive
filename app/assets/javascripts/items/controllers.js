@@ -33,10 +33,62 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.transcriptExpanded = false;
 
-  $scope.isTranscriptProcessing = function() {
+  $scope.isFileProcessing = function(file) {
     var item = $scope.item;
     var user = $scope.currentUser;
-    return (user && item && user.canEdit(item) && (item.audioFiles.length > 0) && (item.audioFiles[0].transcript == null));
+    return (user && item && user.canEdit(item) && (file.transcript == null));
+  };
+
+  $scope.status = "uploading";
+  $scope.upgradeMessage = false;
+
+  $scope.statusNotification = function(file) {
+    $scope.taskStatus(file);
+    var statusHTML = "<h4>Status: ";
+    if ($scope.status == "uploading") {
+      statusHTML += "uploading";
+    } else if ($scope.status == "upload_failed") {
+      statusHTML += "UPLOAD FAILED - please try uploading again or contact us if uploads keep failing.";
+    } else if ($scope.status == "started") {
+      statusHTML += "transcript processing.</h4><p>The first two minutes of your transcription will be ready momentarily. ";
+      if ($scope.upgradeMessage) {
+        statusHTML += "<a href='/pricing'>Upgrade your plan for full transcripts.</a></p>";
+      } else {
+        statusHTML += "The rest will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.</p>";
+      }
+    } else if ($scope.status == "ts_failed") {
+      statusHTML += "TRANSCRIPTION FAILED - please <a href='mailto:edison@popuparchive.com?Subject=Transcription%20Failed%20-%20My%20User%20ID:%20"+ $scope.currentUser.id +"'>email us for support</a>";
+    }
+    return statusHTML;
+  };
+
+  $scope.taskStatus = function(file) {
+    if (!file) { return false; }
+    var upload, start, full;
+    for (var i=0; i<file.tasks.length; i++) {
+      var task = file.tasks[i];
+      if (task.type == "upload") {
+        upload = task.status;
+      } else if (task.identifier == "ts_start") {
+        start = task.status;
+      } else if (task.identifier == "ts_all" || task.identifier == "ts_paid") {
+        full = task.status;
+      }
+    }
+    if (upload == "failed") {
+      $scope.status = "upload_failed";
+    } else if (start == "failed" || full == "failed"){
+      $scope.status = "ts_failed";
+    } else if (start == "working" || start == "created") {
+      $scope.status = "started";
+    } else if (start == "complete" && full != "complete") {
+      $scope.status = "full";
+    } else if (full == "complete") {
+      $scope.status = "finished";
+    }
+    if (!full) {
+      $scope.upgradeMessage = true;
+    }
   };
 
   $scope.allowEditButton = function(file) {
@@ -46,12 +98,8 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       var found = false;
     }
     else {
-      for(var i = 0; i < file.tasks.length; i++) {
-        task = file.tasks[i];
-        if ((task.identifier == 'ts_all' || task.identifier == 'ts_paid') && (task.status== 'complete')) {
+      if ($scope.status == "finished") {
           var found = false;
-          break;
-        }
       }
     }
     return found;
