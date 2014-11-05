@@ -11,10 +11,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141029204336) do
+ActiveRecord::Schema.define(:version => 20141104052524) do
 
   add_extension "hstore"
-  add_extension "pg_stat_statements"
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "namespace"
@@ -195,19 +194,20 @@ ActiveRecord::Schema.define(:version => 20141029204336) do
     t.text     "date_peg"
     t.text     "notes"
     t.text     "transcription"
-    t.string   "tags",                              :array => true
+    t.string   "tags",                                                   :array => true
     t.integer  "geolocation_id"
     t.hstore   "extra"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.integer  "csv_import_id"
-    t.integer  "collection_id",     :null => false
+    t.integer  "collection_id",                          :null => false
     t.string   "token"
     t.integer  "storage_id"
     t.boolean  "is_public"
     t.string   "language"
     t.datetime "deleted_at"
     t.string   "image"
+    t.string   "transcript_type",   :default => "basic", :null => false
   end
 
   add_index "items", ["collection_id"], :name => "index_items_on_collection_id"
@@ -379,21 +379,23 @@ ActiveRecord::Schema.define(:version => 20141029204336) do
     t.string   "url"
     t.integer  "cost_per_min"
     t.text     "description"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
+    t.integer  "retail_cost_per_min", :default => 0, :null => false
   end
 
   create_table "transcripts", :force => true do |t|
-    t.integer  "audio_file_id",  :null => false
+    t.integer  "audio_file_id",                 :null => false
     t.string   "identifier"
     t.string   "language"
     t.integer  "start_time"
     t.integer  "end_time"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
     t.decimal  "confidence"
     t.integer  "transcriber_id"
     t.integer  "cost_per_min"
+    t.integer  "cost_type",      :default => 1, :null => false
   end
 
   add_index "transcripts", ["audio_file_id", "identifier"], :name => "index_transcripts_on_audio_file_id_and_identifier"

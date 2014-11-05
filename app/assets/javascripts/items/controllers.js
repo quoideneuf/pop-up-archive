@@ -16,7 +16,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   }
 
 }])
-.controller('ItemCtrl', ['$scope', '$timeout', '$q', '$modal', 'Item', 'Loader', 'Me', '$routeParams', 'Collection', 'Entity', '$location', 'SearchResults', 'Storage', '$window', 'Speaker', function ItemCtrl($scope, $timeout, $q, $modal, Item, Loader, Me, $routeParams, Collection, Entity, $location, SearchResults, Storage, $window, Speaker) {
+.controller('ItemCtrl', ['$scope', '$timeout', '$q', '$modal', '$http', 'Item', 'Loader', 'Me', '$routeParams', 'Collection', 'Entity', '$location', 'SearchResults', 'Storage', '$window', function ItemCtrl($scope, $timeout, $q, $modal, $http, Item, Loader, Me, $routeParams, Collection, Entity, $location, SearchResults, Storage, $window) {
 
   $scope.Storage = Storage;
 
@@ -136,6 +136,66 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       return "expanded";
     }
     return "collapsed";
+  };
+
+  // our version of angular-strap does not support prefixEvent (below)
+  // so listen on modal.show.
+  // TODO change when we upgrade.
+  $scope.$on('modal-hide', function() {
+    //console.log('modal hidden');
+    // re-enable buttons so can order for other audio on the page.
+    jQuery('button.ts-upgrade').not('.disabled').prop('disabled', false);
+  });
+
+  $scope.getPremiumCostAndPromptOrder = function() {
+    var audioFile = $scope.item.newAudioFile($scope.selectedAudioFile);
+    var costUrl = audioFile.getPremiumCostUrl();
+    $http.get(costUrl).success(function(data, headers, config) {
+      //console.log('got cost: ', data);
+      $scope.audioCost = data;
+      $scope.audioFile = audioFile;
+      $scope.orderPremiumTranscriptModal = $modal({template: '/assets/audio_files/order_premium_transcript.html', persist: true, show: true, backdrop: 'static', scope: $scope, prefixEvent: 'orderPremiumTranscriptModal'});
+    }).
+    error(function(data, status, headers, config) {
+      console.log("ERROR!: ", data, status, headers);
+    });
+  };
+
+  // register listener once. This event fired by credit card form.
+  // if the user wants to order a premium transcript and they do not yet have
+  // an active credit card, we intervene and ask for one.
+  $scope.$on('userHasValidCreditCard', function(event, data) {
+    //console.log('userHasValidCreditCard event fired', data);
+    $scope.getPremiumCostAndPromptOrder();
+  });
+
+  // when premium transcript successfully ordered, disable its associated button.
+  $scope.$on('premiumTranscriptOrdered', function(event, audioFile) {
+    var btn = jQuery('#premium-ondemand-'+audioFile.id);
+    //console.log("btn: ", btn);
+    btn.html('Premium transcript ordered');
+    btn.addClass('disabled'); // flag as permanently off
+    btn.prop('disabled', true);
+  });
+
+  $scope.orderPremiumTranscript = function(af, $ev) {
+    $scope.selectedAudioFile = af; // track so our listeners can get it.
+
+    // disable all buttons immediately to prevent multiple clicks
+    // modal listener (above) will re-enable
+    jQuery('button.ts-upgrade').not('.disabled').prop('disabled', true);
+
+    // if the user does not have an active credit card, ask for one.
+    if (!$scope.currentUser.hasCreditCard()) {
+      $scope.onDemandRequiresCC = true;
+      $scope.orderPremiumCCModal = $modal({template: '/assets/account/credit_card.html', persist: true, show: true, backdrop: 'static', scope: $scope});
+    }
+    else {
+      // credit card already on file, so
+      // fire event that triggers the getPremiumCostAndPromptOrder immediately.
+      $scope.$emit('userHasValidCreditCard');
+    }
+
   };
 
   $scope.itemStorage = function() {
@@ -321,7 +381,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       return;
     new ImageFile({remoteFileUrl: imageUrl, container: "items", containerId: saveItem.id} ).create();      
     $scope.item.images.push({ name: 'name', remoteFileUrl: imageUrl, size: ''});
-    console.log("url link", $scope.urlForImage);
+    //console.log("url link", $scope.urlForImage);
     $scope.urlForImage = "";
   };
 
@@ -343,6 +403,12 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       if (!$scope.item.title || $scope.item.title == "") {
         $scope.item.title = newFiles[0].name;
       }
+
+      // set default transcriptType based on subscriber plan
+      // NOTE that we only want them to change the transcriptType
+      // when user is directly uploading files.
+      $scope.defaultTranscriptType = $scope.currentUser.hasPremiumTranscripts() ? "premium" : "basic";
+      $scope.item.transcriptType = $scope.defaultTranscriptType;
 
       if (!$scope.item.files) {
         $scope.item.files = [];

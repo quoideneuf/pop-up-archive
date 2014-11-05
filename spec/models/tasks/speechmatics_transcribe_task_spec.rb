@@ -134,6 +134,15 @@ describe Tasks::SpeechmaticsTranscribeTask do
 
     end
 
+    it "assigns retail cost for ondemand" do
+      audio_file.item.collection.set_owner(user)
+      extras = { 'original' => audio_file.process_file_url, 'user_id' => user.id, 'ondemand' => true }
+      t = Tasks::SpeechmaticsTranscribeTask.create!(owner: audio_file, identifier: 'test', extras: extras)
+      trans = t.process_transcript(response)
+      trans.cost_type.should == Task::RETAIL
+      trans.cost_per_min.should == Transcriber.find_by_name('speechmatics').retail_cost_per_min
+    end
+
     it 'delineates usage for User vs Org' do
       now = DateTime.now
 

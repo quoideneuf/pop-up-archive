@@ -70,6 +70,9 @@ PopUpArchive::Application.routes.draw do
           post 'order_transcript',     action: 'order_transcript'
           post 'add_to_amara',         action: 'add_to_amara'
           post 'listens',              action: 'listens'
+          get  'transcript/premium/cost',  action: 'premium_transcript_cost'
+          post 'transcript/premium/order', action: 'order_premium_transcript'
+
           # s3 upload actions
           get  'chunk_loaded',         action: 'chunk_loaded'
           get  'get_init_signature',   action: 'init_signature'

@@ -1,7 +1,7 @@
 angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.models', 'Directory.imageFiles.models'])
 .factory('Item', ['Model', '$http', '$q', 'Contribution', 'Person', 'AudioFile', 'Player', 'ImageFile', function (Model, $http, $q, Contribution, Person, AudioFile, Player, ImageFile) {
 
-  var attrAccessible = "dateBroadcast dateCreated datePeg description digitalFormat digitalLocation episodeTitle identifier language musicSoundUsed notes physicalFormat physicalLocation rights seriesTitle tags title transcription adoptToCollection tagList text id originalFileUrl".split(' ');
+  var attrAccessible = "dateBroadcast dateCreated datePeg description digitalFormat digitalLocation episodeTitle identifier language musicSoundUsed notes physicalFormat physicalLocation rights seriesTitle tags title transcription adoptToCollection tagList text id originalFileUrl transcriptType".split(' ');
 
   var Item = Model({url:'/api/collections/{{collectionId}}/items/{{id}}', name: 'item', only: attrAccessible});
 
@@ -118,9 +118,19 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     return "/collections/" + this.collectionId + "/items/" + this.id; 
   }
 
+  Item.prototype.prependZero = function(i) {
+    if (i < 10) {
+      return "0" + i;
+    }
+    return i;
+  }
+
   Item.prototype.getDurationString = function () {
+    var self = this;
     var d = new Date(this.duration * 1000);
-    return d.getUTCHours() + ":" + d.getUTCMinutes() + ":" + d.getUTCSeconds();
+    return self.prependZero(d.getUTCHours()) + ":" 
+         + self.prependZero(d.getUTCMinutes()) + ":" 
+         + self.prependZero(d.getUTCSeconds());
   }
 
   Item.prototype.adopt = function (collectionId) {
@@ -180,6 +190,11 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
       audioFile.upload(file, options);
     });
     return audioFile;
+  }
+
+  Item.prototype.newAudioFile = function(af) {
+    af.itemId = this.id;
+    return new AudioFile(af);
   }
 
   // update existing audioFiles

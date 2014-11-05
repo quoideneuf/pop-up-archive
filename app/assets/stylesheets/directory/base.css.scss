@@ -31,6 +31,14 @@ p {
   text-align: center;
 }
 
+.btn-group > .btn, .btn {
+  font-size: 12px;
+}
+
+.logo {
+  color: #F25A4C;
+}
+
 .scrubbing {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -446,13 +454,6 @@ h5.result-count {
     padding: 10px 20px;
     word-wrap: break-word;
 
-    .btn {
-      border: 0;
-      border-radius: 8px;
-      margin-left: 3px;
-      text-shadow: none;
-    }
-
     .btn-item {
       background: #85D0F1;
       color: #030303;
@@ -463,6 +464,16 @@ h5.result-count {
       font-weight: 800;
       font-size: 32px !important;
     }
+  }
+
+  section.audio-file {
+    padding-bottom: 30px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  section.audio-file:last-of-type {
+    padding-bottom: 12px;
+    border-bottom: none;
   }
 
   section.notes {
@@ -792,6 +803,19 @@ form.with-tags {
   }
   .controls {
     margin-left: 160px;
+  }
+  .radio-group {
+    margin-top: 4px;
+  }
+  .radio-label {
+    width: auto;
+    display: inline;
+    margin-left: 8px;
+    margin-right: 16px;
+  }
+  .radio_button {
+    vertical-align: middle;
+    margin-top: -1px;
   }
 
   select {
@@ -1709,46 +1733,43 @@ ul.great-list {
 
 .ui-match { background: #8ED3F2; }
 
-#download-btn {
+.download-btn {
   padding-left: 12px;
   padding-right: 12px;
 }
 
-#expand-transcript {
+.expand-transcript {
   width:121px;
 }
 
-#ts-info-row {
+.ts-info-row {
   margin-bottom: 10px;
 }
 
-#transcript-label {
+.transcript-label {
   width: 137px;
-  border-radius: 8px;
-  padding: 3px;
-  text-align: center;
-  font-family: soleil;
-  line-height: 1.2;
-  background-color: #F5F5F5;
+  /* border-radius: 8px; */
+  padding: 4px; 
+  display: inline;
 }
 
-#ts-type {
-  font-size: 14px;
+.ts-type {
   color: #F25A4C;
 }
 
-#ts-upgrade {
-  // Hide the link text until this feature is ready
-  display: none;
+.ts-upgrade {
   //  Let's change the color when we get the link working so it doesn't look offensive
   color: #2ca5da;
   font-size: 12px;
   font-weight: bold;
 }
-.speakers-form{
+
+.speakers-form {
   .select2-container{
     padding: 5px;
   }
+  display: inline;
+}
 
 .alert-info p {
   margin-bottom: 0;

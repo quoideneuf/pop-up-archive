@@ -11,6 +11,8 @@ class Task < ActiveRecord::Base
   WORKING  = 'working'
   FAILED   = 'failed'
   COMPLETE = 'complete'
+  RETAIL    = 2 
+  WHOLESALE = 1 
 
   scope :incomplete, where('status != ?', COMPLETE)
 

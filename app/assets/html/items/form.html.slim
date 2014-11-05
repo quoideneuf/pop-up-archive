@@ -92,6 +92,28 @@ section ng-controller="ItemFormCtrl"
             i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['title']" data-placement="bottom"
           .controls
             input.text.input-xlarge#title type='text' ng-model='item.title'
+        .control-group ng-show="defaultTranscriptType == 'basic'"
+          label.control-label
+            | Type
+            i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom"
+          .controls.radio-group
+            input.radio_button type='radio' name="transcriptType" value="basic" ng-model='item.transcriptType' 
+            label.radio-label
+              | Basic
+            input.radio_button type='radio' name="transcriptType" value="premium" ng-model='item.transcriptType' 
+            label.radio-label
+              | Premium
+        .control-group
+          label.control-label
+            | Type
+            i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom"
+          .controls.radio-group
+            input.radio_button ng-change="console.log(item.transcriptType)" type='radio' name="transcriptType" value="basic" ng-model='item.transcriptType' 
+            label.radio-label
+              | Basic
+            input.radio_button type='radio' ng-change="console.log(item.transcriptType)" name="transcriptType" value="premium" ng-model='item.transcriptType' 
+            label.radio-label
+              | Premium
         .control-group
           label.control-label
             | Upload Images

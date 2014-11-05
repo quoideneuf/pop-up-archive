@@ -73,7 +73,8 @@ class Item < ActiveRecord::Base
     :description, :digital_format, :digital_location, :duration,
     :episode_title, :extra, :identifier, :music_sound_used, :notes,
     :physical_format, :physical_location, :rights, :series_title,
-    :tags, :title, :transcription, :adopt_to_collection, :language, :image, :remote_image_url, :image_files
+    :tags, :title, :transcription, :adopt_to_collection, :language, 
+    :image, :remote_image_url, :image_files, :transcript_type
 
   belongs_to :geolocation
   belongs_to :csv_import
@@ -271,6 +272,10 @@ class Item < ActiveRecord::Base
       end
     end
     true
+  end
+
+  def is_premium?
+    self.transcript_type == "premium"
   end
 
   private

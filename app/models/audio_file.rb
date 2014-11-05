@@ -199,7 +199,8 @@ class AudioFile < ActiveRecord::Base
 
   def premium_transcribe_audio(user=self.user)
     # only start this if transcode is complete
-    return unless (transcoded_at && user.plan.has_premium_transcripts?)
+    return unless transcoded_at
+    return unless (user.plan.has_premium_transcripts? || item.is_premium?)
     start_premium_transcribe_job(user, 'ts_paid')
   end
 
@@ -210,6 +211,9 @@ class AudioFile < ActiveRecord::Base
     # always do the first 2 minutes
     start_transcribe_job(user, 'ts_start', {start_only: true})
 
+    # or if parent Item was created with premium-on-demand
+    return if item.is_premium?
+
     if (storage.at_internet_archive? || (user && (user.plan != SubscriptionPlanCached.community)))
       start_transcribe_job(user, 'ts_all')
     end
@@ -218,8 +222,9 @@ class AudioFile < ActiveRecord::Base
   def start_premium_transcribe_job(user, identifier, options={})
     return if (duration.to_i <= 0)
 
-    if task = tasks.select{|task| task.type == 'Tasks::SpeechmaticsTranscribeTask' && task.status != "failed"}.first
+    if task = has_premium_transcribe_task?
       logger.warn "speechmatics transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
+      task
     else
       extras = { 'original' => process_file_url, 'user_id' => user.try(:id) }.merge(options)
       task = Tasks::SpeechmaticsTranscribeTask.new(identifier: identifier, extras: extras)
@@ -260,6 +265,7 @@ class AudioFile < ActiveRecord::Base
         #log and skip if transcode task already exists
         if task = tasks.transcode.without_status(:failed).where(identifier: "#{label}_transcode").last
           logger.debug "transcode task #{identifier} #{task.id} already exists for audio file #{self.id}"
+          task
         else
           self.tasks << Tasks::TranscodeTask.new(
             identifier: "#{label}_transcode",
@@ -344,8 +350,37 @@ class AudioFile < ActiveRecord::Base
     self.transcripts.unscoped.where(:audio_file_id => self.id).any?{|t| t.is_premium?}
   end
 
+  def has_premium_transcribe_task?
+    self.tasks.select{|task| task.type == 'Tasks::SpeechmaticsTranscribeTask' && task.status != "failed"}.first
+  end
+
+  def has_premium_transcribe_task_in_progress?
+    self.tasks.where('type in (?)', ['Tasks::SpeechmaticsTranscribeTask']).\
+               where('status not in (?)', ['complete', 'cancelled']).count > 0 \
+               ? true : false
+  end
+
   def transcript_type
-    self.is_premium? ? "Premium" : "Basic"
+    (self.is_premium? or self.item.is_premium?) ? "Premium" : "Basic"
+  end
+
+  def premium_wholesale_cost(transcriber=Transcriber.premium)
+    transcriber.wholesale_cost(self.duration)
+  end
+
+  def premium_retail_cost(transcriber=Transcriber.premium)
+    transcriber.retail_cost(self.duration)
+  end
+
+  def order_premium_transcript(cur_user)
+    # TODO create named exception classes for these errors
+    if !transcoded_at and format != "audio/mpeg"
+      raise "Cannot order premium transcript for audio that has not been transcoded"
+    end
+    if !cur_user.active_credit_card
+      raise "Cannot order premium transcript without an active credit card"
+    end
+    start_premium_transcribe_job(cur_user, 'ts_paid', { ondemand: true })
   end
 
   private

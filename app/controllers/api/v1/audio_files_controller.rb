@@ -1,12 +1,18 @@
 require "digest/sha1"
 
 class Api::V1::AudioFilesController < Api::V1::BaseController
+  include ActionView::Helpers::NumberHelper
+  include Api::BaseHelper
 
   expose :item
   expose :audio_files, ancestor: :item
   expose :audio_file
   expose :upload_to_storage
   expose :task
+
+  def index
+    respond_with :api, audio_files
+  end 
 
   def update
     if params[:task].present?
@@ -27,7 +33,17 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
   end
 
   def show
-    redirect_to audio_file.url
+    # respond w/json only if explicitly asked.
+    # otherwise, redirect to physical asset.
+    # because of how our routing is configured, everything defaults to 'json'
+    # so we have to examine the original request URL to discover
+    # if .json was actually present on the request.
+    req_format_was_json = request.fullpath.match(/(\.json)$/)
+    if req_format_was_json
+      respond_with :api, audio_file
+    else
+      redirect_to audio_file.url
+    end
   end
 
   def destroy
@@ -38,6 +54,30 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
   def transcript_text
     response.headers['Content-Disposition'] = 'attachment'
     render text: audio_file.transcript_text, content_type: 'text/plain'
+  end
+
+  def premium_transcript_cost
+    cost = audio_file.premium_retail_cost
+    render status: 200, json: {
+      id: audio_file.id,
+      type: 'premium',
+      filename: audio_file.filename,
+      duration: audio_file.duration,
+      duration_hms: format_time( audio_file.duration ),
+      cost: number_to_currency(cost)
+    }
+  end
+
+  def order_premium_transcript
+    authorize! :order_premium_transcript, audio_file
+    logger.debug "order_premium_transcript for audio_file: #{audio_file.inspect}"
+    task = audio_file.order_premium_transcript(current_user)
+    render status: 202, json: {
+      task: task.id,
+      status: task.status,
+      type: 'premium',
+      id: audio_file.id
+    }
   end
 
   def order_transcript

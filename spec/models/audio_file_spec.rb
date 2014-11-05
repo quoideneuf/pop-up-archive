@@ -3,8 +3,8 @@ require 'spec_helper'
 describe AudioFile do
 
   before {
-    SubscriptionPlanCached.reset_cache
     StripeMock.start
+    SubscriptionPlanCached.reset_cache
   }
   after { StripeMock.stop }
 
@@ -229,6 +229,20 @@ describe AudioFile do
       @audio_file.premium_transcribe_audio
       @audio_file.tasks.size.should == 1
     end
+
+    it "should order premium transcript ondemand" do
+      new_user = FactoryGirl.create :user
+      new_user.update_card!('void_card_token')
+      plan = SubscriptionPlanCached.create name: 'Test Plan', amount: 10000, hours: 200, plan_id: '10_small_business_yr'
+      new_user.subscribe!(plan)
+      @audio_file.user = new_user
+      @audio_file.transcoded_at = '10/10/2014'
+      @audio_file.duration = 100
+      task = @audio_file.order_premium_transcript(new_user)
+      @audio_file.tasks.size.should == 1
+      task.extras[:ondemand].should == true
+    end
+
   end
 
   describe "#update_from_fixer" do
