@@ -52,6 +52,10 @@ class AudioFile < ActiveRecord::Base
     item.try(:token)
   end
 
+  def get_storage
+    item.try(:storage)
+  end
+
   # verify that user_id is set, calling set_user_id if it is not.
   # called via before_save callback
   def check_user_id

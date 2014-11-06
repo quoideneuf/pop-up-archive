@@ -23,7 +23,7 @@ module FileStorage
   end
 
   def get_storage
-    item.try(:storage)
+    raise "#{self.class} does not implement get_storage method"
   end
 
   def get_token
