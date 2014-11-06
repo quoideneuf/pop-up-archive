@@ -14,7 +14,12 @@ module Searchable
       on: :update,
       if: Proc.new { |item| item.respond_to?(:deleted_at) && item.deleted_at.blank? }
 
-    after_commit lambda { IndexerWorker.perform_async(:delete, self.class.to_s, self.id) },
+    # since we do soft-deletes, we must check the deleted_at column for not null,
+    # and since we want the user experience to be immediate, we do it sychronously
+    # rather than firing off an IndexerWorker task.
+    # NOTE this has the potential to DOS Elasticsearch server if we did lots of simultaneous soft-deletes,
+    # but the most common case is a single item soft-deleted at a time.
+    after_commit lambda { self.__elasticsearch__.delete_document },
       on: :destroy,
       if: Proc.new { |item| item.respond_to?(:deleted_at) && item.deleted_at.present? }
     
