@@ -2,9 +2,12 @@ require 'spec_helper'
 
 describe Transcriber do
 
+  before { StripeMock.start }
+  after { StripeMock.stop }
+
   before(:all) do
     @transcriber = FactoryGirl.create :transcriber
-    @audio       = FactoryGirl.create :audio_file
+    @audio       = AudioFile.new  # no factory. no need to save and it saves test time.
   end
 
   it "should calculate wholesale and retail costs" do
