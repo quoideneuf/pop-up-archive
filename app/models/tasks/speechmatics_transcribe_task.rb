@@ -215,7 +215,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
             start_time: BigDecimal.new(row['time'].to_s),
             end_time:   row_end,
             text:       row['name'],
-            speaker:    speaker_lookup[speaker['name']]
+            speaker_id: speaker_lookup[speaker['name']].id,
           })
         end
       end
