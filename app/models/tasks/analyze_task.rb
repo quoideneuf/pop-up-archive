@@ -25,15 +25,17 @@ class Tasks::AnalyzeTask < Task
     end
   end 
 
-  def process_analysis(analysis)
+  def process_analysis(analysis_json)
     item = owner.item
     return unless item
 
     existing_names = item.entities.collect{|e| e.name || ''}.sort.uniq
     analysis = nil
     begin
-      if analysis.is_a?(String) and analysis.length > 0
-        analysis = JSON.parse(analysis)
+      if analysis_json.is_a?(String) and analysis_json.length > 0
+        analysis = JSON.parse(analysis_json)
+      else 
+        raise "Got invalid analysis JSON string: #{analysis_json.inspect}"
       end
     rescue JSON::ParserError => err
       # log it and skip
