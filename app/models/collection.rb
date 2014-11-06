@@ -189,6 +189,10 @@ class Collection < ActiveRecord::Base
     read_attribute(:token) || update_token
   end
 
+  def url
+    "#{Rails.application.routes.url_helpers.root_url}collections/#{id}"
+  end 
+
   @@instance_lock = Mutex.new
   def update_token
     @@instance_lock.synchronize do
