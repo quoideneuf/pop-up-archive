@@ -16,7 +16,9 @@ describe FileStorage do
     }
 
     it "should copy to item storage" do
-      copy_to_item_storage
+      # TODO flesh this out
+      @audio_file.copy_to_item_storage
+      @image_file.copy_to_item_storage
     end
 
     # it "should provide filename for an image file" do
