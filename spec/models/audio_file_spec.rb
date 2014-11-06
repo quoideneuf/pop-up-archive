@@ -185,7 +185,7 @@ describe AudioFile do
 
     it 'should order start and all transcripts for organizations' do
       @audio_file.user.organization = FactoryGirl.build :organization
-      @audio_file.should_receive(:start_transcribe_job).twice
+      @audio_file.should_receive(:start_transcribe_job)
       @audio_file.transcribe_audio
     end
 
