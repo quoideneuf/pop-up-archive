@@ -6,12 +6,20 @@ class Transcriber < ActiveRecord::Base
 
   has_many :transcripts
 
+  after_commit :invalidate_caches, on: :update
+
   def self.basic
     @_basic ||= self.find_by_name('google_voice')
   end
 
   def self.premium
     @_premium ||= self.find_by_name('speechmatics')
+  end
+
+  # call this whenever making price changes
+  def invalidate_caches
+    @_basic = nil
+    @_premium = nil
   end
 
   # returns float for cost of N seconds of transcription.
