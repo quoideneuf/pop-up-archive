@@ -103,7 +103,7 @@
                 button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave()"
                   i.icon-save
                   |  Save Transcript
-                button.btn ng-show="currentUser.canEdit(item)" bs-modal="'#{asset_path 'items/assign_speakers_form.html'}'"
+                button.btn ng-show="currentUser.canEdit(item) && audioFile.transcriptType != 'Basic'" bs-modal="'#{asset_path 'items/assign_speakers_form.html'}'"
                   i.icon-user
                   |  Assign Speakers
                 button.btn.expand-transcript ng-click="toggleTranscript()" ng-show="transcriptExpanded"
