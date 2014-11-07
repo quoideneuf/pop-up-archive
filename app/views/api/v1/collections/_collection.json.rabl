@@ -1,11 +1,15 @@
 attributes :id, :title, :description, :items_visible_by_default, :token
 
-node(:urls) do |i|
-  { self: url_for(api_collection_path(i)) }
+node :number_of_items do |coll|
+  coll.items.count
 end
 
-node (:storage) do |i|
-  i.default_storage.provider
+node(:urls) do |coll|
+  { self: url_for(api_collection_path(coll)) }
+end
+
+node (:storage) do |coll|
+  coll.default_storage.provider
 end
 
 child :image_files do |af|
