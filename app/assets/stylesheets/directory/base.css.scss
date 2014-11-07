@@ -125,7 +125,7 @@ p {
   -webkit-border-radius:50%;
   -khtml-border-radius: 50%;
   background: #F25A4C;
-  font-family: "soleil", sans-serif !important;
+  font-family: 'soleil', helvetica, sans-serif !important;
   text-shadow: none !important;
   text-align: center;
   color: rgb(255, 255, 255);
@@ -208,7 +208,7 @@ button.pua-pill {
   border-radius: 8px;
   background: #7C7B81;
   color: white;
-  font-family: "soleil", sans-serif;
+  font-family: 'soleil', helvetica, sans-serif;
   padding: 7px 14px;
   font-size: 14px;
   font-weight: 800;
@@ -315,7 +315,7 @@ button.pua-pill {
 
     h5 {
       color: #B59B6D;
-      font-family: "soleil", sans-serif !important;
+      font-family: 'soleil', helvetica, sans-serif !important;
       font-weight: 800;
       font-size: 16px;
       border-bottom: 4px solid white;
@@ -342,14 +342,14 @@ button.pua-pill {
         }
 
         small {
-          font-family: "soleil", sans-serif !important;
+          font-family: 'soleil', helvetica, sans-serif !important;
           color: #B59B6D;
           font-weight: bold;
           font-size: 12px;
         }
 
         .label-info {
-          font-family: "soleil", sans-serif !important;
+          font-family: 'soleil', helvetica, sans-serif !important;
           font-size: 14px;
           background: none;
           border-radius: 0;
@@ -369,7 +369,7 @@ button.pua-pill {
 
   .media-heading a {
     color: #B59B6D;
-    font-family: "soleil", sans-serif !important;
+    font-family: 'soleil', helvetica, sans-serif !important;
     font-size: 18px;
     font-weight: 800;
 
@@ -395,7 +395,7 @@ button.pua-pill {
 
 h5.result-count {
   color: #B59B6D;
-  font-family: "soleil", sans-serif !important;
+  font-family: 'soleil', helvetica, sans-serif !important;
   font-weight: 800;
   font-size: 16px;
   display: block;
@@ -447,7 +447,7 @@ h5.result-count {
   }
 
   .well {
-    font-family: "soleil", sans-serif;
+    font-family: 'soleil', helvetica, sans-serif;
     box-shadow: none;
     background: white;
     border-radius: 14px;
@@ -480,7 +480,7 @@ h5.result-count {
   section.notes {
     h5 {
       color: #7C7B81;
-      font-family: "soleil", sans-serif !important;
+      font-family: 'soleil', helvetica, sans-serif !important;
     }
 
     padding: 0px;
@@ -490,7 +490,7 @@ h5.result-count {
   section.transcription {
     h5 {
       color: #7C7B81;
-      font-family: "soleil", sans-serif !important;
+      font-family: 'soleil', helvetica, sans-serif !important;
     }
 
     padding: 0px;
@@ -500,7 +500,7 @@ h5.result-count {
   section.rights {
     h5 {
       color: #7C7B81;
-      font-family: "soleil", sans-serif !important;
+      font-family: 'soleil', helvetica, sans-serif !important;
     }
 
     padding: 0px 15px;
@@ -509,7 +509,7 @@ h5.result-count {
 
   section.entities {
     h5 {
-      font-family: "soleil", sans-serif !important;
+      font-family: 'soleil', helvetica, sans-serif !important;
       color: #7C7B81;
       clear: both;
     }
@@ -536,7 +536,7 @@ h5.result-count {
       li.entity {
         display: block;
         float: left;
-        font-family: "soleil", sans-serif !important;
+        font-family: 'soleil', helvetica, sans-serif !important;
         margin: 4px;
 
         .btn {
@@ -577,7 +577,7 @@ h5.result-count {
 
   section.tags {
     h5 {
-      font-family: "soleil", sans-serif !important;
+      font-family: 'soleil', helvetica, sans-serif !important;
       color: #7C7B81;
       clear: both;
     }
@@ -593,7 +593,7 @@ h5.result-count {
       li {
         display: block;
         float: left;
-        font-family: "soleil", sans-serif !important;
+        font-family: 'soleil', helvetica, sans-serif !important;
         margin: 4px;
 
         .btn {
@@ -1170,7 +1170,7 @@ form.with-tags {
 #enterprise {
   .strong {
     font-weight: bold;
-    font-family: soleil, sans-serif !important;
+    font-family: 'soleil', helvetica, sans-serif !important;
     padding-bottom: 5px;
     color: white;
   }
@@ -1196,7 +1196,7 @@ form.with-tags {
       padding: 0;
     }
     #slug{
-      font-family: soleil, sans-serif !important;
+      font-family: 'soleil', helvetica, sans-serif !important;
       color: #2c677f;
       font-size: 30px;
       line-height: 39px;
@@ -1235,7 +1235,7 @@ form.with-tags {
       background-color: #3d3d3e;
       color: white;
       padding: 25px 5px 30px 15px;
-      font-family: soleil, sans-serif !important;
+      font-family: 'soleil', helvetica, sans-serif !important;
       font-size: 19px;
       line-height: 28px;
     }
@@ -1425,7 +1425,7 @@ form.with-tags {
   
   #text-nav {
     position: relative;
-    font-family: "soleil", sans-serif !important;
+    font-family: 'soleil', helvetica, sans-serif !important;
     font-size: 17px;
     height: 70px;
     ul {
@@ -1448,7 +1448,7 @@ form.with-tags {
 }
 
 .featurebtn {
-  font-family: soleil, sans-serif;
+  font-family: 'soleil', helvetica, sans-serif;
   font-size: 1.4em;
   background-color: #85D0F1;
   opacity: .9;
@@ -1645,12 +1645,12 @@ dd.usage-meter {
   .meter-words {
     position: relative;
     z-index: 10;
-    font-family: "soleil", sans-serif !important;
+    font-family: 'soleil', helvetica, sans-serif !important;
   }
 }
 
 .plan-well {
-  font-family: "soleil", sans-serif;
+  font-family: 'soleil', helvetica, sans-serif;
   background: #FFF;
   border-radius: 20px;
   text-align: center;

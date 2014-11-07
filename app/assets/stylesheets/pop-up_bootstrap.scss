@@ -32,7 +32,7 @@ body {
   .nav {
     li {
       a {
-        font-family: "soleil", sans-serif !important;
+        font-family: 'soleil', helvetica, sans-serif !important;
         font-weight: bold !important;
         font-size: 16px !important;
         color: rgb(125, 125, 130) !important;
@@ -61,14 +61,14 @@ body {
 
 h1 {
   color: #7c7b81;
-  font-family: "soleil", sans-serif !important;
+  font-family: 'soleil', helvetica, sans-serif !important;
   font-weight: 800;
   font-size: 32px;
   }
 
 h2 {
   color: #7c7b81;
-  font-family: "soleil", sans-serif !important;
+  font-family: 'soleil', helvetica, sans-serif !important;
   font-weight: 800;
   font-size: 24px;
 }
@@ -95,7 +95,7 @@ input[type='file'] {
   margin-top: -5px;
   font-size: 14px;
   font-weight: bold;
-  font-family: "soleil", sans-serif;
+  font-family: 'soleil', helvetica, sans-serif;
 }
 
 footer, footer p {
@@ -107,7 +107,7 @@ footer, footer p {
   display: block;
   float: left;
   height: 82px;
-  font-family: "Soleil", sans-serif;
+  font-family: 'soleil', helvetica, sans-serif;
   font-weight: 900;
   font-size: 2em;
   text-transform: lowercase;
