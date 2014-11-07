@@ -229,14 +229,17 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
       collection.update().then(function (data) {
         $scope.addRemoteImageFile(collection, $scope.urlForImage);
         $scope.uploadImageFiles(collection, collection.images);
-        delete $scope.item;
+        delete $scope.collection;
       });
     } else {
       collection.create().then(function (data) {
+        $scope.addRemoteImageFile(collection, $scope.urlForImage);
+        $scope.uploadImageFiles(collection, collection.images);
         $scope.collections.push(collection);
         Me.authenticated(function (me) {
           me.collectionIds.push(collection.id);
         });
+        delete $scope.collection;
       });
     }
   }
