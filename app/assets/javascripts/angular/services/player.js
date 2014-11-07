@@ -510,6 +510,9 @@
         //abbreviate speaker names to initials
         scope.abbreviateSpeaker = function (speakerId) {
           var name = scope.assignSpeaker(speakerId);
+          if (!name) {
+            return '';
+          }
           //if speaker is in the format F1 or M1 or S1 do not abbreviate
           re = /^[MFS]\d+$/;
           if (re.test(name)){
