@@ -139,7 +139,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   };
 
   // our version of angular-strap does not support prefixEvent (below)
-  // so listen on modal.show.
+  // so listen on 'modal-hide'
   // TODO change when we upgrade.
   $scope.$on('modal-hide', function() {
     //console.log('modal hidden');
