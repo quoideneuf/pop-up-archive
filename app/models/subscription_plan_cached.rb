@@ -23,7 +23,7 @@ class SubscriptionPlanCached
 
   def self.ungrandfathered
     Rails.cache.fetch([:plans, :group, :ungrandfathered], expires_in: 30.minutes) do
-      all.select { |p| (p.name ||'')[0] != '*' && p != organization }
+      all.select { |p| (p.name ||'')[0] != '*' }
     end
   end
 
@@ -33,7 +33,7 @@ class SubscriptionPlanCached
     end
   end
 
-  # community() and organization() methods are essentially singletons
+  # community() is essentially singletons
   # but for the purposes of testing we create-on-demand.
   def self.community
     if Rails.env.test?
@@ -43,19 +43,6 @@ class SubscriptionPlanCached
       spc = ungrandfathered.find { |p| p.id == 'community' and p.name == 'Community'}
       if !spc
         raise "Cannot find 'community' plan"
-      end
-      return spc
-    end
-  end
-
-  def self.organization
-    if Rails.env.test?
-      return create(plan_id: 'organization', name: 'Organization', amount: 0)
-    end
-    Rails.cache.fetch([:plans, :group, :organization], expires_in: 30.minutes) do
-      spc = all.find { |p| p.id == 'organization' and p.name == 'Organization' }
-      if !spc
-        raise "Cannot find 'organization' plan"
       end
       return spc
     end
