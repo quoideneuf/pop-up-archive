@@ -18,4 +18,7 @@
 
     p ng-show="collection.description" ng-bind-html="collection.description"
 
-    ng-include ng-controller="SearchResultsCtrl" src="'#{asset_path 'search/results.html'}'"
+    div ng-if="collection.numberOfItems > 0"
+      ng-include ng-controller="SearchResultsCtrl" src="'#{asset_path 'search/results.html'}'"
+    div ng-if="collection.numberOfItems == 0" 
+      ng-include="'#{asset_path 'collections/new.html'}'"
