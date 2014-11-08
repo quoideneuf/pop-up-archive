@@ -215,13 +215,11 @@ class AudioFile < ActiveRecord::Base
   def transcribe_audio(user=self.user)
     # don't bother if this is premium plan
     return if (user && user.plan.has_premium_transcripts?)
-    
+    # or if parent Item was created with premium-on-demand
+    return if item.is_premium?
+ 
     # always do the first 2 minutes
     start_transcribe_job(user, 'ts_start', {start_only: true})
-
-    # TODO should this check happen above ts_start above?
-    # skip ts_all if parent Item was created with premium-on-demand
-    return if item.is_premium?
 
     if (storage.at_internet_archive? || (user && (user.plan != SubscriptionPlanCached.community)))
       start_transcribe_job(user, 'ts_all')
