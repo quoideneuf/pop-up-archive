@@ -12,18 +12,21 @@ ul.nav.authn.pull-right
   li
     a.border href="/collections"
       #my_dashboard
-      i.icon-desktop
-      |  dashboard
+        i.icon-desktop
+        span.nav-label
+          |  dashboard
   li
     a.border bs-dropdown="myCollectionsMenu"
       #my_collections
         i.icon-folder-close-alt
-        |  my collections&nbsp;
+        span.nav-label
+          |  my collections&nbsp;
         i.icon-caret-down    
   li
     a.border bs-dropdown="userMenu"
       #user_name
         i.icon-user
-        |  #{current_user.name.downcase}&nbsp;
+        span.nav-label
+          |  #{current_user.name.downcase}&nbsp;
         i.icon-caret-down
 =render('alerts')
