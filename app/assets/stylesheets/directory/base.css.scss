@@ -1822,7 +1822,10 @@ ul.great-list {
 @media only screen and (max-width: 940px) {
   .navbar-static-top .container,
   .navbar-fixed-top .container,
-  .container {
+  .container,
+  .span12,
+  .span10,
+  .span9 {
     width: auto;
   }
 }
@@ -1848,6 +1851,9 @@ ul.great-list {
   }
   .nav-collapse .pull-right li a .nav-label {
     display:none;
+  }
+  #home #feature-image {
+    margin: 0;
   }
 }
 @media only screen and (max-width: 600px) {
