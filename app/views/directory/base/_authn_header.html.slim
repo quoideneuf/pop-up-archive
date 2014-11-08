@@ -1,0 +1,22 @@
+.navbar-shadow
+.navbar-shadow-hider
+.navbar.navbar-fixed-top
+  .navbar-inner
+    .container
+      h1.site-title.authn
+        a ng-href='/' title="Pop Up Archive" rel="home"
+          .logo.pop Pop
+          .logo.up Up
+          .logo.archive &nbsp;Archive
+        .clear 
+        a ng-href='/' title="Pop Up Archive" rel="home"
+          logo.prx
+            | in cahoots with 
+            img src='#{asset_path("prx_logo.png")}' alt="PRX"
+
+      a.btn.btn-navbar data-toggle="collapse" data-target=".nav-collapse"
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      .nav-collapse.collapse
+        = render('authn_nav')

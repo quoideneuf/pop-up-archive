@@ -15,6 +15,10 @@ body {
   background: rgb(242, 239, 239);
 }
 
+body.authn {
+  padding-top: 150px;
+}
+
 ::selection {
   background: #85D0F1;
   color: rgb(242, 239, 239);
@@ -145,6 +149,14 @@ footer, footer p {
       margin-top: -6px;
     }
 
+  }
+}
+
+.site-title.authn {
+  height: 112px;
+  .logo.archive {
+    clear: both;
+    height: auto;
   }
 }
 

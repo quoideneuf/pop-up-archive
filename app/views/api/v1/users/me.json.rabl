@@ -12,6 +12,7 @@ if current_user
   node(:uri) { "#{cur_url}/api/users/#{current_user.id}" }
   node(:uploads_collection_id) { current_user.uploads_collection.id }
   node(:collection_ids) { current_user.collection_ids }
+  node(:collections) { current_user.collections_title_id }
   node(:role) { current_user.role }
 
   node(:name) { current_user.name }

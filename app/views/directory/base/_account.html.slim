@@ -1,10 +1,10 @@
 - if user_signed_in?
   ul.nav
     li
-			a bs-dropdown="userMenu"
-				i.icon-user    
-				#user_name = "  #{current_user.name.downcase}  "
-				i.icon-chevron-down
+      a bs-dropdown="userMenu"
+        i.icon-user    
+          #user_name = "    #{current_user.name.downcase}  "
+        i.icon-chevron-down
     li
       a.activity 
         span#loading-gear.animated.flash ng-show="loading()"

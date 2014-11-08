@@ -1,0 +1,29 @@
+ul.nav
+  li
+    form.navbar-search ng-controller="GlobalSearchCtrl" ng-submit="go()"
+      input.search-query style="width:150px" ng-model="query.string" placeholder='Search' type='search'
+  li= link_to('help', '/help') 
+
+ul.nav.authn.pull-right
+  li
+    a.activity 
+      span#loading-gear.animated.flash ng-show="loading()"
+        i.icon-large.icon-refresh.icon-spin style="color: #333"
+  li
+    a.border href="/collections"
+      #my_dashboard
+      i.icon-desktop
+      |  dashboard
+  li
+    a.border bs-dropdown="myCollectionsMenu"
+      #my_collections
+        i.icon-folder-close-alt
+        |  my collections&nbsp;
+        i.icon-caret-down    
+  li
+    a.border bs-dropdown="userMenu"
+      #user_name
+        i.icon-user
+        |  #{current_user.name.downcase}&nbsp;
+        i.icon-caret-down
+=render('alerts')

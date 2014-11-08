@@ -106,12 +106,40 @@ p {
   }
   #user_name {
     display: inline-block;
-    max-width: 130px;
+    max-width: 200px;
     overflow: hidden;
   }
 }
 
+/* authn nav overrides */
+.nav.authn.pull-right li a.border {
+  border: 1px solid #eee;
+  border-left: 1px dotted #bbb;
+}
+
+.nav.authn.pull-right li .dropdown-menu {
+  right: auto;
+}
+
+.nav.authn.pull-right li .dropdown-menu::before, 
+.nav.authn.pull-right li .dropdown-menu::after {
+  border: none;
+  content: none;
+}
+
+.nav.authn.pull-right li.open a.dropdown-toggle {
+  background-color: #fff;
+  border: 1px solid #aaa;
+}
+
+#alerts-wrapper {
+  position: relative;
+  float: left;
+  top: 40px;  /* align below nav */
+}
+
 .number-circle {
+  cursor: pointer;
   padding: 0px;
   margin: 0px 0px 0px 0px;
   overflow: hidden;
@@ -674,6 +702,7 @@ ul.search-pills {
 //Navbar
 
 $navbarHeight: 105px;
+$authNavbarHeight: 135px;
 
 .navbar-shadow {
   position: fixed;
@@ -698,6 +727,16 @@ $navbarHeight: 105px;
   width: 100%;
   height: 15px;
 }
+
+.authn .navbar-shadow {
+  &:after {
+    margin: $authNavbarHeight - 10px auto 0;
+  }
+}
+
+.authn .navbar-shadow-hider {
+  top: $authNavbarHeight;
+} 
 
 
 .pager {
