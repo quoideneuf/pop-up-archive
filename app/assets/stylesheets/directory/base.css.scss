@@ -113,8 +113,9 @@ p {
 
 /* authn nav overrides */
 .nav.authn.pull-right li a.border {
-  border: 1px solid #eee;
+  border: 1px solid #eee; /* prevent jump on click with invisible border */
   border-left: 1px dotted #bbb;
+  padding: 9px;  /* 1px less than default to compensate for the border */
 }
 
 .nav.authn.pull-right li .dropdown-menu {
