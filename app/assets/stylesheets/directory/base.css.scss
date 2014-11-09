@@ -1506,8 +1506,8 @@ form.with-tags {
   margin-left: 2em;
 }
 
-.featurebtn2 a:hover {
-    text-decoration: none;
+.featurebtn:hover, .featurebtn2:hover {
+  text-decoration: none;
 }
 
 //explore
@@ -1882,5 +1882,8 @@ ul.great-list {
   }
   body, body.authn {
     padding-top: 0;
+  }
+  .featurebtn2 {
+    margin-left: 0;
   }
 }
