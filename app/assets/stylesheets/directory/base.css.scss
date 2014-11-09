@@ -1831,7 +1831,7 @@ ul.great-list {
 }
 
 /* nav breaks-per-item */
-@media only screen and (max-width: 900px) {
+@media screen and (max-width: 900px) {
   .nav-collapse .pull-right li a #my_dashboard .nav-label {
     display: none;
   }
@@ -1840,12 +1840,12 @@ ul.great-list {
     padding-right: 8px;
   }
 }
-@media only screen and (max-width: 860px) {
+@media screen and (max-width: 860px) {
   .nav-collapse .pull-right li a #my_collections .nav-label {
     display: none;
   }
 }
-@media only screen and (max-width: 750px) {
+@media screen and (max-width: 750px) {
   .nav-collapse .pull-right li a #user_name .nav-label {
     display: none;
   }
@@ -1856,7 +1856,7 @@ ul.great-list {
     margin: 0;
   }
 }
-@media only screen and (max-width: 600px) {
+@media screen and (max-width: 600px) {
   .nav-collapse .nav.pull-right {
     /* stop pulling right */
     float: left;
