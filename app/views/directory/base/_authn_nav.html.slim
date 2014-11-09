@@ -2,7 +2,9 @@ ul.nav
   li
     form.navbar-search ng-controller="GlobalSearchCtrl" ng-submit="go()"
       input.search-query style="width:150px" ng-model="query.string" placeholder='Search' type='search'
-  li= link_to('help', '/help') 
+  li
+    a href="https://popuparchiveorg.zendesk.com/hc/en-us" target="_blank"
+      | help
 
 ul.nav.authn.pull-right
   li
