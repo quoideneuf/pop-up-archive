@@ -6,7 +6,7 @@ angular.module('Directory.account.models', [])
   	return this.get().then(function (plans) {
       var community;
       angular.forEach(plans, function (plan) {
-        if (typeof community == 'undefined' && plan.amount == 0) {
+        if (typeof community == 'undefined' && plan.id == "community") {
           community = plan;
         }
       });
@@ -72,6 +72,10 @@ angular.module('Directory.account.models', [])
   $rootScope.togglePlans = function () {
     $rootScope.interval = ( $rootScope.interval == 'year' ? 'month' : 'year');
     $rootScope.longInterval = !$rootScope.longInterval;
+  };
+
+  $rootScope.getInterval = function() {
+    return $rootScope.interval;
   };
 
   $rootScope.isPremiumPlan = function (plan) {
