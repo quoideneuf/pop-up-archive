@@ -2,6 +2,8 @@ module Billable
   extend ActiveSupport::Concern
 
   # mixin methods for User and Organization for billing/usage
+
+
   def billable_collections
     # assumes every Collection is already assigned an owner.
     # this is done on Collection.create
@@ -231,6 +233,54 @@ module Billable
     else
       return send(methname)[:cost].to_f
     end
+  end
+
+  # returns JSON-ready array of monthly usage, including on-demand charges
+  def usage_summary
+    summary = { 
+      this_month: { hours: 0, overage: {}, cost: 0.00 },  
+      current: [], 
+      history: [], 
+    }   
+    pp summary
+    now = DateTime.now
+    year = now.utc.year
+    month = now.utc.month
+    thismonth = sprintf("%d-%02d", year, month)
+    summary[:this_month][:period] = thismonth
+    monthly_usages.order('"yearmonth" desc, "use" asc').each do |mu|
+      msum = { 
+        period: mu.yearmonth,
+        type:   mu.use,
+        cost:   number_to_currency( mu.cost ),
+        costn:  mu.cost,
+        hours:  mu.value.fdiv(3600).round(3),
+      }   
+      summary[:history].push msum
+      if mu.yearmonth == thismonth
+        summary[:current].push msum
+      end 
+    end 
+
+    # calculate current totals based on the User's plan. This determines overages.
+    plan_hours = pop_up_hours
+    base_monthly_cost = plan.amount  # TODO??
+
+    # first combine basic+premium
+    summary[:current].each do |msum|
+      summary[:this_month][:hours] += msum[:hours]
+      summary[:this_month][:costn] += msum[:costn] || 0
+    end 
+
+    # second calculate overages
+    if summary[:this_month][:hours] > plan_hours
+      summary[:this_month][:overage][:hours] = summary[:this_month][:hours] - plan_hours
+      summary[:this_month][:overage][:costn] = OVERAGE_HOURLY_RATE * summary[:this_month][:overage][:hours]
+      summary[:this_month][:overage][:cost]  = number_to_currency( summary[:this_month][:overage][:costn] )
+    end 
+
+    # return
+    summary
   end
 
 end

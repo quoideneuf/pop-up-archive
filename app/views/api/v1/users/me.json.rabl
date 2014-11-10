@@ -21,13 +21,15 @@ if current_user
     {
       id: current_user.organization.id,
       name: current_user.organization.name,
-      amara_team: current_user.organization.amara_team
+      amara_team: current_user.organization.amara_team,
+      usage: current_user.organization.usage_summary,
     } if current_user.organization.present?
   }
 
   node(:used_metered_storage) { current_user.used_metered_storage }
   node(:used_unmetered_storage) { current_user.used_unmetered_storage }
   node(:total_metered_storage) { current_user.pop_up_hours * 3600 }
+  node(:usage) { current_user.usage_summary }
   node(:plan) { current_user.plan_json }
   node(:credit_card) { current_user.active_credit_card_json } if current_user.active_credit_card.present?
   node(:has_card) { current_user.active_credit_card.present? }
