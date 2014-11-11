@@ -325,7 +325,7 @@ module Billable
 
   def is_over_monthly_limit?
     summ = self.entity.usage_summary
-    if summ[:this_month][:overage][:hours]
+    if summ[:this_month][:overage][:hours].to_f > 0
       return true
     else
       return false
