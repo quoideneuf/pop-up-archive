@@ -27,7 +27,9 @@ ActiveAdmin.register Transcript do
         row("User") { user = transcript.audio_file.user; user ? link_to(user.name, superadmin_user_path(user)) : '(nil)' }
         row :billable_to
         row :billable_seconds
-        row("Cost") { number_to_currency(transcript.cost_dollars) }
+        row :is_billable
+        row("Wholesale Cost") { number_to_currency(transcript.cost_dollars) }
+        row("Retail Cost") { number_to_currency(transcript.retail_cost_dollars) }
       end     
     end
  
