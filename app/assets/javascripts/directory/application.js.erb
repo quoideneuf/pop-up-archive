@@ -262,6 +262,7 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
     });
 
     $timeout(function() { angular.element('.logo.up').addClass('raised-logo'); }, 1000);
+    $timeout(function() { angular.element('.logo-square .up').addClass('raised-logo-square'); }, 1000);
 
     $scope.modalOpts = {
       backdropFade: true,
@@ -288,15 +289,12 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
     });
 
     $scope.userMenu = [];
+    $scope.myCollectionsMenu = [];
 
-    $scope.setUserMenu = function() {
+    $scope.setUserMenus = function() {
       Me.authenticated(function (user) {
 
         var menu = [
-          {
-            text: 'my collections',
-            href: '/collections'
-          },
           {
             text: 'my account',
             href: '/account'
@@ -314,14 +312,24 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
         ];
 
         if (user && user.organization) {
-          menu.push({text: user.organization.name, href: '/organization'});
+          menu.unshift({text: user.organization.name, href: '/organization'});
         }
 
         $scope.userMenu = menu;
+
+        var collMenu = [];
+        angular.forEach(user.collections, function(coll_title, coll_id) {
+          collMenu.push({
+            text: coll_title, // TODO html escape
+            href: '/collections/'+coll_id,
+          });
+        });
+        $scope.myCollectionsMenu = collMenu;
+
       });
     };
 
-    $scope.setUserMenu();
+    $scope.setUserMenus();
 
     $scope.itemHelp = {
       'collection'      : { 'title': 'Collection',

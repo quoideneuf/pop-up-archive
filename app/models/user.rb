@@ -95,6 +95,14 @@ class User < ActiveRecord::Base
     organization ? organization.collection_ids : super
   end
 
+  def collections_title_id
+    colls = {}
+    collections.each do |c|
+      colls[c.id.to_s] = c.title
+    end
+    colls
+  end
+
   def uploads_collection
     organization.try(:uploads_collection) || uploads_collection_grant.collection || add_uploads_collection
   end

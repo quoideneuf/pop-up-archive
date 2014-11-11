@@ -15,6 +15,10 @@ body {
   background: rgb(242, 239, 239);
 }
 
+body.authn {
+  padding-top: 90px;
+}
+
 ::selection {
   background: #85D0F1;
   color: rgb(242, 239, 239);
@@ -111,8 +115,7 @@ footer, footer p {
   font-weight: 900;
   font-size: 2em;
   text-transform: lowercase;
-  margin-top: 4px;
-  padding-right: 12px;
+  padding-right: 15px;
 
   a {
     display: block;
@@ -123,6 +126,23 @@ footer, footer p {
       display: block;
       float: left;
       height: 33px;
+      transition: margin-top 250ms ease 500ms;
+      -webkit-transition: margin-top 250ms ease 500ms;
+      -moz-transition: margin-top 250ms ease 500ms;
+      -o-transition: margin-top 250ms ease 500ms;
+    }
+
+    .logo-square {
+      color: #fff;
+      background-color: #F25A4C; /* coral */
+      font-size: 85%;
+      min-height: 30px;
+      min-width: 30px;
+      padding: 5px;
+    }
+
+    .logo-square .up {
+      margin-top: -10px;
       transition: margin-top 250ms ease 500ms;
       -webkit-transition: margin-top 250ms ease 500ms;
       -moz-transition: margin-top 250ms ease 500ms;
@@ -145,6 +165,18 @@ footer, footer p {
       margin-top: -6px;
     }
 
+    .up.raised-logo-square {
+      margin-top: -14px;
+    }
+
+  }
+}
+
+.site-title.authn {
+  height: 50px; 
+  .logo.archive {
+    clear: both;
+    height: auto;
   }
 }
 

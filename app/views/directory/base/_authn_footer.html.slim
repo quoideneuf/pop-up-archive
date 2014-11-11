@@ -1,0 +1,40 @@
+.container.ng-cloak ng-hide="hideFooter"
+  .row-fluid
+    .span12.navbar#colophon
+      h1.site-title
+        a ng-href='/' title="Pop Up Archive" rel="home"
+          .logo.pop Pop
+          .logo.up Up
+          .logo.archive &nbsp;Archive
+        a ng-href='/' title="Pop Up Archive" rel="home"
+          logo.prx
+            | in cahoots with 
+            img src='#{asset_path("prx_logo.png")}' alt="PRX"
+      ul.nav.pull-right
+        li
+          a href="https://twitter.com/popuparchive" @popuparchive
+        li= link_to('enterprise', '/enterprise', {target: '_self'})
+        li= link_to('team', '/team', {target: '_self'})
+        li= link_to('contact', 'mailto:edison@popuparchive.org')
+        li= link_to('pricing', '/pricing')
+        li= link_to('news', 'http://popuparchive.tumblr.com/', {target: '_blank'})
+        li= link_to('terms', '/terms_of_use')
+        li= link_to('faq', '/faq')
+      .clear
+      .site-info.pull-left
+        p Pop Up Archive is optimized for Chrome.
+        ul  
+          li.copyright ©#{© 2013} 
+          li  
+            a href="http://www.popuparchive.com/" Pop Up Archive
+    .row-fluid
+      .span12
+        .site-info
+          ul
+            li
+              a href="http://www.knightfoundation.org" target="_blank"
+                img.image.sponsors src='#{asset_path("knight-foundationBW.png")}'
+            li  
+              a href="http://www.neh.gov" target="_blank"
+                img.image.sponsors src='#{asset_path("neh_logo.jpg")}'
+
