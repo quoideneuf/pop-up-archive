@@ -3,6 +3,8 @@ module Billable
 
   # mixin methods for User and Organization for billing/usage
 
+  # retail hourly rate (dollars)
+  OVERAGE_HOURLY_RATE = 22
 
   def billable_collections
     # assumes every Collection is already assigned an owner.
@@ -235,15 +237,13 @@ module Billable
     end
   end
 
-  # returns JSON-ready array of monthly usage, including on-demand charges
-  def usage_summary
+  # returns JSON-ready hash of monthly usage, including on-demand charges
+  def usage_summary(now=DateTime.now)
     summary = { 
-      this_month: { hours: 0, overage: {}, cost: 0.00 },  
+      this_month: { hours: 0, overage: {}, ondemand: {}, cost: 0.00 },  
       current: [], 
       history: [], 
     }   
-    pp summary
-    now = DateTime.now
     year = now.utc.year
     month = now.utc.month
     thismonth = sprintf("%d-%02d", year, month)
@@ -252,8 +252,6 @@ module Billable
       msum = { 
         period: mu.yearmonth,
         type:   mu.use,
-        cost:   number_to_currency( mu.cost ),
-        costn:  mu.cost,
         hours:  mu.value.fdiv(3600).round(3),
       }   
       summary[:history].push msum
@@ -263,21 +261,47 @@ module Billable
     end 
 
     # calculate current totals based on the User's plan. This determines overages.
-    plan_hours = pop_up_hours
+    plan_hours        = pop_up_hours
     base_monthly_cost = plan.amount  # TODO??
+    plan_is_premium   = plan.has_premium_transcripts?
 
-    # first combine basic+premium
-    summary[:current].each do |msum|
-      summary[:this_month][:hours] += msum[:hours]
-      summary[:this_month][:costn] += msum[:costn] || 0
-    end 
+    # if plan is "basic", calculate ondemand premium and overages.
+    if !plan_is_premium 
+      summary[:current].each do |msum|
 
-    # second calculate overages
-    if summary[:this_month][:hours] > plan_hours
-      summary[:this_month][:overage][:hours] = summary[:this_month][:hours] - plan_hours
-      summary[:this_month][:overage][:costn] = OVERAGE_HOURLY_RATE * summary[:this_month][:overage][:hours]
-      summary[:this_month][:overage][:cost]  = number_to_currency( summary[:this_month][:overage][:costn] )
-    end 
+        # if there is premium usage, it must be on-demand, so calculate the retail cost. 
+        if msum[:type] == MonthlyUsage::PREMIUM_TRANSCRIPTS && msum[:hours] > 0 
+          summary[:this_month][:ondemand][:cost] += (Transcriber.premium.retail_cost_per_min * 60 * msum[:hours]).round(2)
+          summary[:this_month][:ondemand][:hours] = msum[:hours]
+          summary[:this_month][:cost] += summary[:this_month][:ondemand][:cost]
+
+        # basic plan, basic usage. 
+        elsif msum[:type] == MonthlyUsage::BASIC_TRANSCRIPTS
+
+           # month-to-date hours
+           summary[:this_month][:hours] = msum[:hours]
+
+           # check for overage
+           if msum[:hours] > plan_hours
+             summary[:this_month][:overage][:hours] = msum[:hours] - plan_hours
+             summary[:this_month][:overage][:cost] = (OVERAGE_HOURLY_RATE * summary[:this_month][:overage][:hours]).round(2)
+             summary[:this_month][:cost] += summary[:this_month][:overage][:cost]
+           end
+        end
+      end
+
+    # otherwise, plan is premium. check for overages only.
+    else
+      summary[:current].each do |msum|
+        if msum.use == MonthlyUsage::PREMIUM_TRANSCRIPTS
+          if msum[:hours] > plan_hours
+            summary[:this_month][:overage][:hours] = msum[:hours] - plan_hours
+            summary[:this_month][:overage][:cost] = (OVERAGE_HOURLY_RATE * summary[:this_month][:overage][:hours]).round(2)
+            summary[:this_month][:cost] += summary[:this_month][:overage][:cost]
+          end
+        end
+      end
+    end
 
     # return
     summary

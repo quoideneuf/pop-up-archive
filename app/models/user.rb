@@ -43,9 +43,6 @@ class User < ActiveRecord::Base
 
   OVERAGE_CALC = 'coalesce(used_metered_storage_cache - pop_up_hours_cache * 3600, 0)'
 
-  # retail hourly rate
-  OVERAGE_HOURLY_RATE = 22
-
   scope :over_limits, -> { select("users.*, #{OVERAGE_CALC} as overage").where("#{OVERAGE_CALC} > 0").order('overage DESC') }
   scope :premium_usage_desc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) desc"
   scope :premium_usage_asc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) asc"
