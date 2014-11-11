@@ -1,21 +1,6 @@
-section ng-controller="EnterpriseCtrl"
+section#contact-modal
   .modal-header
     button type="button" class="close" data-dismiss="modal" aria-hidden="true" x
-    h3 Send a Request
-  form enterprise-form="save"
-    .loading-shield ng-show="sending"
-      i.icon-refresh.icon-spin
-    .modal-body
-      .form-horizontal
-        .control-group
-          label.control-label for="name" Name
-          .controls
-            input type="text" size="20" name="name"
-        .control-group
-          label.control-label for="text" Inquiry
-          .controls
-            textarea.form-control rows="4" name="text"
-
-    .modal-footer
-      button.btn.pull-left ng-disabled="sending" ng-click="hide(); $event.stopPropagation()" Cancel
-      button.btn.btn-primary ng-disabled="sending" type="submit" Send
+    h3 &nbsp
+  div style="padding: 0 8px;"
+    <iframe src="https://docs.google.com/forms/d/1wp-J1I2MPabo9-9B2yqRgD3IwTNHMpog0xSmu-2dfR0/viewform?embedded=true" width="550" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
