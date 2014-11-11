@@ -115,8 +115,7 @@ footer, footer p {
   font-weight: 900;
   font-size: 2em;
   text-transform: lowercase;
-  margin-top: 4px;
-  padding-right: 12px;
+  padding-right: 15px;
 
   a {
     display: block;
@@ -136,14 +135,14 @@ footer, footer p {
     .logo-square {
       color: #fff;
       background-color: #F25A4C; /* coral */
-      font-size: 150%;
-      min-height: 50px;
-      min-width: 50px;
-      padding: 8px;
+      font-size: 85%;
+      min-height: 30px;
+      min-width: 30px;
+      padding: 2px;
     }
 
     .logo-square .up {
-      margin-top: 8px;
+      margin-top: -10px;
       transition: margin-top 250ms ease 500ms;
       -webkit-transition: margin-top 250ms ease 500ms;
       -moz-transition: margin-top 250ms ease 500ms;
@@ -167,7 +166,7 @@ footer, footer p {
     }
 
     .up.raised-logo-square {
-      margin-top: -8px;
+      margin-top: -14px;
     }
 
   }
