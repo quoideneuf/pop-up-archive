@@ -48,6 +48,9 @@ ul.pager
 						a ng-href="{{item.link()}}" {{item.getTitle()}}
           h5 ng-bind-html="item.collectionTitle"
           p ng-show="item.getDescription()" ng-bind-html="item.getDescription()"
+          p.item-details
+            | Created: {{item.getCreatedAt()}}  Duration: 
+            span ng-bind-html="item.getDurationString()"
           .transcripts ng-show="item.highlights.audioFiles.length"
             section ng-repeat="audioFile in item.highlights.audioFiles" ng-controller="AudioFileCtrl"
               .transcript transcript-text="audioFile.transcript.parts" transcript-editable="false" transcript-timestamps="start"

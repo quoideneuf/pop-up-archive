@@ -114,6 +114,10 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     }
   }
 
+  Item.prototype.getCreatedAt = function() {
+    return new Date(Date.parse(this.dateCreated || this.dateAdded)).toString();
+  }
+
   Item.prototype.link = function () {
     return "/collections/" + this.collectionId + "/items/" + this.id; 
   }
