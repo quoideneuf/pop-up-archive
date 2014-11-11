@@ -31,7 +31,7 @@
       | Need more room?&nbsp;
       a href="/account/plan" Upgrade to a paid plan!
 .row-fluid
-  .span6
+  .well.span6
     h4 Account Information
     hr/
     dl.dl-horizontal
@@ -39,7 +39,7 @@
       dd {{ me.name }}
       dt Email Address
       dd {{ me.email }}
-  .span6
+  .well.span6
     h4 Storage Information
     hr/  
     dl.dl-horizontal
@@ -51,3 +51,31 @@
       dd.usage-meter ng-class="{warning: me.usedMeteredStorage >= me.totalMeteredStorage, full: me.usedMeteredStorage >= me.totalMeteredStorage }"
         .bar ng-style="{width: me.usedMeteredStorage / me.totalMeteredStorage * 100 + '%'}"
         .meter-words {{me.usedMeteredStorage | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
+
+.row-fluid
+  .well.usage
+    h4 Usage
+    .usage-organization ng-show="me.organization"
+      h5 {{me.organization.name}}, This Month ({{me.organization.usage.thisMonth.period}})
+      .usage-hours
+      | {{me.organization.usage.thisMonth.hours}} hours
+      .usage-cost
+      | {{me.organization.usage.thisMonth.cost | currency:"USD $"}}
+    .usage-current
+      h5 ng-show="me.organization" Me, This Month ({{me.usage.thisMonth.period}})
+      h5 ng-hide="me.organization" This Month ({{me.usage.thisMonth.period}})
+      .usage-hours
+      | {{me.usage.thisMonth.hours}} hours
+      .usage-cost
+      | {{me.usage.thisMonth.cost | currency:"USD $"}}
+    .usage-history
+      h5 History
+      .usage-month ng-repeat="msum in me.usage.history"
+        h6 {{msum.period}}
+        .usage-hours
+        | {{msum.hours}} hours
+        .usage-cost
+        | {{msum.cost | currency:"USD $"}}
+
+
+      
