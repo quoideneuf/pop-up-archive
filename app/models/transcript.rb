@@ -11,6 +11,9 @@ class Transcript < ActiveRecord::Base
 
   after_save :update_item
 
+  RETAIL    = 2 
+  WHOLESALE = 1 
+
   def update_item
     IndexerWorker.perform_async(:update, item.class.to_s, item.id) if item
   end
@@ -121,6 +124,7 @@ class Transcript < ActiveRecord::Base
 
   def retail_cost(af=audio_file)
     return 0.0 if !billable?
+    return 0.0 if cost_type == WHOLESALE
     secs = billable_seconds(af)
     mins = secs.fdiv(60)
     return retail_cost_per_min.to_f * mins.to_f

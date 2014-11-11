@@ -12,8 +12,6 @@ class Task < ActiveRecord::Base
   FAILED   = 'failed'
   COMPLETE = 'complete'
   CANCELLED = 'cancelled'
-  RETAIL    = 2 
-  WHOLESALE = 1 
 
   scope :incomplete, where('status not in (?)', [COMPLETE, CANCELLED])
 

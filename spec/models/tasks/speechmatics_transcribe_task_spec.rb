@@ -139,7 +139,7 @@ describe Tasks::SpeechmaticsTranscribeTask do
       extras = { 'original' => audio_file.process_file_url, 'user_id' => user.id, 'ondemand' => true }
       t = Tasks::SpeechmaticsTranscribeTask.create!(owner: audio_file, identifier: 'test', extras: extras)
       trans = t.process_transcript(response)
-      trans.cost_type.should == Task::RETAIL
+      trans.cost_type.should == Transcript::RETAIL
       trans.retail_cost_per_min.should == Transcriber.find_by_name('speechmatics').retail_cost_per_min
       trans.cost_per_min.should == Transcriber.find_by_name('speechmatics').cost_per_min
     end

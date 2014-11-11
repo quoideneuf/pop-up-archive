@@ -143,7 +143,7 @@ class Tasks::TranscribeTask < Task
       transcriber_id: transcriber.id, 
       cost_per_min: transcriber.cost_per_min,
       retail_cost_per_min: transcriber.retail_cost_per_min,
-      cost_type: Task::WHOLESALE,
+      cost_type: Transcript::WHOLESALE,
       is_billable: self.start_only? ? false : true,
     )
     sum = 0.0

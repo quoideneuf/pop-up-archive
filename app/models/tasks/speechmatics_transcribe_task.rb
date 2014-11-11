@@ -166,9 +166,9 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     # if this was an ondemand transcript, the cost is retail, not wholesale.
     # 'wholesale' is the cost PUA pays, and translates to zero to the customer under their plan.
     # 'retail' is the cost the customer pays, if the transcript is on-demand.
-    cost_type = Task::WHOLESALE
+    cost_type = Transcript::WHOLESALE
     if self.extras['ondemand']
-      cost_type = Task::RETAIL
+      cost_type = Transcript::RETAIL
     end
 
     Transcript.transaction do
