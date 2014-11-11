@@ -57,18 +57,24 @@ module Billable
     total_billable_secs = monthly_usages.where(use: billable_type).sum(:value)
     total_usage_secs    = monthly_usages.where(use: usage_type).sum(:value)
     total_cost          = monthly_usages.sum(:cost)
+    total_retail_cost   = monthly_usages.sum(:retail_cost)
     total_billable_cost = monthly_usages.where(use: billable_type).sum(:cost)
+    total_billable_retail_cost = monthly_usages.where(use: billable_type).sum(:retail_cost)
     total_usage_cost    = monthly_usages.where(use: usage_type).sum(:cost)
+    total_usage_retail_cost = monthly_usages.where(use: usage_type).sum(:retail_cost)
 
     # we make seconds and cost fixed-width so that sorting a string works
     # like sorting an integer.
     return { 
       :seconds          => "%010d" % total_secs, 
       :cost             => sprintf('%010.2f', total_cost),
+      :retail_cost      => sprintf('%010.2f', total_retail_cost),
       :billable_seconds => "%010d" % total_billable_secs,
       :billable_cost    => sprintf('%010.2f', total_billable_cost),
+      :billable_retail_cost => sprintf('%010.2f', total_billable_retail_cost),
       :usage_seconds    => "%010d" % total_usage_secs,
       :usage_cost       => sprintf('%010.2f', total_usage_cost),
+      :usage_retail_cost => sprintf('%010.2f', total_usage_retail_cost),
     }
   end
 
@@ -99,21 +105,23 @@ module Billable
   def transcripts_billable_for_month_of(dtim=DateTime.now, transcriber_id)
     total_secs = 0
     total_cost = 0
+    total_retail_cost = 0
 
     sql = self.sql_for_billable_transcripts_for_month_of(dtim, transcriber_id)
 
     # abort early if we have no valid SQL
-    return { :seconds => 0, :cost => 0 } if !sql
+    return { :seconds => 0, :cost => 0, :retail_cost => 0 } if !sql
 
     Transcript.find_by_sql(sql).each do |tr|
       af = tr.audio_file
       total_secs += tr.billable_seconds(af)
       total_cost += tr.cost(af)
+      total_retail_cost += tr.retail_cost(af)
     end
 
     # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
     # but we round to the nearest penny when we cache it in aggregate.
-    return { :seconds => total_secs, :cost => total_cost.fdiv(1000) }
+    return { :seconds => total_secs, :cost => total_cost.fdiv(1000), :retail_cost => total_retail_cost.fdiv(1000) }
   end
 
   # unlike transcripts_billable_for_month_of, this method looks at usage only, ignoring billable_to.
@@ -129,13 +137,14 @@ module Billable
     end_dtim   = month_end.strftime('%Y-%m-%d %H:%M:%S')
     total_secs = 0 
     total_cost = 0 
+    total_retail_cost = 0 
 
     # hand-roll sql to optimize query.
     # there might be a way to do this all with activerecord but my activerecord-fu is weak.
     collection_ids = collections.map { |c| c.id.to_s }
 
     # abort early if we have no collections
-    return { :seconds => 0, :cost => 0 } if collection_ids.size == 0
+    return { :seconds => 0, :cost => 0, :retail_cost => 0 } if collection_ids.size == 0
 
     items_sql = "select i.id from items as i where i.deleted_at is null and i.collection_id in (#{collection_ids.join(',')})"
     audio_files_sql = "select af.id from audio_files as af "
@@ -147,11 +156,12 @@ module Billable
       af = tr.audio_file
       total_secs += tr.billable_seconds(af)
       total_cost += tr.cost(af)
+      total_retail_cost += tr.retail_cost(af)
     end
 
     # cost_per_min is in 1000ths of a dollar, not 100ths (cents)
     # but we round to the nearest penny when we cache it in aggregate.
-    return { :seconds => total_secs, :cost => total_cost.fdiv(1000) }
+    return { :seconds => total_secs, :cost => total_cost.fdiv(1000), :retail_cost => total_retail_cost.fdiv(1000) }
   end 
 
   def my_audio_file_storage(metered=true)
@@ -170,7 +180,7 @@ module Billable
   end 
 
   def update_usage_for(use, rep, now=DateTime.now)
-    monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).first_or_initialize.update_attributes!(value: rep[:seconds], cost: rep[:cost])
+    monthly_usages.where(use: use, year: now.utc.year, month: now.utc.month).first_or_initialize.update_attributes!(value: rep[:seconds], cost: rep[:cost], retail_cost: rep[:retail_cost])
   end 
 
   def calculate_monthly_usages!
@@ -237,7 +247,11 @@ module Billable
     end
   end
 
-  # returns JSON-ready hash of monthly usage, including on-demand charges
+  # Returns JSON-ready hash of monthly usage, including on-demand charges.
+  # NOTE that for the purposes of billing, we ignore the 'cost' and 'retail_cost'
+  # of the monthly usage records and instead look at (a) overages and (b) ondemand (premium usage on a basic plan).
+  # The one exception is that we use the 'retail_cost' for case (b) since that is derived directly from
+  # the transcripts themselves, unlike overages, which use a constant OVERAGE_HOURLY_RATE.
   def usage_summary(now=DateTime.now)
     summary = { 
       this_month: { hours: 0, overage: {}, ondemand: {}, cost: 0.00 },  
@@ -253,6 +267,7 @@ module Billable
         period: mu.yearmonth,
         type:   mu.use,
         hours:  mu.value.fdiv(3600).round(3),
+        cost:   mu.retail_cost.round(2),  # expose only what we charge customers, whether we charge them or not.
       }   
       summary[:history].push msum
       if mu.yearmonth == thismonth
@@ -269,9 +284,9 @@ module Billable
     if !plan_is_premium 
       summary[:current].each do |msum|
 
-        # if there is premium usage, it must be on-demand, so calculate the retail cost. 
+        # if there is premium usage, it must be on-demand, so pass on the msum cost. 
         if msum[:type] == MonthlyUsage::PREMIUM_TRANSCRIPTS && msum[:hours] > 0 
-          summary[:this_month][:ondemand][:cost] += (Transcriber.premium.retail_cost_per_min * 60 * msum[:hours]).round(2)
+          summary[:this_month][:ondemand][:cost]  = msum[:cost]
           summary[:this_month][:ondemand][:hours] = msum[:hours]
           summary[:this_month][:cost] += summary[:this_month][:ondemand][:cost]
 
@@ -284,8 +299,9 @@ module Billable
            # check for overage
            if msum[:hours] > plan_hours
              summary[:this_month][:overage][:hours] = msum[:hours] - plan_hours
-             summary[:this_month][:overage][:cost] = (OVERAGE_HOURLY_RATE * summary[:this_month][:overage][:hours]).round(2)
-             summary[:this_month][:cost] += summary[:this_month][:overage][:cost]
+             # we do not charge for basic plan overages. instead we just prevent them at upload time.
+             #summary[:this_month][:overage][:cost] = (OVERAGE_HOURLY_RATE * summary[:this_month][:overage][:hours]).round(2)
+             #summary[:this_month][:cost] += summary[:this_month][:overage][:cost]
            end
         end
       end

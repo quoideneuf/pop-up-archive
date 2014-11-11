@@ -163,12 +163,12 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
     transcriber = Transcriber.find_by_name('speechmatics')
 
-    # if this was an ondemand transcript, the cost is retail, not wholesale
-    transcript_cpm = transcriber.cost_per_min
-    cost_type      = Task::WHOLESALE
+    # if this was an ondemand transcript, the cost is retail, not wholesale.
+    # 'wholesale' is the cost PUA pays, and translates to zero to the customer under their plan.
+    # 'retail' is the cost the customer pays, if the transcript is on-demand.
+    cost_type = Task::WHOLESALE
     if self.extras['ondemand']
-      transcript_cpm = transcriber.retail_cost_per_min
-      cost_type      = Task::RETAIL
+      cost_type = Task::RETAIL
     end
 
     Transcript.transaction do
@@ -178,7 +178,8 @@ class Tasks::SpeechmaticsTranscribeTask < Task
         start_time: 0,
         end_time: 0,
         transcriber_id: transcriber.id,
-        cost_per_min: transcript_cpm,
+        cost_per_min: transcriber.cost_per_min,
+        retail_cost_per_min: transcriber.retail_cost_per_min,
         cost_type: cost_type,
       )
       speakers = response.speakers

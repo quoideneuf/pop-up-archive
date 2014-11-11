@@ -141,7 +141,10 @@ class Tasks::TranscribeTask < Task
       start_time: 0, 
       end_time: 0, 
       transcriber_id: transcriber.id, 
-      cost_per_min: transcriber.cost_per_min
+      cost_per_min: transcriber.cost_per_min,
+      retail_cost_per_min: transcriber.retail_cost_per_min,
+      cost_type: Task::WHOLESALE,
+      is_billable: self.start_only? ? false : true,
     )
     sum = 0.0
     count = 0.0

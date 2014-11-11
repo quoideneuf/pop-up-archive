@@ -140,7 +140,8 @@ describe Tasks::SpeechmaticsTranscribeTask do
       t = Tasks::SpeechmaticsTranscribeTask.create!(owner: audio_file, identifier: 'test', extras: extras)
       trans = t.process_transcript(response)
       trans.cost_type.should == Task::RETAIL
-      trans.cost_per_min.should == Transcriber.find_by_name('speechmatics').retail_cost_per_min
+      trans.retail_cost_per_min.should == Transcriber.find_by_name('speechmatics').retail_cost_per_min
+      trans.cost_per_min.should == Transcriber.find_by_name('speechmatics').cost_per_min
     end
 
     it 'delineates usage for User vs Org' do

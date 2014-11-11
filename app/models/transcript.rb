@@ -1,5 +1,5 @@
 class Transcript < ActiveRecord::Base
-  attr_accessible :language, :audio_file_id, :identifier, :start_time, :end_time, :confidence, :transcriber_id, :cost_per_min, :cost_type
+  attr_accessible :language, :audio_file_id, :identifier, :start_time, :end_time, :confidence, :transcriber_id, :cost_per_min, :cost_type, :retail_cost_per_min, :is_billable
 
   belongs_to :audio_file
   belongs_to :transcriber
@@ -74,7 +74,11 @@ class Transcript < ActiveRecord::Base
 
   def is_premium?
     self.transcriber_id == Transcriber.premium.id
-  end 
+  end
+
+  def billable?
+    self.is_billable
+  end
 
   # returns a User or Organization
   def billable_to
@@ -107,15 +111,28 @@ class Transcript < ActiveRecord::Base
   end 
 
   # returns a float representing 1000ths of a dollar
+  # if billable? is false, always returns 0.0
   def cost(af=audio_file)
+    return 0.0 if !billable?
     secs = billable_seconds(af)
     mins = secs.fdiv(60)
     return cost_per_min.to_f * mins.to_f
   end
 
+  def retail_cost(af=audio_file)
+    return 0.0 if !billable?
+    secs = billable_seconds(af)
+    mins = secs.fdiv(60)
+    return retail_cost_per_min.to_f * mins.to_f
+  end
+
   # returns a float in dollars
   def cost_dollars(af=audio_file)
     return cost(af) / 1000
+  end
+
+  def retail_cost_dollars(af=audio_file)
+    return retail_cost(af) / 1000
   end
     
   private
