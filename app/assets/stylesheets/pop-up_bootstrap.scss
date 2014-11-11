@@ -16,7 +16,7 @@ body {
 }
 
 body.authn {
-  padding-top: 150px;
+  padding-top: 110px;
 }
 
 ::selection {
@@ -133,6 +133,23 @@ footer, footer p {
       -o-transition: margin-top 250ms ease 500ms;
     }
 
+    .logo-square {
+      color: #fff;
+      background-color: #F25A4C; /* coral */
+      font-size: 150%;
+      min-height: 50px;
+      min-width: 50px;
+      padding: 8px;
+    }
+
+    .logo-square .up {
+      margin-top: 8px;
+      transition: margin-top 250ms ease 500ms;
+      -webkit-transition: margin-top 250ms ease 500ms;
+      -moz-transition: margin-top 250ms ease 500ms;
+      -o-transition: margin-top 250ms ease 500ms;
+    }
+
     .prx {
       padding-top: 8px;
       font-size: 14px !important;
@@ -149,11 +166,15 @@ footer, footer p {
       margin-top: -6px;
     }
 
+    .up.raised-logo-square {
+      margin-top: -8px;
+    }
+
   }
 }
 
 .site-title.authn {
-  height: 112px;
+  height: 72px; 
   .logo.archive {
     clear: both;
     height: auto;

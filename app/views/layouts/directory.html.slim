@@ -71,7 +71,7 @@ html lang='en' ng-app='Directory' ng-controller='DirectoryCtrl'
             i.icon-cog.icon-spin
             |  Loading
             
-    footer= render('footer')
+    footer= render(user_signed_in? ? 'authn_footer' : 'footer')
     #persistent-player.player.hidden ng-controller="PersistentPlayerCtrl" ng-class="{hidden:!player.nowPlaying(),collapsed:collapsed}" ng-cloak="" ng-click="collapse()"
       img ng-src="{{player.albumArt()}}"
       .scrubber
