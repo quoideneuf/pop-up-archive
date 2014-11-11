@@ -2,29 +2,30 @@
   .row-fluid
     #intro
       p#slug Make your organization's sound searchable, accessible, and reusable. 
-      img src="#{asset_path('enterprise1.jpg')}"
-      p Our tools are lightweight, so they work for the everyman and some of the biggest media collections in the world. Our work began with extensive user research with radio producers and distributors and institutional archives. Our current clients include major media stations, universities, multimedia producers, and oral history archives large and small. 
       a.button.btn.btn-large.btn-info.center href='mailto:founders@popuparchive.com' 
-        |Let's Get Started. Contact Us.
+        |Let's Get Started. Contact Us.      
+      img src="#{asset_path('enterprise1.jpg')}"      
+      p Our tools are lightweight, so they work for the everyman and some of the biggest media collections in the world. Our work began with extensive user research with radio producers and distributors and institutional archives. Our current clients include major media stations, universities, multimedia producers, and oral history archives large and small. 
       
     #services
       ul
         li 
           span.strong Auto-transcription, timestamps, and keywords 
           br
-          |Searchability and timestamps aid SEO, enable distribution, and streamline workflows, with turnaround so fast your newsroom can use it to accelerate the process from live/broadcast to web.
+          | Access to searchable audio archive with premium quality machine transcripts and tags. Premium machine transcripts include speaker differentiation, punctuation, and timestamps to the millisecond.
+          /! |Searchability and timestamps aid SEO, enable distribution, and streamline workflows, with turnaround so fast your newsroom can use it to accelerate the process from live/broadcast to web.
         li 
           span.strong Automated upload 
           br
-          |Make thousands of hours of sound searchable, processed automatically from your feed, server, or SoundCloud.
+          |Make thousands of hours of sound searchable with your organization's custom metadata, processed automatically from your RSS feed, server, spreadsheet, or SoundCloud page.
         li 
-          span.strong Preservation and transcoding 
+          span.strong Full team access and training 
           br
-          |Upload audio to the Internet Archive for preservation and file format maintenance with perpetual access.
+          |Accounts with access controls, and training for your staff.
         li 
-          span.strong Hypermedia API 
+          span.strong Embeddable audio widgets
           br
-          |Integrate with workflows where it makes most sense for your organization.
+          |Unlimited use of Pop Up Archive embeddable player, embeddable transcripts (coming soon) and WordPress plugin to embed audio and tags into WordPress sites.
         li 
           span.strong Collection assessment and ontology building 
           br
@@ -32,31 +33,39 @@
         li 
           span.strong Advanced transcript editor 
           br
-          |Perfect your transcripts with the Amara editing platform.
+          |Use the in-site transcript editor to easily assign and edit speakers names, or clean up the text with time saving key commands.
         li 
-          span.strong Team account access and training 
+          span.strong Hypermedia API 
           br
-          |Accounts with access controls, and training for your staff.
+          |Integrate with workflows where it makes most sense for your organization.   
+        li 
+          span.strong Preservation and transcoding 
+          br
+          |Upload audio to the 
+          a.entlink href="https://archive.org/" Internet Archive 
+          | for preservation and file format maintenance with perpetual access.         
         li 
           span.strong Premium customer service 
           br
           |Dedicated email/phone customer support with guaranteed response within 24 hours.
-        li 
-          span.strong Multi-language audio 
-          br
-          |Auto-transcription and keywords for a core set of languages, plus crowdsourced translation for dozens more.
+      
     #rightsidebar
-      p 
-        | "Pop Up Archive is the smart solution we've been waiting for. The team is ahead of the curve in ways that make our job easier and our team more effective.” &mdash;
-        br
-        | Joaquin Alvarado, Center for Investigative Reporting
+      .rsidebar  
+        p.strong "The archive they have built for us will streamline our newsroom operations moving forward by enabling us to organize, track, and reuse our valuable content."
+        p -Ashleyanne Krigbaum, Producer / Reporter / All-around heroine, KALW
+        img src="#{asset_path('user_stories/ashleyanne.png')}"      
+
+        /! p 
+        /!  | "Pop Up Archive is the smart solution we've been waiting for. The team is ahead of the curve in ways that make our job easier and our team more effective.” &mdash;
+        /!  br
+        /!  | Joaquin Alvarado, Center for Investigative Reporting
       img src="#{asset_path('cassette.png')}"
       img src="#{asset_path('reel.png')}"
       img src="#{asset_path('volume.png')}"
-      img src="#{asset_path('disk.png')}"
+      /! img src="#{asset_path('disk.png')}"
     #logos
-      h4 
-        | Our awesome and contented clients
+      #slug-center 
+        | Some of our awesome and contented clients
         i.icon-thumbs-up
       img src="#{asset_path('user_stories/logos.png')}"
 

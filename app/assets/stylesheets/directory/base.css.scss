@@ -3,6 +3,7 @@
 @import "my-collections";
 @import "player";
 @import "pricing";
+@import "enterprise";
 @import "home";
 @import "font-awesome";
 @import "bootstrap-datepicker";
@@ -1141,101 +1142,6 @@ form.with-tags {
 .storage-internetarchive { background: image-url('storage/ia.png') no-repeat center; }
 .storage-soundcloud { background: image-url('storage/sc.png') no-repeat center; }
 .storage-prx { background: image-url('storage/prx.png') no-repeat center; }
-
-#enterprise {
-  .strong {
-    font-weight: bold;
-    font-family: soleil, sans-serif !important;
-    padding-bottom: 5px;
-    color: white;
-  }
-  p, ul{
-    font-family: "freight-text-pro", serif !important;
-  }
-  #intro{
-    
-    float:left;
-    width: 357px;
-    h2 {
-      padding: 30px 15px 30px 0px;
-      margin: 0;
-      color: black;
-    }
-    p {
-      font-size: 19px;
-      line-height: 27px;
-      padding: 15px 20px 15px 0px;
-    }
-    img {
-      margin: 0;
-      padding: 0;
-    }
-    #slug{
-      font-family: soleil, sans-serif !important;
-      color: #2c677f;
-      font-size: 30px;
-      line-height: 39px;
-    }
-    .btn{
-      margin-left: 25px;
-    }
-  }
-  #services{
-    height: 929px;
-    float:left;
-    width: 310px;
-    background-color: #f25a4c;
-    padding: 10px 45px 33px;
-    ul {
-      margin: 0;
-      padding-top: 30px;
-    }
-    li {
-      list-style: none;
-      margin-bottom: 15px;
-      padding: 5px 0;
-      margin: 0;
-      font-size: 16px;
-      line-height: 22px;
-    }
-  }
-  #rightsidebar{
-    float:left;
-    width: 183px;
-    img {
-      padding: 16px 42px;
-      width: 110px;
-    }
-    p {
-      background-color: #3d3d3e;
-      color: white;
-      padding: 25px 5px 30px 15px;
-      font-family: soleil, sans-serif !important;
-      font-size: 19px;
-      line-height: 28px;
-    }
-  }
-  #logos {
-    padding-top: 20px;
-    float: left;
-    width: 100%;
-    h4 {
-      color: #aa027b;
-    }
-    i {
-      padding-left: 5px;
-    }
-    ul {
-      margin: 0;
-    }
-    li {
-      display: inline;
-      width: 120px;
-      padding-right: 2px;
-    }
-  }
-}
-
 
 //About
 #about {
