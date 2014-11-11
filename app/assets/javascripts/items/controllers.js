@@ -62,7 +62,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   };
 
   $scope.status = "uploading";
-  $scope.upgradeMessage = false;
+  $scope.upgradePlan = false;
 
   $scope.statusNotification = function(file) {
     $scope.taskStatus(file);
@@ -71,13 +71,14 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       statusHTML += "uploading";
     } else if ($scope.status == "upload_failed") {
       statusHTML += "UPLOAD FAILED - please try uploading again or contact us if uploads keep failing.";
-    } else if ($scope.status == "started") {
-      statusHTML += "transcript processing.</h4><p>The first two minutes of your transcription will be ready momentarily. ";
-      if ($scope.upgradeMessage) {
-        statusHTML += "<a href='/pricing'>Upgrade your plan for full transcripts.</a></p>";
-      } else {
-        statusHTML += "The rest will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.</p>";
+    } else if ($scope.status == "started" || $scope.status == "full") {
+      statusHTML += "transcript processing.</h4>";
+      if ($scope.upgradePlan) {
+        statusHTML += "<p>The first two minutes of your transcription will be ready momentarily. <a href='/pricing'>Upgrade your plan for full transcripts.</a></p>";
+      } else if ($scope.transcriptType == "Basic" && !$scope.upgradePlan) {
+        statusHTML += "<p>The first two minutes of your transcription will be ready momentarily.";
       }
+      statusHTML += "The full transcript will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.</p>";
     } else if ($scope.status == "ts_failed") {
       statusHTML += "TRANSCRIPTION FAILED - please <a href='mailto:edison@popuparchive.com?Subject=Transcription%20Failed%20-%20My%20User%20ID:%20"+ $scope.currentUser.id +"'>email us for support</a>";
     }
@@ -103,13 +104,13 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       $scope.status = "ts_failed";
     } else if (start == "working" || start == "created") {
       $scope.status = "started";
-    } else if (start == "complete" && full != "complete") {
+    } else if (full != "complete") {
       $scope.status = "full";
     } else if (full == "complete") {
       $scope.status = "finished";
     }
     if (!full) {
-      $scope.upgradeMessage = true;
+      $scope.upgradePlan = true;
     }
   };
 
