@@ -4,7 +4,7 @@
   h3
     | My Account
 
-.row-fluid ng-show="me.plan.amount"
+.row-fluid ng-if="me.hasCard"
   .well
     .credit-card.pull-right ng-show="me.creditCard"
       img ng-src="/assets/{{me.creditCard.type.toLowerCase()}}.png" ng-show="me.creditCard.type"
