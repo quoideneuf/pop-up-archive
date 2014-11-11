@@ -276,7 +276,7 @@ module Billable
     end 
 
     # calculate current totals based on the User's plan. This determines overages.
-    plan_hours        = pop_up_hours
+    plan_hours        = plan.hours
     base_monthly_cost = plan.amount  # TODO??
     plan_is_premium   = plan.has_premium_transcripts?
 
