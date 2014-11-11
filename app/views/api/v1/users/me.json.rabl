@@ -30,6 +30,7 @@ if current_user
   node(:used_unmetered_storage) { current_user.used_unmetered_storage }
   node(:total_metered_storage) { current_user.pop_up_hours * 3600 }
   node(:usage) { current_user.usage_summary }
+  node(:over_monthly_limit) { current_user.is_over_monthly_limit? }
   node(:plan) { current_user.plan_json }
   node(:credit_card) { current_user.active_credit_card_json } if current_user.active_credit_card.present?
   node(:has_card) { current_user.active_credit_card.present? }

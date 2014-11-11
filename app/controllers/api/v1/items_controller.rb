@@ -44,6 +44,12 @@ class Api::V1::ItemsController < Api::V1::BaseController
   end
 
   def create
+    if current_user.is_over_monthly_limit?
+      render status: 431, json: {
+        error: 'Monthly limit exceeded',
+      }
+      return
+    end
     item.valid?
     item.save
     respond_with :api, item
