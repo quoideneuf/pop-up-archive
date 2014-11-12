@@ -55,7 +55,7 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
                         {name: "Newest Created to Oldest Created", sort_by: "date_created", sort_order: "desc"},
                         {name: "Oldest Created to Newest Created", sort_by: "date_created", sort_order: "asc"}];
                         
-  $scope.selectedSort = $scope.sortOptions[0];
+  $scope.selectedSort = $scope.sortOptions[3]; // should match actual search controller logic on server
   
   $scope.sortResults = function (args) {
     $location.search('sortBy', args.sort_by);
