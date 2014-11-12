@@ -70,14 +70,13 @@
       | {{me.usage.thisMonth.hours}} hours
       .usage-cost
       | {{me.usage.thisMonth.cost | currency:"USD $"}}
+    hr
     .usage-history
       h5 History
       .usage-month ng-repeat="msum in me.usage.history"
-        h6 {{msum.period}}
+        h6 {{msum.period}} - {{msum.type}}
         .usage-hours
         | {{msum.hours}} hours
         .usage-cost
         | {{msum.cost | currency:"USD $"}}
-
-
-      
+        hr
