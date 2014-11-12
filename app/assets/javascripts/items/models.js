@@ -102,6 +102,21 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     if (this.notes) { return this.notes; }
   }
 
+  Item.prototype.getShortDescription = function() {
+    var desc = this.getDescription();
+    if (!desc) return desc;
+    var maxlen = 255;
+    // strip any markup so our count is accurate and we do not split 
+    // in the middle of a tag
+    var cleaned = desc.replace(/<[^>]+>/g, '');
+    if (cleaned.length > maxlen) {
+      return cleaned.substr(0, maxlen).replace(/\S+$/g,'') + '...';
+    }
+    else {
+      return cleaned;
+    }
+  }
+
   Item.prototype.getImages = function () {
     if (this.imageFiles) {return this.imageFiles}
   }

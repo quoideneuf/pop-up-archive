@@ -47,7 +47,7 @@ ul.pager
 					h4.media-heading ng-show="item.getTitle()"
 						a ng-href="{{item.link()}}" {{item.getTitle()}}
           h5 ng-bind-html="item.collectionTitle"
-          p ng-show="item.getDescription()" ng-bind-html="item.getDescription()"
+          p ng-show="item.getShortDescription()" ng-bind-html="item.getShortDescription()"
           p.item-details
             | Created: {{item.getCreatedAt()}}  Duration: 
             span ng-bind-html="item.getDurationString()"
