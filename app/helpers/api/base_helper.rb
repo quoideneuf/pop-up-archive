@@ -37,7 +37,7 @@ module Api::BaseHelper
   end
 
   def total_private_duration
-    seconds = Rails.cache.fetch(:pua_total_public_duration_sum, expires_in: 60.minutes) do
+    seconds = Rails.cache.fetch(:pua_total_private_duration_sum, expires_in: 60.minutes) do
       secs = AudioFile.all_private_duration
     end 
     return time_definition(seconds)
