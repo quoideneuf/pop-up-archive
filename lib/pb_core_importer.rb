@@ -89,6 +89,8 @@ class PBCoreImporter
         audio = AudioFile.new
         instance.audio_files << audio
         item.audio_files << audio
+        audio.item              = item
+        audio.instance          = instance
         audio.identifier        = url
         audio.remote_file_url   = url
         audio.format            = instance.format
@@ -101,6 +103,8 @@ class PBCoreImporter
           audio = AudioFile.new
           instance.audio_files << audio
           item.audio_files << audio
+          audio.item              = item
+          audio.instance          = instance
           audio.identifier        = url
           audio.remote_file_url   = url
           audio.format            = pbcPart.try(:digital).try(:value) || instance.format
