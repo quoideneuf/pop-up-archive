@@ -3,8 +3,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
     query_builder = QueryBuilder.new(params, current_user)
     page = params[:page].to_i
     query_str = params[:query]
-    #Rails.logger.warn("search params: #{params.inspect}")
-    #Rails.logger.warn("query_str: #{query_str.inspect}")
+    sort_by   = params[:sort_by]
 
     search_query = Search.new(items_index_name) do
       if page.present? && page > 1
@@ -24,11 +23,12 @@ class Api::V1::SearchesController < Api::V1::BaseController
         filter my_filter.type, my_filter.value
       end
 
+      # determine sort order
       if !query_str.present? or query_str.length == 0
         sort do
           by 'created_at', 'desc'
         end
-      elsif params['sort_by'].present?
+      elsif sort_by 
         sort do
           by query_builder.sort_column, query_builder.sort_order 
         end
