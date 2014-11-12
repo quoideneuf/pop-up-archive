@@ -1,6 +1,6 @@
 .navbar-shadow
 .navbar-shadow-hider
-.navbar.navbar-fixed-top
+.navbar.navbar-fixed-top ng-class="{'over-monthly-limit': currentUser.overMonthlyLimit}"
   .navbar-inner
     .container
       h1.site-title.authn
@@ -14,3 +14,9 @@
         span.icon-bar
       .nav-collapse.collapse
         = render('authn_nav')
+        .over-limit-msg ng-show="currentUser.overMonthlyLimit"
+          | You are over your 
+          a href="/account" 
+            | monthly limit.  
+          a href="/account/plan"
+            | Upgrade now!
