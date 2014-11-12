@@ -1,6 +1,6 @@
 class PBCoreImporter
 
-  attr_accessor :file, :collection, :url, :dry_run
+  attr_accessor :file, :collection, :url, :dry_run, :verbose
 
   def initialize(options={})
     PBCore.config[:date_formats] = ['%m/%d/%Y', '%Y-%m-%d']
@@ -8,6 +8,7 @@ class PBCoreImporter
     self.collection = Collection.find(options[:collection_id])
     self.url        = options[:url]
     self.dry_run    = options.key?(:dry_run) ? !!options[:dry_run] : false
+    self.verbose    = options[:verbose] || false
 
     if options[:file]
     	raise "File missing or 0 length: #{options[:file]}" unless (File.size?(options[:file]).to_i > 0) 
@@ -29,11 +30,18 @@ class PBCoreImporter
     items = []
     pbc_collection = PBCore::V2::Collection.parse(file)
     pbc_collection.description_documents.each do |doc|
-      sleep(2)
-			item = item_for_omeka_doc(doc)
+      sleep(1)
+      item = item_for_omeka_doc(doc)
       unless Item.where(identifier: item.identifier, collection_id: item.collection.id).exists?
-        item.save! unless dry_run
+        if dry_run
+          self.verbose and STDERR.puts "[#{item.identifier}] dry_run==true, skipping save."
+        else
+          item.save!
+          self.verbose and STDERR.puts "[#{item.identifier}] Saved item"
+        end
         items << item
+      else
+        self.verbose and STDERR.puts "[#{item.identifier}] Not saving, found Item in db already."
       end
     end
     items
@@ -55,6 +63,8 @@ class PBCoreImporter
     item.rights            = doc.rights.collect{|r| [r.summary.try(:value), r.link.try(:value), r.embedded.try(:value)].compact.join("\n") }.compact.join("\n")
     item.notes             = doc.detect_element(:annotations, match_value: 'notes', default_first: false)
     item.transcription     = doc.detect_element(:annotations, match_value: 'transcript', default_first: false)
+
+    self.verbose and STDERR.puts "[#{item.identifier}] Created Item #{item.title}"
 
     # process each instance
     doc.instantiations.each do |pbcInstance|
@@ -99,6 +109,7 @@ class PBCoreImporter
       end
 
       item.instances << instance
+      self.verbose and STDERR.puts "[#{item.identifier}] Added instance #{instance.identifier}"
 
     end
     item
