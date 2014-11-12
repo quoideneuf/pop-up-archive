@@ -13,14 +13,19 @@
 	overflow: hidden;
 
 	.file-transcript-text {
-		height: 16px;
-		-webkit-marquee: auto medium infinite scroll normal;
-		text-overflow: ellipsis;
+      height: 16px;
+      -webkit-marquee: auto medium infinite scroll normal;
+      text-overflow: ellipsis;
 	}
 
 	.current {
-		background-color: transparent;
+      background-color: transparent;
 	}
+
+    em {
+      background-color: yellow;
+      font-weight: bold;
+    }
 }
 
 .file-transcript {
