@@ -14,7 +14,7 @@
         span.icon-bar
       .nav-collapse.collapse
         = render('authn_nav')
-        .over-limit-msg ng-show="currentUser.overMonthlyLimit"
+        .over-limit-msg.alert.alert-error ng-show="currentUser.overMonthlyLimit"
           | You are over your 
           a href="/account" 
             | monthly limit.  
