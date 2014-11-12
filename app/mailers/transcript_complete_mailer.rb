@@ -1,5 +1,5 @@
 class TranscriptCompleteMailer < ActionMailer::Base
-  default from: ENV['EMAIL_USERNAME'], template_path: ['base', 'transcript_complete_mailer']
+  default from: ENV['EMAIL_FROM'], template_path: ['base', 'transcript_complete_mailer']
 
   def new_auto_transcript(user, audio_file, item)
     @user, @audio_file, @item = user, audio_file, item
