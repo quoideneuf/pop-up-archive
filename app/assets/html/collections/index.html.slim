@@ -1,64 +1,41 @@
-.row-fluid 
-  h1 My Collections
+.row-fluid style="display:inline;"
+  h1 style="display:inline;" My Collections
   .page-nav.pull-right
     button.btn type="button" bs-popover="batchUpload" data-placement="bottom" 
       i.icon-th-list
       |  Batch Upload
 
-  h3 Unsorted Files
-  .alert 
-    | This is a temporary place for your audio. Select audio below to move it to your collections. Then: listen, see transcripts, and add tags! 
-  .alert.alert-error ng-show="collections.length < 2 && selectedItems.length > 0"
-    | It looks like you haven't created any collections yet. Create a collection to get started.
-  div
-    / span tutorial-step="tour.upload" data-placement="top"
-    / span tutorial-step="tour.collection" data-placement="top"
-  .holding-cell 
-    ul.inline.items.uploads
-      li.add-item ng-click="uploadFile()"        
-        .item-thumb.icon-cloud-upload
-        | Upload
-      li ng-repeat="item in uploadsCollection.items" ng-click="toggleItemSelection(item)" ng-class="{selected: item.selected}" title="{{item.getTitle()}}"
-        .item-thumb ng-class="item.getThumbClass()"
-        | {{item.getTitle()}}
-    .selection-actions ng-class="{in: selectedItems.length}"
-      button.btn.btn-danger ng-click="deleteSelection()"
-        i.icon-trash  Delete
-      button.btn ng-click="selectAll(uploadsCollection.items)"
-        i.icon-check  Select All
-      button.btn ng-click="clearSelection()"
-        i.icon-remove-sign  Clear Selection
-      button.btn ng-disabled="collections.length < 2" bs-modal="'#{asset_path 'collections/categorize_items.html'}'"
-        i.icon-circle-arrow-down  Move to Collection
-
 .row-fluid
-  .page-nav.pull-right
-    a.btn href="/collections/edit" 
-      i.icon-edit
-      |  Batch Edit
-
-  h3 Collections
-  .alert.alert-info 
-	  | Pop Up Archive collections can be private or shared publicly. 
-	  a href="/faq#privacy" Learn more about privacy.
-  div
-    / span tutorial-step="tour.welcome" data-placement="top"
-    / span tutorial-step="tour.privacy" data-placement="top"
-    / span tutorial-step="tour.privacy2" data-placement="top"
-    / span tutorial-step="tour.collection2" data-placement="top"
-    / span tutorial-step="tour.view_item" data-placement="top"
-  .collections 
-    ul.inline.collections
-      li.add-collection
-        a ng-href="#" ng-click="newCollection()"
-          | Create a Collection
-          i.icon-plus
-      li ng-repeat="collection in collections | notUploads"
+  .alert.alert-info
+	  | Use collections to group and organize your audio files.
+  ul.collections-list
+    li.collection-box ng-repeat="collection in collections | notUploads"
+      .image
         span ng-class="{'public-ribbon': collection.itemsVisibleByDefault}"
         a ng-href="/collections/{{collection.id}}"
           .box ng-show="collection.imageFiles.length" style="background-image:url('{{collection.imageFiles[0].file.file.thumb.url}}')"
           .box ng-hide="collection.imageFiles.length"
           .collection-thumb
-          | {{collection.title}}
           span.storage.lower-right ng-class="Storage.storageClass(collection.storage)"
+      .collection-info
+        a ng-href="/collections/{{collection.id}}"
+          h3 {{collection.title}}
+        p {{collection.description}}
+      .container
+        .recent-items.row
+          .col-xs-4
+           | File
+          .col-xs-4
+            | Item
+          .col-xs-4
+            | Status
+        ul.items-list
+          li ng-repeat="item in collection.items"
+            | {{item.}}
 
+  .collections
+    ul.inline.collections
+      li.add-collection
+        a ng-href="#" ng-click="newCollection()"
+          i.icon-plus
+      h1 style="padding-top:23px;" Create a new collection
