@@ -309,7 +309,7 @@ module Billable
     # otherwise, plan is premium. check for overages only.
     else
       summary[:current].each do |msum|
-        if msum.use == MonthlyUsage::PREMIUM_TRANSCRIPTS
+        if msum[:type] == MonthlyUsage::PREMIUM_TRANSCRIPTS
           if msum[:hours] > plan_hours
             summary[:this_month][:overage][:hours] = msum[:hours] - plan_hours
             summary[:this_month][:overage][:cost] = (OVERAGE_HOURLY_RATE * summary[:this_month][:overage][:hours]).round(2)
