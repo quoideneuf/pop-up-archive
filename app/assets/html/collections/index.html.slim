@@ -7,11 +7,11 @@
 
 .row-fluid
   .alert.alert-info
-	  | Use collections to group and organize your audio files.
+    | Use collections to group and organize your audio files.
   ul.collections-list
     li.collection-box ng-repeat="collection in collections | notUploads"
+      span ng-class="{'public-ribbon': collection.itemsVisibleByDefault}"
       .image
-        span ng-class="{'public-ribbon': collection.itemsVisibleByDefault}"
         a ng-href="/collections/{{collection.id}}"
           .box ng-show="collection.imageFiles.length" style="background-image:url('{{collection.imageFiles[0].file.file.thumb.url}}')"
           .box ng-hide="collection.imageFiles.length"
@@ -33,9 +33,9 @@
           li ng-repeat="item in collection.items"
             | {{item.}}
 
-  .collections
+.collections
     ul.inline.collections
       li.add-collection
         a ng-href="#" ng-click="newCollection()"
           i.icon-plus
-      h1 style="padding-top:23px;" Create a new collection
+      h1 style="padding:23px 115px;" Create a new collection
