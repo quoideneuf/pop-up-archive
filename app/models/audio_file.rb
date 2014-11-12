@@ -390,6 +390,14 @@ class AudioFile < ActiveRecord::Base
     start_premium_transcribe_job(cur_user, 'ts_paid', { ondemand: true })
   end
 
+  def self.all_public_duration
+    self.connection.execute("select sum(af.duration) as dursum from items as i, audio_files as af where i.is_public=true and af.item_id=i.id").first.first[1]
+  end
+
+  def self.all_private_duration
+    self.connection.execute("select sum(af.duration) as dursum from items as i, audio_files as af where i.is_public=false and af.item_id=i.id").first.first[1]
+  end
+
   private
 
   def set_metered

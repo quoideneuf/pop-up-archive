@@ -27,7 +27,21 @@ module Api::BaseHelper
       hours = (total_time / 3600).to_s + "hrs"
     end
     return hours
-  end        
+  end
+
+  def total_public_duration
+    seconds = Rails.cache.fetch(:pua_total_public_duration_sum, expires_in: 60.minutes) do
+      secs = AudioFile.all_public_duration
+    end
+    return time_definition(seconds)
+  end
+
+  def total_private_duration
+    seconds = Rails.cache.fetch(:pua_total_public_duration_sum, expires_in: 60.minutes) do
+      secs = AudioFile.all_private_duration
+    end 
+    return time_definition(seconds)
+  end
 
   def time_definition(total_time)
     if !total_time.is_a? Integer

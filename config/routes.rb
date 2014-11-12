@@ -48,6 +48,8 @@ PopUpArchive::Application.routes.draw do
     scope module: :v1, constraints: ApiVersionConstraint.new(version: 1, default: true) do
       root to: 'status#info'
 
+      get '/stats' => 'status#stats'
+
       get '/me' => 'users#me'
       put '/me/credit_card' => 'credit_cards#update'
       put '/me/subscription' => 'subscriptions#update'
