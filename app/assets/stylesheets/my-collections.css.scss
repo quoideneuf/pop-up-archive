@@ -71,13 +71,13 @@ ul.collections {
     border: 3px dashed #ddd;
     background: transparent;
 
-    width: $collection-size - 6px;
-    height: $collection-size - 6px;
+    width: 70px;
+    height: 70px;
     padding-bottom: 4px;
   }
   i.icon-plus {
-    font-size: 90px;
-    width: $collection-size - 6px;
+    font-size: 78px;
+    width: 70px;
     display:block;
   }
 
@@ -341,22 +341,22 @@ div.holding-cell {
       height: 75px;
       width: 75px;
     }
-
-    .public-ribbon {
-      background: image-url('public-collection-ribbon.png') no-repeat;
-      display: block;
-      position: absolute;
-      right: 0;
-      top: 0;
-      z-index: 1000;
-      height: 54px;
-      width: 54px;
-      text-indent: -9000px;
-    }
   }
 }
 
 .collection-box {
+
+  .public-ribbon {
+    background: image-url('public-collection-ribbon.png') no-repeat;
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1000;
+    height: 54px;
+    width: 54px;
+    text-indent: -9000px;
+  }
   list-style: none;
   border-radius: 10px;
   position: relative;
