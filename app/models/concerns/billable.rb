@@ -17,7 +17,7 @@ module Billable
     billable_collection_ids = billable_collections.map { |c| c.id.to_s }
     return [] unless billable_collection_ids.size > 0
     items_sql = "select i.id from items as i where i.collection_id in (#{billable_collection_ids.join(',')})"
-    audio_files_sql = "select * from audio_files as af where af.duration is not null"
+    audio_files_sql = "select * from audio_files as af where af.duration is not null and af.item_id in (#{items_sql})"
     AudioFile.find_by_sql(audio_files_sql)
   end
 
