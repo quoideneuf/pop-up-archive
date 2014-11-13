@@ -408,6 +408,40 @@ class AudioFile < ActiveRecord::Base
     self.connection.execute("select sum(af.duration) as dursum from items as i, audio_files as af where i.is_public=false and af.item_id=i.id").first.first[1]
   end
 
+  def current_status
+    status, upload, basic, premium = ""
+    self.tasks.each do |task|
+      if task.type == "upload"
+        upload = task.status
+      elsif task.identifier == "ts_all"
+        basic = task.status
+      elsif task.identifier == "ts_paid"
+        premium = task.status
+      end
+    end
+
+    if upload == "failed"
+      status = "Upload Failed"
+    elsif upload == "working"
+      status = "Uploading"
+    elsif premium == "failed"
+      status = "Premium Transcript Failed"
+    elsif premium == "working"
+      status = "Premium Transcript Processing"
+    elsif basic == "failed"
+      status = "Basic Transcript Failed"
+    elsif basic == "working"
+      status = "Basic Transcript Processing"
+    elsif premium == "complete"
+      status = "Premium Transcript Complete"
+    elsif basic == "complete"
+      status = "Basic Transcript Complete"
+    else
+      status = "Transcript Preview Processing"
+    end
+    status
+  end
+
   private
 
   def set_metered
