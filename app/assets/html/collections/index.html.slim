@@ -10,7 +10,7 @@
     | Use collections to group and organize your audio files.
   ul.collections-list
     li.collection-box ng-repeat="collection in collections | notUploads"
-      span ng-class="{'public-ribbon': collection.itemsVisibleByDefault}"
+      span ng-class="{'public-ribbon': collection.itemsVisibleByDefault, 'private-ribbon': !collection.itemsVisibleByDefault}" 
       .image
         a ng-href="/collections/{{collection.id}}"
           .box ng-show="collection.imageFiles.length" style="background-image:url('{{collection.imageFiles[0].file.file.thumb.url}}')"
