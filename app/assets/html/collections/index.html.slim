@@ -10,7 +10,7 @@
     | Use collections to group and organize your audio files.
   ul.collections-list
     li.collection-box ng-repeat="collection in collections | notUploads"
-      span ng-class="{'public-ribbon': collection.itemsVisibleByDefault, 'private-ribbon': !collection.itemsVisibleByDefault}" 
+      span ng-class="{'public-ribbon': collection.itemsVisibleByDefault, 'private-ribbon': !collection.itemsVisibleByDefault}"
       .image
         a ng-href="/collections/{{collection.id}}"
           .box ng-show="collection.imageFiles.length" style="background-image:url('{{collection.imageFiles[0].file.file.thumb.url}}')"
@@ -21,19 +21,21 @@
         a ng-href="/collections/{{collection.id}}"
           h3 {{collection.title}}
         p {{collection.description}}
-      .container
-        .recent-items.row
-          .col-xs-4
-            | File
-          .col-xs-4
-            | Item
-          .col-xs-4
-            | Status
-        ul.items-list
-          li ng-repeat="file in collection.recentFiles"
+        button.upload-item-to-collection ng-click="uploadItemToCollection(collection.id)"
+          i.icon-upload &nbsp
+          | Add an item to {{collection.title}}
+      .recent-items.row
+        .col-xs-4 File
+        .col-xs-4 Item
+        .col-xs-4 Status
+      ul.items-list
+        li ng-repeat="file in collection.recentFiles"
+          a ng-href="/collections/{{collection.id}}/items/{{file.itemId}}"
             .col-xs-4 ng-class-odd=" 'odd-file' " {{file.fileName}}
             .col-xs-4 ng-class-odd=" 'odd-file' " {{file.itemName}}
             .col-xs-4 ng-class-odd=" 'odd-file' " {{file.fileStatus}}
+        li
+          a ng-show="collection.numberOfAudioFiles > 5" ng-href="/collections/{{collection.id}}" more...
 
 .collections
     ul.inline.collections
