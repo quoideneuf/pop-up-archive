@@ -127,14 +127,14 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       speaker_idx = 0
       words.each do |row|
         speaker = speakers[speaker_idx]
-
         row_end = BigDecimal.new(row['time'].to_s) + BigDecimal.new(row['duration'].to_s)
         speaker_end = BigDecimal.new(speaker['time'].to_s) + BigDecimal.new(speaker['duration'].to_s)
 
         if tt
           if (row_end > speaker_end)
-            speaker_idx += 1
             tt.save
+            speaker_idx += 1
+            speaker = speakers[speaker_idx]
             tt = nil
           elsif (row_end - tt[:start_time]) > 5.0
             tt.save
