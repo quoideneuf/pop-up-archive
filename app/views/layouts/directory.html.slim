@@ -83,6 +83,7 @@ html lang='en' ng-app='Directory' ng-controller='DirectoryCtrl'
         button ng-hide="player.paused()" ng-click="$event.stopPropagation();player.pause()"
           i.icon-pause
 
+    =render('contact')
 
     script#pending-action type='text/ng-template'
       a ng-href='{{action.path}}' ng-click="removeAction($index)" {{action.message}}
