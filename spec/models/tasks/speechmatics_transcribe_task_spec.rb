@@ -23,54 +23,102 @@ describe Tasks::SpeechmaticsTranscribeTask do
       },
       "speakers" => [
       {
-        "duration" => "0.680",
+        "duration" => "1.240",
         "name" => "M1",
-        "time" => "0.590",
+        "time" => "0.060",
+        "confidence" => nil
+      },
+      {
+        "duration" => "2.420",
+        "name" => "F1",
+        "time" => "1.380",
         "confidence" => nil
       }
       ],
       "words" => [
       {
-        "duration" => "0.160", 
+        "duration" => "0.170", 
         "confidence" => "0.995", 
-        "name" => "Why", 
-        "time" => "0.470"
+        "name" => "My", 
+        "time" => "0.060"
       }, 
       {
-        "duration" => "0.290", 
-        "confidence" => "0.995", 
-        "name" => "hidy-ho", 
-        "time" => "0.630"
-      },  
-      {
-        "duration" => "0.100", 
-        "confidence" => "0.995", 
-        "name" => "says", 
-        "time" => "0.920"
+        "duration" => "0.440", 
+        "confidence" => "0.944", 
+        "name" => "parents'", 
+        "time" => "0.230"
       }, 
       {
-        "duration" => "0.180", 
+        "duration" => "0.630", 
         "confidence" => "0.995", 
-        "name" => "world's", 
-        "time" => "1.020"
+        "name" => "dog", 
+        "time" => "0.670"
       }, 
-      {
-        "duration" => "0.120", 
-        "confidence" => "0.995", 
-        "name" => "C.E.O.", 
-        "time" => "1.040"
-      }, 
-      {
-        "duration" => "0.120", 
-        "confidence" => "0.995", 
-        "name" => "overlord", 
-        "time" => "1.060"
-      },
       {
         "duration" => "0.000", 
         "confidence" => "NaN", 
         "name" => ".", 
-        "time" => "1.060"
+        "time" => "1.300"
+      }, 
+      {
+        "duration" => "0.200", 
+        "confidence" => "0.974", 
+        "name" => "It's", 
+        "time" => "1.380"
+      }, 
+      {
+        "duration" => "0.140", 
+        "confidence" => "0.995", 
+        "name" => "what", 
+        "time" => "1.580"
+      }, 
+      {
+        "duration" => "0.110", 
+        "confidence" => "0.995", 
+        "name" => "they", 
+        "time" => "1.720"
+      }, 
+      {
+        "duration" => "0.390", 
+        "confidence" => "0.995", 
+        "name" => "do", 
+        "time" => "1.950"
+      }, 
+      {
+        "duration" => "0.140", 
+        "confidence" => "0.995", 
+        "name" => "they", 
+        "time" => "2.390"
+      }, 
+      {
+        "duration" => "0.140", 
+        "confidence" => "0.995", 
+        "name" => "do", 
+        "time" => "2.530"
+      }, 
+      {
+        "duration" => "0.330", 
+        "confidence" => "0.995", 
+        "name" => "more", 
+        "time" => "2.670"
+      }, 
+      {
+        "duration" => "0.180", 
+        "confidence" => "0.995", 
+        "name" => "than", 
+        "time" => "3.000"
+      }, 
+      {
+        "duration" => "0.620", 
+        "confidence" => "0.995", 
+        "name" => "disagree", 
+        "time" => "3.180"
+      }, 
+      {
+        "duration" => "0.000", 
+        "confidence" => "NaN", 
+        "name" => ".", 
+        "time" => "3.800"
       }, 
       ]
     }
@@ -104,14 +152,14 @@ describe Tasks::SpeechmaticsTranscribeTask do
     it "processes transcript result" do
       
       trans = task.process_transcript(response)
-      # puts trans.timed_texts.to_yaml
 
-      trans.timed_texts.count.should == 1
-      trans.timed_texts.first.text.should == "Why hidy-ho says world's C.E.O. overlord."
+      trans.timed_texts.count.should == 2
+      trans.timed_texts.first.text.should == "My parents' dog."
 
-      trans.speakers.count.should == 1
+      trans.speakers.count.should == 2
       trans.speakers.first.name.should == "M1"
       trans.timed_texts.first.speaker_id.should == trans.speakers.first.id
+      trans.timed_texts.second.speaker_id.should == trans.speakers.second.id
     end
 
     it 'updates paid transcript usage' do
