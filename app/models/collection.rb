@@ -86,7 +86,7 @@ class Collection < ActiveRecord::Base
           owner = grant.collector
         else
           # otherwise, the oldest grantee, if any.
-          grant = collection_grants.order('created_at asc').first
+          grant = collection_grants.where('collector_id is not null').order('created_at asc').first
           if grant and grant.collector
             owner = grant.collector.entity
           else
