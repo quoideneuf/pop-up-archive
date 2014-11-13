@@ -51,19 +51,6 @@ ul.collections {
       width: 75px;
     }
 
-    .public-ribbon {
-      background: image-url('public-collection-ribbon.png') no-repeat;
-      display: block;
-      position: absolute;
-      right: 0;
-      top: 0;
-      z-index: 1000;
-      height: 54px;
-      width: 54px;
-      text-indent: -9000px;
-    }
-
-
   }
 
 
@@ -346,8 +333,20 @@ div.holding-cell {
 
 .collection-box {
 
-  .public-ribbon {
-    background: image-url('public-collection-ribbon.png') no-repeat;
+    .public-ribbon {
+    background: image-url('public-banner.png') no-repeat;
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1000;
+    height: 54px;
+    width: 54px;
+    text-indent: -9000px;
+  }
+
+  .private-ribbon {
+    background: image-url('private-banner.png') no-repeat;
     display: block;
     position: absolute;
     right: 0;
