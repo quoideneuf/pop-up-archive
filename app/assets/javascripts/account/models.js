@@ -49,7 +49,7 @@ angular.module('Directory.account.models', [])
 }])
 
 
-.factory('Subscribe', ['Model', '$rootScope', 'Plan', '$window', function (Model, $rootScope, Plan, $window) {
+.factory('Subscribe', ['Model', '$rootScope', 'Plan', '$window', '$modal', function (Model, $rootScope, Plan, $window, $modal) {
   $rootScope.interval = 'month';
   $rootScope.offer = $rootScope.offer || {};
   $rootScope.community = Plan.community();
@@ -96,7 +96,7 @@ angular.module('Directory.account.models', [])
   $rootScope.changePlan = function (plan) {
     switch(plan.id){
       case 'enterprise':
-        $window.open('mailto:edison@popuparchive.com?subject=Pop Up Archive Enterprise Plan Inquiry', '_blank');
+        $modal({template: '/assets/plans/form.html', persist: true, show: true, backdrop: 'static'});
         return;
       default: 
         subscribe(plan);
