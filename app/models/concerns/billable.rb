@@ -16,8 +16,8 @@ module Billable
   def billable_audio_files
     billable_collection_ids = billable_collections.map { |c| c.id.to_s }
     return [] unless billable_collection_ids.size > 0
-    items_sql = "select i.id from items as i where i.deleted_at is null and i.collection_id in (#{billable_collection_ids.join(',')})"
-    audio_files_sql = "select * from audio_files as af where af.deleted_at is null and af.duration is not null"
+    items_sql = "select i.id from items as i where i.collection_id in (#{billable_collection_ids.join(',')})"
+    audio_files_sql = "select * from audio_files as af where af.duration is not null"
     AudioFile.find_by_sql(audio_files_sql)
   end
 
@@ -91,9 +91,9 @@ module Billable
     billable_collection_ids = billable_collections.map { |c| c.id.to_s }
     return nil unless billable_collection_ids.size > 0
 
-    items_sql = "select i.id from items as i where i.deleted_at is null and i.collection_id in (#{billable_collection_ids.join(',')})"
+    items_sql = "select i.id from items as i where i.collection_id in (#{billable_collection_ids.join(',')})"
     audio_files_sql = "select af.id from audio_files as af "
-    audio_files_sql += "where af.deleted_at is null and af.duration is not null "
+    audio_files_sql += "where af.duration is not null "
     audio_files_sql += " and created_at between '#{start_dtim}' and '#{end_dtim}' and af.item_id in (#{items_sql})"
     transcripts_sql = "select * from transcripts as t where t.transcriber_id=#{transcriber_id} and t.audio_file_id in (#{audio_files_sql})"
     transcripts_sql += " order by created_at asc"
@@ -146,9 +146,9 @@ module Billable
     # abort early if we have no collections
     return { :seconds => 0, :cost => 0, :retail_cost => 0 } if collection_ids.size == 0
 
-    items_sql = "select i.id from items as i where i.deleted_at is null and i.collection_id in (#{collection_ids.join(',')})"
+    items_sql = "select i.id from items as i where i.collection_id in (#{collection_ids.join(',')})"
     audio_files_sql = "select af.id from audio_files as af "
-    audio_files_sql += "where af.deleted_at is null and af.duration is not null "
+    audio_files_sql += "where af.duration is not null "
     audio_files_sql += " and af.user_id=#{self.id}"
     audio_files_sql += " and created_at between '#{start_dtim}' and '#{end_dtim}' and af.item_id in (#{items_sql})"
     transcripts_sql = "select * from transcripts as t where t.transcriber_id=#{transcriber_id} and t.audio_file_id in (#{audio_files_sql})"
