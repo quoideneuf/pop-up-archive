@@ -229,7 +229,7 @@ class Collection < ActiveRecord::Base
     audio_files = []
     files = self.audio_files.last(5)
     files.each do |file|
-      audio_file = { file_name: file["file"], item_name: file.item.title, file_status: file.tasks.last.status }
+      audio_file = { file_name: file["file"], item_name: file.item.title, file_status: file.current_status }
       audio_files << audio_file
     end
     audio_files
