@@ -209,7 +209,13 @@ class AudioFile < ActiveRecord::Base
     # only start this if transcode is complete
     return unless transcoded_at
     return unless (user.plan.has_premium_transcripts? || item.is_premium?)
-    start_premium_transcribe_job(user, 'ts_paid')
+    opts = {}
+    # if the user is on a basic plan, but the item is flagged premium,
+    # then the user must have requested a premium treatment at upload time.
+    if !user.plan.has_premium_transcripts? and item.is_premium?
+      opts['ondemand'] = true
+    end
+    start_premium_transcribe_job(user, 'ts_paid', opts)
   end
 
   def transcribe_audio(user=self.user)
