@@ -376,6 +376,7 @@ div.holding-cell {
   .recent-items {
     clear: both;
     margin-left: 15px;
+    font-weight: bold;
   }
   .col-xs-4 {
     width: 33.3333%;
@@ -383,5 +384,12 @@ div.holding-cell {
     min-height: 1px;
     padding: 0;
     float: left;
+  }
+  .items-list {
+    margin-left: 15px;
+    list-style: none;
+  }
+  .odd-file {
+    background-color: #F2EFEF;
   }
 }
