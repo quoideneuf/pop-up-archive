@@ -27,8 +27,8 @@ if current_user
     } if current_user.organization.present?
   }
 
-  node(:used_metered_storage) { current_user.used_metered_storage }
-  node(:used_unmetered_storage) { current_user.used_unmetered_storage }
+  node(:used_metered_storage) { current_user.used_metered_storage_cache }
+  node(:used_unmetered_storage) { current_user.used_unmetered_storage_cache }
   node(:total_metered_storage) { current_user.pop_up_hours * 3600 }
   node(:usage) { current_user.usage_summary }
   node(:over_monthly_limit) { current_user.is_over_monthly_limit? }
