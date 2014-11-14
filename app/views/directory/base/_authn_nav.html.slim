@@ -15,13 +15,7 @@ ul.nav.authn.pull-right
         i.icon-large.icon-refresh.icon-spin style="color: #aaa"
   li =render('alerts')
   li
-    a.border href="/collections"
-      #my_dashboard
-        i.icon-desktop
-        span.nav-label
-          |  dashboard
-  li
-    a.border.main.split href="/collections"
+    a.first.border.main.split href="/collections"
       #my_collections
         i.icon-folder-close-alt
         span.nav-label
@@ -29,8 +23,6 @@ ul.nav.authn.pull-right
     a.split.menu bs-dropdown="myCollectionsMenu"
       #my_collections_menu
         i.icon-caret-down
-        
-
   li
     a.border bs-dropdown="userMenu"
       #user_name

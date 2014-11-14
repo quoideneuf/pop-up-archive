@@ -117,6 +117,10 @@ p {
   display: inline-block;
 }
 
+.nav.authn.pull-right li a.border.first {
+  border-left: none; /* yes, irony. */
+}
+
 .nav.authn.pull-right li a.border.split,
 .nav.authn.pull-right li a.split,
 .nav.authn.pull-right li a.border.split div {
