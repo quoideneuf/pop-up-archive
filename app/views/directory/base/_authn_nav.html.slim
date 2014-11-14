@@ -29,6 +29,6 @@ ul.nav.authn.pull-right
       #user_name
         i.icon-user
         span.nav-label
-          |  #{current_user.name.downcase}&nbsp;
+          |  #{current_user.name.downcase.truncate(19)}&nbsp;
         i.icon-caret-down
 =render('alerts')
