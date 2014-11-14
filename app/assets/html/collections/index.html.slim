@@ -39,9 +39,6 @@
           li
             a ng-show="collection.numberOfAudioFiles > 5" ng-href="/collections/{{collection.id}}" more...
 
-.collections
-    ul.inline.collections
-      li.add-collection
-        a ng-href="#" ng-click="newCollection()"
-          i.icon-plus
-      h1 style="padding:23px 115px;" Create a new collection
+button.collection-button.add-collection ng-href="#" ng-click="newCollection()"
+    i.icon-plus-sign &nbsp
+    | Create a Collection
