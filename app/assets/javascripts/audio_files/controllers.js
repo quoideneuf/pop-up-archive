@@ -25,10 +25,12 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
       }
   ];
   $scope.item.formattedTitle = $scope.item.title.replace("'", "&apos;");
-  $scope.embedCode =
-    { "title": "Copy and Paste the Following Code to Embed This File on Your Site",
-       "content": "<xmp><iframe frameborder='0' width='508' height='95' scrolling='no' seamless='yes' name='"+ $scope.item.formattedTitle + "' src='"+ $scope.my_path + "/embed_player/" + encodeURIComponent($scope.item.formattedTitle.replace(/\./g, '&#46;')) + "/" + $scope.audioFile.id + "/" + $scope.item.id + "/" + $scope.collection.id + "'></iframe></xmp>",
+  $scope.embedCode = function() {
+    return { 
+       "title": "Copy and Paste the Following Code to Embed This File on Your Site",
+       "content": "<xmp><iframe frameborder='0' width='508' height='95' scrolling='no' seamless='yes' name='"+ $scope.item.formattedTitle + "' src='"+ $scope.my_path + "/embed_player/" + encodeURIComponent($scope.item.formattedTitle.replace(/\./g, '&#46;')) + "/" + $scope.audioFile.id + "/" + $scope.item.id + "/" + $scope.collection.id + "'></iframe></xmp>"
     };
+  }
 
   $scope.play = function () {
     $scope.audioFile = new AudioFile($scope.audioFile);

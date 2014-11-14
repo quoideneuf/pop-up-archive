@@ -38,7 +38,7 @@
       .well
         section.audio-file ng-repeat="audioFile in item.audioFiles" ng-controller="AudioFileCtrl"
           .btn-group.pull-right
-            button.btn ng-show="collection.itemsVisibleByDefault" type="button" bs-popover="embedCode"  data-placement="bottom" 
+            button.btn ng-show="collection.itemsVisibleByDefault" type="button" bs-popover="embedCode()"  data-placement="bottom" 
               i.icon-link
               |  Embed Code
             button.btn.dropdown-toggle.download-btn type="button" bs-dropdown="downloadLinks" data-toggle="dropdown"  
