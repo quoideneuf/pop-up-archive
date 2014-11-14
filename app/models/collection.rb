@@ -225,4 +225,14 @@ class Collection < ActiveRecord::Base
     parameterized_string
   end
 
+  def recent_files
+    audio_files = []
+    files = self.audio_files.last(5)
+    files.each do |file|
+      audio_file = { file_name: file["file"], item_name: file.item.title, item_id: file.item.id, file_status: file.current_status }
+      audio_files << audio_file
+    end
+    audio_files
+  end
+
 end

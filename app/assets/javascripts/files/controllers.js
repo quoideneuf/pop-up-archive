@@ -65,6 +65,23 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
       $scope.$emit('filesAdded', []);
     };
 
+    // Sets the default collection for uploads to the most recent collection
+    $scope.mostRecent = function () {
+      var cols = $scope.collections;
+      var mostRecent = cols[0];
+      for (var i=1; i<cols.length; i++) {
+        if ((cols[i].id > mostRecent.id) && (cols[i].id != $scope.uploadsCollection.id)){
+          mostRecent = cols[i];
+        }
+      }
+      return mostRecent.id;
+    };
+
+    $scope.uploadItemToCollection = function(id) {
+      $scope.selectedCollection = id;
+      $scope.uploadFile();
+    };
+
     $scope.uploadCSV = function (file) {
       var alert = new Alert();
       alert.category = 'upload';
@@ -105,7 +122,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
         // start a new item if there is not one already in scope
         if(force || !$scope.item) {
           console.log('initializeItem new item', $scope.item);
-          var collectionId = parseInt($routeParams.collectionId, 10) || $scope.currentUser.uploadsCollectionId;
+          var collectionId = parseInt($routeParams.collectionId, 10) || $scope.selectedCollection || $scope.mostRecent();
           var newItem = new Item({collectionId:collectionId, title:'', files:[], images:[angular.element('#image').value]});
           $scope.item = newItem;
           //console.log('initializeItem make new', newItem);
