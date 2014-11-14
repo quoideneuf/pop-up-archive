@@ -113,7 +113,7 @@ module Billable
     return { :seconds => 0, :cost => 0, :retail_cost => 0 } if !sql
 
     Transcript.find_by_sql(sql).each do |tr|
-      af = tr.audio_file
+      af = tr.audio_file_lazarus
       total_secs += tr.billable_seconds(af)
       total_cost += tr.cost(af)
       total_retail_cost += tr.retail_cost(af)
@@ -153,7 +153,7 @@ module Billable
     audio_files_sql += " and created_at between '#{start_dtim}' and '#{end_dtim}' and af.item_id in (#{items_sql})"
     transcripts_sql = "select * from transcripts as t where t.transcriber_id=#{transcriber_id} and t.audio_file_id in (#{audio_files_sql})"
     Transcript.find_by_sql(transcripts_sql).each do |tr|
-      af = tr.audio_file
+      af = tr.audio_file_lazarus
       total_secs += tr.billable_seconds(af)
       total_cost += tr.cost(af)
       total_retail_cost += tr.retail_cost(af)
