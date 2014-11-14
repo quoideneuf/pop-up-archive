@@ -69,8 +69,6 @@ p {
 
     ul.alert-showers, .alert-showers li.alert-shower {
       width: 300px;
-      max-height: 700px;
-      overflow-y: scroll;
       
       a {
         text-decoration:underline;
@@ -119,6 +117,28 @@ p {
   display: inline-block;
 }
 
+.nav.authn.pull-right li a.border.split,
+.nav.authn.pull-right li a.split,
+.nav.authn.pull-right li a.border.split div {
+  display: inline-block;
+}
+
+.nav.authn.pull-right li a.split.menu {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.nav.authn.pull-right li a.split.menu div {
+  border-left: 1px solid #fff;
+  padding-left: 6px;
+  margin-left: 0;
+}
+
+.nav.authn.pull-right li a.split.main {
+  padding-right: 3px;
+  margin-right: 0;
+}
+
 .nav.authn.pull-right li .dropdown-menu {
   right: auto;
 }
@@ -134,15 +154,32 @@ p {
   border: 1px solid #aaa;
 }
 
-#alerts-wrapper {
-  position: relative;
-  float: left;
-  top: 40px;  /* align below nav */
+.nav.authn.pull-right li.open a.dropdown-toggle.menu div {
+  padding-left: 5px;
+}
+
+.nav.authn.pull-right li.open a.dropdown-toggle.menu {
+  padding-right: 7px;
+}
+
+#alerts-container {
+  padding: 4px;
+}
+
+#alerts-container a {
+  padding: 0;
+}
+
+#alerts-container ul.dropdown-menu {
+  width: 320px;
+  overflow-y: scroll;
+  max-height: 500px;
 }
 
 .number-circle {
   cursor: pointer;
-  padding: 0px;
+  padding: 4px;
+  padding-top: 6px;
   margin: 0px 0px 0px 0px;
   overflow: hidden;
   display: block;

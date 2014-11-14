@@ -113,6 +113,7 @@ angular.module('Directory.alerts', ['ngLoadingIndicators'])
             '<div class="bar" ng-style="{width:alert.progress+\'%\'}"></div>' +
           '</div>' +
       '</a>' +
+      '<hr/>' +
     '</li>' +
   '<ul>';
 

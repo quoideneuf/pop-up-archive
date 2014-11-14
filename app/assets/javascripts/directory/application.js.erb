@@ -251,7 +251,7 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
   }]);
 
   window.directory.config(applicationConfig);
-  window.directory.controller("DirectoryCtrl", ['$scope', '$route', '$interpolate', 'Me', '$timeout', '$location', function($scope, $route, $interpolate, Me, $timeout, $location) {
+  window.directory.controller("DirectoryCtrl", ['$scope', '$route', '$interpolate', 'Me', 'Alert', '$timeout', '$location', function($scope, $route, $interpolate, Me, Alert, $timeout, $location) {
 
     $scope.$on( '$routeChangeSuccess', function ( event, current, previous ) {
       if ( $location.path() == '/collections/edit' ) {
@@ -287,6 +287,13 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
         });
       }
     });
+
+    $scope.testAlert = function() {
+      var alert = new Alert();
+      alert.category = 'test';
+      alert.message = 'this is a test';
+      alert.add();
+    }
 
     $scope.userMenu = [];
     $scope.myCollectionsMenu = [];
