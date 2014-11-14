@@ -5,25 +5,24 @@ ul.nav
   li
     a href="https://popuparchiveorg.zendesk.com/hc/en-us" target="_blank"
       | help
+/  li
+/    button.btn ng-click="testAlert()" test alerts
 
 ul.nav.authn.pull-right
   li
     a.activity 
       span#loading-gear.animated ng-show="loading()"
         i.icon-large.icon-refresh.icon-spin style="color: #aaa"
+  li =render('alerts')
   li
-    a.border href="/collections"
-      #my_dashboard
-        i.icon-desktop
-        span.nav-label
-          |  dashboard
-  li
-    a.border bs-dropdown="myCollectionsMenu"
+    a.first.border.main.split href="/collections"
       #my_collections
         i.icon-folder-close-alt
         span.nav-label
           |  my collections&nbsp;
-        i.icon-caret-down    
+    a.split.menu bs-dropdown="myCollectionsMenu"
+      #my_collections_menu
+        i.icon-caret-down
   li
     a.border bs-dropdown="userMenu"
       #user_name
@@ -31,4 +30,3 @@ ul.nav.authn.pull-right
         span.nav-label
           |  #{current_user.name.downcase.truncate(19)}&nbsp;
         i.icon-caret-down
-=render('alerts')
