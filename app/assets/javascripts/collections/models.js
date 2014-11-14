@@ -32,10 +32,10 @@ angular.module('Directory.collections.models', ['RailsModel', 'Directory.imageFi
 
   Collection.prototype.fetchItems = function () {
     var self = this;
-    console.log(this);
+    //console.log(this);
     Item.get({collectionId: this.id}).then(function (items) {
       self.items = items;
-      console.log(items);
+      //console.log(items);
       angular.forEach(items, function (item) {
         item.getCollection = function () {
           return self;
