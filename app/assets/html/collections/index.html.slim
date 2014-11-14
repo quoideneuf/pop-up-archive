@@ -8,6 +8,9 @@
 .row-fluid
   .alert.alert-info
     | Use collections to group and organize your audio files.
+  button.collection-button.add-collection ng-href="#" ng-click="newCollection()"
+    i.icon-plus-sign &nbsp
+    | Create a Collection
   ul.collections-list
     li.collection-box ng-repeat="collection in collections | notUploads"
       span class="ribbon" ng-class="{'public': collection.itemsVisibleByDefault, 'private': !collection.itemsVisibleByDefault}"
@@ -38,7 +41,3 @@
             .col-xs-4 ng-class-odd=" 'odd-file' " {{file.fileStatus}}
           li
             a ng-show="collection.numberOfAudioFiles > 5" ng-href="/collections/{{collection.id}}" more...
-
-button.collection-button.add-collection ng-href="#" ng-click="newCollection()"
-    i.icon-plus-sign &nbsp
-    | Create a Collection
