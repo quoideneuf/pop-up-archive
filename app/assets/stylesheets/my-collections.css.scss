@@ -110,6 +110,8 @@
       min-height: 1px;
       padding: 0;
       float: left;
+      white-space: nowrap;
+      overflow: hidden;
     }
     .items-list {
       margin: 0;
