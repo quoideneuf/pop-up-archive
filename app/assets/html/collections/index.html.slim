@@ -16,19 +16,22 @@
         .image ng-hide="collection.imageFiles.length"
             .box
       .collection-info
-        a ng-href="/collections/{{collection.id}}"
-          h3 {{collection.title}}
-        p {{collection.description}}
-        button.upload-item-to-collection ng-click="uploadItemToCollection(collection.id)"
-          i.icon-upload &nbsp
-          | Add an item to {{collection.title}}
-      .recent-items.row
-        .col-xs-4 File
-        .col-xs-4 Item
-        .col-xs-4 Status
-      ul.items-list
-        li ng-repeat="file in collection.recentFiles"
-          a ng-href="/collections/{{collection.id}}/items/{{file.itemId}}"
+        div
+          a ng-href="/collections/{{collection.id}}"
+            h3 style="display: inline-block" {{collection.title}}
+          span
+            ng-pluralize count="collection.numberOfItems" when="{'0': '(No Items yet)', '1': '(1 Item)', 'other': '({} Items)' }"
+        p {{collection.description | characters:220}}
+      button.collection-button.upload-item-to-collection ng-click="uploadItemToCollection(collection.id)"
+        i.icon-upload &nbsp
+        | Add an Item to {{collection.title}}
+      .recent-items
+        .labels ng-hide="collection.numberOfAudioFiles == 0"
+          .col-xs-4 File
+          .col-xs-4 Item
+          .col-xs-4 Status
+        ul.items-list
+          li ng-repeat="file in collection.recentFiles"
             .col-xs-4 ng-class-odd=" 'odd-file' " {{file.fileName}}
             .col-xs-4 ng-class-odd=" 'odd-file' " {{file.itemName}}
             .col-xs-4 ng-class-odd=" 'odd-file' " {{file.fileStatus}}
