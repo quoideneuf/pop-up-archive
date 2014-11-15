@@ -37,20 +37,23 @@ ul.pager
       .media-body
         a.pull-left ng-click="item.play()" ng-show="item.paused()"
           i.play-overlay.icon-play
-          img.media-object ng-src=" {{item.imageFiles.length > 0 && item.imageFiles[0].file.file.thumb.url || '/assets/minimark.png' }}"
+          img.media-object ng-src=" {{item.imageFiles.length > 0 && item.imageFiles[item.imageFiles.length - 1].file.file.thumb.url || '/assets/minimark.png' }}"
         a.pull-left ng-click="item.pause()" ng-show="item.playing()"
           i.play-overlay.icon-pause
-          img.media-object ng-src=" {{item.imageFiles.length > 0 && item.imageFiles[0].file.file.thumb.url || '/assets/minimark.png' }}"
+          img.media-object ng-src=" {{item.imageFiles.length > 0 && item.imageFiles[item.imageFiles.length - 1].file.file.thumb.url || '/assets/minimark.png' }}"
         a.pull-left ng-hide="item.playable()" ng-href="{{item.link()}}"
-          img.media-object ng-src=" {{item.imageFiles.length > 0 && item.imageFiles[0].file.file.thumb.url || '/assets/minimark.png' }}"
+          img.media-object ng-src=" {{item.imageFiles.length > 0 && item.imageFiles[item.imageFiles.length - 1].file.file.thumb.url || '/assets/minimark.png' }}"
 				.media
 					h4.media-heading ng-show="item.getTitle()"
 						a ng-href="{{item.link()}}" {{item.getTitle()}}
           h5 ng-bind-html="item.collectionTitle"
-          p ng-show="item.getDescription()" ng-bind-html="item.getDescription()"
+          p ng-show="item.getShortDescription()" ng-bind-html="item.getShortDescription()"
+          p.item-details
+            | Created: {{item.getCreatedAt()}}  Duration: 
+            span ng-bind-html="item.getDurationString()"
           .transcripts ng-show="item.highlights.audioFiles.length"
             section ng-repeat="audioFile in item.highlights.audioFiles" ng-controller="AudioFileCtrl"
-              .transcript transcript-text="audioFile.transcript.parts" transcript-editable="false" transcript-timestamps="start"
+              .transcript transcript-text="audioFile.transcript" transcript-editable="false" transcript-timestamps="start"
           .entities
             .tag ng-repeat="entity in item.entityShortList() track by $index" {{entity}}
     .result-count-footer        

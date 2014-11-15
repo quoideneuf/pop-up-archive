@@ -8,11 +8,22 @@ class Tasks::TranscodeTask < Task
 
     # optimally the length check should be in an analyze task,
     # but we check here too just in case it missed on that step.
-    if !audio_file.duration
+    if !audio_file.duration or audio_file.duration == 0
       analysis = self.results[:info] || {}
-      if analysis[:length]
+      if analysis[:length] and analysis[:length].to_i > 0
+        Rails.logger.warn "setting audio_file.duration on #{audio_file.id} from transcode task #{self.id}"
         audio_file.update_attribute(:duration, analysis[:length].to_i)
       end
+    end
+  end
+
+  def recover!
+    if !audio_file
+      cancel!
+    else
+      # most often status is working but job has completed,
+      # and there's just a timing issue between the db commit and the worker running.
+      finish!
     end
   end
 

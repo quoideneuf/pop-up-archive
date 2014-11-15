@@ -2,18 +2,24 @@ require "digest/sha1"
 
 class Api::V1::ImageFilesController < Api::V1::BaseController
 
-  expose :item
-  expose :image_files, ancestor: :item
+  expose (:imageable) {
+    if params[:item_id]
+      Item.find(params[:item_id])
+    elsif params[:collection_id]
+      Collection.find(params[:collection_id])
+    end
+  }
+  expose :image_files, ancestor: :imageable
   expose :image_file
   expose :upload_to_storage
 
   def create
     image_file.save
-    respond_with :api, image_file.item, image_file
+    respond_with :api, image_file.imageable, image_file
   end
 
   def show
-    redirect_to item.url
+    redirect_to imageable.url
   end
 
   def destroy
@@ -30,7 +36,7 @@ class Api::V1::ImageFilesController < Api::V1::BaseController
   end
 
   # these are for the request signing
-  # really need to see if this is an AWS or IA item/collection
+  # TODO really need to see if this is an AWS or IA item/collection
   # and depending on that, use a specific bucket/key
   include S3UploadHandler
 

@@ -22,7 +22,7 @@ namespace :transcribers do
         if transcribers.has_key?(task.type)
           # we don't want to update the parent item.updated_at so run raw sql
           t = transcribers[task.type]
-          transcript.connection.execute("update transcripts set transcriber_id=#{t.id},cost_per_min=#{t.cost_per_min} where id=#{transcript.id}")
+          transcript.connection.execute("update transcripts set transcriber_id=#{t.id},cost_per_min=#{t.cost_per_min},retail_cost_per_min=#{t.retail_cost_per_min} where id=#{transcript.id}")
         end
       end
       progress.inc

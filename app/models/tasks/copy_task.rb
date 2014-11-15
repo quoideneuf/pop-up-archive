@@ -16,6 +16,14 @@ class Tasks::CopyTask < Task
     self.should_process = true
   end
 
+  def recover!
+    if !owner
+      cancel!
+    else
+      finish!
+    end
+  end
+
   def create_copy_job
     j = create_job do |job|
       job.job_type    = 'audio'

@@ -1,15 +1,36 @@
+require 'pp'
+
 namespace :fixer do
 
   desc "check fixer status mismatches"
   task check: [:environment] do
 
+    verbose = ENV['VERBOSE']
+    debug   = ENV['DEBUG']
+    limit   = ENV['LIMIT']
+    recover_types = Hash[ ENV['RECOVER'] ? ENV['RECOVER'].split(/\ *,\ */).map{|t| [t, true]} : [] ]
+    debug and pp recover_types.inspect
     puts "Finding all tasks with status mismatch..."
+    puts "Will try to recover these types: #{ recover_types.keys.inspect }"
     mismatched_tasks = Task.get_mismatched_status('working')
+    mismatched_report = Hash.new{ |h,k| h[k] = 1 }
     mismatched_tasks.each do |task|
-      puts "Task #{task.owner_type}:#{task.id} has status '#{task.status}' with results: " + task.results.inspect
-
+      mismatched_report[task.type] += 1
+      if limit and limit.to_i >= mismatched_report[task.type]
+        debug and puts "Limit #{limit} reached. Skipping eval of task #{task.id}"
+        next
+      end
+      debug and puts "Task #{task.type} #{task.id} has status '#{task.status}' with results: " + task.results.inspect
+      if recover_types.has_key?(task.type)
+        verbose and puts "Calling #{task.type}.find(#{task.id}).recover!"
+        task.recover!
+        verbose and puts "#{task.type}.find(#{task.id}) new status == #{task.status}"
+        mismatched_report[task.status] += 1
+      end
     end
 
+    puts "These tasks with mismatched status were found:"
+    pp mismatched_report
   end
 
   desc "set duration from any complete transcoding"
@@ -33,6 +54,50 @@ namespace :fixer do
       end
     end
     puts "Updated #{fixed} audio_files"
+
+  end
+
+  desc "speechmatics sanity check"
+  task speechmatics_poll: [:environment] do
+    # No tasks are recovered by default, since that means notifying the user on success,
+    # which we might not want to do in testing/dev. Set RECOVER env var to trigger task.recover!
+    ok_to_recover = ENV['RECOVER']
+ 
+    # find all status=created older than N hours
+    # and verify they exist at SM. If not, cancel them.
+    sm_tasks = Task.where(type: 'Tasks::SpeechmaticsTranscribeTask')\
+                   .where('status not in (?)', [Task::CANCELLED,Task::COMPLETE])\
+                   .where('created_at < ?', DateTime.now-1)
+    sm_tasks_count = sm_tasks.count
+    puts "Found #{sm_tasks_count} unfinished Speechmatics tasks older than 1 day"
+
+    # fetch all SM jobs at once to save HTTP overhead.
+    # TODO ask them to implement sorting, searching, paging.
+    sm = Speechmatics::Client.new({ :request => { :timeout => 120 } })
+    sm_jobs = sm.user.jobs.list.jobs
+    # create lookup hash by job id
+    sm_jobs_lookup = Hash[ sm_jobs.map{ |smjob| [smjob['id'].to_s, smjob] } ]
+    sm_tasks.find_in_batches do |taskgroup|
+      taskgroup.each do |task|
+        # if we don't have a job_id then it never was created at SM
+        if !task.extras['job_id']
+          puts "Task.find(#{task.id}) has no job_id: #{task.inspect}"
+          task.recover!  # should cancel it with err msg
+          next
+        end
+
+        # lookup SM status
+        sm_job = sm_jobs_lookup[task.extras['job_id']]
+        if !sm_job
+          puts "No SM job found for task: #{task.inspect}"
+          next
+        end
+
+        puts "Task.find(#{task.id}) looks like this at SM: #{sm_job.inspect}"
+        task.recover! if ok_to_recover
+
+      end
+    end
 
   end
 

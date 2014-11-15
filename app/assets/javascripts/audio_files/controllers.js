@@ -25,10 +25,12 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
       }
   ];
   $scope.item.formattedTitle = $scope.item.title.replace("'", "&apos;");
-  $scope.embedCode =
-    { "title": "Copy and Paste the Following Code to Embed This File on Your Site",
-       "content": "<xmp><iframe frameborder='0' width='508' height='95' scrolling='no' seamless='yes' name='"+ $scope.item.formattedTitle + "' src='"+ $scope.my_path + "/embed_player/" + encodeURIComponent($scope.item.formattedTitle.replace(/\./g, '&#46;')) + "/" + $scope.audioFile.id + "/" + $scope.item.id + "/" + $scope.collection.id + "'></iframe></xmp>",
+  $scope.embedCode = function() {
+    return { 
+       "title": "Copy and Paste the Following Code to Embed This File on Your Site",
+       "content": "<xmp><iframe frameborder='0' width='508' height='95' scrolling='no' seamless='yes' name='"+ $scope.item.formattedTitle + "' src='"+ $scope.my_path + "/embed_player/" + encodeURIComponent($scope.item.formattedTitle.replace(/\./g, '&#46;')) + "/" + $scope.audioFile.id + "/" + $scope.item.id + "/" + $scope.collection.id + "'></iframe></xmp>"
     };
+  }
 
   $scope.play = function () {
     $scope.audioFile = new AudioFile($scope.audioFile);
@@ -160,6 +162,35 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
       modalEl.modal('hide');
     });
   } 
+
+}])
+.controller("OrderPremiumTranscriptFormCtrl", ['$scope', '$window', '$q', 'Me', 'AudioFile', function($scope, $window, $q, Me, AudioFile) {
+
+  Me.authenticated(function (me) {
+
+    $scope.submit = function () {
+      $scope.audioFile.orderPremiumTranscript(me).then(function(respTask) {
+        //console.log("then, got respTask: ", respTask); 
+        $scope.$emit('premiumTranscriptOrdered', $scope.audioFile);
+      }).
+      catch(function(data) {
+        console.log("caught error on orderPremiumTranscript", data);
+      });
+      $scope.clear();
+      return;
+    }   
+
+  }); 
+
+  $scope.clear = function () {
+    $scope.hideOrderPremiumTranscriptModal();
+  }
+
+  $scope.hideOrderPremiumTranscriptModal = function () {
+    $q.when($scope.orderPremiumTranscriptModal).then( function (modalEl) {
+      modalEl.modal('hide');
+    }); 
+  }
 
 }])
 .controller("PersistentPlayerCtrl", ["$scope", 'Player', function ($scope, Player) {

@@ -48,6 +48,14 @@ class AudioFile < ActiveRecord::Base
     self.filename
   end
 
+  def get_token
+    item.try(:token)
+  end
+
+  def get_storage
+    item.try(:storage)
+  end
+
   # verify that user_id is set, calling set_user_id if it is not.
   # called via before_save callback
   def check_user_id
@@ -199,16 +207,25 @@ class AudioFile < ActiveRecord::Base
 
   def premium_transcribe_audio(user=self.user)
     # only start this if transcode is complete
-    return unless (transcoded_at && user.plan.has_premium_transcripts?)
-    start_premium_transcribe_job(user, 'ts_paid')
+    return unless transcoded_at
+    return unless (user.plan.has_premium_transcripts? || item.is_premium?)
+    opts = {}
+    # if the user is on a basic plan, but the item is flagged premium,
+    # then the user must have requested a premium treatment at upload time.
+    if !user.plan.has_premium_transcripts? and item.is_premium?
+      opts['ondemand'] = true
+    end
+    start_premium_transcribe_job(user, 'ts_paid', opts)
   end
 
   def transcribe_audio(user=self.user)
-    # always do the first 2 minutes
-    start_transcribe_job(user, 'ts_start', {start_only: true})
-
     # don't bother if this is premium plan
     return if (user && user.plan.has_premium_transcripts?)
+    # or if parent Item was created with premium-on-demand
+    return if item.is_premium?
+ 
+    # always do the first 2 minutes
+    start_transcribe_job(user, 'ts_start', {start_only: true})
 
     if (storage.at_internet_archive? || (user && (user.plan != SubscriptionPlanCached.community)))
       start_transcribe_job(user, 'ts_all')
@@ -218,8 +235,9 @@ class AudioFile < ActiveRecord::Base
   def start_premium_transcribe_job(user, identifier, options={})
     return if (duration.to_i <= 0)
 
-    if task = tasks.select{|task| task.type == 'Tasks::SpeechmaticsTranscribeTask' && task.status != "failed"}.first
+    if task = has_premium_transcribe_task?
       logger.warn "speechmatics transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
+      task
     else
       extras = { 'original' => process_file_url, 'user_id' => user.try(:id) }.merge(options)
       task = Tasks::SpeechmaticsTranscribeTask.new(identifier: identifier, extras: extras)
@@ -260,6 +278,7 @@ class AudioFile < ActiveRecord::Base
         #log and skip if transcode task already exists
         if task = tasks.transcode.without_status(:failed).where(identifier: "#{label}_transcode").last
           logger.debug "transcode task #{identifier} #{task.id} already exists for audio file #{self.id}"
+          task
         else
           self.tasks << Tasks::TranscodeTask.new(
             identifier: "#{label}_transcode",
@@ -339,13 +358,88 @@ class AudioFile < ActiveRecord::Base
     Rails.application.routes.url_helpers.api_item_audio_file_transcript_text_url(item_id, id)
   end
 
+  def transcripts_alone
+    self.transcripts.unscoped.where(:audio_file_id => self.id)
+  end
+
   def is_premium?
     # call unscoped w/explicit 'where' to avoid loading timed texts too.
     self.transcripts.unscoped.where(:audio_file_id => self.id).any?{|t| t.is_premium?}
   end
 
+  def has_premium_transcribe_task?
+    self.tasks.select{|task| task.type == 'Tasks::SpeechmaticsTranscribeTask' && task.status != "failed"}.first
+  end
+
+  def has_premium_transcribe_task_in_progress?
+    self.tasks.where('type in (?)', ['Tasks::SpeechmaticsTranscribeTask']).\
+               where('status not in (?)', ['complete', 'cancelled']).count > 0 \
+               ? true : false
+  end
+
   def transcript_type
-    self.is_premium? ? "Premium" : "Basic"
+    (self.is_premium? or self.item.is_premium?) ? "Premium" : "Basic"
+  end
+
+  def premium_wholesale_cost(transcriber=Transcriber.premium)
+    transcriber.wholesale_cost(self.duration)
+  end
+
+  def premium_retail_cost(transcriber=Transcriber.premium)
+    transcriber.retail_cost(self.duration)
+  end
+
+  def order_premium_transcript(cur_user)
+    # TODO create named exception classes for these errors
+    if !transcoded_at and format != "audio/mpeg"
+      raise "Cannot order premium transcript for audio that has not been transcoded"
+    end
+    if !cur_user.active_credit_card
+      raise "Cannot order premium transcript without an active credit card"
+    end
+    start_premium_transcribe_job(cur_user, 'ts_paid', { ondemand: true })
+  end
+
+  def self.all_public_duration
+    self.connection.execute("select sum(af.duration) as dursum from items as i, audio_files as af where i.is_public=true and af.item_id=i.id").first.first[1]
+  end
+
+  def self.all_private_duration
+    self.connection.execute("select sum(af.duration) as dursum from items as i, audio_files as af where i.is_public=false and af.item_id=i.id").first.first[1]
+  end
+
+  def current_status
+    status, upload, basic, premium = ""
+    self.tasks.each do |task|
+      if task.type == "upload"
+        upload = task.status
+      elsif task.identifier == "ts_all"
+        basic = task.status
+      elsif task.identifier == "ts_paid"
+        premium = task.status
+      end
+    end
+
+    if upload == "failed"
+      status = "Upload Failed"
+    elsif upload == "working"
+      status = "Uploading"
+    elsif premium == "failed"
+      status = "Premium Transcript Failed"
+    elsif premium == "working"
+      status = "Premium Transcript Processing"
+    elsif basic == "failed"
+      status = "Basic Transcript Failed"
+    elsif basic == "working"
+      status = "Basic Transcript Processing"
+    elsif premium == "complete"
+      status = "Premium Transcript Complete"
+    elsif basic == "complete"
+      status = "Basic Transcript Complete"
+    else
+      status = "Transcript Preview Processing"
+    end
+    status
   end
 
   private

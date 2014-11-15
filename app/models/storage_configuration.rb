@@ -34,6 +34,10 @@ class StorageConfiguration < ActiveRecord::Base
     end
   end
 
+  def to_s
+    self.provider
+  end
+
   def direct_upload?
     at_amazon?
   end

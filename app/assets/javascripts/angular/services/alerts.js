@@ -102,7 +102,7 @@ angular.module('Directory.alerts', ['ngLoadingIndicators'])
 }]).directive('popUpAlertsDropdown', ['$parse', '$compile', function($parse, $compile) {
 
   var template = '' +
-  '<ul class="dropdown-menu alert-showers pull-right" role="menu" aria-labelledby="alerts-dropdown" ng-hide="alerts.length == 0">' +
+  '<ul class="dropdown-menu alert-showers" role="menu" aria-labelledby="alerts-dropdown" ng-hide="alerts.length == 0">' +
     '<li class="alert-shower" ng-repeat="alert in alerts" ng-class="{pending:!(alert.done)}">' +
       '<a class="pull-right dismiss" ng-click="alert.dismiss(); $event.stopPropagation()" ><i class="icon-remove-circle"></i></a></br>' +
       '<a ng-href="{{alert.path}}">' +
@@ -113,6 +113,7 @@ angular.module('Directory.alerts', ['ngLoadingIndicators'])
             '<div class="bar" ng-style="{width:alert.progress+\'%\'}"></div>' +
           '</div>' +
       '</a>' +
+      '<hr/>' +
     '</li>' +
   '<ul>';
 

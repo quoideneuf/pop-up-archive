@@ -14,7 +14,7 @@ class ItemResultsPresenter < BasicObject
   def results
     @_results ||= @results.hits.map {|result|
       ItemResultPresenter.new(result)
-    }.select {|r| r.database_object.present? }
+    }
   end
 
   def facets
@@ -25,13 +25,16 @@ class ItemResultsPresenter < BasicObject
   # and (b) easier to test
   def format_results
     formatted = []
-    attrs = [:title, :description, :date_created, :identifier, :collection_id,
-      :collection_title, :episode_title, :series_title, :date_broadcast, :tags, :notes]
+    attrs = [:title, :description, :date_created, :date_added, :identifier, :collection_id,
+      :collection_title, :episode_title, :series_title, :date_broadcast, :tags, :notes, :digital_format,
+      :physical_format, :digital_location, :physical_location, :music_sound_used, :date_peg, :rights, :duration, 
+      :tags, :transcript_type, :notes, :token, :language, :updated_at, :date_added ]
 
     if results and results.size
       results.each do |result|
         fres = { :id => result.id }
         attrs.each do |attr|
+          #::STDERR.puts "check search_attrs for '#{attr}'"
           if result.search_attrs[attr].present?
             fres[attr] = result.search_attrs[attr]
           end
@@ -104,7 +107,13 @@ class ItemResultsPresenter < BasicObject
     end
 
     def image_files
-      @_image_files ||= ::ImageFile.where(item_id: @result.id)
+      if @_image_files
+        @_image_files
+      elsif ::ImageFile.where(imageable_id: @result.id, imageable_type: "Item").exists?
+        @_image_files = ::ImageFile.where(imageable_id: @result.id, imageable_type: "Item")
+      else
+        @_image_files = ::ImageFile.where(imageable_id: @result.collection_id, imageable_type: "Collection")
+      end
     end
 
     def highlighted_audio_files
@@ -116,10 +125,12 @@ class ItemResultsPresenter < BasicObject
     end
 
     def respond_to?(method)
-      [:audio_files, :highlighted_audio_files, :entities].include?(method) || @result.respond_to?(method) || database_object.respond_to?(method)
+      #::STDERR.puts "respond_to?(#{method})"
+      [:audio_files, :highlighted_audio_files, :entities].include?(method) || @result.respond_to?(method) || search_attrs[method].present? || database_object.respond_to?(method)
     end
 
     def method_missing(method, *args)
+      #::STDERR.puts "method_missing(#{method})"
       if @_result && @result != @_result && search_attrs[method].present?
         return search_attrs[method]
       end

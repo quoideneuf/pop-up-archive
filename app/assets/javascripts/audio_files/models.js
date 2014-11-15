@@ -108,6 +108,21 @@ angular.module('Directory.audioFiles.models', ['RailsModel', 'S3Upload'])
     });
   };
 
+  AudioFile.prototype.getPremiumCostUrl = function() {
+    var self = this;
+    return self.$url() + '/transcript/premium/cost';
+  };
+
+  AudioFile.prototype.orderPremiumTranscript = function(user) {
+    var self = this;
+    var url = self.$url() + '/transcript/premium/order';
+    //console.log('order url:', url);
+    return AudioFile.processResponse($http.post(url)).then(function (respTask) {
+      //console.log("got response: ", respTask);
+      return respTask;
+    });
+  };
+
   AudioFile.prototype.addToAmara = function (user) {
     var self = this;
     // console.log('addToAmara', this);
@@ -133,6 +148,10 @@ angular.module('Directory.audioFiles.models', ['RailsModel', 'S3Upload'])
   return AudioFile;
 }])
 .factory('TimedText', ['Model', '$http', function (Model, $http) {
-  var TimedText = Model({url:'/api/timed_texts/{{id}}', name: 'timed_text', only: ['text']});
+  var TimedText = Model({url:'/api/timed_texts/{{id}}', name: 'timed_text', only: ['text', 'speakerId']});
   return TimedText;
+}])
+.factory('Speaker', ['Model', function (Model) {
+  var Speaker = Model({url:'/api/speakers/{{id}}', name: 'speaker', only: ['name']});
+  return Speaker;
 }]);

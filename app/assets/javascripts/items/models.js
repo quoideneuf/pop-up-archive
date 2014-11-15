@@ -1,7 +1,7 @@
 angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.models', 'Directory.imageFiles.models'])
 .factory('Item', ['Model', '$http', '$q', 'Contribution', 'Person', 'AudioFile', 'Player', 'ImageFile', function (Model, $http, $q, Contribution, Person, AudioFile, Player, ImageFile) {
 
-  var attrAccessible = "dateBroadcast dateCreated datePeg description digitalFormat digitalLocation episodeTitle identifier language musicSoundUsed notes physicalFormat physicalLocation rights seriesTitle tags title transcription adoptToCollection tagList text id originalFileUrl".split(' ');
+  var attrAccessible = "dateBroadcast dateCreated datePeg description digitalFormat digitalLocation episodeTitle identifier language musicSoundUsed notes physicalFormat physicalLocation rights seriesTitle tags title transcription adoptToCollection tagList text id originalFileUrl transcriptType".split(' ');
 
   var Item = Model({url:'/api/collections/{{collectionId}}/items/{{id}}', name: 'item', only: attrAccessible});
 
@@ -44,7 +44,6 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
   });
 
   Item.beforeResponse(function(data, resource) {
-    // console.log("beforeResponse");
     data.tagList = [];
     data.images = [];    
     angular.forEach((data.tags || []), function (v,k) {
@@ -103,6 +102,21 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     if (this.notes) { return this.notes; }
   }
 
+  Item.prototype.getShortDescription = function() {
+    var desc = this.getDescription();
+    if (!desc) return desc;
+    var maxlen = 255;
+    // strip any markup so our count is accurate and we do not split 
+    // in the middle of a tag
+    var cleaned = desc.replace(/<[^>]+>/g, '');
+    if (cleaned.length > maxlen) {
+      return cleaned.substr(0, maxlen).replace(/\S+$/g,'') + '...';
+    }
+    else {
+      return cleaned;
+    }
+  }
+
   Item.prototype.getImages = function () {
     if (this.imageFiles) {return this.imageFiles}
   }
@@ -115,13 +129,27 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     }
   }
 
+  Item.prototype.getCreatedAt = function() {
+    return new Date(Date.parse(this.dateCreated || this.dateAdded)).toString();
+  }
+
   Item.prototype.link = function () {
     return "/collections/" + this.collectionId + "/items/" + this.id; 
   }
 
+  Item.prototype.prependZero = function(i) {
+    if (i < 10) {
+      return "0" + i;
+    }
+    return i;
+  }
+
   Item.prototype.getDurationString = function () {
+    var self = this;
     var d = new Date(this.duration * 1000);
-    return d.getUTCHours() + ":" + d.getUTCMinutes() + ":" + d.getUTCSeconds();
+    return self.prependZero(d.getUTCHours()) + ":" 
+         + self.prependZero(d.getUTCMinutes()) + ":" 
+         + self.prependZero(d.getUTCSeconds());
   }
 
   Item.prototype.adopt = function (collectionId) {
@@ -157,7 +185,7 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     if (angular.isDefined(file.url)) {
       originalFileUrl = file.url;
     }
-    var imageFile = new ImageFile({itemId: item.id, originalFileUrl: originalFileUrl});
+    var imageFile = new ImageFile({container: "items", containerId: item.id, originalFileUrl: originalFileUrl});
 
     imageFile.create().then( function() {
       imageFile.filename = imageFile.cleanFileName(file.name);      
@@ -181,6 +209,11 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
       audioFile.upload(file, options);
     });
     return audioFile;
+  }
+
+  Item.prototype.newAudioFile = function(af) {
+    af.itemId = this.id;
+    return new AudioFile(af);
   }
 
   // update existing audioFiles

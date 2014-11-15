@@ -13,14 +13,19 @@
 	overflow: hidden;
 
 	.file-transcript-text {
-		height: 16px;
-		-webkit-marquee: auto medium infinite scroll normal;
-		text-overflow: ellipsis;
+      height: 16px;
+      -webkit-marquee: auto medium infinite scroll normal;
+      text-overflow: ellipsis;
 	}
 
 	.current {
-		background-color: transparent;
+      background-color: transparent;
 	}
+
+    em {
+      background-color: yellow;
+      font-weight: bold;
+    }
 }
 
 .file-transcript {
@@ -88,7 +93,7 @@
 
 		input {
 			border: none;
-			font-family: "soleil", sans-serif;
+			font-family: 'soleil', helvetica, sans-serif;
 			color: #444;
 			height: 22px;
 			margin-left: 5px;
@@ -131,15 +136,6 @@
   margin-right: 20px;
   right: 0;
   text-align: right;
-
-  .btn {
-    font-size: 12px;
-    background: #ddd !important;
-    color: #333 !important;
-    padding: 3px 5px;
-    font-weight: 900;
-    display: inline-block;
-  }
 
   .search-group {
     display: inline-block;

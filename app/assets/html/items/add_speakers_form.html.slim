@@ -1,0 +1,28 @@
+.speakers-form ng-controller="ItemFormCtrl" 
+	.modal-header
+		button type="button" class="close" data-dismiss="modal" aria-hidden="true" x
+		h3 ng-show="collection.id" Add Speakers for {{item.title}}
+
+	.modal-body
+		form.form-horizontal 
+		    .control-group
+	          .controls ng-hide="item.contributions.length > 0"
+	            label.pull-left style='padding-top: 5px;'
+	              i No contributors.
+	          .control-row.full-row ng-repeat="contribution in item.contributions" ng-hide="contribution._delete"
+	            span.field
+	              select ui-select2="roleSelect" ng-model="contribution.role"
+	                option
+	                option ng-repeat="role in item.standardRoles" value="{{role}}" {{role}}
+
+	            span.field
+	              input ui-select2="peopleSelect" type="hidden" ng-model="contribution.person"
+
+	            button.btn type="button" ng-click="deleteContribution(contribution)" Delete
+
+	          .clearfix.controls
+	          	button.btn.btn-danger.pull-right type="button" ng-click="submit()" Save Contriubtors
+	            button.btn.pull-right type="button" ng-click="addContribution()" Add Contributor
+
+	.modal-footer
+	  button.btn type="button" ng-click="dismiss()" Close 

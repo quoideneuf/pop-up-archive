@@ -8,7 +8,8 @@ ActiveAdmin.register Transcript do
     column :created_at 
     column :billable_to, :sortable => false
     column :transcriber
-    column('Cost') do |t| number_to_currency(t.cost_dollars) end
+    column('Wholesale Cost') do |t| number_to_currency(t.cost_dollars) end
+    column('Retail Cost') do |t| number_to_currency(t.retail_cost_dollars) end
   end
 
   filter :transcriber
@@ -27,7 +28,9 @@ ActiveAdmin.register Transcript do
         row("User") { user = transcript.audio_file.user; user ? link_to(user.name, superadmin_user_path(user)) : '(nil)' }
         row :billable_to
         row :billable_seconds
-        row("Cost") { number_to_currency(transcript.cost_dollars) }
+        row :is_billable
+        row("Wholesale Cost") { number_to_currency(transcript.cost_dollars) }
+        row("Retail Cost") { number_to_currency(transcript.retail_cost_dollars) }
       end     
     end
  

@@ -1,5 +1,5 @@
 class Transcript < ActiveRecord::Base
-  attr_accessible :language, :audio_file_id, :identifier, :start_time, :end_time, :confidence, :transcriber_id, :cost_per_min
+  attr_accessible :language, :audio_file_id, :identifier, :start_time, :end_time, :confidence, :transcriber_id, :cost_per_min, :cost_type, :retail_cost_per_min, :is_billable
 
   belongs_to :audio_file
   belongs_to :transcriber
@@ -10,6 +10,9 @@ class Transcript < ActiveRecord::Base
   default_scope includes(:timed_texts)
 
   after_save :update_item
+
+  RETAIL    = 2 
+  WHOLESALE = 1 
 
   def update_item
     IndexerWorker.perform_async(:update, item.class.to_s, item.id) if item
@@ -72,19 +75,31 @@ class Transcript < ActiveRecord::Base
     srt
   end
 
+  # since billing ignores whether an audio_file was deleted, provide a getter
+  # that ignores the paranoia deleted_at value.
+  # NOTE that Rails 4.x w/ ActiveRecord 5.x may have the option of a :with_deleted
+  # association definition, making this hand-constructed query unneccessary.
+  def audio_file_lazarus
+    AudioFile.with_deleted.find self.audio_file_id
+  end
+
   def is_premium?
     self.transcriber_id == Transcriber.premium.id
-  end 
+  end
+
+  def billable?
+    self.is_billable
+  end
 
   # returns a User or Organization
   def billable_to
-    audio_file.billable_to
+    audio_file_lazarus.billable_to
   end
 
   # returns the billable seconds
   # optional single arg is the audio_file this transcript references,
   # to avoid the sql load overhead when calculating (see User.transcripts_billable_for_month_of)
-  def billable_seconds(af=audio_file)
+  def billable_seconds(af=audio_file_lazarus)
     if end_time == 120 and start_time == 0 and cost_per_min == 0
 
       # 2min preview is free 
@@ -107,15 +122,29 @@ class Transcript < ActiveRecord::Base
   end 
 
   # returns a float representing 1000ths of a dollar
-  def cost(af=audio_file)
+  # if billable? is false, always returns 0.0
+  def cost(af=audio_file_lazarus)
+    return 0.0 if !billable?
     secs = billable_seconds(af)
     mins = secs.fdiv(60)
     return cost_per_min.to_f * mins.to_f
   end
 
+  def retail_cost(af=audio_file_lazarus)
+    return 0.0 if !billable?
+    return 0.0 if cost_type == WHOLESALE
+    secs = billable_seconds(af)
+    mins = secs.fdiv(60)
+    return retail_cost_per_min.to_f * mins.to_f
+  end
+
   # returns a float in dollars
-  def cost_dollars(af=audio_file)
+  def cost_dollars(af=audio_file_lazarus)
     return cost(af) / 1000
+  end
+
+  def retail_cost_dollars(af=audio_file_lazarus)
+    return retail_cost(af) / 1000
   end
     
   private

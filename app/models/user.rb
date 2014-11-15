@@ -3,6 +3,7 @@ require 'customer'
 class User < ActiveRecord::Base
 
   include Billable
+  include ActionView::Helpers::NumberHelper
 
   rolify
   # Include default devise modules. Others available are:
@@ -94,6 +95,14 @@ class User < ActiveRecord::Base
     organization ? organization.collection_ids : super
   end
 
+  def collections_title_id
+    colls = {}
+    collections.each do |c|
+      colls[c.id.to_s] = c.title
+    end
+    colls
+  end
+
   def uploads_collection
     organization.try(:uploads_collection) || uploads_collection_grant.collection || add_uploads_collection
   end
@@ -170,7 +179,8 @@ class User < ActiveRecord::Base
       amount: plan.amount,
       pop_up_hours: plan.hours,
       trial: customer.trial,  # TODO cache this better to avoid needing to call customer() at all.
-      interval: plan.interval
+      interval: plan.interval,
+      is_premium: plan.has_premium_transcripts? ? true : false,
     }
   end
 
@@ -203,7 +213,7 @@ class User < ActiveRecord::Base
           raise "Caught Stripe error #{err}"
         end
         @_customer = cus
-        return cus
+        cus
       end
     else
       Customer.new(Stripe::Customer.create(email: email, description: name)).tap do |cus|
@@ -270,6 +280,11 @@ class User < ActiveRecord::Base
     return user_ids
   end
 
+  def invalidate_cache
+    Rails.cache.delete(customer_cache_id)
+    @_customer = nil
+  end 
+
   private
 
   def delete_customer
@@ -296,10 +311,6 @@ class User < ActiveRecord::Base
 
   def customer_cache_id
     [:customer, :individual, customer_id]
-  end
-
-  def invalidate_cache
-    Rails.cache.delete(customer_cache_id)
   end
 
   def add_default_collection

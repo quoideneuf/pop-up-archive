@@ -102,6 +102,9 @@ angular.module('Directory.account.controllers', ['stripe', 'Directory.account.mo
       $scope.saving = true;
       currentUser.updateCreditCard(response.id).then(function (data) {
         $scope.$emit('creditCardSubmit', data);
+        if ($scope.onDemandRequiresCC) {
+          $scope.$emit('userHasValidCreditCard', data);
+        }
         $scope.hide();
       });
     }
