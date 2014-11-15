@@ -19,6 +19,11 @@ body.authn {
   padding-top: 90px;
 }
 
+body.authn.over-monthly-limit {
+  padding-top: 120px;
+  background: rgb(242, 239, 239);
+}
+
 ::selection {
   background: #85D0F1;
   color: rgb(242, 239, 239);
