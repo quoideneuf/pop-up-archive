@@ -29,6 +29,7 @@ ActiveAdmin.register Transcript do
         row :billable_to
         row :billable_seconds
         row :is_billable
+        row("Premium") { transcript.is_premium? }
         row("Wholesale Cost") { number_to_currency(transcript.cost_dollars) }
         row("Retail Cost") { number_to_currency(transcript.retail_cost_dollars) }
       end     
