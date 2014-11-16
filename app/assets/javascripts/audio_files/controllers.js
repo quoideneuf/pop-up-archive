@@ -164,20 +164,42 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
   } 
 
 }])
-.controller("OrderPremiumTranscriptFormCtrl", ['$scope', '$window', '$q', 'Me', 'AudioFile', function($scope, $window, $q, Me, AudioFile) {
+.controller("OrderPremiumTranscriptFormCtrl", ['$scope', '$window', '$q', '$modal', 'Me', 'AudioFile', function($scope, $window, $q, $modal, Me, AudioFile) {
 
   Me.authenticated(function (me) {
 
-    $scope.submit = function () {
+    // this event fired by account controller on CC form submit
+    // if the onDemandRequiresCC var is true (set below)
+    $scope.$on('userHasValidCC', function(event, audioFile) {
       $scope.audioFile.orderPremiumTranscript(me).then(function(respTask) {
-        //console.log("then, got respTask: ", respTask); 
         $scope.$emit('premiumTranscriptOrdered', $scope.audioFile);
       }).
       catch(function(data) {
         console.log("caught error on orderPremiumTranscript", data);
-      });
+      }); 
+    });
+
+    // handle 'submit' button click on Order Premium Transcript form.
+    $scope.submit = function () {
+
+      // check if user has CC on file. If not, prompt for one before ordering.
+      if (!me.hasCard) {
+        $scope.clear();  // close window immediately.
+        $scope.onDemandRequiresCC = true;
+        $scope.orderPremiumCCModal = $modal({template: '/assets/account/credit_card_ondemand.html', persist: true, show: true, backdrop: 'static', scope: $scope});
+      }
+      else {
+        $scope.audioFile.orderPremiumTranscript(me).then(function(respTask) {
+          //console.log("then, got respTask: ", respTask); 
+          $scope.$emit('premiumTranscriptOrdered', $scope.audioFile);
+        }).
+        catch(function(data) {
+          console.log("caught error on orderPremiumTranscript", data);
+        });
+      }
+
+      // close window no matter what.
       $scope.clear();
-      return;
     }   
 
   }); 

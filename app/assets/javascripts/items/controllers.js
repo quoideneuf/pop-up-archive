@@ -149,25 +149,16 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.getPremiumCostAndPromptOrder = function() {
     var audioFile = $scope.item.newAudioFile($scope.selectedAudioFile);
-    var costUrl = audioFile.getPremiumCostUrl();
-    $http.get(costUrl).success(function(data, headers, config) {
-      //console.log('got cost: ', data);
-      $scope.audioCost = data;
-      $scope.audioFile = audioFile;
-      $scope.orderPremiumTranscriptModal = $modal({template: '/assets/audio_files/order_premium_transcript.html', persist: true, show: true, backdrop: 'static', scope: $scope, prefixEvent: 'orderPremiumTranscriptModal'});
-    }).
-    error(function(data, status, headers, config) {
-      console.log("ERROR!: ", data, status, headers);
+    $scope.audioFile = audioFile;
+    $scope.orderPremiumTranscriptModal = $modal({
+      template: '/assets/audio_files/order_premium_transcript.html', 
+      persist: true, 
+      show: true, 
+      backdrop: 'static', 
+      scope: $scope, 
+      prefixEvent: 'orderPremiumTranscriptModal'
     });
   };
-
-  // register listener once. This event fired by credit card form.
-  // if the user wants to order a premium transcript and they do not yet have
-  // an active credit card, we intervene and ask for one.
-  $scope.$on('userHasValidCreditCard', function(event, data) {
-    //console.log('userHasValidCreditCard event fired', data);
-    $scope.getPremiumCostAndPromptOrder();
-  });
 
   // when premium transcript successfully ordered, disable its associated button.
   $scope.$on('premiumTranscriptOrdered', function(event, audioFile) {
@@ -185,17 +176,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     // modal listener (above) will re-enable
     jQuery('button.ts-upgrade').not('.disabled').prop('disabled', true);
 
-    // if the user does not have an active credit card, ask for one.
-    if (!$scope.currentUser.hasCreditCard()) {
-      $scope.onDemandRequiresCC = true;
-      $scope.orderPremiumCCModal = $modal({template: '/assets/account/credit_card.html', persist: true, show: true, backdrop: 'static', scope: $scope});
-    }
-    else {
-      // credit card already on file, so
-      // fire event that triggers the getPremiumCostAndPromptOrder immediately.
-      $scope.$emit('userHasValidCreditCard');
-    }
-
+    $scope.getPremiumCostAndPromptOrder();
   };
 
   $scope.itemStorage = function() {
