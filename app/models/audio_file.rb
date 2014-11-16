@@ -420,24 +420,27 @@ class AudioFile < ActiveRecord::Base
       end
     end
 
-    if upload == "failed"
-      status = "Upload Failed"
-    elsif upload == "working"
+    # 'failed' status means that fixer will retry.
+    # 'cancelled' means we ran out of re-tries or otherwise gave up.
+    # since 'failed' is not final, communicate it the same as 'working'
+    if upload == "failed" or upload == "working"
       status = "Uploading"
-    elsif premium == "failed"
-      status = "Premium Transcript Failed"
-    elsif premium == "working"
-      status = "Premium Transcript Processing"
-    elsif basic == "failed"
-      status = "Basic Transcript Failed"
-    elsif basic == "working"
-      status = "Basic Transcript Processing"
+    elsif upload == "cancelled"
+      status = "Upload cancelled"
+    elsif premium == "failed" or premium == "working"
+      status = "Premium Transcript processing"
+    elsif premium == "cancelled"
+      status = "Premium Transcript cancelled"
+    elsif basic == "failed" or basic == "working"
+      status = "Basic Transcript processing"
+    elsif basic == "cancelled"
+      status = "Basic Transcript cancelled"
     elsif premium == "complete"
-      status = "Premium Transcript Complete"
+      status = "Premium Transcript complete"
     elsif basic == "complete"
-      status = "Basic Transcript Complete"
+      status = "Basic Transcript complete"
     else
-      status = "Transcript Preview Processing"
+      status = "Transcript Preview processing"
     end
     status
   end
