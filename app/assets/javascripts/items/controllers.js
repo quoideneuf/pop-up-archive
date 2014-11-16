@@ -16,7 +16,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   }
 
 }])
-.controller('ItemCtrl', ['$scope', '$timeout', '$q', '$modal', '$http', 'Item', 'Loader', 'Me', '$routeParams', 'Collection', 'Entity', '$location', 'SearchResults', 'Storage', '$window', function ItemCtrl($scope, $timeout, $q, $modal, $http, Item, Loader, Me, $routeParams, Collection, Entity, $location, SearchResults, Storage, $window) {
+.controller('ItemCtrl', ['$scope', '$timeout', '$q', '$modal', '$http', 'Item', 'Loader', 'Me', '$routeParams', 'Collection', 'Entity', '$location', 'SearchResults', 'Storage', '$window', 'Speaker', function ItemCtrl($scope, $timeout, $q, $modal, $http, Item, Loader, Me, $routeParams, Collection, Entity, $location, SearchResults, Storage, $window, Speaker) {
 
   $scope.Storage = Storage;
 
