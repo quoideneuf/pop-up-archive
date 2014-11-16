@@ -1277,7 +1277,8 @@ form.with-tags {
   display: inline-block;
   border-radius: 1em;
   border: none;
-  padding: 20px;
+  padding: 1em;
+  margin-bottom: 1em;
 }
 
 .featurebtn2 {
@@ -1631,9 +1632,6 @@ ul.great-list {
   }
   .nav-collapse .pull-right li a .nav-label {
     display:none;
-  }
-  #home #feature-image {
-    margin: 0;
   }
 }
 @media screen and (max-width: 600px) {
