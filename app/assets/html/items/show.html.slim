@@ -41,10 +41,6 @@
             button.btn ng-show="collection.itemsVisibleByDefault" type="button" bs-popover="embedCode()"  data-placement="bottom" 
               i.icon-link
               |  Embed Code
-            button.btn.dropdown-toggle.download-btn type="button" bs-dropdown="downloadLinks" data-toggle="dropdown"  
-              i.icon-download-alt 
-              |  Download  
-              span.icon-caret-down
           h4 ng-show="item.audioFiles.length > 1" {{audioFile.filename || 'no audio file'}}
           .player
             button.player-button ng-disabled="player.time == 0" ng-click="player.rewind()"
@@ -64,9 +60,10 @@
             .span6
               .transcript-label ng-hide="editTable"
                 span.ts-type {{audioFile.transcriptType}} Transcript
+                i.icon-question-sign style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['transcriptInfo']" data-placement="bottom"                
               button.btn.ts-upgrade id="premium-ondemand-{{audioFile.id}}" ng-show="currentUser.canEdit(item) && audioFile.transcriptType == 'Basic' && !audioFile.premiumInProgress" ng-click="orderPremiumTranscript(audioFile, $event)" title="Your cost: {{audioFile.premiumRetailCost}}"
                 i.icon-star-empty
-                |  Upgrade to Premium
+                |  Reprocess as Premium
               button.btn.ts-upgrade id="premium-ondemand-{{audioFile.id}}" ng-show="audioFile.transcriptType == 'Basic' && audioFile.premiumInProgress" ng-disabled="true"
                 i.icon-time
                 |  Premium in progress
@@ -95,23 +92,30 @@
               .search-group
                 input.search-query ng-class="{extended:!!transcriptFilter}" ng-model="transcriptFilter" placeholder="Search"
                 a.clear-filter.icon-remove-sign ng-show="transcriptFilter.length > 0" ng-click="transcriptFilter=''"
+                
+                 
 
               .btn-group ng-show="item.audioFiles[0].transcript"
+                .btn-group ng-show="item.audioFiles[0].transcript"
+                  button.btn.dropdown-toggle.download-btn type="button" bs-dropdown="downloadLinks" data-toggle="dropdown"  
+                    i.icon-download-alt 
+                    |  Download  
+                    span.icon-caret-down 
                 button.btn ng-disabled="allowEditButton(audioFile)" ng-show="currentUser.canEdit(item) && !editTable" ng-click="callEditor()"
                   i.icon-edit
-                  |  Edit Transcript
+                  |  Edit
                 button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave()"
                   i.icon-save
-                  |  Save Transcript
+                  |  Save
                 button.btn ng-show="currentUser.canEdit(item) && audioFile.transcriptType != 'Basic'" bs-modal="'#{asset_path 'items/assign_speakers_form.html'}'"
                   i.icon-user
                   |  Assign Speakers
                 button.btn.expand-transcript ng-click="toggleTranscript()" ng-show="transcriptExpanded"
                   i.icon-double-angle-up
-                  |  Collapse Transcript
+                  |  Collapse
                 button.btn.expand-transcript ng-click="toggleTranscript()" ng-show="!transcriptExpanded"
                   i.icon-double-angle-down
-                  |  Expand Transcript
+                  |  Expand
 
           div ng-class="transcriptClass()"
             ul.arrow-buttons
@@ -135,11 +139,11 @@
                 a href="#" &nbsp;
                 
             .transcript speakers="audioFile.transcript.speakers" transcript-text="audioFile.transcript.parts | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
-            .alert.alert-info ng-show="upgradeMessage && status=='full'" 
+            .alert.alert-info ng-show="audioFile.currentStatus == 'Transcript Preview complete'" 
               |  Here is the transcription of the first two minutes of your audio.&nbsp;
               strong
                 a href="/pricing" Upgrade your plan for full transcripts.
-            div ng-show="!upgradeMessage && status == 'full'"
+            div ng-show="audioFile.currentStatus == 'Basic Transcript processing'"
               |  Here is the transcription of the first two minutes of your audio. The rest will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.
 
           div ng-show="isFileProcessing(audioFile)" 

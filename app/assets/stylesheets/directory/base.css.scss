@@ -1558,6 +1558,8 @@ ul.great-list {
 .download-btn {
   padding-left: 12px;
   padding-right: 12px;
+  margin-left: 4px;
+  type: button; 
 }
 
 .ts-info-row {
@@ -1581,6 +1583,9 @@ ul.great-list {
   font-weight: bold;
 }
 
+.alert-info p {
+  margin-bottom: 0;
+}
 .speakers-form {
   .select2-container{
     padding: 5px;

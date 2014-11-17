@@ -9,7 +9,7 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
         href: "/api/items/" + $scope.item.id + "/audio_files/" + $scope.audioFile.id + "/transcript.txt"
       },
       {
-        text: 'SRT Format',
+        text: 'SRT Format (Captions)',
         target: '_self',
         href: "/api/items/" + $scope.item.id + "/audio_files/" + $scope.audioFile.id + "/transcript.srt"
       },
