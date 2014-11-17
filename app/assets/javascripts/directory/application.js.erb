@@ -251,7 +251,7 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
   }]);
 
   window.directory.config(applicationConfig);
-  window.directory.controller("DirectoryCtrl", ['$scope', '$route', '$interpolate', 'Me', '$timeout', '$location', function($scope, $route, $interpolate, Me, $timeout, $location) {
+  window.directory.controller("DirectoryCtrl", ['$scope', '$route', '$interpolate', 'Me', 'Alert', '$timeout', '$location', function($scope, $route, $interpolate, Me, Alert, $timeout, $location) {
 
     $scope.$on( '$routeChangeSuccess', function ( event, current, previous ) {
       if ( $location.path() == '/collections/edit' ) {
@@ -262,6 +262,7 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
     });
 
     $timeout(function() { angular.element('.logo.up').addClass('raised-logo'); }, 1000);
+    $timeout(function() { angular.element('.logo-square .up').addClass('raised-logo-square'); }, 1000);
 
     $scope.modalOpts = {
       backdropFade: true,
@@ -287,16 +288,20 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
       }
     });
 
-    $scope.userMenu = [];
+    $scope.testAlert = function() {
+      var alert = new Alert();
+      alert.category = 'test';
+      alert.message = 'this is a test';
+      alert.add();
+    }
 
-    $scope.setUserMenu = function() {
+    $scope.userMenu = [];
+    $scope.myCollectionsMenu = [];
+
+    $scope.setUserMenus = function() {
       Me.authenticated(function (user) {
 
         var menu = [
-          {
-            text: 'my collections',
-            href: '/collections'
-          },
           {
             text: 'my account',
             href: '/account'
@@ -314,14 +319,27 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
         ];
 
         if (user && user.organization) {
-          menu.push({text: user.organization.name, href: '/organization'});
+          menu.unshift({text: user.organization.name, href: '/organization'});
         }
 
         $scope.userMenu = menu;
+
+        var collMenu = [];
+        angular.forEach(user.collections, function(coll_title, coll_id) {
+          if (coll_id == user.uploadsCollectionId) {
+            return; // skip My Uploads
+          }
+          collMenu.push({
+            text: coll_title, // TODO html escape
+            href: '/collections/'+coll_id,
+          });
+        });
+        $scope.myCollectionsMenu = collMenu;
+
       });
     };
 
-    $scope.setUserMenu();
+    $scope.setUserMenus();
 
     $scope.itemHelp = {
       'collection'      : { 'title': 'Collection',
@@ -331,7 +349,7 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
                             'content': '<p>The name that will appear when you search for the item. Not all audio will have a predefined title, e.g., interviews or segments of a longer work. In these situations, make up a title that you think will help you or others easily identify the audio\’s content.</p><p>Examples</p><ul><li>Willie Nelson Interview</li><li>War of the Worlds</li><li>NASA Apollo 11 Onboard Recordings</li></ul>'
                           },
       'image'           : { 'image': 'Image',
-                            'content': '<p>Image Placeholder text</p><ul><li>Thumbnail</li><li>Bigger Picture</li></ul>'
+                            'content': '<p>Select an image to display on this item page. All images resized to 75px by 75px. Accepted image formats include:</p><ul><li>Jpg</li><li>Png</li></ul>'
                           },
       'episodeTitle'    : { 'title': 'Episode Title',
                             'content': '<p>A finished episode or piece to which the audio contributed. Not all of your audio contributes to a larger piece. In these cases, leave this field blank.</p><p>Examples</p><ul><li>Hidden Kitchens Texas</li><li>Notes on Camp</li><li>Parasites</li></ul>'
@@ -410,6 +428,9 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
                           },
       'contributors'    : { 'title': 'Contributors',
                             'content': '<p>The person(s) with various roles related to the item, such as producers, interviewees, etc.'
+                          },
+      'transcriptType'  : { 'title': 'Transcript Type',
+                            'content': '<p>Machine transcripts come in two quality levels: Basic and Premium. Both Basic and Premium transcripts use automatic speech recognition software to create time-stamped transcripts with keyword tags from your audio. Premium transcripts feature higher word accuracy, with punctuation and speaker differentiation.</p><p><a href="https://www.popuparchive.com/pricing">See a side-by-side quality comparison.</a></p>'
                           }
     };
 

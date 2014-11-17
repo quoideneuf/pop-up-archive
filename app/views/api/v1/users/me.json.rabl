@@ -12,6 +12,7 @@ if current_user
   node(:uri) { "#{cur_url}/api/users/#{current_user.id}" }
   node(:uploads_collection_id) { current_user.uploads_collection.id }
   node(:collection_ids) { current_user.collection_ids }
+  node(:collections) { current_user.collections_title_id }
   node(:role) { current_user.role }
 
   node(:name) { current_user.name }
@@ -21,13 +22,16 @@ if current_user
     {
       id: current_user.organization.id,
       name: current_user.organization.name,
-      amara_team: current_user.organization.amara_team
+      amara_team: current_user.organization.amara_team,
+      usage: current_user.organization.usage_summary,
     } if current_user.organization.present?
   }
 
   node(:used_metered_storage) { current_user.used_metered_storage_cache }
   node(:used_unmetered_storage) { current_user.used_unmetered_storage_cache }
   node(:total_metered_storage) { current_user.pop_up_hours * 3600 }
+  node(:usage) { current_user.usage_summary }
+  node(:over_monthly_limit) { current_user.is_over_monthly_limit? }
   node(:plan) { current_user.plan_json }
   node(:credit_card) { current_user.active_credit_card_json } if current_user.active_credit_card.present?
   node(:has_card) { current_user.active_credit_card.present? }

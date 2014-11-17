@@ -16,6 +16,7 @@ class Collection < ActiveRecord::Base
   has_many :items, dependent: :destroy
   has_many :audio_files, through: :items
   has_many :transcripts, through: :audio_files
+  has_many :image_files, :as => :imageable, dependent: :destroy
 
   validates_presence_of :title
 
@@ -85,7 +86,7 @@ class Collection < ActiveRecord::Base
           owner = grant.collector
         else
           # otherwise, the oldest grantee, if any.
-          grant = collection_grants.order('created_at asc').first
+          grant = collection_grants.where('collector_id is not null').order('created_at asc').first
           if grant and grant.collector
             owner = grant.collector.entity
           else
@@ -139,7 +140,8 @@ class Collection < ActiveRecord::Base
   end
 
   def storage
-    default_storage.provider
+    # default_storage.provider
+    default_storage
   end
 
   def validate_storage
@@ -182,4 +184,55 @@ class Collection < ActiveRecord::Base
   def used_unmetered_storage
     @_used_unmetered_storage ||= (items.map{|item| item.audio_files.where(metered: false).sum(:duration) }.inject(:+) || 0)
   end
+
+  def token
+    read_attribute(:token) || update_token
+  end
+
+  def url
+    "#{Rails.application.routes.url_helpers.root_url}collections/#{id}"
+  end 
+
+  @@instance_lock = Mutex.new
+  def update_token
+    @@instance_lock.synchronize do
+      begin
+        t = "#{hosterize((self.title||'untitled')[0,50])}." + generate_token(6) + ".popuparchive.org"
+      end while Collection.where(:token => t).exists?
+      self.update_attribute(:token, t)
+      t
+    end
+  end
+
+  def generate_token(length=10)
+    cs = ('A'..'Z').to_a + ('a'..'z').to_a + ('0'..'9').to_a
+    SecureRandom.random_bytes(length).each_char.map{|c| cs[(c.ord % cs.length)]}.join
+  end
+
+  # like parameterize, but no '_'
+  def hosterize(string, sep = '-')
+    # replace accented chars with their ascii equivalents
+    parameterized_string = ActiveSupport::Inflector.transliterate(string).downcase
+    # Turn unwanted chars into the separator
+    parameterized_string.gsub!(/[^a-z0-9\-]+/, sep)
+    unless sep.nil? || sep.empty?
+      re_sep = Regexp.escape(sep)
+      # No more than one of the separator in a row.
+      parameterized_string.gsub!(/#{re_sep}{2,}/, sep)
+      # Remove leading/trailing separator.
+      parameterized_string.gsub!(/^#{re_sep}|#{re_sep}$/, '')
+    end
+    parameterized_string
+  end
+
+  def recent_files
+    audio_files = []
+    files = self.audio_files.last(5)
+    files.each do |file|
+      audio_file = { file_name: file["file"], item_name: file.item.title, item_id: file.item.id, file_status: file.current_status }
+      audio_files << audio_file
+    end
+    audio_files
+  end
+
 end

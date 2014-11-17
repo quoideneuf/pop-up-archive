@@ -33,9 +33,12 @@ section ng-controller="CreditCardCtrl"
             span.help-inline ng-show="errors.exp_month + errors.exp_year" ng-bind="errors.exp_month + errors.exp_year"
       hr
       p ng-hide="creditCard"
-        | To begin your subscription, please enter your credit card information above.
-        |  Billing occurs automatically once a month starting on
-        |  the day your subscription begins.
+        p ng-show="onDemandRequiresCC"
+          | Your credit card will be billed for each premium transcript you order.
+        p ng-hide="onDemandRequiresCC"
+          | To begin your subscription, please enter your credit card information above.
+          |  Billing occurs automatically once a month starting on
+          |  the day your subscription begins.
       p ng-show="creditCard"
         | To update your credit card, please enter the new information above. All future
         |  charges for your account will be issued to the new card.

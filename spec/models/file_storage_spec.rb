@@ -15,6 +15,12 @@ describe FileStorage do
       @image_file = FactoryGirl.create :image_file
     }
 
+    it "should copy to item storage" do
+      # TODO flesh this out
+      @audio_file.copy_to_item_storage
+      @image_file.copy_to_item_storage
+    end
+
     # it "should provide filename for an image file" do
     #   @image_file.file.filename.should eq 'test.jpg'
     #   @audio_file.filename('ogg').should eq 'test.ogg'

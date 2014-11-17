@@ -57,8 +57,14 @@ def create_es_index(klass)
 end
 
 def seed_test_db
+  StripeMock.start
+  print "Cleaning test db..."
   DatabaseCleaner.clean_with(:truncation)
+  puts "done"
+  print "Loading seed data into test db..."
   load Rails.root + "db/seeds.rb"
+  puts "done"
+  StripeMock.stop
 end
 
 def start_es_server

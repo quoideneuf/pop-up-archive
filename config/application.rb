@@ -107,6 +107,17 @@ module PopUpArchive
       Doorkeeper::AuthorizedApplicationsController.layout('oauth')
     end
 
+    # SMTP (mail) settings
+    config.action_mailer.raise_delivery_errors = true
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = { 
+      :address              => "smtp.mandrillapp.com",
+      :port                 => 587,
+      :domain               => 'popuparchive.com',
+      :user_name            => ENV['EMAIL_USERNAME'],
+      :password             => ENV['EMAIL_PASSWORD'],
+    }
+
     config.middleware.use Rack::Cors do
       allow do
         origins '*'

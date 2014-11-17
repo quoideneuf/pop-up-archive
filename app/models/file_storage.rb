@@ -10,10 +10,6 @@ module FileStorage
     attr_accessor :should_trigger_fixer_copy
   end
 
-  def collection
-    item.try(:collection)
-  end
-
   def has_file?
     !self.file.try(:path).nil?
   end
@@ -23,15 +19,26 @@ module FileStorage
   end
 
   def storage
-    storage_configuration || item.try(:storage)
+    storage_configuration || self.get_storage
+  end
+
+  def get_storage
+    raise "#{self.class} does not implement get_storage method"
+  end
+
+  def get_token
+    item.try(:token)
   end
 
   def store_dir(stor=storage)
     p = self.respond_to?(:path) ? self.path : ''
-    stor.use_folders? ? "#{item.try(:token)}/#{p}" : nil
+    return nil unless stor.use_folders?
+    tok = self.get_token
+    return "#{tok}/#{p}" 
   end
 
   def upload_to
+    # needs change for collection image?
     storage.direct_upload? ? storage : item.upload_to
   end
 
@@ -63,10 +70,14 @@ module FileStorage
     self.should_trigger_fixer_copy = false
   end
 
+  def item_storage
+    item.storage
+  end
+
   def copy_to_item_storage
     # refresh storage related
     file_storage = self.storage_configuration
-    item_storage = item(true).storage
+    item_storage = self.item_storage
     # file_storage = self.storage_configuration
     # item_storage = item.storage
     # puts "\ncopy_to_item_storage: storage(#{file_storage.inspect}) == item.storage(#{item_storage.inspect})\n"
@@ -139,7 +150,7 @@ module FileStorage
         da[:collections] << 'popuparchive' unless da[:collections].include?('popuparchive')
       end
 
-      default_subject = item.try(:collection).try(:title)
+      default_subject = self.collection_title
       da[:subjects] = [] unless da.has_key?(:subjects)
       da[:subjects] << default_subject unless da[:subjects].include?(default_subject)
 
@@ -177,7 +188,7 @@ module FileStorage
 
   def destination_directory(options={})
     stor = options[:storage] || storage
-    stor.use_folders? ? stor.bucket : item.token
+    stor.use_folders? ? stor.bucket : self.get_token
   end
 
   def destination(options={})

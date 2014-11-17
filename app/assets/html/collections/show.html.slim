@@ -2,14 +2,22 @@
   .span12    
     .page-nav.pull-right
       button.btn ng-show="canEdit" ng-click="uploadFile()"
-        i.icon-plus  Upload
+        i.icon-upload-alt
+        |  Upload
       button.btn ng-show="canEdit" ng-click="newCollection()"
-        i.icon-edit  Edit Collection
+        i.icon-edit
+        |  Edit Collection
       button.btn.btn-danger ng-click="delete()" ng-show="canEdit"
-        i.icon-trash  Delete Collection
+        i.icon-trash
+        |  Delete Collection
 
-    h2 Browsing {{collection.title}}
+    .thumb-and-title    
+      img ng-show="collection.imageFiles" ng-src="{{ updateImage() }}"
+      h2 Browsing {{collection.title}}
+      .clear
 
     p ng-show="collection.description" ng-bind-html="collection.description"
 
-    ng-include ng-controller="SearchResultsCtrl" src="'#{asset_path 'search/results.html'}'"
+    div ng-if="collection.numberOfItems > 0"
+      ng-include ng-controller="SearchResultsCtrl" src="'#{asset_path 'search/results.html'}'"
+    div ng-if="collection.numberOfItems == 0" ng-include="'#{asset_path 'collections/new.html'}'"

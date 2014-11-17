@@ -11,7 +11,7 @@
       /   a ng-click="selectInterval('year')" Yearly Plans
       /   a.pull-right ng-click="selectInterval('month')" Monthly
     .row-fluid.parent
-      .plan-well.span3 ng-repeat="plan in plans | filter: {'interval': interval} | orderBy:'amount' | limitTo: 4" ng-class="{current: isCurrentPlan(plan), selected: isSelectedPlan(plan), disabled: isDisabled(plan.name)}" ng-click="isDisabled(plan.name) ||changePlan(plan)"
+      .plan-well.span3 ng-repeat="plan in plans | filter: {'interval': getInterval()} | orderBy:'amount' | limitTo: 4" ng-class="{current: isCurrentPlan(plan), selected: isSelectedPlan(plan), disabled: isDisabled(plan.name)}" ng-click="isDisabled(plan.name) ||changePlan(plan)"
           // p ng-show="isCurrentPlan(plan)" Current Plan
           h3 {{plan.name}}
           object ng-show="plan.name == 'Community'" type="image/svg+xml" data="/assets/pricing/free.svg"

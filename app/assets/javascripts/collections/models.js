@@ -1,19 +1,41 @@
 ;(function(){
-angular.module('Directory.collections.models', ['RailsModel'])
-.factory('Collection', ['Model', 'Item', function (Model, Item) {
+angular.module('Directory.collections.models', ['RailsModel', 'Directory.imageFiles.models'])
+.factory('Collection', ['Model', 'Item', 'ImageFile', function (Model, Item, ImageFile) {
   var collections = {};
 
 
   var Collection = Model({url:'/api/collections/{{id}}', name: 'collection', only: ['title', 'description', 'itemsVisibleByDefault', 'storage']});
+
   var PublicCollection = Model({url:'/api/collections/public', name:'collection'});
   Collection.public = function () {
     return PublicCollection.query.apply(PublicCollection, arguments);
   }
 
+  Collection.prototype.addImageFile = function (file, options ){
+    var options = options || {};
+    var collection = this;
+    var originalFileUrl = null;
+    if (angular.isDefined(file.url)) {
+      originalFileUrl = file.url;
+    }
+    var imageFile = new ImageFile({container: "collections", containerId: collection.id, originalFileUrl: originalFileUrl});
+
+    imageFile.create().then( function() {
+      imageFile.filename = imageFile.cleanFileName(file.name);      
+      collection.imageFiles = collection.imageFiles || [];
+      collection.imageFiles.push(imageFile);
+      options.token = collection.token;
+      imageFile.upload(file, options);
+    });
+    return imageFile;
+  }  
+
   Collection.prototype.fetchItems = function () {
     var self = this;
+    //console.log(this);
     Item.get({collectionId: this.id}).then(function (items) {
       self.items = items;
+      //console.log(items);
       angular.forEach(items, function (item) {
         item.getCollection = function () {
           return self;
@@ -22,6 +44,10 @@ angular.module('Directory.collections.models', ['RailsModel'])
       return items;
     });
     return this;
+  }
+
+  Collection.prototype.link = function () {
+    return "/collections/" + this.id; 
   }
 
   Collection.prototype.visibilityIsSet = function () {

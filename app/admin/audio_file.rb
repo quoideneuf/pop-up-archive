@@ -47,8 +47,11 @@ ActiveAdmin.register AudioFile do
     panel "Transcripts" do
       table_for audio_file.transcripts do |tbl|
         tbl.column("ID") {|tr| link_to tr.identifier, superadmin_transcript_path(tr) }
-        tbl.column("Cost") {|tr| number_to_currency(tr.cost_dollars) }
+        tbl.column("Wholesale Cost") {|tr| number_to_currency(tr.cost_dollars) }
+        tbl.column("Retail Cost") {|tr| number_to_currency(tr.retail_cost_dollars) }
         tbl.column("Transcriber") {|tr| link_to tr.transcriber.name, superadmin_transcriber_path(tr.transcriber) }
+        tbl.column("Is Billable") {|tr| tr.is_billable }
+        tbl.column("Is Premium") {|tr| tr.is_premium? }
         tbl.column("Billable") {|tr| link_to tr.billable_to.name, (tr.billable_to.is_a?(User) ? superadmin_user_path(tr.billable_to) : superadmin_organization_path(tr.billable_to)) }
       end
     end

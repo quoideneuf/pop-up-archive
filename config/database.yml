@@ -12,6 +12,10 @@
 # Configure Using Gemfile
 # gem 'pg'
 #
+###################################################################
+# NOTE pool size is ignored here. If you want to change it,
+# alter the DATABASE_URL env var and append ?pool=N
+###################################################################
 development:
   adapter: postgresql
   encoding: unicode

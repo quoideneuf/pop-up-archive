@@ -11,8 +11,9 @@ class Task < ActiveRecord::Base
   WORKING  = 'working'
   FAILED   = 'failed'
   COMPLETE = 'complete'
+  CANCELLED = 'cancelled'
 
-  scope :incomplete, where('status != ?', COMPLETE)
+  scope :incomplete, where('status not in (?)', [COMPLETE, CANCELLED])
 
   # convenient scopes for subclass types
   [:analyze_audio, :analyze, :copy, :detect_derivatives, :order_transcript, :transcode, :transcribe, :upload, :speechmatics_transcribe].each do |task_subclass|
@@ -26,10 +27,11 @@ class Task < ActiveRecord::Base
 
   state_machine :status, initial: :created do
 
-    state :created,  value: CREATED
-    state :working,  value: WORKING
-    state :failed,   value: FAILED
-    state :complete, value: COMPLETE
+    state :created,   value: CREATED
+    state :working,   value: WORKING
+    state :failed,    value: FAILED
+    state :complete,  value: COMPLETE
+    state :cancelled, value: CANCELLED
 
     event :begin do
       transition all - [:working] => :working
@@ -43,6 +45,14 @@ class Task < ActiveRecord::Base
       transition  all - [:failed] => :failed
     end
 
+    event :cancel do
+      transition all - [:cancelled] => :cancelled
+    end
+
+    after_transition any => :cancelled do |task, transition|
+      task.cancel_task
+    end
+
     after_transition any => :complete do |task, transition|
       task.finish_task
     end
@@ -53,10 +63,11 @@ class Task < ActiveRecord::Base
   # then kick off the FinishTask so that status gets updated.
   # this addresses a timing/race condition between external services (e.g. fixer)
   # and the async nature of our task runner (sidekiq)
-  after_commit :finish_async, on: :update, if: Proc.new {|task| !task.complete?}
+  after_commit :finish_async, on: :update, if: Proc.new {|task| !task.complete? and !task.cancelled?}
 
   def finish_async
-    return unless results && (results['status'] == 'complete')
+    return unless results && (results['status'] == COMPLETE)
+    #Rails.logger.debug("firing FinishTaskWorker.perform_async(#{id})")
     FinishTaskWorker.perform_async(id) unless Rails.env.test?
   end
 
@@ -191,7 +202,36 @@ class Task < ActiveRecord::Base
   end
 
   def self.get_mismatched_status(task_status)
-    self.where("status=? and extras->'results' not like ?", task_status, "%_status_:_#{task_status}_%'")
+    self.where("status=? and extras->'results' not like ?", task_status, "%_status_:_#{task_status}_%'").order('created_at asc')
   end
 
+  # methods for dislodging stuck tasks
+  def stuck?
+
+    # cancelled jobs are final.
+    return false if status == CANCELLED
+
+    # older than a day and incomplete
+    if status != COMPLETE && (DateTime.now - 1) > created_at
+      return true
+
+    # job claims to be finished but task hasn't heard that yet.
+    elsif status != COMPLETE && results['status'] == COMPLETE
+      return true
+
+    # ok
+    else
+      return false
+    end 
+  end
+
+  # required abstract method (if recovery matters to a subclass) 
+  def recover!
+    raise self.class.name + " does not implement recover! method"
+  end
+
+  def cancel_task
+    Rails.logger.warn "#{self.class.name}.cancel_task called by task #{self.id}"
+  end
+  
 end

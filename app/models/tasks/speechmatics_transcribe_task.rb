@@ -71,6 +71,61 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     return billed_duration
   end
 
+  def stuck?
+    # cancelled jobs are final.
+    return false if status == CANCELLED
+
+    # older than a day and incomplete
+    if status != COMPLETE && (DateTime.now - 1) > created_at
+      return true
+
+    # we failed to register a SM job_id
+    elsif !extras['job_id']
+      return true
+
+    end
+
+    # if we get here, not stuck
+    return false
+  end
+
+  def recover!
+
+    # couple easy cases first.
+    if !owner
+      self.extras[:error] = "No owner/audio_file found"
+      cancel!
+      return
+    elsif !self.extras['job_id']
+      self.extras[:error] = "No Speechmatics job_id found"
+      cancel!
+      return
+    end
+
+    # call out to SM and find out what our status is
+    sm = Speechmatics::Client.new({ :request => { :timeout => 120 } })
+    sm_job = sm.user.jobs(extras['job_id']).get
+    self.extras['sm_job_status'] = sm_job.job['job_status']
+
+    # cancel any rejected jobs.
+    if self.extras['sm_job_status'] == 'rejected'
+      self.extras[:error] = 'Speechmatics job rejected'
+      cancel!
+      return
+    end
+
+    # jobs marked 'expired' may still have a transcript. Only the audio is expired from their cache.
+    if self.extras['sm_job_status'] == 'expired' or self.extras['sm_job_status'] == 'done'
+      finish!
+      return
+    end
+
+    # if we get here, unknown status, so log and try to finish anyway.
+    logger.warn("Task #{self.id} for Speechmatics job #{self.extras['job_id']} has status '#{self.extras['sm_job_status']}'")
+    finish!  # attempt to finish. Who knows, we might get lucky.
+
+  end
+
   def finish_task
     return unless audio_file
 
@@ -108,6 +163,14 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
     transcriber = Transcriber.find_by_name('speechmatics')
 
+    # if this was an ondemand transcript, the cost is retail, not wholesale.
+    # 'wholesale' is the cost PUA pays, and translates to zero to the customer under their plan.
+    # 'retail' is the cost the customer pays, if the transcript is on-demand.
+    cost_type = Transcript::WHOLESALE
+    if self.extras['ondemand']
+      cost_type = Transcript::RETAIL
+    end
+
     Transcript.transaction do
       trans    = audio_file.transcripts.create!(
         language: 'en-US',  # TODO get this from audio_file?
@@ -115,7 +178,9 @@ class Tasks::SpeechmaticsTranscribeTask < Task
         start_time: 0,
         end_time: 0,
         transcriber_id: transcriber.id,
-        cost_per_min: transcriber.cost_per_min
+        cost_per_min: transcriber.cost_per_min,
+        retail_cost_per_min: transcriber.retail_cost_per_min,
+        cost_type: cost_type,
       )
       speakers = response.speakers
       words    = response.words
@@ -127,14 +192,14 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       speaker_idx = 0
       words.each do |row|
         speaker = speakers[speaker_idx]
-
         row_end = BigDecimal.new(row['time'].to_s) + BigDecimal.new(row['duration'].to_s)
         speaker_end = BigDecimal.new(speaker['time'].to_s) + BigDecimal.new(speaker['duration'].to_s)
 
         if tt
           if (row_end > speaker_end)
-            speaker_idx += 1
             tt.save
+            speaker_idx += 1
+            speaker = speakers[speaker_idx]
             tt = nil
           elsif (row_end - tt[:start_time]) > 5.0
             tt.save
@@ -151,7 +216,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
             start_time: BigDecimal.new(row['time'].to_s),
             end_time:   row_end,
             text:       row['name'],
-            speaker:    speaker_lookup[speaker['name']]
+            speaker_id: speaker_lookup[speaker['name']].id,
           })
         end
       end
