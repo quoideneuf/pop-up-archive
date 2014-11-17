@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141111154402) do
+ActiveRecord::Schema.define(:version => 20141117224535) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
@@ -374,7 +374,9 @@ ActiveRecord::Schema.define(:version => 20141111154402) do
     t.integer  "speaker_id"
   end
 
+  add_index "timed_texts", ["speaker_id"], :name => "index_timed_texts_on_speaker_id"
   add_index "timed_texts", ["start_time", "transcript_id"], :name => "index_timed_texts_on_start_time_and_transcript_id"
+  add_index "timed_texts", ["transcript_id"], :name => "index_timed_texts_on_transcript_id"
 
   create_table "transcribers", :force => true do |t|
     t.string   "name"

@@ -75,6 +75,10 @@ class Transcript < ActiveRecord::Base
     srt
   end
 
+  def has_speaker_ids
+    self.timed_texts.where("speaker_id is not null").count > 0 ? true : false
+  end
+
   # since billing ignores whether an audio_file was deleted, provide a getter
   # that ignores the paranoia deleted_at value.
   # NOTE that Rails 4.x w/ ActiveRecord 5.x may have the option of a :with_deleted
