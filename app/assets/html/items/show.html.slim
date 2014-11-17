@@ -135,11 +135,11 @@
                 a href="#" &nbsp;
                 
             .transcript speakers="audioFile.transcript.speakers" transcript-text="audioFile.transcript.parts | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
-            .alert.alert-info ng-show="upgradeMessage && status=='full'" 
+            .alert.alert-info ng-show="upgradePlan && status=='full'" 
               |  Here is the transcription of the first two minutes of your audio.&nbsp;
               strong
                 a href="/pricing" Upgrade your plan for full transcripts.
-            div ng-show="!upgradeMessage && status == 'full'"
+            div ng-show="!upgradePlan && transcriptType == 'Basic' && status == 'full'"
               |  Here is the transcription of the first two minutes of your audio. The rest will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.
 
           div ng-show="isFileProcessing(audioFile)" 
