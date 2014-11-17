@@ -51,7 +51,10 @@ class Tasks::TranscribeTask < Task
 
   def notify_user
     return unless (user && audio_file && audio_file.item)
-    TranscriptCompleteMailer.new_auto_transcript(user, audio_file, audio_file.item).deliver
+    return if extras['notify_sent']
+    r = TranscriptCompleteMailer.new_auto_transcript(user, audio_file, audio_file.item).deliver
+    extras['notify_sent'] = DateTime.now.to_s
+    r
   end
 
   def audio_file
