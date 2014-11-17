@@ -16,7 +16,7 @@
           h3 {{plan.name}}
           object ng-show="plan.name == 'Community'" type="image/svg+xml" data="/assets/pricing/free.svg"
           object ng-show="plan.name == 'Professional'" type="image/svg+xml" data="/assets/pricing/tie.svg" 
-          //object ng-show="plan.name == 'Small Business'" type="image/svg+xml" data="/assets/pricing/building.svg"
+          object ng-show="plan.name == 'Small Business'" type="image/svg+xml" data="/assets/pricing/building.svg"
           object ng-show="plan.name == 'Enterprise'" type="image/svg+xml" data="/assets/pricing/castle.svg"
           img ng-show="isDisabled(plan.name)" src="#{asset_path('pricing/coming_soon.png')}"
           h3 ng-show="plan.id != 'enterprise'" ${{plan.amount/100}} 

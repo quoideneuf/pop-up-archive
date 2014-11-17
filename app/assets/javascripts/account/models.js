@@ -88,9 +88,6 @@ angular.module('Directory.account.models', [])
   };
 
   $rootScope.isDisabled = function  (name) {
-    if (name == "Small Business") {
-      return true;
-    }
   }
 
   $rootScope.changePlan = function (plan) {
