@@ -65,10 +65,13 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     var statusHTML = "<h4>Status: " + file.currentStatus + "</h4>";
     if (file.currentStatus == "Transcript Preview processing") {
       statusHTML += "<p>The first two minutes of your transcription will be ready momentarily. ";
-      } if ($scope.currentUser.hasCommunityPlan) {
-        statusHTML += "<a href='/pricing'>Upgrade your plan for full transcripts.</a></p>";
+      if ($scope.currentUser.hasCommunityPlan) {
+          statusHTML += "<a href='/pricing'>Upgrade your plan for full transcripts.</a></p>";
       } else {
-      statusHTML += "The full transcript will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.</p>";
+        statusHTML += "The full transcript will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.</p>";
+      }
+    } else if (file.currentStatus.match(/cancelled/g)) {
+      statusHTML += "Something went wrong. Please <a href='mailto:edison@popuparchive.com?Subject=Transcription%20Failed%20-%20My%20User%20ID:%20"+ $scope.currentUser.id +"'>email us for support</a>";
     }
     return statusHTML;
   };
