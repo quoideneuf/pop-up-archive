@@ -443,7 +443,7 @@ class AudioFile < ActiveRecord::Base
       status = "Basic Transcript complete"
     elsif start == "created" or start == "working"
       status = "Transcript Preview processing"
-    elsif start == "complete" and !basic
+    elsif start == "complete" and basic == ""
       status = "Transcript Preview complete"
     end
     status
