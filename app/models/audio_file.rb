@@ -409,10 +409,12 @@ class AudioFile < ActiveRecord::Base
   end
 
   def current_status
-    status, upload, basic, premium = ""
+    status, upload, start, basic, premium = ""
     self.tasks.each do |task|
       if task.type == "upload"
         upload = task.status
+      elsif task.identifier == "ts_start"
+        start = task.status
       elsif task.identifier == "ts_all"
         basic = task.status
       elsif task.identifier == "ts_paid"
@@ -439,8 +441,10 @@ class AudioFile < ActiveRecord::Base
       status = "Premium Transcript complete"
     elsif basic == "complete"
       status = "Basic Transcript complete"
-    else
+    elsif start == "created" or start == "working"
       status = "Transcript Preview processing"
+    elsif start == "complete" and !basic
+      status = "Transcript Preview complete"
     end
     status
   end
