@@ -71,6 +71,8 @@ namespace :fixer do
     sm_tasks_count = sm_tasks.count
     puts "Found #{sm_tasks_count} unfinished Speechmatics tasks older than 1 day"
 
+    report = {'cancelled, no job_id' => 0, 'No SM job found for job_id' => 0, 'recovered' => 0}
+
     # fetch all SM jobs at once to save HTTP overhead.
     # TODO ask them to implement sorting, searching, paging.
     sm = Speechmatics::Client.new({ :request => { :timeout => 120 } })
@@ -83,6 +85,7 @@ namespace :fixer do
         if !task.extras['job_id']
           puts "Task.find(#{task.id}) has no job_id: #{task.inspect}"
           task.recover!  # should cancel it with err msg
+          report['cancelled, no job_id'] += 1
           next
         end
 
@@ -90,13 +93,20 @@ namespace :fixer do
         sm_job = sm_jobs_lookup[task.extras['job_id']]
         if !sm_job
           puts "No SM job found for task: #{task.inspect}"
+          report['No SM job found for job_id'] += 1
           next
         end
 
         puts "Task.find(#{task.id}) looks like this at SM: #{sm_job.inspect}"
-        task.recover! if ok_to_recover
-
+        if ok_to_recover
+          task.recover! && report['recovered'] += 1
+        end
+         
       end
+    end
+
+    report.keys.each do |k|
+      puts "#{k} => #{report[k].to_s}"
     end
 
   end
