@@ -17,7 +17,7 @@ namespace :fixer do
     mismatched_tasks.each do |task|
       mismatched_report[task.type] += 1
       if limit and limit.to_i <= mismatched_report[task.type]
-        verbose and puts "Limit #{limit} reached. Skipping eval of task #{task.id}"
+        verbose and puts "Limit #{limit} reached for #{task.type}. Skipping eval of task #{task.id}"
         next
       end
       debug and puts "Task #{task.type} #{task.id} has status '#{task.status}' with results: " + task.results.inspect
