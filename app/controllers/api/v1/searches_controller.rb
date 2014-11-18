@@ -4,6 +4,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
     page = params[:page].to_i
     query_str = params[:query]
     sort_by   = params[:sort_by]
+    filters   = params[:filters]
 
     search_query = Search.new(items_index_name) do
       if page.present? && page > 1
@@ -24,7 +25,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
       end
 
       # determine sort order
-      if !query_str.present? or query_str.length == 0
+      if !filters and (!query_str.present? or query_str.length == 0)
         sort do
           by 'created_at', 'desc'
         end
