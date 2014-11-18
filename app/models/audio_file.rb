@@ -429,7 +429,7 @@ class AudioFile < ActiveRecord::Base
       status = "Uploading"
     elsif upload == "cancelled"
       status = "Upload cancelled"
-    elsif premium == "failed" or premium == "working"
+    elsif premium == "failed" or premium == "created"
       status = "Premium Transcript processing"
     elsif premium == "cancelled"
       status = "Premium Transcript cancelled"
