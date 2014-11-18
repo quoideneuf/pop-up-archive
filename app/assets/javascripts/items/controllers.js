@@ -61,56 +61,19 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     return (user && item && user.canEdit(item) && (file.transcript == null));
   };
 
-  $scope.status = "uploading";
-  $scope.upgradeMessage = false;
-
   $scope.statusNotification = function(file) {
-    $scope.taskStatus(file);
-    var statusHTML = "<h4>Status: ";
-    if ($scope.status == "uploading") {
-      statusHTML += "uploading";
-    } else if ($scope.status == "upload_failed") {
-      statusHTML += "UPLOAD FAILED - please try uploading again or contact us if uploads keep failing.";
-    } else if ($scope.status == "started") {
-      statusHTML += "transcript processing.</h4><p>The first two minutes of your transcription will be ready momentarily. ";
-      if ($scope.upgradeMessage) {
-        statusHTML += "<a href='/pricing'>Upgrade your plan for full transcripts.</a></p>";
+    var statusHTML = "<h4>Status: " + file.currentStatus + "</h4>";
+    if (file.currentStatus == "Transcript Preview processing") {
+      statusHTML += "<p>The first two minutes of your transcription will be ready momentarily. ";
+      if ($scope.currentUser.hasCommunityPlan) {
+          statusHTML += "<a href='/pricing'>Upgrade your plan for full transcripts.</a></p>";
       } else {
-        statusHTML += "The rest will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.</p>";
+        statusHTML += "The full transcript will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.</p>";
       }
-    } else if ($scope.status == "ts_failed") {
-      statusHTML += "TRANSCRIPTION FAILED - please <a href='mailto:edison@popuparchive.com?Subject=Transcription%20Failed%20-%20My%20User%20ID:%20"+ $scope.currentUser.id +"'>email us for support</a>";
+    } else if (file.currentStatus.match(/cancelled/g)) {
+      statusHTML += "Something went wrong. Please <a href='mailto:edison@popuparchive.com?Subject=Transcription%20Failed%20-%20My%20User%20ID:%20"+ $scope.currentUser.id +"'>email us for support</a>";
     }
     return statusHTML;
-  };
-
-  $scope.taskStatus = function(file) {
-    if (!file) { return false; }
-    var upload, start, full;
-    for (var i=0; i<file.tasks.length; i++) {
-      var task = file.tasks[i];
-      if (task.type == "upload") {
-        upload = task.status;
-      } else if (task.identifier == "ts_start") {
-        start = task.status;
-      } else if (task.identifier == "ts_all" || task.identifier == "ts_paid") {
-        full = task.status;
-      }
-    }
-    if (upload == "failed") {
-      $scope.status = "upload_failed";
-    } else if (start == "failed" || full == "failed"){
-      $scope.status = "ts_failed";
-    } else if (start == "working" || start == "created") {
-      $scope.status = "started";
-    } else if (start == "complete" && full != "complete") {
-      $scope.status = "full";
-    } else if (full == "complete") {
-      $scope.status = "finished";
-    }
-    if (!full) {
-      $scope.upgradeMessage = true;
-    }
   };
 
   $scope.allowEditButton = function(file) {
@@ -120,7 +83,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       var found = false;
     }
     else {
-      if ($scope.status == "finished") {
+      if (file.currentStatus == "Basic Transcript complete" || file.currentStatus == "Premium Transcript complete") {
           var found = false;
       }
     }
@@ -149,25 +112,16 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.getPremiumCostAndPromptOrder = function() {
     var audioFile = $scope.item.newAudioFile($scope.selectedAudioFile);
-    var costUrl = audioFile.getPremiumCostUrl();
-    $http.get(costUrl).success(function(data, headers, config) {
-      //console.log('got cost: ', data);
-      $scope.audioCost = data;
-      $scope.audioFile = audioFile;
-      $scope.orderPremiumTranscriptModal = $modal({template: '/assets/audio_files/order_premium_transcript.html', persist: true, show: true, backdrop: 'static', scope: $scope, prefixEvent: 'orderPremiumTranscriptModal'});
-    }).
-    error(function(data, status, headers, config) {
-      console.log("ERROR!: ", data, status, headers);
+    $scope.audioFile = audioFile;
+    $scope.orderPremiumTranscriptModal = $modal({
+      template: '/assets/audio_files/order_premium_transcript.html', 
+      persist: true, 
+      show: true, 
+      backdrop: 'static', 
+      scope: $scope, 
+      prefixEvent: 'orderPremiumTranscriptModal'
     });
   };
-
-  // register listener once. This event fired by credit card form.
-  // if the user wants to order a premium transcript and they do not yet have
-  // an active credit card, we intervene and ask for one.
-  $scope.$on('userHasValidCreditCard', function(event, data) {
-    //console.log('userHasValidCreditCard event fired', data);
-    $scope.getPremiumCostAndPromptOrder();
-  });
 
   // when premium transcript successfully ordered, disable its associated button.
   $scope.$on('premiumTranscriptOrdered', function(event, audioFile) {
@@ -185,17 +139,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     // modal listener (above) will re-enable
     jQuery('button.ts-upgrade').not('.disabled').prop('disabled', true);
 
-    // if the user does not have an active credit card, ask for one.
-    if (!$scope.currentUser.hasCreditCard()) {
-      $scope.onDemandRequiresCC = true;
-      $scope.orderPremiumCCModal = $modal({template: '/assets/account/credit_card.html', persist: true, show: true, backdrop: 'static', scope: $scope});
-    }
-    else {
-      // credit card already on file, so
-      // fire event that triggers the getPremiumCostAndPromptOrder immediately.
-      $scope.$emit('userHasValidCreditCard');
-    }
-
+    $scope.getPremiumCostAndPromptOrder();
   };
 
   $scope.itemStorage = function() {

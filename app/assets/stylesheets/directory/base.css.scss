@@ -1277,7 +1277,8 @@ form.with-tags {
   display: inline-block;
   border-radius: 1em;
   border: none;
-  padding: 20px;
+  padding: 1em;
+  margin-bottom: 1em;
 }
 
 .featurebtn2 {
@@ -1557,6 +1558,8 @@ ul.great-list {
 .download-btn {
   padding-left: 12px;
   padding-right: 12px;
+  margin-left: 4px;
+  type: button; 
 }
 
 .ts-info-row {
@@ -1580,6 +1583,9 @@ ul.great-list {
   font-weight: bold;
 }
 
+.alert-info p {
+  margin-bottom: 0;
+}
 .speakers-form {
   .select2-container{
     padding: 5px;
@@ -1631,9 +1637,6 @@ ul.great-list {
   }
   .nav-collapse .pull-right li a .nav-label {
     display:none;
-  }
-  #home #feature-image {
-    margin: 0;
   }
 }
 @media screen and (max-width: 600px) {

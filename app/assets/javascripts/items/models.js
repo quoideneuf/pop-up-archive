@@ -144,9 +144,10 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     return i;
   }
 
-  Item.prototype.getDurationString = function () {
+  Item.prototype.getDurationString = function (secs) {
     var self = this;
-    var d = new Date(this.duration * 1000);
+    if (!secs) secs = this.duration;
+    var d = new Date(secs * 1000);
     return self.prependZero(d.getUTCHours()) + ":" 
          + self.prependZero(d.getUTCMinutes()) + ":" 
          + self.prependZero(d.getUTCSeconds());

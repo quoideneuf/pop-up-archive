@@ -72,7 +72,7 @@ if job_id
   pp job.job
 elsif transcript_id
   transcript = sm.user.jobs(transcript_id).transcript
-  pp transcript.job
+  pp transcript.body
 elsif job_list
   jobs = sm.user.jobs.list.jobs
   pp jobs

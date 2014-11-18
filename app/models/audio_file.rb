@@ -409,10 +409,12 @@ class AudioFile < ActiveRecord::Base
   end
 
   def current_status
-    status, upload, basic, premium = ""
+    status, upload, start, basic, premium = ""
     self.tasks.each do |task|
-      if task.type == "upload"
+      if task.type == "Tasks::UploadTask"
         upload = task.status
+      elsif task.identifier == "ts_start"
+        start = task.status
       elsif task.identifier == "ts_all"
         basic = task.status
       elsif task.identifier == "ts_paid"
@@ -420,24 +422,29 @@ class AudioFile < ActiveRecord::Base
       end
     end
 
-    if upload == "failed"
-      status = "Upload Failed"
-    elsif upload == "working"
+    # 'failed' status means that fixer will retry.
+    # 'cancelled' means we ran out of re-tries or otherwise gave up.
+    # since 'failed' is not final, communicate it the same as 'working'
+    if upload == "failed" or upload == "working"
       status = "Uploading"
-    elsif premium == "failed"
-      status = "Premium Transcript Failed"
-    elsif premium == "working"
-      status = "Premium Transcript Processing"
-    elsif basic == "failed"
-      status = "Basic Transcript Failed"
-    elsif basic == "working"
-      status = "Basic Transcript Processing"
+    elsif upload == "cancelled"
+      status = "Upload cancelled"
+    elsif premium == "failed" or premium == "created"
+      status = "Premium Transcript processing"
+    elsif premium == "cancelled"
+      status = "Premium Transcript cancelled"
+    elsif basic == "failed" or basic == "working"
+      status = "Basic Transcript processing"
+    elsif basic == "cancelled"
+      status = "Basic Transcript cancelled"
     elsif premium == "complete"
-      status = "Premium Transcript Complete"
+      status = "Premium Transcript complete"
     elsif basic == "complete"
-      status = "Basic Transcript Complete"
-    else
-      status = "Transcript Preview Processing"
+      status = "Basic Transcript complete"
+    elsif start == "created" or start == "working"
+      status = "Transcript Preview processing"
+    elsif start == "complete" and !basic
+      status = "Transcript Preview complete"
     end
     status
   end

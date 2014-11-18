@@ -7,7 +7,10 @@
 
 .row-fluid
   .alert.alert-info
-    | Use collections to group and organize your audio files.
+    | Use collections to group and organize your audio files. Upload a file below to create an 
+    span.highlight Item
+    i.icon-question-sign style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['item']" data-placement="bottom"
+    | page in Pop Up Archive.
   button.collection-button.add-collection ng-href="#" ng-click="newCollection()"
     i.icon-plus-sign &nbsp
     | Create a Collection
@@ -27,7 +30,7 @@
         p {{collection.description | characters:220}}
       button.collection-button.upload-item-to-collection ng-click="uploadItemToCollection(collection.id)"
         i.icon-upload &nbsp
-        | Add an Item to {{collection.title}}
+        | Upload an Audio File to {{collection.title}}
       .recent-items
         .labels ng-hide="collection.numberOfAudioFiles == 0"
           .col-xs-4 File
