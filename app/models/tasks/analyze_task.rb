@@ -9,8 +9,24 @@ class Tasks::AnalyzeTask < Task
     if destination && destination.length > 0
       connection = Fog::Storage.new(storage.credentials)
       uri        = URI.parse(destination)
-      analysis   = get_file(connection, uri)    
-      process_analysis(analysis)
+      analysis   = nil
+      begin 
+        analysis   = get_file(connection, uri)
+      rescue Excon::Errors::InternalServerError => err
+        # upstream errors are unpredictable, not worth re-trying.
+        self.extras['error'] = "Received 500 error for #{uri}"
+        self.cancel!
+        return
+      rescue => err
+        raise err  # re-throw
+      end
+      if analysis
+        process_analysis(analysis)
+      else
+        self.extras['error'] = 'No analysis found'
+        self.cancel!
+        return
+      end
     else
       raise "No destination so cannot finish task #{id}"
     end
