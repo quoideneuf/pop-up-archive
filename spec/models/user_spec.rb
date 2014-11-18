@@ -50,12 +50,63 @@ describe User do
     it 'updates usage' do
       time = DateTime.now
       user.usage_for('test', time).to_i.should == 0
-      user.update_usage_for('test', {:seconds => 100, :cost => 0}, time)
+      user.update_usage_for('test', {:seconds => 100, :cost => 0, :retail_cost => 0}, time)
       user.usage_for('test', time).should eq 100
-      user.update_usage_for('test', {:seconds => 1000, :cost => 1234}, time)
+      user.update_usage_for('test', {:seconds => 1000, :cost => 1234, :retail_cost => 5678}, time)
       user.usage_for('test', time).should eq 1000
     end
 
+    it "treats counts deleted audio toward monthly usage" do
+      audio_persist = FactoryGirl.create(:audio_file_private)
+      audio_deleted = FactoryGirl.create(:audio_file_private)
+      audio_persist_transcript = FactoryGirl.create :transcript
+      audio_deleted_transcript = FactoryGirl.create :transcript
+      # factory transcripts are created as orphans. must assign audio explicitly.
+      audio_persist_transcript.audio_file_id = audio_persist.id
+      audio_persist_transcript.transcriber = Transcriber.basic
+      audio_deleted_transcript.audio_file_id = audio_deleted.id
+      audio_deleted_transcript.transcriber = Transcriber.basic
+      # nice round numbers
+      audio_persist.duration = 3600
+      audio_deleted.duration = 3600
+      audio_persist_transcript.save!
+      audio_deleted_transcript.save!
+      audio_persist.save!
+      audio_deleted.save!
+      audio_persist_user = audio_persist.item.collection.billable_to
+      audio_deleted_user = audio_deleted.item.collection.billable_to
+      #STDERR.puts "audio_persist = #{audio_persist.inspect}"
+      #STDERR.puts "audio_persist.user = #{audio_persist.user.inspect}"
+      #STDERR.puts "audio_persist.item.collection.billable_to = #{audio_persist.item.collection.billable_to.inspect}"
+      #STDERR.puts "audio_deleted = #{audio_deleted.inspect}"
+      #STDERR.puts "audio_deleted.user = #{audio_deleted.user.inspect}"
+      #STDERR.puts "audio_deleted.item.collection.billable_to = #{audio_deleted.item.collection.billable_to.inspect}"
+      #STDERR.puts "audio_persist_transcript = #{audio_persist_transcript.inspect}"
+      #STDERR.puts "audio_deleted_transcript = #{audio_deleted_transcript.inspect}"
+      audio_persist_transcript.billable_seconds.should eq 3600
+      audio_deleted_transcript.billable_seconds.should eq 3600
+      audio_persist_transcript.billable_to.should eq audio_persist_user
+      audio_deleted_transcript.billable_to.should eq audio_deleted_user
+      Rails.logger.warn("-------------------------------- TEST FIXTURES COMPLETE ----------------------------------")
+
+      audio_persist_user.calculate_monthly_usages!
+      audio_deleted_user.calculate_monthly_usages!
+      audio_persist_user.update_usage_report!
+      audio_deleted_user.update_usage_report!
+      #STDERR.puts audio_persist_user.usage_summary.inspect
+      Rails.logger.warn("-------------------------------- TEST SETUP COMPLETE ----------------------------------")
+
+      audio_persist_user.usage_summary[:this_month][:hours].should eq 1.0
+      audio_deleted_user.usage_summary[:this_month][:hours].should eq 1.0
+      audio_deleted.destroy # soft-delete and test again
+      audio_deleted_user.calculate_monthly_usages!
+      audio_deleted_user.update_usage_report!
+      audio_deleted_user.usage_summary[:this_month][:hours].should eq 1.0
+      #STDERR.puts "audio_deleted = #{audio_deleted.inspect}"
+      Rails.logger.warn("-------------------------------- DELETED AUDIO TEST COMPLETE ----------------------------------")
+            
+    end
+ 
   end
 
   context 'storage' do
