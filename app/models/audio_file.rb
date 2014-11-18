@@ -446,9 +446,6 @@ class AudioFile < ActiveRecord::Base
     elsif start == "complete" and !basic
       status = "Transcript Preview complete"
     end
-    if self.id == 29240
-      binding.remote_pry
-    end
     status
   end
 
