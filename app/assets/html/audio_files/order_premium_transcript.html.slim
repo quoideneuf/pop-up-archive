@@ -21,13 +21,16 @@ section ng-controller="OrderPremiumTranscriptFormCtrl"
            | punctuation and capitalization
       .alert
         | For this file of
-        b  {{ audioCost.duration_hms }}
+        b  {{ item.getDurationString(audioFile.duration) }}
         |, a charge of
-        b  {{ audioCost.cost }}
-        |  will be added to your monthly bill.  
+        b  {{ audioFile.premiumRetailCost }}
+        |  will be billed to you at the end of the month.
         a href="/pricing"
           |  Sign up for a premium subscription plan
         |  and get top-quality transcripts like this at a reduced rate.
+      .alert ng-show="!currentUser.hasCard"
+        | Since you don't yet have a credit card on file with us, 
+        | clicking Order below will prompt you for your billing information.
 
   .modal-footer
     button.btn type="button" ng-click="clear()" Close

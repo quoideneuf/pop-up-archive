@@ -20,6 +20,15 @@ namespace :transcribers do
       tasks = Task.where(:owner_id => transcript.audio_file_id, :owner_type => 'AudioFile', :status => 'complete')
       tasks.each do |task|
         if transcribers.has_key?(task.type)
+          # make sure we assign basic and premium correctly.
+          # premium has speaker_id values on the child timed_texts
+          if transcript.has_speaker_ids and task.type == 'Tasks::TranscribeTask'
+            next
+          end
+          if !transcript.has_speaker_ids and task.type == 'Tasks::SpeechmaticsTranscribeTask'
+            next
+          end
+ 
           # we don't want to update the parent item.updated_at so run raw sql
           t = transcribers[task.type]
           transcript.connection.execute("update transcripts set transcriber_id=#{t.id},cost_per_min=#{t.cost_per_min},retail_cost_per_min=#{t.retail_cost_per_min} where id=#{transcript.id}")

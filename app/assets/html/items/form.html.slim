@@ -10,15 +10,23 @@ section ng-controller="ItemFormCtrl"
     form.item-form.form-horizontal name='newItemForm' ng-hide="currentUser.overMonthlyLimit"
 
       div ng-hide='(item.id > 0) || (item.files.length > 0)' style="text-align:center;"
-        h3 Drag and drop files anywhere on the site
+        h3 Drag and drop a file anywhere on the site
         div style="margin:-10px 0 10px 0;" or
         span file-button="" style='margin-right: 4px;'
-          button.btn.btn-large style="margin-bottom:10px;" Choose Files
+          button.btn.btn-large style="margin-bottom:10px;" Choose File
 
       section ng-show='(item.id > 0) || (item.files.length > 0)'
+        .alert.alert-danger ng-show="(item.files.length > 1) && showFilesAlert"
+          a ng-click="hideAlert()" style='text-decoration: none; color: #da4f49; float: right; margin-right: -20px;' 
+            i.icon-remove
+          p 
+            | Are you sure? Uploading multiple audio files at once means they'll be saved onto the same Item page in Pop Up Archive. 
+          p
+            strong
+              | To create separate pages for each file, upload one at a time.         
         .control-group
           label.control-label
-            | Upload Files
+            | Upload File
             i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['audioFiles']" data-placement="bottom"
           .controls ng-hide="item.files.length > 0"
             label.pull-left style='padding-top: 5px;'
@@ -33,14 +41,11 @@ section ng-controller="ItemFormCtrl"
                 td.file-remove
                   a href="#" ng-click="removeAudioFile(audioFile)" style='text-decoration: none; color: #da4f49;'
                     i.icon-remove-sign
-          .alert.alert-danger ng-show="(item.files.length > 1) && showFilesAlert"
-            a ng-click="hideAlert()" style='text-decoration: none; color: #da4f49; float: right; margin-right: -20px;' 
-              i.icon-remove
-            p 
-              | Are you sure? Uploading multiple audio files at once means they'll be saved onto the same item page.
+
             
           p.alert.alert-info.pull-right 
-            | Drop multiple files or click 'Add Files to Item' if uploading multi-part interviews and recordings.
+            i.icon-star-empty
+            |   If you're uploading multi-part interviews and recordings, drop multiple files or click 'Add Files to Item' to save them to the same Item page. 
 
           .clearfix.controls
             span.pull-right file-button=""
