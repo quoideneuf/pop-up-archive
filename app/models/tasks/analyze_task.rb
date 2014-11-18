@@ -17,6 +17,11 @@ class Tasks::AnalyzeTask < Task
         self.extras['error'] = "Received 500 error for #{uri}"
         self.cancel!
         return
+      rescue Exceptions::PrivateFileNotFound => err
+        # can't find via our own storage. that's fatal too.
+        self.extras['error'] = "Failed to find file: #{err}"
+        self.cancel!
+        return
       rescue => err
         raise err  # re-throw
       end
