@@ -6,7 +6,6 @@ class Tasks::AnalyzeTask < Task
 
   def finish_task
     return if cancelled?
-    puts "in finish_task task.status == '#{self.status}'"
     if destination && destination.length > 0
       connection = Fog::Storage.new(storage.credentials)
       uri        = URI.parse(destination)
