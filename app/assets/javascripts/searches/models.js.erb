@@ -30,10 +30,16 @@ angular.module('Directory.searches.models', ['RailsModel', 'Directory.items.mode
   Search.prototype.aFacetIsVisible = function () {
     var aFacetIsVisible = false;
     angular.forEach(this.facetsAsObjects(), function (facet) {
-      if (facet.visible()) 
+      if (facet.visible())
         aFacetIsVisible = true;
     });
     return aFacetIsVisible;
+  }
+
+  Search.prototype.getFacet = function (name) {
+    return this.facetsAsObjects().filter(function (facet) {
+      return facet.name === name;
+    })[0];
   }
 
   return Search;
@@ -71,7 +77,7 @@ angular.module('Directory.searches.models', ['RailsModel', 'Directory.items.mode
   DateTimeFacetEntry.prototype = new FacetEntry();
 
   DateTimeFacetEntry.prototype.nameForPresenting = function () {
-    if (!this._date) {    
+    if (!this._date) {
       this._date = new Date(0);
       this._date.setUTCSeconds(this.name/1000);
     }
@@ -229,7 +235,7 @@ angular.module('Directory.searches.models', ['RailsModel', 'Directory.items.mode
   Query.prototype.add = function (thing) {
     this.queryParts.push(thing);
     this.perform();
-  } 
+  }
 
   Query.prototype.remove = function (thing) {
     this.queryParts.splice(this.queryParts.indexOf(thing), 1);
