@@ -2,20 +2,25 @@ angular.module('Directory.analytics.directives',['d3'])
   .directive('bubbleChart', ['d3Service', function (d3Service) {
     return {
       restrict: 'E',
-      scope: { data: '='},
+      scope: { 
+        data: '=data',
+        collections: '=collections'
+      },
       link: function (scope, element, attrs) {
         var data = scope.data;
+        var collections = scope.collections;
 
         d3Service.d3().then(function () {
           var node,
-              maxRadius = 50,
+              maxRadius = 80,
               nameTextSize = 12,
               countTextSize = 10,
-              height = 400,
+              height = 700,
               width = 700,
               collisionPadding = 4,
               minCollisionRadius = 12,
               jitter = 0.6,
+    
               center = {
                 x: width / 2,
                 y: height / 2
@@ -39,8 +44,8 @@ angular.module('Directory.analytics.directives',['d3'])
             cx = width / 2;
             cy = height / 2;
             //uneven gravity gives vis a landscape layout
-            ax = alpha / 8;
-            ay = alpha;
+            ax = alpha /2;
+            ay = alpha /2;
 
             return function (d) {
               d.x += (cx - d.x) * ax;
@@ -102,7 +107,11 @@ angular.module('Directory.analytics.directives',['d3'])
             nodeEnter
               .append('a')
               .attr('xlink:href', function (d) {
-                return '/search?query=' + encodeURIComponent(idValue(d));
+                col_ids=[];
+                for (var i = collections.length - 1; i >= 0; i--) {
+                  col_ids.push(collections[i].collection.id);
+                };
+                return '/search?query=' + encodeURIComponent(idValue(d)) + ',collection_id%3A(' + col_ids.join('%20OR%20') + ')';
               } )
               .append('circle');
             nodeEnter.append('text').attr('class', 'name');

@@ -1,7 +1,7 @@
 div ng-controller="AnalyticsCtrl"
-  h2 My Data
   .row
     .span3.facets
+      h2 My Data
       .facet
         h5 Filter by Collection
         ul.unstyled.terms
@@ -10,4 +10,4 @@ div ng-controller="AnalyticsCtrl"
               input checkbox-group="" type="checkbox" name="selectedEntries[]" value="{{dataCollection}}" ng-model="dataCollection.selected" ng-click="toggleCollection(dataCollection)"
               .label.label-info {{dataCollection.collection.title}}
     .span9.visualization
-      bubble-chart data="analyticsData.dataForVis"
+      bubble-chart data="analyticsData.dataForVis" collections="analyticsData.dataCollections"
