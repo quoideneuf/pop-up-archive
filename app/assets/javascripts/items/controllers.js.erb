@@ -520,5 +520,5 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
 }])
 .run(function($FB){
-  $FB.init('292747780854383');
+  $FB.init('<%= ENV["FACEBOOK_APP_ID"] %>');
 });
