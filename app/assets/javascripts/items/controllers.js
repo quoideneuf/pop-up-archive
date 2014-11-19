@@ -78,8 +78,10 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       } else {
         statusHTML += "The full transcript will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.</p>";
       }
+    } else if (file.currentStatus == "Premium Transcript processing") {
+      statusHTML += "<p>Your Premium Transcript will be ready soon. We'll email you when the full transcript is loaded.</p>";
     } else if (file.currentStatus.match(/cancelled/g)) {
-      statusHTML += "Something went wrong. Please <a href='mailto:edison@popuparchive.com?Subject=Transcription%20Failed%20-%20My%20User%20ID:%20"+ $scope.currentUser.id +"'>email us for support</a>";
+      statusHTML += "<p>Something went wrong. Please <a href='mailto:edison@popuparchive.com?Subject=Transcription%20Failed%20-%20My%20User%20ID:%20"+ $scope.currentUser.id +"'>email us for support</a></p>";
     }
     return statusHTML;
   };
