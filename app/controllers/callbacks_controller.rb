@@ -33,7 +33,8 @@ class CallbacksController < ApplicationController
       af = params[:model_name].camelize.constantize.find(params[:model_id])
       @resource = af.tasks.speechmatics_transcribe.where("extras -> 'job_id' = ?", params[:id]).first
     else
-      @resource = Task.where("extras -> 'public_id' = ?", params[:model_id]).first || Task.where("extras -> 'job_id' = ?", params[:id]).first
+      @resource = Task.where("type='Tasks::SpeechmaticsTranscribeTask' and extras -> 'public_id' = ?", params[:model_id]).first || \
+                  Task.where("type='Tasks::SpeechmaticsTranscribeTask' and extras -> 'job_id' = ?", params[:id]).first
     end
 
     if @resource
