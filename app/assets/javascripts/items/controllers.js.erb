@@ -34,7 +34,6 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   $scope.transcriptExpanded = false;
 
   $scope.updateImage = function(format) {
-    console.log(format);
     if ($scope.item && $scope.item.imageFiles.length) {
       var images = $scope.item.imageFiles;
       var image = images[0];
