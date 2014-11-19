@@ -260,7 +260,8 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     return unless (user && audio_file && audio_file.item)
     return if extras['notify_sent']
     r = TranscriptCompleteMailer.new_auto_transcript(user, audio_file, audio_file.item).deliver
-    extras['notify_sent'] = DateTime.now.to_s
+    self.extras['notify_sent'] = DateTime.now.to_s
+    self.save!
     r
   end
 
