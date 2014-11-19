@@ -31,6 +31,12 @@ class Tasks::TranscribeTask < Task
         # otherwise, re-throw and we'll try again later
         raise err
 
+      rescue Excon::Errors::Found => err
+        # for whatever reason we got a fatal response (e.g. too many redirects)
+        self.extras[:error] = "#{err}"
+        self.cancel!
+        return true
+
       rescue
         raise # re-throw whatever it was
 
