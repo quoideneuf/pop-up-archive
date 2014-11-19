@@ -33,7 +33,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.transcriptExpanded = false;
 
-  $scope.updateImage = function() {
+  $scope.updateImage = function(format) {
     if ($scope.item && $scope.item.imageFiles.length) {
       var images = $scope.item.imageFiles;
       var image = images[0];
@@ -42,7 +42,11 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
           image = images[i];
         }
       }
-      return image.file.file.thumb.url;
+      if (format == "thumb") {
+        return image.file.file.thumb.url;
+      } else {
+        return image.file.file.url;
+      }
     } else if ($scope.collection && $scope.collection.imageFiles.length) {
       var images = $scope.collection.imageFiles;
       var image = images[0];
@@ -51,7 +55,11 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
           image = images[i];
         }
       }
-      return image.file.file.thumb.url;
+      if (format == "thumb") {
+        return image.file.file.thumb.url;
+      } else {
+        return image.file.file.url;
+      }
     }
   };
 
