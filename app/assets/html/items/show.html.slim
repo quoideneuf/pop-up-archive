@@ -28,7 +28,7 @@
           |  &raquo;
           a ng-href="/collections/{{collection.id}}" {{collection.title}}
         .thumb-and-title
-          img ng-show="item.imageFiles || collection.imageFiles" ng-src="{{ updateImage() }}"
+          img ng-show="item.imageFiles.length || collection.imageFiles.length" ng-src="{{ updateImage() }}"
           h1 {{item.title}}
           .clear
         p ng-show="item.description" ng-bind-html="item.description"
