@@ -1,4 +1,4 @@
-angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.user', 'Directory.items.models', 'Directory.entities.models', 'Directory.people.models', 'prxSearch', 'Directory.storage', 'ngRoute', 'ngSanitize'])
+angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.user', 'Directory.items.models', 'Directory.entities.models', 'Directory.people.models', 'prxSearch', 'Directory.storage', 'ngRoute', 'ngSanitize', 'djds4rce.angular-socialshare'])
 .controller('ItemsCtrl', [ '$scope', 'Item', 'Loader', 'Me', 'Storage', function ItemsCtrl($scope, Item, Loader, Me, Storage) {
 
   $scope.Storage = Storage;
@@ -508,4 +508,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     }
   }
 
-}]);
+}])
+.run(function($FB){
+  $FB.init('292747780854383');
+});
