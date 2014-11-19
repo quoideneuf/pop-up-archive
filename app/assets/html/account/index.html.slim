@@ -4,7 +4,7 @@
       i.icon-wrench
       |  Change Plan
   h3
-    | My Account
+    | Account
 
 .row-fluid ng-if="me.hasCard"
   .well
@@ -23,7 +23,7 @@
     .plan-pricing
       | {{me.totalMeteredStorage | timeCode: 'words'}} - {{me.plan.amount / 100 | currency }}/{{me.plan.interval | shortInterval }}
       small
-        a href="/account/plan" Get More!
+        a href="/account/plan" Change My Plan.
 
 .row-fluid ng-hide="me.plan.amount"
   .well

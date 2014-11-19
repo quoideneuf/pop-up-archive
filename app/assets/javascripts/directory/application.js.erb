@@ -98,18 +98,18 @@ can find and hear exactly what they're looking for."
       templateUrl: "<%= asset_path 'account/index.html' %>",
       controller: "AccountCtrl",
       loginRequired: true,
-      title: "My Account"
+      title: "Account"
     })
     .when('/account/plan', {
       templateUrl: "<%= asset_path 'account/plans.html' %>",
       controller: "AccountPlanCtrl",
-      title: "My Account &raquo Plans",
+      title: "Account &raquo Plans",
       loginRequired: true
     })
     .when('/account/plan/prx', {
       templateUrl: "<%= asset_path 'account/plans_prx.html' %>",
       controller: "PRXAccountPlanCtrl",
-      title: "My Account &raquol Plans &raquo PRX Special Offer",
+      title: "Account &raquol Plans &raquo PRX Special Offer",
       loginRequired: true
     })
     .when('/collections', {
@@ -308,15 +308,11 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
 
         var menu = [
           {
-            text: 'my collections',
-            href: '/collections'
-          },
-          {
-            text: 'my data',
+            text: 'analytics',
             href: '/analytics'
           },
           {
-            text: 'my account',
+            text: 'account',
             href: '/account'
           },
           // {
