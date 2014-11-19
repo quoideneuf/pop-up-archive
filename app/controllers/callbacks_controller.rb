@@ -24,10 +24,26 @@ class CallbacksController < ApplicationController
   end
 
   def speechmatics
-    @resource = params[:model_name].camelize.constantize.find(params[:model_id])
-    # don't know which param it is going to be
-    if @resource && (task = @resource.tasks.speechmatics_transcribe.where("extras -> 'job_id' = ?", params[:id]).first)
-      FinishTaskWorker.perform_async(task.id) unless Rails.env.test?
+    # find the task that created the speechmatics job.
+    # best case is that we have a proper xref in the extras[:job_id]
+    # worst case is that we rely on the callback url to contain the task.extras[:public_id]
+
+    # backwards compat.
+    if params[:model_name] == 'audio_file'
+      af = params[:model_name].camelize.constantize.find(params[:model_id])
+      @resource = af.tasks.speechmatics_transcribe.where("extras -> 'job_id' = ?", params[:id]).first
+    else
+      @resource = Task.where("extras -> 'public_id' = ?", params[:model_id]).first || Task.where("extras -> 'job_id' = ?", params[:id]).first
+    end
+
+    if @resource
+      if @resource.extras['job_id'] && @resource.extras['job_id'] == params[:id]
+        # base case. proper 2-way xref, nothing to do
+      elsif !@resource.extras['job_id']
+        # worst case. create the job_id now but give it a different key so we can tell it was after-the-fact.
+        @resource.extras['sm_job_id'] = params[:id]
+      end
+      FinishTaskWorker.perform_async(@resource.id) unless Rails.env.test?
       head 202
     else
       head 200

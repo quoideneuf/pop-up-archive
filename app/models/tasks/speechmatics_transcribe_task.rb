@@ -237,13 +237,14 @@ class Tasks::SpeechmaticsTranscribeTask < Task
   end
 
   def set_speechmatics_defaults
+    extras['public_id']     = SecureRandom.hex(8)
     extras['call_back_url'] = speechmatics_call_back_url
     extras['entity_id']     = user.entity.id if user
     extras['duration']      = audio_file.duration.to_i if audio_file
   end
 
   def speechmatics_call_back_url
-    Rails.application.routes.url_helpers.speechmatics_callback_url(model_name: owner.class.model_name.underscore, model_id: owner.id)
+    Rails.application.routes.url_helpers.speechmatics_callback_url(model_name: 'task', model_id: self.extras['public_id'])
   end
 
   def download_audio_file

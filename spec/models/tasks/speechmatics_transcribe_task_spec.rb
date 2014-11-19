@@ -146,7 +146,7 @@ describe Tasks::SpeechmaticsTranscribeTask do
 
     it "makes callback url" do
       task.set_speechmatics_defaults
-      task.call_back_url.should eq "http://test.popuparchive.com/speechmatics_callback/files/audio_file/#{audio_file.id}"
+      task.call_back_url.should eq "http://test.popuparchive.com/speechmatics_callback/files/task/#{task.extras['public_id']}"
     end
 
     it "processes transcript result" do
