@@ -15,6 +15,10 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     # download audio file
     data_file = download_audio_file
 
+    # remember the temp file name so we can look up later
+    self.extras['sm_name'] = data_file.path
+    self.save!
+
     # create the speechmatics job
     sm = Speechmatics::Client.new({ :request => { :timeout => 120 } })
     begin
@@ -33,20 +37,29 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       # it is possible that speechmatics got the request
       # but we failed to get the response.
       # so check back to see if a record exists for our file.
-      sm_jobs = sm.user.jobs.list.jobs
-      sm_jobs.each do|smjob|
-        if smjob['name'] == data_file.path
-          # yes, it was successful even though SM failed to respond.
-          self.extras['job_id'] = smjob['id']
-          self.save!
-          break
-        end
-      end
+      self.lookup_sm_job_by_name
 
     rescue
       # re-throw original exception
       raise
     end
+
+  end
+
+  def lookup_sm_job_by_name
+
+    sm      = Speechmatics::Client.new({ :request => { :timeout => 120 } })
+    sm_jobs = sm.user.jobs.list.jobs
+    job_id  = nil
+    sm_jobs.each do|smjob|
+      if smjob['name'] == self.extras['sm_name']
+        # yes, it was successful even though SM failed to respond.
+        self.extras['job_id'] = job_id = smjob['id']
+        self.save!
+        break
+      end 
+    end
+    job_id
 
   end
 
@@ -97,9 +110,12 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       cancel!
       return
     elsif !self.extras['job_id']
-      self.extras[:error] = "No Speechmatics job_id found"
-      cancel!
-      return
+      # try to look it up, one last time
+      if !self.lookup_sm_job_by_name
+        self.extras[:error] = "No Speechmatics job_id found"
+        cancel!
+        return
+      end
     end
 
     # call out to SM and find out what our status is

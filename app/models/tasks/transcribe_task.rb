@@ -37,6 +37,12 @@ class Tasks::TranscribeTask < Task
         self.cancel!
         return true
 
+      rescue Excon::Errors::InternalServerError => err
+        # unknown internal error
+        self.extras[:error] = "#{err}"
+        self.cancel!
+        return true
+
       rescue
         raise # re-throw whatever it was
 
