@@ -44,8 +44,8 @@ angular.module('Directory.analytics.directives',['d3'])
             cx = width / 2;
             cy = height / 2;
             //uneven gravity gives vis a landscape layout
-            ax = alpha /2;
-            ay = alpha /2;
+            ax = alpha;
+            ay = alpha/1.5;
 
             return function (d) {
               d.x += (cx - d.x) * ax;
