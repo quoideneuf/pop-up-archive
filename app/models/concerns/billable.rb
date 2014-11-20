@@ -289,6 +289,7 @@ module Billable
           summary[:this_month][:ondemand][:cost]  = msum[:cost]
           summary[:this_month][:ondemand][:hours] = msum[:hours]
           summary[:this_month][:cost] += summary[:this_month][:ondemand][:cost]
+          summary[:this_month][:hours] += summary[:this_month][:ondemand][:hours]
 
         # basic plan, basic usage. 
         elsif msum[:type] == MonthlyUsage::BASIC_TRANSCRIPTS
