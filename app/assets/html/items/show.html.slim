@@ -101,7 +101,7 @@
                     i.icon-download-alt 
                     |  Download  
                     span.icon-caret-down 
-                button.btn ng-disabled="allowEditButton(audioFile)" ng-show="currentUser.canEdit(item) && !editTable" ng-click="callEditor()"
+                button.btn ng-disabled="allowEditButton(audioFile)" ng-show="currentUser.canEdit(item) && !editTable" ng-click="callEditor(); toggleTranscript()"
                   i.icon-edit
                   |  Edit
                 button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave()"
