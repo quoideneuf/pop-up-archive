@@ -37,7 +37,7 @@
     };
     $httpProvider.defaults.transformRequest.push(setIsLoading);
   }])
-  .factory('myHttpInterceptor', ['$q', '$rootScope', function ($q, $rootScope) {
+  .factory('myHttpInterceptor', ['$q', '$rootScope', '$location', function ($q, $rootScope, $location) {
     if (typeof $rootScope.setIsLoading === 'undefined') {
       $realRootScope = $rootScope;
       $rootScope.loading = loading;
@@ -45,11 +45,14 @@
     }
 
     return function (promise) {
-      return promise.then(function (response) {
+      return promise.then(function success(response) {
         actuallyIsLoading -= 1;
         if (actuallyIsLoading < 0) actuallyIsLoading = 0;
         return response;
-      }, function (response) {
+      }, function error(response) {
+        var errCode = response.status;
+        $rootScope.errorLocation = response.config.url;
+        $location.path('/error/' + errCode).search({was:response.config.url})
         actuallyIsLoading -= 1;
         if (actuallyIsLoading < 0) actuallyIsLoading = 0;
         return $q.reject(response);
