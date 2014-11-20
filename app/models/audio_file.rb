@@ -173,7 +173,7 @@ class AudioFile < ActiveRecord::Base
 
   def analyze_audio(force=false)
     result = nil
-    if !force && task = tasks.analyze_audio.without_status(:failed).last
+    if !force && task = tasks.analyze_audio.without_status(:failed).pop
       logger.debug "analyze task #{task.id} already exists for audio_file #{self.id}"
     else
       result = Tasks::AnalyzeAudioTask.new(extras: { 'original' => process_file_url })
@@ -406,7 +406,7 @@ class AudioFile < ActiveRecord::Base
   end
 
   def unfinished_tasks
-    self.tasks.where('status not in (?)', ['complete', 'cancelled'])
+    self.tasks.without_status([:complete, :cancelled])
   end
 
   def has_basic_transcribe_task_in_progress?
