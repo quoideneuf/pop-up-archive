@@ -50,6 +50,9 @@ class Utils
       file_name = key.split("/").last
 
       directory = connection.directories.get(bucket)
+      if !directory
+        raise "Failed to get directory for bucket #{bucket}"
+      end
 
       try_count = 0
       file_exists = false
