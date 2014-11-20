@@ -42,10 +42,10 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
           image = images[i];
         }
       }
-      if (format == "thumb") {
-        return image.file.file.thumb.url;
-      } else {
+      if (format == "full") {
         return image.file.file.url;
+      } else {
+        return image.file.file.thumb.url;
       }
     } else if ($scope.collection && $scope.collection.imageFiles.length) {
       var images = $scope.collection.imageFiles;
@@ -55,10 +55,10 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
           image = images[i];
         }
       }
-      if (format == "thumb") {
-        return image.file.file.thumb.url;
-      } else {
+      if (format == "full") {
         return image.file.file.url;
+      } else {
+        return image.file.file.thumb.url;
       }
     }
   };
