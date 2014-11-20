@@ -346,7 +346,7 @@
       },
       priority: -1000,
       template: '<div class="file-transcript">' +
-                  '<table class="table">' +
+                  '<table class="table" ng-class="{editTable: bold}">' +
                     '<tr ng-repeat="text in transcript" ng-class="{current: transcriptStart== {{text.startTime | round}}}" ng-init="originalSpeaker=text.speakerId">' +
                       '<td class="play"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
                       '<td class ="timestamp" ng-class="{keytime: $index % 5 != 0}" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +

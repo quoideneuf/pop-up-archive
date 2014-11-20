@@ -138,7 +138,7 @@
               li
                 a href="#" &nbsp;
                 
-            .transcript speakers="audioFile.transcript.speakers" transcript-text="audioFile.transcript.parts | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
+            .transcript ng-class="{true:'glow'}[editTable]" speakers="audioFile.transcript.speakers" transcript-text="audioFile.transcript.parts | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
             .alert.alert-info ng-show="audioFile.currentStatus == 'Transcript Preview complete'"
               |  Here is the transcription of the first two minutes of your audio.&nbsp;
               strong
