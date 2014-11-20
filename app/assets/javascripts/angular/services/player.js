@@ -335,6 +335,7 @@
       replace: true,
       scope: {
         transcript: "=transcriptText",
+        transcriptType: "=transcriptType",
         speakers: "=speakers",
         canEdit: "=transcriptEditable",
         transcriptTimestamps: "@",
@@ -352,7 +353,7 @@
                       '<td class ="timestamp" ng-class="{keytime: $index % 5 != 0}" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-hide="editTable" class="speaker" title="{{assignSpeaker(text.speakerId)}}" ng-bind="speakerChange(transcript[$index-1].speakerId, text.speakerId)"></td>' +
-                      '<td ng-show="editTable">' +
+                      '<td ng-show="editTable && transcriptType != \'Basic\'">' +
                           '<a bs-popover="speakerPopover"  data-placement="right" data-unique="1">' +
                             '<span ng-bind="abbreviateSpeaker(text.speakerId)"></span>' +
                             '<i class="icon-chevron-down"></i>' +
