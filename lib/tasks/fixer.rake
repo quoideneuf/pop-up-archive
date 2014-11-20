@@ -71,7 +71,7 @@ namespace :fixer do
     sm_tasks_count = sm_tasks.count
     puts "Found #{sm_tasks_count} unfinished Speechmatics tasks older than 1 day"
 
-    report = {'cancelled, no job_id' => 0, 'No SM job found for job_id' => 0, 'recovered' => 0}
+    report = {'cancelled, no job_id' => 0, 'missing job_id' => 0, 'No SM job found for job_id' => 0, 'recovered' => 0}
 
     # fetch all SM jobs at once to save HTTP overhead.
     # TODO ask them to implement sorting, searching, paging.
@@ -84,8 +84,21 @@ namespace :fixer do
         # if we don't have a job_id then it never was created at SM
         if !task.extras['job_id']
           puts "Task.find(#{task.id}) has no job_id: #{task.inspect}"
-          task.recover!  # should cancel it with err msg
-          report['cancelled, no job_id'] += 1
+
+          # if not recovering, log it and skip to next
+          if !ok_to_recover
+            report['missing job_id'] += 1
+            next
+          end
+
+          task.recover!  # should cancel it with err msg if can't reverse lookup job_id
+          if task.status == "cancelled"
+            report['cancelled, no job_id'] += 1
+          elsif task.status == "complete"
+            report['recovered'] += 1
+          else
+            puts "Called Task.find(#{task.id}).recover! and ended with status '#{task.status}'"
+          end
           next
         end
 
