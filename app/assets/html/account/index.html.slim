@@ -63,6 +63,10 @@
       | {{me.organization.usage.thisMonth.hours}} hours
       .usage-cost
       | {{me.organization.usage.thisMonth.cost | currency:"USD $"}}
+      .usage-hours ng-show="me.organization.usage.thisMonth.ondemand"
+      | {{me.organization.usage.thisMonth.ondemand.hours}} premium hours
+      .usage-cost ng-show="me.organization.usage.thisMonth.ondemand"
+      | {{me.organization.usage.thisMonth.ondemand.cost | currency:"USD $"}}
     .usage-current
       h5 ng-show="me.organization" Me, This Month ({{me.usage.thisMonth.period}})
       h5 ng-hide="me.organization" This Month ({{me.usage.thisMonth.period}})
@@ -70,6 +74,10 @@
       | {{me.usage.thisMonth.hours}} hours
       .usage-cost
       | {{me.usage.thisMonth.cost | currency:"USD $"}}
+      .usage-hours ng-show="me.usage.thisMonth.ondemand"
+      | {{me.usage.thisMonth.ondemand.hours}} premium hours
+      .usage-cost ng-show="me.usage.thisMonth.ondemand"
+      | {{me.usage.thisMonth.ondemand.cost | currency:"USD $"}}
     hr
     .usage-history
       h5 History
