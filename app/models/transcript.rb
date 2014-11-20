@@ -91,6 +91,19 @@ class Transcript < ActiveRecord::Base
     self.transcriber_id == Transcriber.premium.id
   end
 
+  def duration
+    self.end_time - self.start_time
+  end
+
+  def is_preview?
+    af = self.audio_file_lazarus
+    self.transcriber_id == Transcriber.basic.id && self.duration <= 120 && af.duration && af.duration > 120
+  end
+
+  def is_basic?
+    self.transcriber_id == Transcriber.basic.id && !self.is_preview?
+  end
+
   def billable?
     self.is_billable
   end

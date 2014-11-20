@@ -358,23 +358,63 @@ class AudioFile < ActiveRecord::Base
     Rails.application.routes.url_helpers.api_item_audio_file_transcript_text_url(item_id, id)
   end
 
+  # avoid default scope because we do not want timed_texts
   def transcripts_alone
     self.transcripts.unscoped.where(:audio_file_id => self.id)
   end
 
+  def has_preview?
+    # short audio, any transcript
+    if self.duration and self.duration < 120 and self.transcripts_alone.count > 0
+      return true
+    end
+    self.transcripts_alone.where(:end_time => 120, :start_time => 0).count
+  end
+
+  def has_basic_transcript?
+    self.transcripts_alone.any?{|t| t.is_basic?}
+  end
+
+  # symmetry only
+  def has_premium_transcript?
+    is_premium?
+  end
+
   def is_premium?
-    # call unscoped w/explicit 'where' to avoid loading timed texts too.
-    self.transcripts.unscoped.where(:audio_file_id => self.id).any?{|t| t.is_premium?}
+    self.transcripts_alone.any?{|t| t.is_premium?}
+  end
+
+  # returns true if audio still requires a basic or premium transcript. preview is excluded.
+  def needs_transcript?
+    # if user has plan needing more than preview, 
+    # and there are no transcripts yet created, 
+    # and no tasks in process.
+    if transcripts_alone.count == 0 and !has_basic_transcribe_task_in_progress? and !has_premium_transcribe_task_in_progress?
+      return true
+    end
+    if user and user.plan.has_premium_transcripts? and !has_premium_transcribe_task_in_progress? and !has_premium_transcript?
+      return true
+    end
+    if user and user.plan != SubscriptionPlanCached.community and !has_basic_transcribe_task_in_progress? and !has_basic_transcript?
+      return true
+    end
+    return false
   end
 
   def has_premium_transcribe_task?
     self.tasks.select{|task| task.type == 'Tasks::SpeechmaticsTranscribeTask' && task.status != "failed"}.first
   end
 
+  def unfinished_tasks
+    self.tasks.where('status not in (?)', ['complete', 'cancelled'])
+  end
+
+  def has_basic_transcribe_task_in_progress?
+    self.unfinished_tasks.any?{|t| t.type == 'Tasks::TranscribeTask'}
+  end
+
   def has_premium_transcribe_task_in_progress?
-    self.tasks.where('type in (?)', ['Tasks::SpeechmaticsTranscribeTask']).\
-               where('status not in (?)', ['complete', 'cancelled']).count > 0 \
-               ? true : false
+    self.unfinished_tasks.any?{|t| t.type == 'Tasks::SpeechmaticsTranscribeTask'}
   end
 
   def transcript_type

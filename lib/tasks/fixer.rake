@@ -105,6 +105,8 @@ namespace :fixer do
         # lookup SM status
         sm_job = sm_jobs_lookup[task.extras['job_id']]
         if !sm_job
+          task.extras[:error] = "No SM job found for job_id"
+          task.cancel!
           puts "No SM job found for task: #{task.inspect}"
           report['No SM job found for job_id'] += 1
           next
@@ -123,6 +125,37 @@ namespace :fixer do
     end
 
   end
+
+  desc "check for audio with no transcript and (optionally) create it"
+  task transcript_check: [:environment] do
+
+    ok_to_recover = ENV['RECOVER']
+    verbose       = ENV['VERBOSE']
+
+    AudioFile.find_in_batches do |afgroup|
+      afgroup.each do |af|
+        if !af.has_file? && af.original_file_url.blank?
+          next  # can't do anything
+        end
+
+        if af.transcripts_alone.count >= 2
+          next  # has enough
+        end
+
+        if af.has_preview? and af.needs_transcript?
+          verbose and puts "AudioFile.find(#{af.id}) needs any transcript"
+          ok_to_recover and af.process_file # has preview, needs full
+        end
+
+        if !af.has_preview? and !af.has_premium_transcript?
+          verbose and puts "AudioFile.find(#{af.id}) needs premium transcript"
+          ok_to_recover and af.process_file # missing preview
+        end
+
+      end # afgroup
+    end # batches
+
+  end # task
 
 end
 
