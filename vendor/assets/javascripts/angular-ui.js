@@ -697,7 +697,20 @@ angular.module('ui.directives').directive('uiKeyup', ['keypressHelper', function
             }
         });
     };
-  });    
+  });
+
+  app.directive('ngDownArrow', function () {
+    return function (scope, element, attrs) {
+      element.bind("keydown keypress", function (event) {
+        if(event.keyCode == 40) {
+          scope.$apply(function (){
+              scope.$eval(attrs.ngDownArrow)
+          });
+          event.preventDefault();
+        }
+      });
+    };
+  });     
 
   app.directive('ngTab', function () {
     return function (scope, element, attrs) {

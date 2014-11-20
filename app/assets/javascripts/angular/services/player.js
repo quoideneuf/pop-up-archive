@@ -365,7 +365,7 @@
                         '</a>' +
                       '</td>' +
                       '<td ng-show="editorEnabled">' + 
-                        '<input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)">' +
+                        '<input ng-blur="updateText(text)" ng-model="editableTranscript" ng-enter="updateTextKeyCommand(text)" ng-down-arrow="updateTextKeyCommand(text)" ng-up-arrow="enableEditorPreviousField(text)" ng-tab="playerPausePlay()" ng-shift-tab="seekTo(text.startTime)">' +
                       '</td>' +
                     '</tr>' +
                   '</table>' +
