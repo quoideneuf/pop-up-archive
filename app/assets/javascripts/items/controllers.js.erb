@@ -186,8 +186,15 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   $scope.deleteItem = function () {
     if (confirm("Are you sure you want to delete the item " + $scope.item.title +"? \n\n This cannot be undone." )){
       $scope.item.delete().then(function () {
-        $timeout(function(){ $scope.$broadcast('datasetChanged')}, 100);
-        $location.path('/collections/' + $scope.collection.id);
+        // even though the DELETE should be instantaneous from our POV,
+        // "sleep" a full second to let the search index sychronize.
+        // c.f. github issue #765
+        // NOTE we fire the location change *after* we broadcast the datasetChange,
+        // so that we mark all searches as stale.
+        $timeout(function(){ 
+          $scope.$broadcast('datasetChanged');
+          $location.path('/collections/' + $scope.collection.id);
+        }, 1000);
       })
     }
   };
