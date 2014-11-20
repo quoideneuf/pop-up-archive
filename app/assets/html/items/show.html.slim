@@ -118,7 +118,7 @@
                   |  Expand
 
           div ng-class="transcriptClass()"
-            ul.arrow-buttons
+            ul.arrow-buttons ng-show="showOnAmara()"
               / li ng-show="showOrderTranscript()"
               /   a class='perfect' href="#" ng-click='orderTranscript()'
               /     | Perfect your transcript
@@ -131,7 +131,7 @@
               /   a class='amara' href="#" ng-click='addToAmara()'
               /     | Submit to Amara
               /     img src='#{asset_path("amarasmall.png")}'
-              li ng-show="showOnAmara()"
+              li 
                 a class='crafted' ng-href='{{addToAmaraTask().transcriptUrl}}' target="blank"
                   | View on Amara
                   img src='#{asset_path("amarasmall.png")}'
