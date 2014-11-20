@@ -211,6 +211,22 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
       templateUrl: "<%= asset_path 'analytics/index.html' %>",
       title: "Analytics"
     })
+    .when('/error/404', {
+      templateUrl: "<%= asset_path 'error/404.html' %>",
+      title: "Not Found"
+    })
+    .when('/error/403', {
+      templateUrl: "<%= asset_path 'error/403.html' %>",
+      title: "Permission Denied"
+    })
+    .when('/error/401', {
+      templateUrl: "<%= asset_path 'error/401.html' %>",
+      title: "Login Required"
+    })
+    .when('/error/500', {
+      templateUrl: "<%= asset_path 'error/500.html' %>",
+      title: "Server Error"
+    })
     .otherwise({
       template: "<h1>404 - not found</h1>"
     });
