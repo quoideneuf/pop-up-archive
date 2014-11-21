@@ -20,4 +20,4 @@
 
     div ng-if="collection.numberOfItems > 0"
       ng-include ng-controller="SearchResultsCtrl" src="'#{asset_path 'search/results.html'}'"
-    div ng-if="collection.numberOfItems == 0" ng-include="'#{asset_path 'collections/new.html'}'"
+    div ng-if="collection.numberOfItems == 0 && canEdit" ng-include="'#{asset_path 'collections/new.html'}'"
