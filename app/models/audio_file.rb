@@ -453,8 +453,8 @@ class AudioFile < ActiveRecord::Base
   end
 
   def is_copied?
-    if self.copy_task.count
-      return self.copy_task.with_status(:complete).count > 0
+    if self.tasks.copy.count > 0
+      return self.tasks.copy.with_status(:complete).count > 0
     else
       return true  # no copy needed
     end
