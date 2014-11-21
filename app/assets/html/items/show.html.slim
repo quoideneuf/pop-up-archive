@@ -33,7 +33,7 @@ meta view-head="view-head" property="og:description" content="{{item.description
         .thumb-and-title
           img ng-if="(item.imageFiles && item.imageFiles.length) || (collection.imageFiles && collection.imageFiles.length)" ng-src="{{ updateImage() }}"
           h1 view-title="view-title" {{item.title}}
-          a style="display:none;" facebook="facebook" class="facebookShare" data-url='http://www.popuparchive.com/collections/{{collection.id}}/items/{{item.id}}'
+          a style="display:none;" facebook="facebook" class="facebookShare" data-url='/collections/{{collection.id}}/items/{{item.id}}'
           .clear
         p ng-show="item.description" ng-bind-html="item.description"
 
