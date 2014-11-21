@@ -16,7 +16,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     data_file = download_audio_file
 
     # remember the temp file name so we can look up later
-    self.extras['sm_name'] = data_file.path
+    self.extras['sm_name'] = File.basename(data_file.path)
     self.save!
 
     # create the speechmatics job
