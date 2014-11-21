@@ -1,5 +1,5 @@
 meta view-head="view-head" property="og:title" content="{{item.title}}"
-meta view-head="view-head" property="og:image" content="{{ updateImage('full') }}"
+meta ng-if="(item.imageFiles && item.imageFiles.length) || (collection.imageFiles && collection.imageFiles.length)" view-head="view-head" property="og:image" content="{{ updateImage('full') }}"
 meta view-head="view-head" property="og:description" content="{{item.description}}"
 .container ng-show="currentUser.canEdit(item) || collection.itemsVisibleByDefault"
   ul.pager ng-show="nextItem || previousItem || searchResults.query"
@@ -31,7 +31,7 @@ meta view-head="view-head" property="og:description" content="{{item.description
           |  &raquo;
           a ng-href="/collections/{{collection.id}}" {{collection.title}}
         .thumb-and-title
-          img ng-if="item.imageFiles.length || collection.imageFiles.length" ng-src="{{ updateImage() }}"
+          img ng-if="(item.imageFiles && item.imageFiles.length) || (collection.imageFiles && collection.imageFiles.length)" ng-src="{{ updateImage() }}"
           h1 view-title="view-title" {{item.title}}
           a style="display:none;" facebook="facebook" class="facebookShare" data-url='http://www.popuparchive.com/collections/{{collection.id}}/items/{{item.id}}'
           .clear

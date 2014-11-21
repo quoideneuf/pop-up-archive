@@ -12,7 +12,7 @@
         |  Delete Collection
 
     .thumb-and-title    
-      img ng-show="collection.imageFiles" ng-src="{{ updateImage() }}"
+      img ng-if="collection.imageFiles && collection.imageFiles.length" ng-src="{{ updateImage() }}"
       h2 Browsing {{collection.title}}
       .clear
 
