@@ -60,7 +60,8 @@
             .span6
               .transcript-label ng-hide="editTable"
                 span.ts-type {{audioFile.transcriptType}} Transcript
-                i.icon-question-sign style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['transcriptInfo']" data-placement="bottom"                
+                i.icon-question-sign ng-show="audioFile.transcriptType == 'Basic'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['basicTranscript']" data-placement="bottom"    
+                i.icon-question-sign ng-show="audioFile.transcriptType == 'Premium'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['premiumTranscript']" data-placement="bottom"            
               button.btn.ts-upgrade id="premium-ondemand-{{audioFile.id}}" ng-show="currentUser.canEdit(item) && audioFile.transcriptType == 'Basic' && !audioFile.premiumInProgress" ng-click="orderPremiumTranscript(audioFile, $event)" title="Your cost: {{audioFile.premiumRetailCost}}"
                 i.icon-star-empty
                 |  Reprocess as Premium
