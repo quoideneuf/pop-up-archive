@@ -52,7 +52,8 @@
       }, function error(response) {
         var errCode = response.status;
         $rootScope.errorLocation = response.config.url;
-        $location.path('/error/' + errCode).search({was:response.config.url})
+        $rootScope.prevLocation = $location.absUrl();
+        $location.path('/error/' + errCode).search({was:$rootScope.prevLocation})
         actuallyIsLoading -= 1;
         if (actuallyIsLoading < 0) actuallyIsLoading = 0;
         return $q.reject(response);
