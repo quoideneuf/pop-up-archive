@@ -448,44 +448,61 @@ class AudioFile < ActiveRecord::Base
     self.connection.execute("select sum(af.duration) as dursum from items as i, audio_files as af where i.is_public=false and af.item_id=i.id").first.first[1]
   end
 
+  def is_uploaded?
+    self.tasks.count > 0
+  end
+
+  def is_copied?
+    if self.copy_task.count
+      return self.copy_task.with_status(:complete).count > 0
+    else
+      return true  # no copy needed
+    end
+  end
+
   def current_status
-    status, upload, start, basic, premium = ""
-    self.tasks.each do |task|
-      if task.type == "Tasks::UploadTask"
-        upload = task.status
-      elsif task.identifier == "ts_start"
-        start = task.status
-      elsif task.identifier == "ts_all"
-        basic = task.status
-      elsif task.identifier == "ts_paid"
-        premium = task.status
-      end
+    # the order of progression, regardless of what order the tasks actually complete.
+    # upload
+    # analyze audio
+    # copy
+    # transcode
+    # transcribe
+    # * preview
+    # * basic
+    # * premium
+    # analyze
+    #
+    # because all these tasks are async, we just evaluate the current state
+    # in a fail-forward progression, assuming that all previous conditions are true
+    # if the current condition is true.
+    status = 'Uploading'
+    if self.is_uploaded?
+      status = 'Copying'
+    end
+    if self.is_copied?
+      status = 'Transcoding'
+    end
+    if self.transcoded?
+      status = 'Transcribing'
+    end
+    if self.has_preview?
+      status = 'Preview complete'
+    end
+    if !self.needs_transcript?
+      status = 'Transcription complete'
+    end
+    if self.has_basic_transcript?
+      status = 'Basic transcript complete'
+    end
+    if self.has_premium_transcript?
+      status = 'Premium transcript complete'
+    end
+    if self.tasks.any?{|t| t.stuck?}
+      status = 'Stuck'
     end
 
-    # 'failed' status means that fixer will retry.
-    # 'cancelled' means we ran out of re-tries or otherwise gave up.
-    # since 'failed' is not final, communicate it the same as 'working'
-    if upload == "failed" or upload == "working"
-      status = "Uploading"
-    elsif upload == "cancelled"
-      status = "Upload cancelled"
-    elsif premium == "failed" or premium == "created"
-      status = "Premium Transcript processing"
-    elsif premium == "cancelled"
-      status = "Premium Transcript cancelled"
-    elsif basic == "failed" or basic == "working"
-      status = "Basic Transcript processing"
-    elsif basic == "cancelled"
-      status = "Basic Transcript cancelled"
-    elsif premium == "complete"
-      status = "Premium Transcript complete"
-    elsif basic == "complete"
-      status = "Basic Transcript complete"
-    elsif start == "created" or start == "working"
-      status = "Transcript Preview processing"
-    elsif start == "complete" and !basic
-      status = "Transcript Preview complete"
-    end
+    # TODO do we care about communicating the analyze status?
+
     status
   end
 
