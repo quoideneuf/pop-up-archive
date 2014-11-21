@@ -268,7 +268,7 @@ module Billable
         type:   mu.use,
         hours:  mu.value.fdiv(3600).round(3),
         cost:   mu.retail_cost.round(2),  # expose only what we charge customers, whether we charge them or not.
-      }   
+      }
       summary[:history].push msum
       if mu.yearmonth == thismonth
         summary[:current].push msum
@@ -287,9 +287,9 @@ module Billable
         # if there is premium usage, it must be on-demand, so pass on the msum cost. 
         if msum[:type] == MonthlyUsage::PREMIUM_TRANSCRIPTS && msum[:hours] > 0 
           summary[:this_month][:ondemand][:cost]  = msum[:cost]
-          summary[:this_month][:ondemand][:hours] = msum[:hours]
+          summary[:this_month][:ondemand][:hours] = msum[:hours].round(3)
           summary[:this_month][:cost] += summary[:this_month][:ondemand][:cost]
-          summary[:this_month][:hours] += summary[:this_month][:ondemand][:hours]
+          summary[:this_month][:hours] += summary[:this_month][:ondemand][:hours].round(3)
 
         # basic plan, basic usage. 
         elsif msum[:type] == MonthlyUsage::BASIC_TRANSCRIPTS
