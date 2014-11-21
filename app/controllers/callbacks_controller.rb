@@ -52,4 +52,33 @@ class CallbacksController < ApplicationController
   
   end
 
+  def stripe_webhook
+    # the body is the JSON payload, decoded for us as params
+    stripe_event = params
+
+    # pull out the customer id
+    cust_id = stripe_event[:data][:object][:customer]
+    Rails.logger.warn("stripe callback for customer #{cust_id}")
+
+    # find the relevant user
+    user = User.find_by_customer_id cust_id
+
+    # stripe sends callback to live env for test events
+    # so make sure we actually have this user in this env.
+    if user
+
+      # TODO could parse stripe_event[:type] here if we wanted more fine-grained control of actions we take.
+
+      # nullify the cached subscription_plan_id for the user so it gets re-cached on next access
+      user.subscription_plan_id = nil
+      user.save!
+
+    else
+      Rails.logger.warn("Got stripe callback for non-existent user.customer_id #{cust_id}")
+
+    end
+
+    head 200  # always say ok
+  end
+
 end
