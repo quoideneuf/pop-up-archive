@@ -368,7 +368,7 @@ class AudioFile < ActiveRecord::Base
     if self.duration and self.duration < 120 and self.transcripts_alone.count > 0
       return true
     end
-    self.transcripts_alone.where(:end_time => 120, :start_time => 0).count
+    self.transcripts_alone.where(:end_time => 120, :start_time => 0).count > 0
   end
 
   def has_basic_transcript?
@@ -485,6 +485,17 @@ class AudioFile < ActiveRecord::Base
     if self.transcoded?
       status = 'Transcribing'
     end
+
+    # check for "stuck" before any transcript checks,
+    # so that subsequent transcript checks can override.
+    # this is because even though a lower-level task may be 'stuck'
+    # it is possible the chain has sufficiently recovered enough
+    # to produce a transcript, which is the end goal in any case.
+    if self.tasks.any?{|t| t.stuck?}
+      status = 'Stuck'
+    end
+
+    # now transcript checks
     if self.has_preview?
       status = 'Preview complete'
     end
@@ -496,9 +507,6 @@ class AudioFile < ActiveRecord::Base
     end
     if self.has_premium_transcript?
       status = 'Premium transcript complete'
-    end
-    if self.tasks.any?{|t| t.stuck?}
-      status = 'Stuck'
     end
 
     # TODO do we care about communicating the analyze status?
