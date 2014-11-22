@@ -1,6 +1,6 @@
 Pop Up Archive Item: "<%= transcript.audio_file.item.title %>" : <%= transcript.audio_file.item.url %>
 Transcript for file: <%= transcript.audio_file.filename %>
-<% if transcript.audio_file.item.transcript_type == 'premium' %>
+<% if transcript.audio_file.transcript_type == 'Premium' %>
 	<%= render "premium" %>
 <% else %>
 	<%= render "basic" %>
