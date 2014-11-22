@@ -1,0 +1,9 @@
+<%- n=0 %>
+<%- transcript.timed_texts.each_with_index do |tt, index| 
+      n=n+1-%>
+<%= if transcript.timed_texts[index-1].speaker_id != tt.speaker_id
+	"\n\r" +  format_time(tt.start_time) + "\r\n" +
+	transcript.speakers.find(tt.speaker_id).name + "\n"
+	end %>
+<%= tt.text + " " -%>
+<%- end -%>
