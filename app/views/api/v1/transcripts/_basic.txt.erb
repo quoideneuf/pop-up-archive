@@ -1,0 +1,8 @@
+<%- n=0 %>
+<%- transcript.timed_texts.each_with_index do |tt, index| 
+      n=n+1-%>
+<%= if n%7===0 
+      "\n\r" + format_time(tt.start_time) + "\r\n"
+    end %>
+<%= tt.text + " " -%>
+<%- end -%>
