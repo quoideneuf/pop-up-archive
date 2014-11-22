@@ -363,6 +363,18 @@ class AudioFile < ActiveRecord::Base
     self.transcripts.unscoped.where(:audio_file_id => self.id)
   end
 
+  def stuck?
+    self.tasks.any?{|t| t.stuck?}
+  end
+
+  def recover!
+    self.tasks.each do |task|
+      if task.stuck?
+        task.recover!
+      end
+    end
+  end
+
   def has_preview?
     # short audio, any transcript
     if self.duration and self.duration < 120 and self.transcripts_alone.count > 0
@@ -491,7 +503,7 @@ class AudioFile < ActiveRecord::Base
     # this is because even though a lower-level task may be 'stuck'
     # it is possible the chain has sufficiently recovered enough
     # to produce a transcript, which is the end goal in any case.
-    if self.tasks.any?{|t| t.stuck?}
+    if self.stuck?
       status = 'Stuck'
     end
 
