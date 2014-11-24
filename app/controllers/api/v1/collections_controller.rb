@@ -8,14 +8,18 @@ class Api::V1::CollectionsController < Api::V1::BaseController
   end
   expose :kollection do
     if params[:id]
+      koll_exists = Collection.exists? params[:id]
       koll = nil
       if user_signed_in?
         koll = current_user.collections.find_by_id(params[:id])
       end
       koll ||= Collection.is_public.find_by_id(params[:id])
-      # request for a specific collection failed. assume not found rather than unauthz.
       if !koll
-        raise ActiveRecord::RecordNotFound.new "Cannot fetch collection with id #{params[:id]}"
+        if koll_exists
+          raise CanCan::AccessDenied.new "May not fetch collection with id #{params[:id]}"
+        else
+          raise ActiveRecord::RecordNotFound.new "Cannot fetch collection with id #{params[:id]}"
+        end
       end
       koll
     else
