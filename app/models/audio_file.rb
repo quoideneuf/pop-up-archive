@@ -511,7 +511,7 @@ class AudioFile < ActiveRecord::Base
     if self.has_preview?
       status = 'Preview complete'
     end
-    if !self.needs_transcript?
+    if self.has_preview? and !self.needs_transcript?
       status = 'Transcription complete'
     end
     if self.has_basic_transcript?
