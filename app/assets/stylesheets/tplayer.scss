@@ -1,0 +1,69 @@
+/* Pop Up Archive embedable transcripted player */
+//@import 'jplayer.popup';
+@import 'font-awesome';
+@import '_player';
+
+.jp-progress,
+.jp-progress div,
+.jp-time-holder,
+.jp-time-holder div {
+  display: inline-block;
+}
+
+/* The seeking class is added/removed inside jPlayer */
+div.jp-seeking-bg {
+	background: red;
+}
+
+.jp-progress {
+	background: #fff 0px -240px no-repeat;
+    width: 50%;
+	height: 60px;
+	padding: 0 2px 2px 2px;
+	margin-bottom: 4px;
+	overflow:hidden;
+}
+
+div.jp-video .jp-progress {
+	border-top:1px solid #180a1f;
+	border-bottom: 1px solid #554560;
+	width:100%;
+	background-image: none;
+	padding: 0;
+}
+
+.jp-seek-bar {
+	background: red 0px -260px repeat-x;
+	width: 100%;
+	height: 100%;
+	overflow:hidden;
+	cursor:pointer;
+}
+
+.jp-play-bar {
+	background: pink 0px -280px repeat-x;
+	width:0px;
+	height: 100%;
+	overflow:hidden;
+}
+
+/* scrubber is invisible, used for creating waveform */
+.player .scrubber {
+  display: none;
+}
+.player .scrubber canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.player {
+  width: 100%;
+}
+.player h2 {
+  font-size: 32px;
+  color: #444;
+}
+
+.player .player-button {
+  cursor: pointer;
+}
