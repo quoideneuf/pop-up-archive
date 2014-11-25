@@ -173,7 +173,7 @@ class AudioFile < ActiveRecord::Base
 
   def analyze_audio(force=false)
     result = nil
-    if !force && task = tasks.analyze_audio.without_status(:failed).last
+    if !force && task = tasks.analyze_audio.without_status(:failed).pop
       logger.debug "analyze task #{task.id} already exists for audio_file #{self.id}"
     else
       result = Tasks::AnalyzeAudioTask.new(extras: { 'original' => process_file_url })
@@ -358,23 +358,75 @@ class AudioFile < ActiveRecord::Base
     Rails.application.routes.url_helpers.api_item_audio_file_transcript_text_url(item_id, id)
   end
 
+  # avoid default scope because we do not want timed_texts
   def transcripts_alone
     self.transcripts.unscoped.where(:audio_file_id => self.id)
   end
 
+  def stuck?
+    self.tasks.any?{|t| t.stuck?}
+  end
+
+  def recover!
+    self.tasks.each do |task|
+      if task.stuck?
+        task.recover!
+      end
+    end
+  end
+
+  def has_preview?
+    # short audio, any transcript
+    if self.duration and self.duration < 120 and self.transcripts_alone.count > 0
+      return true
+    end
+    self.transcripts_alone.where(:end_time => 120, :start_time => 0).count > 0
+  end
+
+  def has_basic_transcript?
+    self.transcripts_alone.any?{|t| t.is_basic?}
+  end
+
+  # symmetry only
+  def has_premium_transcript?
+    is_premium?
+  end
+
   def is_premium?
-    # call unscoped w/explicit 'where' to avoid loading timed texts too.
-    self.transcripts.unscoped.where(:audio_file_id => self.id).any?{|t| t.is_premium?}
+    self.transcripts_alone.any?{|t| t.is_premium?}
+  end
+
+  # returns true if audio still requires a basic or premium transcript. preview is excluded.
+  def needs_transcript?
+    # if user has plan needing more than preview, 
+    # and there are no transcripts yet created, 
+    # and no tasks in process.
+    if transcripts_alone.count == 0 and !has_basic_transcribe_task_in_progress? and !has_premium_transcribe_task_in_progress?
+      return true
+    end
+    if user and user.plan.has_premium_transcripts? and !has_premium_transcribe_task_in_progress? and !has_premium_transcript?
+      return true
+    end
+    if user and user.plan != SubscriptionPlanCached.community and !has_basic_transcribe_task_in_progress? and !has_basic_transcript?
+      return true
+    end
+    return false
   end
 
   def has_premium_transcribe_task?
     self.tasks.select{|task| task.type == 'Tasks::SpeechmaticsTranscribeTask' && task.status != "failed"}.first
   end
 
+  def unfinished_tasks
+    self.tasks.without_status([:complete, :cancelled])
+  end
+
+  def has_basic_transcribe_task_in_progress?
+    self.unfinished_tasks.any?{|t| t.type == 'Tasks::TranscribeTask'}
+  end
+
   def has_premium_transcribe_task_in_progress?
-    self.tasks.where('type in (?)', ['Tasks::SpeechmaticsTranscribeTask']).\
-               where('status not in (?)', ['complete', 'cancelled']).count > 0 \
-               ? true : false
+    self.unfinished_tasks.any?{|t| t.type == 'Tasks::SpeechmaticsTranscribeTask'}
   end
 
   def transcript_type
@@ -408,44 +460,69 @@ class AudioFile < ActiveRecord::Base
     self.connection.execute("select sum(af.duration) as dursum from items as i, audio_files as af where i.is_public=false and af.item_id=i.id").first.first[1]
   end
 
+  def is_uploaded?
+    self.tasks.count > 0
+  end
+
+  def is_copied?
+    if self.tasks.copy.count > 0
+      return self.tasks.copy.with_status(:complete).count > 0
+    else
+      return true  # no copy needed
+    end
+  end
+
   def current_status
-    status, upload, start, basic, premium = ""
-    self.tasks.each do |task|
-      if task.type == "Tasks::UploadTask"
-        upload = task.status
-      elsif task.identifier == "ts_start"
-        start = task.status
-      elsif task.identifier == "ts_all"
-        basic = task.status
-      elsif task.identifier == "ts_paid"
-        premium = task.status
-      end
+    # the order of progression, regardless of what order the tasks actually complete.
+    # upload
+    # analyze audio
+    # copy
+    # transcode
+    # transcribe
+    # * preview
+    # * basic
+    # * premium
+    # analyze
+    #
+    # because all these tasks are async, we just evaluate the current state
+    # in a fail-forward progression, assuming that all previous conditions are true
+    # if the current condition is true.
+    status = 'Uploading'
+    if self.is_uploaded?
+      status = 'Copying'
+    end
+    if self.is_copied?
+      status = 'Transcoding'
+    end
+    if self.transcoded?
+      status = 'Transcribing'
     end
 
-    # 'failed' status means that fixer will retry.
-    # 'cancelled' means we ran out of re-tries or otherwise gave up.
-    # since 'failed' is not final, communicate it the same as 'working'
-    if upload == "failed" or upload == "working"
-      status = "Uploading"
-    elsif upload == "cancelled"
-      status = "Upload cancelled"
-    elsif premium == "failed" or premium == "created"
-      status = "Premium Transcript processing"
-    elsif premium == "cancelled"
-      status = "Premium Transcript cancelled"
-    elsif basic == "failed" or basic == "working"
-      status = "Basic Transcript processing"
-    elsif basic == "cancelled"
-      status = "Basic Transcript cancelled"
-    elsif premium == "complete"
-      status = "Premium Transcript complete"
-    elsif basic == "complete"
-      status = "Basic Transcript complete"
-    elsif start == "created" or start == "working"
-      status = "Transcript Preview processing"
-    elsif start == "complete" and !basic
-      status = "Transcript Preview complete"
+    # check for "stuck" before any transcript checks,
+    # so that subsequent transcript checks can override.
+    # this is because even though a lower-level task may be 'stuck'
+    # it is possible the chain has sufficiently recovered enough
+    # to produce a transcript, which is the end goal in any case.
+    if self.stuck?
+      status = 'Stuck'
     end
+
+    # now transcript checks
+    if self.has_preview?
+      status = 'Preview complete'
+    end
+    if self.has_preview? and !self.needs_transcript?
+      status = 'Transcription complete'
+    end
+    if self.has_basic_transcript?
+      status = 'Basic transcript complete'
+    end
+    if self.has_premium_transcript?
+      status = 'Premium transcript complete'
+    end
+
+    # TODO do we care about communicating the analyze status?
+
     status
   end
 

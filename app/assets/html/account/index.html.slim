@@ -4,7 +4,7 @@
       i.icon-wrench
       |  Change Plan
   h3
-    | My Account
+    | Account
 
 .row-fluid ng-if="me.hasCard"
   .well
@@ -23,7 +23,7 @@
     .plan-pricing
       | {{me.totalMeteredStorage | timeCode: 'words'}} - {{me.plan.amount / 100 | currency }}/{{me.plan.interval | shortInterval }}
       small
-        a href="/account/plan" Get More!
+        a href="/account/plan" Change My Plan.
 
 .row-fluid ng-hide="me.plan.amount"
   .well
@@ -59,24 +59,35 @@
     h4 Usage
     .usage-organization ng-show="me.organization"
       h5 {{me.organization.name}}, This Month ({{me.organization.usage.thisMonth.period}})
-      .usage-hours
-      | {{me.organization.usage.thisMonth.hours}} hours
-      .usage-cost
-      | {{me.organization.usage.thisMonth.cost | currency:"USD $"}}
+      dl.dl-horizontal
+        dt Total Plan Hours
+        dd {{me.organization.usage.thisMonth.hours}}
+        dt Total Cost
+        dd {{me.organization.usage.thisMonth.cost | currency:"USD $"}}
+        dt.subtotal ng-show="me.organization.usage.thisMonth.ondemand.hours" Premium Hours
+        dd.subtotal ng-show="me.organization.usage.thisMonth.ondemand.hours" {{me.organization.usage.thisMonth.ondemand.hours}}
+        dt.subtotal ng-show="me.organization.usage.thisMonth.ondemand.cost" Premium Cost
+        dd.subtotal ng-show="me.organization.usage.thisMonth.ondemand.cost" {{me.organization.usage.thisMonth.ondemand.cost | currency:"USD $"}}
     .usage-current
       h5 ng-show="me.organization" Me, This Month ({{me.usage.thisMonth.period}})
       h5 ng-hide="me.organization" This Month ({{me.usage.thisMonth.period}})
-      .usage-hours
-      | {{me.usage.thisMonth.hours}} hours
-      .usage-cost
-      | {{me.usage.thisMonth.cost | currency:"USD $"}}
+      dl.dl-horizontal
+        dt Total Hours
+        dd {{me.usage.thisMonth.hours}}
+        dt Total Cost
+        dd {{me.usage.thisMonth.cost | currency:"USD $"}}
+        dt.subtotal ng-show="me.usage.thisMonth.ondemand.hours" Premium Hours
+        dd.subtotal ng-show="me.usage.thisMonth.ondemand.hours" {{me.usage.thisMonth.ondemand.hours}}
+        dt.subtotal ng-show="me.usage.thisMonth.ondemand.cost" Premium Cost
+        dd.subtotal ng-show="me.usage.thisMonth.ondemand.cost" {{me.usage.thisMonth.ondemand.cost | currency:"USD $"}}
     hr
     .usage-history
       h5 History
       .usage-month ng-repeat="msum in me.usage.history"
         h6 {{msum.period}} - {{msum.type}}
-        .usage-hours
-        | {{msum.hours}} hours
-        .usage-cost
-        | {{msum.cost | currency:"USD $"}}
+        dl.dl-horizontal
+          dt Hours 
+          dd {{msum.hours}}
+          dt Cost
+          dd {{msum.cost | currency:"USD $"}}
         hr

@@ -25,6 +25,8 @@
 //= require angular-stripe
 //= require ng-player-hater
 //= require d3.v3.min.js
+//= require angular-socialshare.min
+//= require angularjs-viewhead
 //= require_tree ../account
 //= require_tree ../admin
 //= require_tree ../analytics
@@ -96,18 +98,18 @@ can find and hear exactly what they're looking for."
       templateUrl: "<%= asset_path 'account/index.html' %>",
       controller: "AccountCtrl",
       loginRequired: true,
-      title: "My Account"
+      title: "Account"
     })
     .when('/account/plan', {
       templateUrl: "<%= asset_path 'account/plans.html' %>",
       controller: "AccountPlanCtrl",
-      title: "My Account &raquo Plans",
+      title: "Account &raquo Plans",
       loginRequired: true
     })
     .when('/account/plan/prx', {
       templateUrl: "<%= asset_path 'account/plans_prx.html' %>",
       controller: "PRXAccountPlanCtrl",
-      title: "My Account &raquol Plans &raquo PRX Special Offer",
+      title: "Account &raquol Plans &raquo PRX Special Offer",
       loginRequired: true
     })
     .when('/collections', {
@@ -209,6 +211,22 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
       templateUrl: "<%= asset_path 'analytics/index.html' %>",
       title: "Analytics"
     })
+    .when('/error/404', {
+      templateUrl: "<%= asset_path 'error/404.html' %>",
+      title: "Not Found"
+    })
+    .when('/error/403', {
+      templateUrl: "<%= asset_path 'error/403.html' %>",
+      title: "Permission Denied"
+    })
+    .when('/error/401', {
+      templateUrl: "<%= asset_path 'error/401.html' %>",
+      title: "Login Required"
+    })
+    .when('/error/500', {
+      templateUrl: "<%= asset_path 'error/500.html' %>",
+      title: "Server Error"
+    })
     .otherwise({
       template: "<h1>404 - not found</h1>"
     });
@@ -234,7 +252,8 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
                   'Directory.organizations.controllers',
                   'Directory.account.controllers',
                   'Directory.faq.controllers',
-                  'Directory.analytics.controllers'
+                  'Directory.analytics.controllers',
+                  'viewhead'
                   ];
 
   window.directory = angular.module('Directory', depends);
@@ -305,15 +324,11 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
 
         var menu = [
           {
-            text: 'my collections',
-            href: '/collections'
-          },
-          {
-            text: 'my data',
+            text: 'analytics',
             href: '/analytics'
           },
           {
-            text: 'my account',
+            text: 'account',
             href: '/account'
           },
           // {

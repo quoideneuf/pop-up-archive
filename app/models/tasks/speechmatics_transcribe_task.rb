@@ -16,7 +16,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     data_file = download_audio_file
 
     # remember the temp file name so we can look up later
-    self.extras['sm_name'] = data_file.path
+    self.extras['sm_name'] = File.basename(data_file.path)
     self.save!
 
     # create the speechmatics job
@@ -28,6 +28,10 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       notification: 'callback',
       callback:     call_back_url
       )
+      if !info or !info.id
+        raise "No job id in speechmatics response for task #{self.id}"
+      end
+
       # save the speechmatics job reference
       self.extras['job_id'] = info.id
       self.save!
@@ -37,7 +41,10 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       # it is possible that speechmatics got the request
       # but we failed to get the response.
       # so check back to see if a record exists for our file.
-      self.lookup_sm_job_by_name
+      job_id = self.lookup_sm_job_by_name
+      if !job_id
+        raise "No job_id captured for speechmatics job in task #{self.id}"
+      end
 
     rescue
       # re-throw original exception

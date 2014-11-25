@@ -71,7 +71,7 @@ namespace :fixer do
     sm_tasks_count = sm_tasks.count
     puts "Found #{sm_tasks_count} unfinished Speechmatics tasks older than 1 day"
 
-    report = {'cancelled, no job_id' => 0, 'No SM job found for job_id' => 0, 'recovered' => 0}
+    report = {'cancelled, no job_id' => 0, 'missing job_id' => 0, 'No SM job found for job_id' => 0, 'recovered' => 0}
 
     # fetch all SM jobs at once to save HTTP overhead.
     # TODO ask them to implement sorting, searching, paging.
@@ -84,14 +84,29 @@ namespace :fixer do
         # if we don't have a job_id then it never was created at SM
         if !task.extras['job_id']
           puts "Task.find(#{task.id}) has no job_id: #{task.inspect}"
-          task.recover!  # should cancel it with err msg
-          report['cancelled, no job_id'] += 1
+
+          # if not recovering, log it and skip to next
+          if !ok_to_recover
+            report['missing job_id'] += 1
+            next
+          end
+
+          task.recover!  # should cancel it with err msg if can't reverse lookup job_id
+          if task.status == "cancelled"
+            report['cancelled, no job_id'] += 1
+          elsif task.status == "complete"
+            report['recovered'] += 1
+          else
+            puts "Called Task.find(#{task.id}).recover! and ended with status '#{task.status}'"
+          end
           next
         end
 
         # lookup SM status
         sm_job = sm_jobs_lookup[task.extras['job_id']]
         if !sm_job
+          task.extras[:error] = "No SM job found for job_id"
+          task.cancel!
           puts "No SM job found for task: #{task.inspect}"
           report['No SM job found for job_id'] += 1
           next
@@ -107,6 +122,182 @@ namespace :fixer do
 
     report.keys.each do |k|
       puts "#{k} => #{report[k].to_s}"
+    end
+
+  end
+
+  desc "check for audio with no transcript and (optionally) create it"
+  task transcript_check: [:environment] do
+
+    ok_to_recover = ENV['RECOVER']
+    verbose       = ENV['VERBOSE']
+
+    AudioFile.find_in_batches do |afgroup|
+      afgroup.each do |af|
+        if !af.has_file? && af.original_file_url.blank?
+          next  # can't do anything
+        end
+
+        if af.transcripts_alone.count >= 2
+          next  # has enough
+        end
+
+        if af.has_preview? and af.needs_transcript?
+          verbose and puts "AudioFile.find(#{af.id}) needs any transcript"
+          ok_to_recover and af.process_file # has preview, needs full
+        end
+
+        if !af.has_preview? and !af.has_premium_transcript?
+          verbose and puts "AudioFile.find(#{af.id}) needs premium transcript"
+          ok_to_recover and af.process_file # missing preview
+        end
+
+      end # afgroup
+    end # batches
+
+  end # task
+
+  desc "resurrect SM jobs marked cancelled but which are really finished"
+  task speechmatics_reclaim: [:environment] do
+    task_to_job = {
+      229896 => 5869,
+      231177 => 6270,
+      231176 => 6271,
+      231174 => 6272,
+      231171 => 6273,
+      236291 => 6825,
+      236289 => 6826,
+      261954 => 7455,
+      261960 => 7457,
+      261933 => 7458,
+      261966 => 7459,
+      261909 => 7460,
+      261950 => 7606,
+      261983 => 7611,
+      261216 => 11361,
+      261884 => 11411,
+      261966 => 11418,
+      262747 => 11526,
+      262742 => 11527,
+      262747 => 11528,
+      262742 => 11529,
+      262747 => 11530,
+      262742 => 11531,
+      262747 => 11532,
+      262742 => 11533,
+      262747 => 11534,
+      262742 => 11535,
+      262747 => 11536,
+      262742 => 11538,
+      262747 => 11546,
+      262996 => 11556,
+      262996 => 11557,
+      262747 => 11558,
+      262996 => 11573,
+      262996 => 11576,
+      262747 => 11577,
+      262996 => 11578,
+      262747 => 11580,
+      262996 => 11581,
+      262996 => 11583,
+      262747 => 11586,
+      262996 => 11591,
+      262996 => 11597,
+      262996 => 11611,
+      262996 => 11615,
+      263554 => 11632,
+      263554 => 11634,
+      263554 => 11635,
+      263554 => 11636,
+      263554 => 11637,
+      263554 => 11638,
+      263554 => 11641,
+      263554 => 11643,
+      263554 => 11645,
+      263554 => 11651,
+      263554 => 11659,
+      262996 => 11660,
+      263554 => 11662,
+      263554 => 11664,
+      264048 => 11666,
+      264048 => 11667,
+      264048 => 11668,
+      263554 => 11669,
+      262996 => 11675,
+      264510 => 11757,
+      264048 => 11760,
+      264545 => 11773,
+      264509 => 11774,
+      264543 => 11775,
+      264545 => 11779,
+      264509 => 11780,
+      264545 => 11784,
+      264545 => 11787,
+      263554 => 11805,
+      265396 => 11818,
+      265955 => 11865,
+      266407 => 11904,
+      266300 => 11905,
+      267579 => 12049,
+      267624 => 12053,
+      267624 => 12063,
+      267640 => 12084,
+      267957 => 12177,
+      263554 => 12188,
+      268525 => 12252,
+      269090 => 12326,
+      269435 => 12352,
+      269446 => 12361,
+      269476 => 12371,
+      269468 => 12372,
+      269494 => 12374,
+      269467 => 12380,
+      270294 => 12497,
+      270294 => 12501,
+      270294 => 12502,
+      271449 => 12643,
+      271473 => 12645,
+      271507 => 12659,
+      274464 => 12969,
+      274465 => 12970,
+      274463 => 12973,
+      274470 => 12976,
+      274548 => 12983,
+      274553 => 12985,
+      274733 => 13005,
+      274860 => 13029,
+      274871 => 13033,
+      277785 => 13336,
+      264133 => 13673,
+      278104 => 13695,
+      264129 => 13703,
+      277777 => 13705,
+      277851 => 13712,
+      277784 => 13713,
+      278541 => 13816,
+      278137 => 13867,
+      278133 => 13870,
+      278135 => 13871,
+      278116 => 13881,
+      277779 => 13882,
+      278124 => 13888,
+      278122 => 13889,
+      278129 => 13896,
+      278120 => 13898,
+      278125 => 13899,
+      278112 => 13908,
+      278127 => 13910,
+      278131 => 13912,
+      278110 => 13916,
+      278109 => 13917,
+    }
+    task_to_job.keys.each do |task_id|
+      job_id = task_to_job[task_id]
+      task = Task.find task_id
+      if task
+        task.extras['job_id'] = job_id
+        task.recover!
+      end
     end
 
   end

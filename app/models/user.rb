@@ -87,6 +87,10 @@ class User < ActiveRecord::Base
     collection_ids - [uploads_collection.id]
   end
 
+  def to_s
+    email
+  end
+
   def collections
     organization ? organization.collections : super
   end

@@ -1,4 +1,4 @@
-angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.user', 'Directory.items.models', 'Directory.entities.models', 'Directory.people.models', 'prxSearch', 'Directory.storage', 'ngRoute', 'ngSanitize'])
+angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.user', 'Directory.items.models', 'Directory.entities.models', 'Directory.people.models', 'prxSearch', 'Directory.storage', 'ngRoute', 'ngSanitize', 'djds4rce.angular-socialshare'])
 .controller('ItemsCtrl', [ '$scope', 'Item', 'Loader', 'Me', 'Storage', function ItemsCtrl($scope, Item, Loader, Me, Storage) {
 
   $scope.Storage = Storage;
@@ -33,7 +33,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.transcriptExpanded = false;
 
-  $scope.updateImage = function() {
+  $scope.updateImage = function(format) {
     if ($scope.item && $scope.item.imageFiles.length) {
       var images = $scope.item.imageFiles;
       var image = images[0];
@@ -42,7 +42,11 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
           image = images[i];
         }
       }
-      return image.file.file.thumb.url;
+      if (format == "full") {
+        return image.file.file.url;
+      } else {
+        return image.file.file.thumb.url;
+      }
     } else if ($scope.collection && $scope.collection.imageFiles.length) {
       var images = $scope.collection.imageFiles;
       var image = images[0];
@@ -51,7 +55,11 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
           image = images[i];
         }
       }
-      return image.file.file.thumb.url;
+      if (format == "full") {
+        return image.file.file.url;
+      } else {
+        return image.file.file.thumb.url;
+      }
     }
   };
 
@@ -63,15 +71,17 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.statusNotification = function(file) {
     var statusHTML = "<h4>Status: " + file.currentStatus + "</h4>";
-    if (file.currentStatus == "Transcript Preview processing") {
+    if (file.currentStatus == "Transcribing" || file.currentStatus == "Transcoding" || file.currentStatus == "Copying") {
       statusHTML += "<p>The first two minutes of your transcription will be ready momentarily. ";
       if ($scope.currentUser.hasCommunityPlan) {
           statusHTML += "<a href='/pricing'>Upgrade your plan for full transcripts.</a></p>";
       } else {
         statusHTML += "The full transcript will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.</p>";
       }
-    } else if (file.currentStatus.match(/cancelled/g)) {
-      statusHTML += "Something went wrong. Please <a href='mailto:edison@popuparchive.com?Subject=Transcription%20Failed%20-%20My%20User%20ID:%20"+ $scope.currentUser.id +"'>email us for support</a>";
+    } else if (file.premiumInProgress) {
+      statusHTML += "<p>Your Premium Transcript will be ready soon. We'll email you when the full transcript is loaded.</p>";
+    } else if (file.currentStatus == "Stuck") {
+      statusHTML += "<p>Something went wrong. Please <a href='mailto:edison@popuparchive.com?Subject=Transcription%20Failed%20-%20My%20User%20ID:%20"+ $scope.currentUser.id +"'>email us for support</a></p>";
     }
     return statusHTML;
   };
@@ -83,7 +93,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       var found = false;
     }
     else {
-      if (file.currentStatus == "Basic Transcript complete" || file.currentStatus == "Premium Transcript complete") {
+      if (file.currentStatus == "Basic transcript complete" || file.currentStatus == "Premium transcript complete") {
           var found = false;
       }
     }
@@ -176,8 +186,15 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   $scope.deleteItem = function () {
     if (confirm("Are you sure you want to delete the item " + $scope.item.title +"? \n\n This cannot be undone." )){
       $scope.item.delete().then(function () {
-        $timeout(function(){ $scope.$broadcast('datasetChanged')}, 100);
-        $location.path('/collections/' + $scope.collection.id);
+        // even though the DELETE should be instantaneous from our POV,
+        // "sleep" a full second to let the search index sychronize.
+        // c.f. github issue #765
+        // NOTE we fire the location change *after* we broadcast the datasetChange,
+        // so that we mark all searches as stale.
+        $timeout(function(){ 
+          $scope.$broadcast('datasetChanged');
+          $location.path('/collections/' + $scope.collection.id);
+        }, 1000);
       })
     }
   };
@@ -508,4 +525,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     }
   }
 
+}])
+.run(['$FB', function($FB) {
+  $FB.init('<%= ENV["FACEBOOK_APP_ID"] %>');
 }]);

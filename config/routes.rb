@@ -40,6 +40,8 @@ PopUpArchive::Application.routes.draw do
   post 'amara_callback', controller: 'callbacks', action: 'amara', as: 'amara_callback'
 
   post 'speechmatics_callback/files/:model_name/:model_id', controller: 'callbacks', action: 'speechmatics', as: 'speechmatics_callback'
+
+  post 'stripe_webhook', controller: 'callbacks', action: 'stripe_webhook', as: 'stripe_webhook'
   
   get 'sitemap.xml', :to => 'sitemap#sitemap', as: 'sitemap', defaults: { format: 'xml' }
     

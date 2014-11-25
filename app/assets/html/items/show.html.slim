@@ -1,3 +1,6 @@
+meta view-head="view-head" property="og:title" content="{{item.title}}"
+meta ng-if="(item.imageFiles && item.imageFiles.length) || (collection.imageFiles && collection.imageFiles.length)" view-head="view-head" property="og:image" content="{{ updateImage('full') }}"
+meta view-head="view-head" property="og:description" content="{{item.description}}"
 .container ng-show="currentUser.canEdit(item) || collection.itemsVisibleByDefault"
   ul.pager ng-show="nextItem || previousItem || searchResults.query"
     li.previous ng-class="{disabled: !previousItem}"
@@ -28,8 +31,9 @@
           |  &raquo;
           a ng-href="/collections/{{collection.id}}" {{collection.title}}
         .thumb-and-title
-          img ng-show="item.imageFiles.length || collection.imageFiles.length" ng-src="{{ updateImage() }}"
-          h1 {{item.title}}
+          img ng-if="(item.imageFiles && item.imageFiles.length) || (collection.imageFiles && collection.imageFiles.length)" ng-src="{{ updateImage() }}"
+          h1 view-title="view-title" {{item.title}}
+          a style="display:none;" facebook="facebook" class="facebookShare" data-url='/collections/{{collection.id}}/items/{{item.id}}'
           .clear
         p ng-show="item.description" ng-bind-html="item.description"
 
@@ -140,14 +144,16 @@
                 a href="#" &nbsp;
                 
             .transcript ng-class="{true:'glow'}[editTable]" transcript-type="audioFile.transcriptType" speakers="audioFile.transcript.speakers" transcript-text="audioFile.transcript.parts | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
-            .alert.alert-info ng-show="audioFile.currentStatus == 'Transcript Preview complete'"
+            .alert.alert-info ng-show="audioFile.currentStatus == 'Transcription complete' && currentUser.canEdit(item)"
               |  Here is the transcription of the first two minutes of your audio.&nbsp;
               strong
                 a href="/pricing" Upgrade your plan for full transcripts.
-            div ng-show="audioFile.currentStatus == 'Basic Transcript processing'"
+            .alert.alert-info ng-show="audioFile.currentStatus == 'Preview complete' && currentUser.canEdit(item)"
               |  Here is the transcription of the first two minutes of your audio. The rest will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.
+            .alert.alert-info ng-show="(audioFile.currentStatus == 'Preview complete' || audioFile.currentStatus == 'Transcription complete') && !currentUser.canEdit(item)"
+              | This is a 2-minute basic transcript preview.
 
-          div ng-show="isFileProcessing(audioFile)"
+          div ng-show="isFileProcessing(audioFile) && currentUser.canEdit(item)"
             .alert.alert-info ng-bind-html="statusNotification(audioFile)"
 
   .row-fluid.item-detail.metadata

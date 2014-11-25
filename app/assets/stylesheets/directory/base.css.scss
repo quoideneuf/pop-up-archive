@@ -13,6 +13,7 @@
 @import "select2-bootstrap";
 @import "animate";
 @import "transcripts";
+@import "angular-socialshare.min";
 @import url(//assets.zendesk.com/external/zenbox/v2.6/zenbox.css);
 
 p {
@@ -1442,6 +1443,10 @@ form.with-tags {
   }
 }
 
+dt.subtotal {
+  font-weight: normal;
+}
+
 dd.usage-meter {
   position: relative;
   background: #FFF;
@@ -1668,5 +1673,12 @@ ul.great-list {
   }
   .featurebtn2 {
     margin-left: 0;
+  }
+}
+.facebookShare {
+  float: right;
+  margin-top: 8px;
+  .facebookCount {
+    display: none;
   }
 }
