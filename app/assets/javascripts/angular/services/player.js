@@ -348,19 +348,19 @@
       priority: -1000,
       template: '<div class="file-transcript">' +
                   '<table class="table">' +
-                    '<tr ng-repeat="text in transcript" ng-class="{current: transcriptStart== {{text.startTime | round}}}" ng-init="originalSpeaker=text.speakerId">' +
+                    '<tr ng-repeat="text in transcript track by text.id" ng-class="{current: transcriptStart== {{text.startTime | round}}}" ng-init="originalSpeaker=text.speakerId">' +
                       '<td class="play"><a ng-click="seekTo(text.startTime)"><i class="icon-play-circle"></i></a></td>' +
                       '<td class ="timestamp" ng-class="{keytime: $index % 5 != 0}" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
-                      '<td ng-hide="editTable" class="speaker" title="{{assignSpeaker(text.speakerId)}}" ng-bind="speakerChange(transcript[$index-1].speakerId, text.speakerId)"></td>' +
-                      '<td ng-show="editTable && transcriptType != \'Basic\'">' +
+                      '<td ng-hide="editRow" class="speaker" title="{{assignSpeaker(text.speakerId)}}" ng-bind="speakerChange(transcript[$index-1].speakerId, text.speakerId)"></td>' +
+                      '<td ng-show="editRow && transcriptType != \'Basic\'">' +
                           '<a bs-popover="speakerPopover"  data-placement="right" data-unique="1">' +
                             '<span ng-bind="abbreviateSpeaker(text.speakerId)"></span>' +
                             '<i class="icon-chevron-down"></i>' +
                           ' </a>' +
                       '</td>' +
                       '<td ng-show="!editorEnabled">' +
-                        '<a ng-click="editOrPlay(text.startTime)">' +
+                        '<a ng-click="editOrPlay()" ng-class="{\'inp-first\': $first}">' +
                           '<div class="file-transcript-text" ng-bind-html="text.text | highlight:transcriptFilter"></div>' +
                         '</a>' +
                       '</td>' +
@@ -410,18 +410,23 @@
         };
 
         scope.$on('CallEditor', function() {
-          scope.editTable = true;
+          //enable transcript editor when user clicks "Edit"
+          scope.editRow = true;
+          //focus cursor in first row of transcript input
+          $timeout(function() {
+            angular.element(window.document.getElementsByClassName('inp-first')).click();
+          });
         });
 
         scope.$on('CallSave', function() {
-          scope.editTable = false;
+          scope.editRow = false;
         });
 
-        scope.editOrPlay = function(time) {
-          if (scope.editTable == true) {
+        scope.editOrPlay = function() {
+          if (scope.editRow == true) {
             this.enableEditor();
           } else {
-            scope.seekTo(time)
+            scope.seekTo(this.startTime);
           }
         };
 
