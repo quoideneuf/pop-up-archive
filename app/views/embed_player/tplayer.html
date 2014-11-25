@@ -1,0 +1,74 @@
+<head>
+  <%= stylesheet_link_tag "http://jplayer.org/css/jPlayer.css" %>
+  <%= stylesheet_link_tag "tplayer" %>
+  <%= javascript_include_tag "jquery" %>
+  <%= javascript_include_tag "jquery.jplayer" %>
+  <%= javascript_include_tag "jquery.jplayer.inspector.min" %>
+  <%= javascript_include_tag "tplayer" %>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $("#pua-tplayer-<%= @file_id %>").jPlayer({
+        ready: function () {
+          $(this).jPlayer("setMedia", {
+            mp3: "<%= @mp3 %>",
+          });
+        },
+        loadedmetadata: function() {
+          console.log('loadedmetadata', this);
+          this.pua_tplayer = new PUATPlayer($('#jp_container-<%= @file_id %>'), this);
+        },
+        cssSelectorAncestor: '#jp_container-<%= @file_id %>',
+        //smoothPlayBar: true,
+        keyEnabled: true,
+        remainingDuration: true,
+        toggleDuration: true,
+        swfPath: "<%= asset_path 'Jplayer.swf' %>",
+        solution: "html, flash",
+        supplied: "mp3",
+      });
+      $("#jplayer_inspector-<%= @file_id %>").jPlayerInspector({jPlayer:$("#pua-tplayer-<%= @file_id %>")});
+    });
+  </script>
+</head>
+<body>
+  <div id="pua-tplayer-<%= @file_id %>" class="jp-jplayer pua-tplayer"></div>
+  <div id="jp_container-<%= @file_id %>" class="jp-audio player">
+    <div class="jp-type-single">
+      <div class="jp-gui jp-interface">
+        <div class="jp-title">
+          <h2><%= @title %></h2>
+        </div>
+        <div class="jp-controls">
+          <button id="jp-reverse-button-<%= @file_id %>" class="jp-reverse player-button">
+              <i class="icon-fast-backward"></i>
+          <button id="jp-play-button-<%= @file_id %>" class="jp-play player-button">
+              <i class="icon-play"></i>
+          <button id="jp-pause-button-<%= @file_id %>" class="jp-pause player-button">
+              <i class="icon-pause"></i>
+        </div>
+        <div class="jp-progress">
+          <div class="jp-seek-bar">
+            <div class="jp-play-bar"></div>
+          </div>
+        </div>
+        <!-- scrubber used for drawing waveform, not displayed -->
+        <div class="scrubber">
+          <canvas></canvas>
+        </div>
+        
+        <div class="jp-time-holder">
+          <div class="jp-current-time" role="timer" aria-label="time"></div> / 
+          <div class="jp-duration" role="timer" aria-label="duration"></div>
+        </div>
+      </div>
+      
+      <a class="jp-popuplink pua-up-link" href="<% url_for '/collections/' %><%= @audio_file.item.collection_id %>/items/<%= @audio_file.item_id %>/" target="_blank">up</a>
+
+      <div class="jp-no-solution">
+        <span>Update Required</span>
+        To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+      </div>
+    </div>
+  </div>
+  <div id="jplayer_inspector-<%= @file_id %>"></div>
+</body>
