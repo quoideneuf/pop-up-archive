@@ -71,15 +71,17 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.statusNotification = function(file) {
     var statusHTML = "<h4>Status: " + file.currentStatus + "</h4>";
-    if (file.currentStatus == "Transcribing" || file.currentStatus == "Transcoding" || file.currentStatus == "Copying") {
+    if (file.currentStatus == "Transcoding" || file.currentStatus == "Copying") {
+      statusHTML += "<p>Preparing file.</p>";
+    } else if (file.premiumInProgress && file.currentStatus != "Uploading") {
+      statusHTML += "<p>Your Premium Transcript will be ready soon. We'll email you when the full transcript is loaded.</p>";
+    } else if (file.currentStatus == "Transcribing") {
       statusHTML += "<p>The first two minutes of your transcription will be ready momentarily. ";
       if ($scope.currentUser.hasCommunityPlan) {
           statusHTML += "<a href='/pricing'>Upgrade your plan for full transcripts.</a></p>";
       } else {
         statusHTML += "The full transcript will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.</p>";
       }
-    } else if (file.premiumInProgress) {
-      statusHTML += "<p>Your Premium Transcript will be ready soon. We'll email you when the full transcript is loaded.</p>";
     } else if (file.currentStatus == "Stuck") {
       statusHTML += "<p>Something went wrong. Please <a href='mailto:edison@popuparchive.com?Subject=Transcription%20Failed%20-%20My%20User%20ID:%20"+ $scope.currentUser.id +"'>email us for support</a></p>";
     }
