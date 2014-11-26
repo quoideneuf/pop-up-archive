@@ -526,6 +526,26 @@ class AudioFile < ActiveRecord::Base
     status
   end
 
+  def best_transcript
+    if self.has_premium_transcript?
+      self.transcripts.each do |t|
+        if t.is_premium?
+          return t
+        end
+      end
+    elsif self.has_basic_transcript?
+      self.transcripts.each do |t|
+        if t.is_basic?
+          return t
+        end
+      end
+    elsif self.has_preview?
+      self.transcripts.first
+    else
+      self.transcripts.first # TODO will this ever yield anything?
+    end
+  end      
+
   private
 
   def set_metered
