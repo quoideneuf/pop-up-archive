@@ -294,7 +294,7 @@ namespace :fixer do
     task_to_job.keys.each do |task_id|
       job_id = task_to_job[task_id]
       task = Task.find task_id
-      if task
+      if task and task.owner
         task.extras['job_id'] = job_id
         task.recover!
       end
