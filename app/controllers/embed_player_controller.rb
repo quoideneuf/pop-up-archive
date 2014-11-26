@@ -14,6 +14,7 @@ class EmbedPlayerController < ApplicationController
     @audio_file = AudioFile.find(@file_id)
     @mp3        = @audio_file.public_url(extension: :mp3)
     @ogg        = @audio_file.public_url(extension: :ogg)
+    @transcript = @audio_file.best_transcript
     @title      = params[:title] || @audio_file.item.title
   end
 end

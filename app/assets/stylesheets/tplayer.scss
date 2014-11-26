@@ -3,48 +3,91 @@
 @import 'font-awesome';
 @import '_player';
 
-.jp-progress,
-.jp-progress div,
-.jp-time-holder,
-.jp-time-holder div {
+.player {
+  padding: 0;
+}
+
+.pua-tplayer {
+  border: 1px solid #ddd;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.pua-tplayer td {
+  border: 1px solid #ccc;
+  vertical-align: top;
+}
+
+.pua-tplayer td.img,
+.pua-tplayer td.timings {
+  width: 80px;
+  vertical-align: middle;
+}
+
+.pua-tplayer .tplayer {
+  width: 100%;
+}
+
+.pua-tplayer.scrolling tbody {
+  display: block;
+  overflow: auto;
+  height: 200px;
+  width: 100%;
+}
+
+.tplayer-bar {
+  width: 100%;
+}
+
+.jp-controls {
+  width: 20%;
+}
+
+.jp-progress {
+  width: 50%;
+}
+
+.player div {
   display: inline-block;
 }
 
 /* The seeking class is added/removed inside jPlayer */
 div.jp-seeking-bg {
-	background: red;
+  background: #eee;
 }
 
 .jp-progress {
-	background: #fff 0px -240px no-repeat;
-    width: 50%;
-	height: 60px;
-	padding: 0 2px 2px 2px;
-	margin-bottom: 4px;
-	overflow:hidden;
+  background: #fff 0px -240px no-repeat;
+  width: 60%;
+  height: 60px;
+  padding: 0 2px 2px 2px;
+  margin-bottom: 4px;
+  overflow:hidden;
+  margin-right: 8px;
 }
 
 div.jp-video .jp-progress {
-	border-top:1px solid #180a1f;
-	border-bottom: 1px solid #554560;
-	width:100%;
-	background-image: none;
-	padding: 0;
+  border-top:1px solid #180a1f;
+  border-bottom: 1px solid #554560;
+  width:100%;
+  background-image: none;
+  padding: 0;
 }
 
 .jp-seek-bar {
-	background: red 0px -260px repeat-x;
-	width: 100%;
-	height: 100%;
-	overflow:hidden;
-	cursor:pointer;
+  background: #eee 0px -260px repeat-x;
+  width: 100%;
+  height: 100%;
+  overflow:hidden;
+  cursor:pointer;
 }
 
 .jp-play-bar {
-	background: pink 0px -280px repeat-x;
-	width:0px;
-	height: 100%;
-	overflow:hidden;
+  background: pink 0px -280px repeat-x;
+  width:0px;
+  height: 100%;
+  overflow:hidden;
 }
 
 /* scrubber is invisible, used for creating waveform */
@@ -62,8 +105,21 @@ div.jp-video .jp-progress {
 .player h2 {
   font-size: 32px;
   color: #444;
+  margin: 0;
 }
 
 .player .player-button {
   cursor: pointer;
+}
+
+.pua-tplayer .tplayer-stats {
+  vertical-align: middle;
+  padding-left: 8px;
+}
+
+.pua-up-link span {
+  background: url(/assets/storage/pop.png) no-repeat center;
+  display: inline-block;
+  height: 29px;
+  width: 29px;
 }

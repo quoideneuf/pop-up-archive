@@ -18,4 +18,9 @@ class TimedText < ActiveRecord::Base
       json[:transcript] = json.delete :text
     end
   end
+
+  def offset_as_ts
+    Time.at(start_time).getgm.strftime('%H:%M:%S')
+  end
+
 end
