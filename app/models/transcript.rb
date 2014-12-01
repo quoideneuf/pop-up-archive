@@ -75,6 +75,17 @@ class Transcript < ActiveRecord::Base
     srt
   end
 
+  def speaker_name(speaker_id)
+    # memoize lookup by id
+    if !@_speakers_by_id
+      @_speakers_by_id = {}
+      speakers.each do |sp|
+        @_speakers_by_id[sp.id] = sp
+      end
+    end
+    @_speakers_by_id[speaker_id].name
+  end
+
   def has_speaker_ids
     self.timed_texts.where("speaker_id is not null").count > 0 ? true : false
   end

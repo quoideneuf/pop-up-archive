@@ -3,7 +3,7 @@
       n=n+1-%>
 <%= if transcript.timed_texts[index-1].speaker_id != tt.speaker_id
 	"\n\r" +  format_time(tt.start_time) + "\r\n" +
-	transcript.speakers.find(tt.speaker_id).name + "\n"
+	transcript.speaker_name(tt.speaker_id) + "\n"
 	end -%>
 <%= tt.text + " " -%>
 <%- end -%>
