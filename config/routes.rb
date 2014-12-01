@@ -106,6 +106,8 @@ PopUpArchive::Application.routes.draw do
         resources :contributions
       end
 
+      resources :transcripts
+
       resources :timed_texts
 
       resources :speakers
