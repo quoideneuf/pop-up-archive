@@ -8,7 +8,7 @@ ActiveAdmin.register MonthlyUsage do
     column 'Wholesale Cost', :cost, sortable: :cost do |mu|
       link_to number_to_currency(mu.cost), superadmin_monthly_usage_path(mu)
     end
-    column 'Retail Cost', :retail_cost, sortable: :cost do |mu|
+    column 'Retail Cost', :retail_cost, sortable: :retail_cost do |mu|
       link_to number_to_currency(mu.retail_cost), superadmin_monthly_usage_path(mu)
     end 
     column 'Time', :value, sortable: :value do |mu|
