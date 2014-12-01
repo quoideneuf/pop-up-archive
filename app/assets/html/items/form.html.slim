@@ -98,17 +98,18 @@ section ng-controller="ItemFormCtrl"
             i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['title']" data-placement="bottom"
           .controls
             input.text.input-xlarge#title type='text' ng-model='item.title'
-        .control-group ng-show="defaultTranscriptType == 'basic' && currentUser.hasCreditCard()"
+        .control-group ng-show="!item.id && defaultTranscriptType == 'basic' && currentUser.hasCreditCard()"
           label.control-label
             | Type
             i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom"
           .controls.radio-group
-            input.radio_button type='radio' name="transcriptType" value="basic" ng-model='item.transcriptType' 
+            input.radio_button type='radio' name="transcriptType" value="basic" ng-model='item.transcriptType' ng-click="premiumSelected=false"
             label.radio-label
               | Basic
-            input.radio_button type='radio' name="transcriptType" value="premium" ng-model='item.transcriptType' 
+            input.radio_button type='radio' name="transcriptType" value="premium" ng-model='item.transcriptType' ng-click="premiumSelected=true"
             label.radio-label
               | Premium
+              span.charge ng-show="premiumSelected"  $22/hour will be charged to your credit card
         .control-group
           label.control-label
             | Upload Images
