@@ -12,6 +12,9 @@ class Api::BaseController < ApplicationController
       format.html { render :file => File.join(Rails.root, 'public', '404'), :formats => [:html], :status => :not_found }
 
       format.json { render :text => { :error => "not found", :status => 404 }.to_json, :status => :not_found }
+      format.xml  { render :text => '<error><msg>not found</msg><status>404</status></error>', :status => :not_found }
+      format.txt  { render :text => 'not found', :status => :not_found }
+      format.srt  { render :text => 'not found', :status => :not_found }
     end
 
   end
