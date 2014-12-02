@@ -207,7 +207,7 @@ class AudioFile < ActiveRecord::Base
 
   def premium_transcribe_audio(user=self.user)
     # only start this if transcode is complete
-    return unless transcoded_at
+    return unless transcoded_at or format == "audio/mpeg"
     return unless (user.plan.has_premium_transcripts? || item.is_premium?)
     opts = {}
     # if the user is on a basic plan, but the item is flagged premium,
