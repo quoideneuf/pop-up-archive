@@ -4,7 +4,7 @@ PopUpArchive::Application.routes.draw do
     controllers :applications => 'oauth/applications'
   end
 
-  get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'pop-up-archive.herokuapp.com' }
+  # get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'pop-up-archive.herokuapp.com' }
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'beta.popuparchive.org' }
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'www.popuparchive.org', protocol: "http://" }
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'www.popuparchive.com', protocol: "http://" }
@@ -13,7 +13,7 @@ PopUpArchive::Application.routes.draw do
   root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'www.popuparchive.org', protocol: 'http://' }
   root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'www.popuparchive.org', protocol: 'https://' }
   root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'beta.popuparchive.org' }
-  root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'pop-up-archive.herokuapp.com' }
+  # root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'pop-up-archive.herokuapp.com' }
   root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'www.popuparchive.com', protocol: 'http://' }
   root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'popuparchive.com' }
   root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'popuparchive.org' }
