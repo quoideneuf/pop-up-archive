@@ -355,8 +355,8 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
       'collection'      : { 'title': 'Collection',
                             'content': '<p>A collection is a set of items. They can be public or private, and are a way to organize your uploads and data.</p><p>Examples</p><ul><li>Hidden Kitchens</li><li>My Project Audio</li></ul>'
                           },
-      'item'      : { 'title': 'Item',
-                            'content': '<p>An Item is the unique Pop Up Archive page created every time you upload audio.</p><br>All of the machine transcripts and tags for your audio live on Item pages.</br>'
+      'item'            : { 'title': 'Item',
+                            'content': '<p>An Item is created every time you upload audio to store your file(s) along with its machine-generated transcript and tags. </p><p><a href="https://popuparchiveorg.zendesk.com/hc/en-us/articles/203618550">Learn more.</a></p>'
                           },
       'title'           : { 'title': 'Title',
                             'content': '<p>The name that will appear when you search for the item. Not all audio will have a predefined title, e.g., interviews or segments of a longer work. In these situations, make up a title that you think will help you or others easily identify the audio\’s content.</p><p>Examples</p><ul><li>Willie Nelson Interview</li><li>War of the Worlds</li><li>NASA Apollo 11 Onboard Recordings</li></ul>'
@@ -395,10 +395,10 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
                             'content': '<p>The audio file\’s digital format on a server or hard drive. Digital media formats are expressed as MIME types (e.g., mpeg). Pop Up Archive currently supports aac, aif, aiff, alac, flac, m4a, m4p, mp2, mp3, mp4, ogg, raw, spx, wav, and  wma.</p><p>Examples</p><ul><li>mpeg (MP2, MP3)</li><li>wav (WAV)</li><li>aiff (AIF, AIFF)</li><li>mp4 (MP4)</li><li>ogg (Ogg Vorbis, Flac)</li></ul>'
                            },
       'audioFiles'      : { 'title': 'Audio Files',
-                            'content': '<p>Digital media files to be uploaded from your computer. A single item may have multiple values if the audio has multiple parts (e.g., an interview recorded over three separate tracks).</p>'
+                            'content': '<p>Digital media files to be uploaded from your computer. Upload multiple files at the same time <strong>only if the audio has multiple parts</strong> (e.g., an interview recorded over three separate tracks).</p>'
                           },
       'audioFiles[][remoteFileUrl]' : { 'title': 'Link(s) to Audio File',
-                            'content': '<p>A direct link to a digital media item on the web. Pop Up Archive will use this URL to upload your audio. A single item may have multiple values if the audio has multiple parts (e.g., an interview recorded over three separate tracks). The URL must end with a file extension like .mp2, .mp3, or .wav. A more general URL to a web page with information about the file can be listed in the Item ID field.</p><p>Examples</p><ul><li>http://archive.org/download/NasaApollo11OnboardRecordings/11_highlight_1.mp3</li><li>http://archive.org/download/NasaApollo11OnboardRecordings/11_highlight_2.mp3</li><li>http://archive.org/download/NasaApollo11OnboardRecordings/11_highlight_3.mp3</li></ul>'
+                            'content': '<p>A direct link to a digital media item on the web. Pop Up Archive will use this URL to upload your audio. Upload multiple files at the same time <strong>only if the audio has multiple parts</strong> (e.g., an interview recorded over three separate tracks).</p> The URL must end with a file extension like .mp2, .mp3, or .wav. A more general URL to a web page with information about the file can be listed in the Item ID field.</p><p>Examples</p><ul><li>http://archive.org/download/NasaApollo11OnboardRecordings/11_highlight_1.mp3</li><li>http://archive.org/download/NasaApollo11OnboardRecordings/11_highlight_2.mp3</li><li>http://archive.org/download/NasaApollo11OnboardRecordings/11_highlight_3.mp3</li></ul>'
                           },
       'digitalLocation' : { 'title': 'Link(s) to Audio File',
                             'content': '<p>A direct link to a digital media item on the web. Pop Up Archive will use this URL to upload your audio. A single item may have multiple values if the audio has multiple parts (e.g., an interview recorded over three separate tracks). The URL must end with .mp2, .mp3, or .wav. A more general URL to a web page with information about the file can be listed in the Item ID field.</p><p>Examples</p><ul><li>http://archive.org/download/NasaApollo11OnboardRecordings/11_highlight_1.mp3</li><li>http://archive.org/download/NasaApollo11OnboardRecordings/11_highlight_2.mp3</li><li>http://archive.org/download/NasaApollo11OnboardRecordings/11_highlight_3.mp3</li></ul>'
@@ -421,14 +421,14 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
       'transcription'   : { 'title': 'Transcription',
                             'content': 'Text transcript of the speech in the audio.'
                           },
-      'premiumTranscript' : { 'title': 'Premium Transcrpt',
-                            'content': '<p>This is a Premium Transcrpt. Our premium transcription software is specially trained for oral history and broadcast audio.</p>'+
+      'premiumTranscript' : { 'title': 'Premium Transcript',
+                            'content': '<p>This is a "Premium" quality machine transcript. Our premium transcription software is specially trained for oral history and broadcast audio.</p>'+
                             '<p>Features include machine generated punctuation, speaker differentiation, and higher accuracy.</p>'+
                             '<p><a href="https://popuparchiveorg.zendesk.com/hc/en-us/articles/203618600-What-are-basic-and-premium-transcripts-">Learn more about our transcripts.</a></p>'
                           },  
       'basicTranscript' : {'title': 'Basic Transcript',
-                            'content': '<p>This is a Basic Transcript. Basic transcripts are created to let you instantly search your audio for keywords.</p>'+
-                            '<p>For higher accuracy, plus other bells and whistles, you can reprocess any audio file with our Premium software.</p>'+
+                            'content': '<p>This is a "Basic" quality machine transcript, created to let you instantly search this audio for keywords.</p>'+
+                            '<p>For higher accuracy, plus other bells and whistles, audio owners can reprocess any audio file with our Premium software.</p>'+
                             '<p><a href="https://popuparchiveorg.zendesk.com/hc/en-us/articles/203618600-What-are-basic-and-premium-transcripts-">Learn more about our transcripts.</a></p>'
                           }, 
       'geographicLocation' : { 'title': 'Geolocation',
@@ -454,6 +454,15 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
                           },
       'transcriptType'  : { 'title': 'Transcript Type',
                             'content': '<p>Basic transcripts let you instantly search your audio for keywords, and serve as a starting point for editing. </p><p>For higher accuracy, punctuation, and editable speaker differentiation, try our Premium software.</p><p><a href="https://popuparchiveorg.zendesk.com/hc/en-us/articles/203618600-What-are-basic-and-premium-transcripts-">Learn more about our transcripts.</a></p>'
+                          },
+      'audfile'         : { 
+                            'content': '<p>This is the file name that your uploaded audio was saved with.</p>'
+                          },
+      'colitem'         : { 
+                            'content': '<p>An Item is the page where we store your audio along with its transcript and tags. </p><p><a href="https://popuparchiveorg.zendesk.com/hc/en-us/articles/203618550">Learn more.</a></p>'
+                          },
+      'status'         : { 
+                            'content': '<p>The processing status for your audio upload.</p><p><a href="https://popuparchiveorg.zendesk.com/hc/en-us/articles/203693330">See all possible statuses.</a></p>'
                           }
     };
 

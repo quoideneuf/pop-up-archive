@@ -8,6 +8,12 @@
         li 
           a ng-click="scrollTo(item.link)" {{item.title}}
           i.icon-plus-sign  
+  p.alert.alert-info.pull-center
+    i.icon-star-empty
+      strong
+        |  For user questions and tutorials, visit our 
+        a href="https://popuparchiveorg.zendesk.com/hc/en-us" Help Center
+        | .
 
   .row ng-repeat="item in faq" 
     .span12 id='{{item.link}}'

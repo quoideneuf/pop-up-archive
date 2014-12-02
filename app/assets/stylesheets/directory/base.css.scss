@@ -793,6 +793,9 @@ $authNavbarHeight: 75px;
   top: $navbarHeight;
 }
 
+#explorewell {
+  width: 100%;
+}
 
 .pager {
   li.centered {
@@ -1301,6 +1304,31 @@ form.with-tags {
   }
 }
 
+.expimg {
+  border-radius: 2px;
+}
+
+h4#lightblueh4 {
+  color: lightblue;
+  font-family: helvetica;
+}
+
+.featuredcol {
+  background-color: #2ca5da;
+  border-radius: 3px;
+  color: white;
+  padding: 2px 15px;
+
+}
+
+a#number {
+  color: #222;
+}
+
+p.explorep {
+  text-align: left;
+}
+
 .top-terms {
   height: 370px;
 }
@@ -1475,8 +1503,9 @@ dd.usage-meter {
   background: #FFF;
   border-radius: 20px;
   text-align: center;
-  padding: 10px;
-  border: 10px solid #FFF;
+  padding: 0;
+  padding-top: 10px;
+  border: 5px solid #FFF;
   margin-bottom: 20px;
   h2 {
     margin-top: 0px;
@@ -1551,6 +1580,10 @@ ul.great-list {
       content: ' ◦ '
     }
   }
+}
+
+ul.pricing {
+  margin: 0 0 10px 8px;
 }
 
 .ui-match { background: #8ED3F2; }
