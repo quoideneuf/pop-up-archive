@@ -100,8 +100,8 @@ meta view-head="view-head" property="og:description" content="{{item.description
                 
                  
 
-              .btn-group ng-show="item.audioFiles[0].transcript"
-                .btn-group ng-show="item.audioFiles[0].transcript"
+              .btn-group ng-show="audioFile.transcript.parts.length"
+                .btn-group
                   button.btn.dropdown-toggle.download-btn type="button" bs-dropdown="downloadLinks" data-toggle="dropdown"  
                     i.icon-download-alt 
                     |  Download  
