@@ -14,6 +14,11 @@ section ng-controller="ItemFormCtrl"
         div style="margin:-10px 0 10px 0;" or
         span file-button="" style='margin-right: 4px;'
           button.btn.btn-large style="margin-bottom:10px;" Choose File
+        .alert.alert-danger 
+          p
+           | Periods not allowed in file names. (For example, episode1.wav, and 
+           strong not 
+           | episode.1.wav.) 
 
       section ng-show='(item.id > 0) || (item.files.length > 0)'
         .alert.alert-danger ng-show="(item.files.length > 1) && showFilesAlert"

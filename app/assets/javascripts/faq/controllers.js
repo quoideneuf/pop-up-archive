@@ -23,7 +23,7 @@ angular.module('Directory.faq.controllers', ['Directory.loader', 'Directory.user
 					answer: "The short answer is that automatic transcription is usually less accurate than human transcription. But getting verbatim human transcripts is expensive, slow and labor-intensive — and search engines don’t need perfect transcripts. There are ways to be smart about interpreting messy output, and to use that data to extract relevant keywords and metadata. It’s like magic: When you pair text content with timestamps, audio becomes browsable. Harnessed the right way, speech-to-text software means effortless access to crucial keywords and moments hidden deep within hours of content.",
 				},
 				{	
-					question: "What does it mean to “search my sound?",
+					question: "What does it mean to 'search my sound?'",
 					answer: "In addition to our standard search bar, and the search bar for each collection, there is also a search bar for each individual audio item, so you can search for every time a word or phrase is mentioned within a single item."
 				},
 			]
@@ -37,11 +37,15 @@ angular.module('Directory.faq.controllers', ['Directory.loader', 'Directory.user
 					answer: "First, here's all the good stuff you get with both: both basic and premium transcripts use automatic speech recognition software to create time-stamped text and keyword tags based on your audio. Generated in real time (e.g. a hour audio file will be processed in approximately one hour), both types of transcripts allow you to search broadly within your audio collections immediately after automatic processing. Although accuracy varies according to factors like audio quality, with our efficient transcript editing tools, even the most basic transcripts can save hours. Now for the differences: Unlike our basic transcripts, our premium transcripts require only minimal editing to get to publishable quality. These transcripts include significantly improved accuracy, speaker differentiation, punctuation and capitalization. In addition to this, premium transcripts generate more accurate automatic tags. You can use these tags to search for common themes in your collections, or even integrate them as automatic blog tags."
 				},
 				{
+					question: "What languages and accents does Pop Up Archive support?",
+					answer: "Pop Up Archive's speech-to-text software currently only supports English language audio. We hope to expand to Spanish language and other major languages in 2015. Because our transcription software is trained on voices from mass media, both Premium and Basic software performs best for dialects heavily represented in American and British broadcast media. That said, feel free to try us out with any accents you've got, and let us know how it goes!",
+				},
+				{
 					question: "Why do the automatic transcripts and tags have errors?",
 					answer: "Automatically generated transcripts rely on software to make a guess about what's being said in your audio file. Your transcript will have more or less errors depending on the quality of the audio. For instance, broadcast-quality news productions and interviews recorded with high-quality equipment result in the most accurate transcripts because there is little background noise.",
 				},
 				{
-					question: "What affects transcript quailty?",
+					question: "What affects transcript quality?",
 					answer: "Transcript quality may be adversely affected by the subject speaking quickly, with an accent, or mumbling; multiple speakers speaking at the same time; background noise; or background music tracks. Pop Up Archive also uses keyword extraction tools that pull useful terms from your transcripts, so even if your transcripts aren't perfect, we can still extract valuable information from them.",
 				},
 			]
@@ -64,7 +68,7 @@ angular.module('Directory.faq.controllers', ['Directory.loader', 'Directory.user
 				},
 				{
 					question: "Does the hourly limit reset each month?",
-					answer: "Yes, you will be able to upload the number of hours available to your plan EACH month.",
+					answer: "Yes, you will be able to upload the number of hours available to your plan each month.",
 				},
 				{
 					question: "Can I use Pop Up Archive for the one-time processing of a large backlog of audio?",
@@ -90,16 +94,8 @@ angular.module('Directory.faq.controllers', ['Directory.loader', 'Directory.user
 			questions: [
 				{
 					question: "How can I share an audio file from Pop Up Archive?",
-					answer: "Click the social media buttons from any page on Pop Up Archive to share with your social networks. Got a blog? That’s what our embeddable player is for. Copy the html code from our “embed” button for an audio item, and paste it into the html on your WordPress, Tumblr, or other blog. Read a tutorial here: http://popuparchive.tumblr.com/post/78816510638/for-you-a-brand-spanking-new-embeddable-player-and. For sites powered by WordPress, we also have a Pop Up Archive plugin that allows your to search your collections and integrate automatic tags right on your blog: http://popuparchive.tumblr.com/post/89803900359/add-automatic-tags-to-your-audio-posts-in-wordpress",
+					answer: "Click the social media buttons from any page on Pop Up Archive to share with your social networks. Got a blog? That’s what our embeddable player is for. Copy the html code from our “embed” button for an audio item, and paste it into the html on your WordPress, Tumblr, or other blog. For sites powered by WordPress, we also have a Pop Up Archive plugin that allows your to search your collections and integrate automatic tags right on your blog. Sign up or visit our Help Center for more information.",
 				},
-				{
-					question: "Can I embed just a certain section of audio?",
-					answer: "We’re working on that. Right now, you can share our audio either by copying the site link or by copying the embed code.",
-				},
-				{
-					question: "How do I share audio on my WordPress site?",
-					answer: "We’ve got a plugin for that! Read about how it works: http://popuparchive.tumblr.com/post/89803900359/add-automatic-tags-to-your-audio-posts-in-wordpress or download now: https://github.com/popuparchive/popuparchive-wp",
-				}
 			]
 		},
 		{

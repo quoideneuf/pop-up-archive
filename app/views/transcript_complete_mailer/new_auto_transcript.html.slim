@@ -5,11 +5,13 @@
 
 .email-body
   p
-    | The automated speech-to-text has completed for item: '
+    | The automated speech-to-text transcript has completed for item: '
     = link_to @item.title + ' (file: ' + @audio_file.filename + ')', @item.url
     |'.
   p
-    | Check it out!
+    | Check it out! Read our 
+    a href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651244" Transcript FAQ
+    |  for more information on how your machine transcript was created.
 
 .email-footer
   = render('signature')
