@@ -176,6 +176,8 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     $scope.collection = new Collection();
   }
 
+  $scope.collection.itemsVisibleByDefault = true;
+
   $scope.visibilityChange = function () {
     if (!$scope.collection.itemsVisibleByDefault) {
       $scope.collection.storage = 'AWS';

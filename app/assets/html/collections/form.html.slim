@@ -9,7 +9,7 @@ div ng-controller='CollectionFormCtrl'
         label.control-label
           | Title
         .controls
-          input name="title" ng-model="collection.title" required=""
+          input name="title" type="text" ng-model="collection.title" ng-required="true" ng-class="{ 'empty-title' : collectionForm.title.$invalid }"
       .control-group
         label.control-label
           | Description
@@ -57,4 +57,4 @@ div ng-controller='CollectionFormCtrl'
 
   .modal-footer
     button.btn type="button" ng-click="dismiss()" Close
-    button.btn.btn-primary ng-click="submit();dismiss()" ng-hide="newCollection.title.$error.required" Save
+    button.btn.btn-primary ng-click="submit();dismiss()" ng-disabled="collectionForm.$invalid" Save
