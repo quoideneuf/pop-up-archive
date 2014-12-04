@@ -41,6 +41,10 @@ class Utils
     end
 
     def new_connection(uri)
+      # turning off ssl check is a Bad Idea, but since some archive.org URLs fail
+      # with the check on, and failure is Worse than a Bad Idea, we turn it off.
+      # NOTE that the root cause is probably a bad ssl_ca_path at heroku.
+      Excon.ssl_verify_peer = false
       Excon.new(uri)
     end
 
@@ -142,7 +146,7 @@ class Utils
           file_downloaded = true
 
         rescue StandardError => err
-          logger.error "File failed to be retrieved: '#{file_name}': #{err.message}"
+          logger.error "Private file failed to be retrieved: '#{file_name}': #{err.message}"
         end
         sleep(1)
       end
@@ -205,13 +209,13 @@ class Utils
             end
           end
         rescue StandardError => err
-          logger.error "File failed to be retrieved: '#{file_name}': #{err.message}"
+          logger.error "Public file failed to be retrieved: '#{file_name}': #{err.message}"
           sleep(1)
         end
       end
 
       if !temp_file or !file_downloaded
-        raise "File download failed, could not download #{uri}."
+        raise "Public file download failed: #{uri}."
       end
 
       if temp_file.size == 0
