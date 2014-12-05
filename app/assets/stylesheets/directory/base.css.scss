@@ -1309,9 +1309,13 @@ form.with-tags {
   border-radius: 2px;
 }
 
-h4#lightblueh4 {
+h4.lightblueh4 {
   color: lightblue;
   font-family: helvetica;
+}
+
+a.explink {
+  font-weight: 900;
 }
 
 .featuredcol {
