@@ -17,8 +17,15 @@ meta view-head="view-head" property="og:description" content="{{item.description
         /     i.icon-level-up
         li.next ng-class="{disabled: !nextItem}"
           a ng-href="{{nextItem.link()}}" Next &rarr;
-  //Item-level buttons
+
   .row-fluid.item-detail
+    //Breadcrumbs
+    .span6 
+      p
+        a ng-href='/collections' Pop Up Archive
+        |  &raquo;
+        a ng-href="/collections/{{collection.id}}" {{collection.title}}
+    //Item-level buttons
     .span6
       .btn-group.pull-right
         button.btn ng-show="currentUser.canEdit(item)" ng-click="uploadFile()"
@@ -28,12 +35,7 @@ meta view-head="view-head" property="og:description" content="{{item.description
           i.icon-trash
           |  Delete Item
 
-    //Breadcrumbs
-    .span6 
-      p
-        a ng-href='/collections' Pop Up Archive
-        |  &raquo;
-        a ng-href="/collections/{{collection.id}}" {{collection.title}}
+
   //Thumb and Title        
   .row-fluid.thumb-and-title
     .span11
