@@ -111,19 +111,22 @@ meta view-head="view-head" property="og:description" content="{{item.description
                 li.icon-step-forward
                 li.bold Shift+Tab:
                 li Play from beginning of line
+
       .row-fluid.ts-info-row ng-show="audioFile.transcript.parts.length"
         //Basic or Premium label
         .span3.transcript-label
           span.ts-type {{audioFile.transcriptType}} Transcript
           i.icon-question-sign ng-show="audioFile.transcriptType == 'Basic'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['basicTranscript']" data-placement="bottom"    
           i.icon-question-sign ng-show="audioFile.transcriptType == 'Premium'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['premiumTranscript']" data-placement="bottom"
+        //Reprocess as Premium button
         .span3
           button.btn.ts-upgrade id="premium-ondemand-{{audioFile.id}}" ng-show="currentUser.canEdit(item) && audioFile.transcriptType == 'Basic' && !audioFile.premiumInProgress && audioFile.duration" ng-click="orderPremiumTranscript(audioFile, $event)" title="Your cost: {{audioFile.premiumRetailCost}}"
             i.icon-star-empty
             |  Reprocess as Premium
           button.btn.ts-upgrade id="premium-ondemand-{{audioFile.id}}" ng-show="audioFile.transcriptType == 'Basic' && audioFile.premiumInProgress" ng-disabled="true"
             i.icon-time
-            |  Premium in progress             
+            |  Premium in progress
+        //Transcript-level buttons        
         .span6.transcript-options
           .btn-group.pull-right ng-show="audioFile.transcript.parts.length"
             button.btn ng-disabled="allowEditButton(audioFile)" ng-show="currentUser.canEdit(item) && !editTable" ng-click="callEditor(); toggleTranscript()"
@@ -146,35 +149,44 @@ meta view-head="view-head" property="og:description" content="{{item.description
             a.clear-filter.icon-remove-sign ng-show="transcriptFilter.length > 0" ng-click="transcriptFilter=''"
 
       div ng-class="transcriptClass()"
-        ul.arrow-buttons ng-show="showOnAmara()"
-          / li ng-show="showOrderTranscript()"
-          /   a class='perfect' href="#" ng-click='orderTranscript()'
-          /     | Perfect your transcript
-          /     img src='#{asset_path("brain.svg")}'
-          / li ng-show="showTranscriptOrdered()"
-          /   a class='crafted' ng-href='' target="blank"
-          /     | Your transcript is being hand crafted
-          /     img src='#{asset_path("brain.svg")}'
-          / li ng-show="showSendToAmara()"
-          /   a class='amara' href="#" ng-click='addToAmara()'
-          /     | Submit to Amara
-          /     img src='#{asset_path("amarasmall.png")}'
-          li 
-            a class='crafted' ng-href='{{addToAmaraTask().transcriptUrl}}' target="blank"
-              | View on Amara
-              img src='#{asset_path("amarasmall.png")}'
-          li
-            a href="#" &nbsp;
+        .row-fluid
+        //Amara buttons, phasing this feature out
+          .span12
+            ul.arrow-buttons ng-show="showOnAmara()"
+              / li ng-show="showOrderTranscript()"
+              /   a class='perfect' href="#" ng-click='orderTranscript()'
+              /     | Perfect your transcript
+              /     img src='#{asset_path("brain.svg")}'
+              / li ng-show="showTranscriptOrdered()"
+              /   a class='crafted' ng-href='' target="blank"
+              /     | Your transcript is being hand crafted
+              /     img src='#{asset_path("brain.svg")}'
+              / li ng-show="showSendToAmara()"
+              /   a class='amara' href="#" ng-click='addToAmara()'
+              /     | Submit to Amara
+              /     img src='#{asset_path("amarasmall.png")}'
+              li 
+                a class='crafted' ng-href='{{addToAmaraTask().transcriptUrl}}' target="blank"
+                  | View on Amara
+                  img src='#{asset_path("amarasmall.png")}'
+              li
+                a href="#" &nbsp;
             
-        .transcript ng-class="{true:'glow'}[editTable]" transcript-type="audioFile.transcriptType" speakers="audioFile.transcript.speakers" transcript-text="audioFile.transcript.parts | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
-        .alert.alert-info ng-show="audioFile.currentStatus == 'Transcription complete' && currentUser.canEdit(item)"
-          |  Here is the transcription of the first two minutes of your audio.&nbsp;
-          strong
-            a href="/pricing" Upgrade your plan for full transcripts.
-        .alert.alert-info ng-show="audioFile.currentStatus == 'Preview complete' && currentUser.canEdit(item)"
-          |  Here is the transcription of the first two minutes of your audio. The rest will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.
-        .alert.alert-info ng-show="(audioFile.currentStatus == 'Preview complete' || audioFile.currentStatus == 'Transcription complete') && !currentUser.canEdit(item)"
-          | This is a 2-minute basic transcript preview.
+        .row-fluid
+          //Transcript
+          .span12
+            .transcript ng-class="{true:'glow'}[editTable]" transcript-type="audioFile.transcriptType" speakers="audioFile.transcript.speakers" transcript-text="audioFile.transcript.parts | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
+        .row-fluid
+          //Transcript processing alerts
+          .span12
+            .alert.alert-info ng-show="audioFile.currentStatus == 'Transcription complete' && currentUser.canEdit(item)"
+              |  Here is the transcription of the first two minutes of your audio.&nbsp;
+              strong
+                a href="/pricing" Upgrade your plan for full transcripts.
+            .alert.alert-info ng-show="audioFile.currentStatus == 'Preview complete' && currentUser.canEdit(item)"
+              |  Here is the transcription of the first two minutes of your audio. The rest will process in real time (a 30-minute file will take at least 30 minutes). We'll email you when it's ready.
+            .alert.alert-info ng-show="(audioFile.currentStatus == 'Preview complete' || audioFile.currentStatus == 'Transcription complete') && !currentUser.canEdit(item)"
+              | This is a 2-minute basic transcript preview.
 
       div ng-show="isFileProcessing(audioFile) && currentUser.canEdit(item)"
         .alert.alert-info ng-bind-html="statusNotification(audioFile)"
