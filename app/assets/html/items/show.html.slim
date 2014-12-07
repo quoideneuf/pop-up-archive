@@ -79,10 +79,10 @@ meta view-head="view-head" property="og:description" content="{{item.description
             i.icon-play
           button.player-button ng-show="isPlaying()" ng-click="player.pause()"
             i.icon-pause
-        .span9
+        .span8
           .scrubber
             .bar ng-show="isLoaded()" ng-style="{width:player.time*100/player.duration+'%'}"
-        .span1
+        .span2
           .timecodes ng-show="player.time"
             span {{player.time | timeCode}}
             span ng-show="item.duration" &#47; {{item.getDurationString()}}
@@ -112,7 +112,8 @@ meta view-head="view-head" property="og:description" content="{{item.description
                 li.bold Shift+Tab:
                 li Play from beginning of line
       .row-fluid.ts-info-row ng-show="audioFile.transcript.parts.length"
-        .span2.transcript-label
+        //Basic or Premium label
+        .span3.transcript-label
           span.ts-type {{audioFile.transcriptType}} Transcript
           i.icon-question-sign ng-show="audioFile.transcriptType == 'Basic'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['basicTranscript']" data-placement="bottom"    
           i.icon-question-sign ng-show="audioFile.transcriptType == 'Premium'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['premiumTranscript']" data-placement="bottom"
@@ -123,7 +124,7 @@ meta view-head="view-head" property="og:description" content="{{item.description
           button.btn.ts-upgrade id="premium-ondemand-{{audioFile.id}}" ng-show="audioFile.transcriptType == 'Basic' && audioFile.premiumInProgress" ng-disabled="true"
             i.icon-time
             |  Premium in progress             
-        .span7.transcript-options
+        .span6.transcript-options
           .btn-group.pull-right ng-show="audioFile.transcript.parts.length"
             button.btn ng-disabled="allowEditButton(audioFile)" ng-show="currentUser.canEdit(item) && !editTable" ng-click="callEditor(); toggleTranscript()"
               i.icon-edit
