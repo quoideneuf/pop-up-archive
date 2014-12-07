@@ -3,8 +3,8 @@ meta view-head="view-head" property="og:title" content="{{item.title}}"
 meta ng-if="(item.imageFiles && item.imageFiles.length) || (collection.imageFiles && collection.imageFiles.length)" view-head="view-head" property="og:image" content="{{ updateImage('full') }}"
 meta view-head="view-head" property="og:description" content="{{item.description}}"
 
-//Navigation
 .container ng-show="currentUser.canEdit(item) || collection.itemsVisibleByDefault"
+  //Search Results Navigation
   .row-fluid
     .span12
       ul.pager ng-show="nextItem || previousItem || searchResults.query"
@@ -28,21 +28,23 @@ meta view-head="view-head" property="og:description" content="{{item.description
           i.icon-trash
           |  Delete Item
 
-      //Storage location
-      a.lower-right ng-show="currentUser.canEdit(item)" ng-click="itemStorage()"
-        span.storage ng-class="Storage.storageClass(item.storage)"
-
     //Breadcrumbs
     .span6 
       p
         a ng-href='/collections' Pop Up Archive
         |  &raquo;
         a ng-href="/collections/{{collection.id}}" {{collection.title}}
-      .thumb-and-title
-        img ng-if="(item.imageFiles && item.imageFiles.length) || (collection.imageFiles && collection.imageFiles.length)" ng-src="{{ updateImage() }}"
-        h1 view-title="view-title" {{item.title}}
-        a style="display:none;" facebook="facebook" class="facebookShare" data-url='https://www.popuparchive.com/collections/{{collection.id}}/items/{{item.id}}'
-        .clear
+  //Thumb and Title        
+  .row-fluid.thumb-and-title
+    .span11
+      img ng-if="(item.imageFiles && item.imageFiles.length) || (collection.imageFiles && collection.imageFiles.length)" ng-src="{{ updateImage() }}"
+      h1 view-title="view-title" {{item.title}}
+      a style="display:none;" facebook="facebook" class="facebookShare" data-url='https://www.popuparchive.com/collections/{{collection.id}}/items/{{item.id}}'
+    //Storage location
+    .span1
+      a.lower-right ng-show="currentUser.canEdit(item)" ng-click="itemStorage()"
+        span.storage ng-class="Storage.storageClass(item.storage)"
+  //Description      
   .row-fluid
     .span12
       p ng-show="item.description" ng-bind-html="item.description"
