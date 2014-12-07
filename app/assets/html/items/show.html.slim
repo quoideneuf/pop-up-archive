@@ -43,6 +43,8 @@ meta view-head="view-head" property="og:description" content="{{item.description
         h1 view-title="view-title" {{item.title}}
         a style="display:none;" facebook="facebook" class="facebookShare" data-url='https://www.popuparchive.com/collections/{{collection.id}}/items/{{item.id}}'
         .clear
+  .row-fluid
+    .span12
       p ng-show="item.description" ng-bind-html="item.description"
 
   .item-detail ng-show="item.audioFiles.length"
