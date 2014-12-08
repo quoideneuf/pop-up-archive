@@ -33,6 +33,17 @@ class AudioFile < ActiveRecord::Base
 
   TRANSCRIBE_RATE_PER_MINUTE = 2.00;  # TODO used?
 
+  # status messages
+  TRANSCRIPT_PREVIEW_COMPLETE = 'Transcript preview complete'
+  TRANSCRIPT_SAMPLE_COMPLETE  = 'Transcript sample complete'
+  TRANSCRIPT_BASIC_COMPLETE   = 'Basic transcript complete'
+  TRANSCRIPT_PREMIUM_COMPLETE = 'Premium transcript complete'
+  UPLOADING_INPROCESS         = 'Uploading'
+  COPYING_INPROCESS           = 'Copying'
+  TRANSCODING_INPROCESS       = 'Transcoding'
+  TRANSCRIBE_INPROCESS        = 'Transcribing'
+  STUCK                       = 'Stuck'
+
   # returns object to which this audio_file should be accounted.
   # should be a User or Organization
   def billable_to
@@ -487,15 +498,15 @@ class AudioFile < ActiveRecord::Base
     # because all these tasks are async, we just evaluate the current state
     # in a fail-forward progression, assuming that all previous conditions are true
     # if the current condition is true.
-    status = 'Uploading'
+    status = UPLOADING_INPROCESS
     if self.is_uploaded?
-      status = 'Copying'
+      status = COPYING_INPROCESS
     end
-    if self.is_copied?
-      status = 'Transcoding'
+    if self.is_copied? and self.is_uploaded?
+      status = TRANSCODING_INPROCESS
     end
     if self.transcoded?
-      status = 'Transcribing'
+      status = TRANSCRIBE_INPROCESS
     end
 
     # check for "stuck" before any transcript checks,
@@ -504,21 +515,22 @@ class AudioFile < ActiveRecord::Base
     # it is possible the chain has sufficiently recovered enough
     # to produce a transcript, which is the end goal in any case.
     if self.stuck?
-      status = 'Stuck'
+      status = STUCK
     end
 
     # now transcript checks
     if self.has_preview?
-      status = 'Preview complete'
+      status = TRANSCRIPT_PREVIEW_COMPLETE
     end
+    # if the 2-min is done, and we do not expect any more, call it a "sample"
     if self.has_preview? and !self.needs_transcript?
-      status = 'Transcription complete'
+      status = TRANSCRIPT_SAMPLE_COMPLETE
     end
     if self.has_basic_transcript?
-      status = 'Basic transcript complete'
+      status = TRANSCRIPT_BASIC_COMPLETE
     end
     if self.has_premium_transcript?
-      status = 'Premium transcript complete'
+      status = TRANSCRIPT_PREMIUM_COMPLETE
     end
 
     # TODO do we care about communicating the analyze status?
