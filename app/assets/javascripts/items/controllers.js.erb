@@ -73,7 +73,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     var statusHTML = "<h4>Status: " + file.currentStatus + "</h4>";
     if (file.currentStatus == "<%= AudioFile::TRANSCODING_INPROCESS %>" || file.currentStatus == "<%= AudioFile::COPYING_INPROCESS %>") {
       statusHTML += "<p>Preparing file.</p>";
-    } else if (file.premiumInProgress && file.currentStatus != "<%= UPLOADING_INPROCESS %>") {
+    } else if (file.premiumInProgress && file.currentStatus != "<%= AudioFile::UPLOADING_INPROCESS %>") {
       statusHTML += "<p>Your Premium Transcript will be ready soon. We'll email you when the full transcript is loaded.</p>";
     } else if (file.currentStatus == "<%= AudioFile::TRANSCRIBE_INPROCESS %>") {
       statusHTML += "<p>The first two minutes of your transcription will be ready momentarily. ";
