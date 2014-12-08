@@ -62,7 +62,7 @@ meta view-head="view-head" property="og:description" content="{{item.description
         //File-level buttons
         .span3
           .btn-group.pull-right
-            button.btn type="button" bs-popover="embedCode()" data-placement="bottom" data-container="body"
+            button.btn type="button" ng-show="collection.itemsVisibleByDefault" bs-popover="embedCode()" data-placement="bottom" data-container="body"
               i.icon-link
               |  Embed Code
             button.btn.dropdown-toggle.download-btn type="button" bs-dropdown="downloadLinks" data-toggle="dropdown"  
