@@ -128,9 +128,9 @@ class AudioFile < ActiveRecord::Base
 
   def urls
     if transcoded?
-      AudioFileUploader.version_formats.keys.collect{|v| url(v)}
+      AudioFileUploader.version_formats.keys.collect{|v| public_url({:extension => v})}
     else
-      [url]
+      [public_url]
     end
   end
 
