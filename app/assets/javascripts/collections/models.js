@@ -28,7 +28,16 @@ angular.module('Directory.collections.models', ['RailsModel', 'Directory.imageFi
       imageFile.upload(file, options);
     });
     return imageFile;
-  }  
+  }
+
+  Collection.prototype.getThumbImage = function() {
+    var self = this;
+    if (self.imageFiles.length) {
+      // first url from last image
+      return self.imageFiles.slice(-1)[0].url.thumb[0];
+    }
+    return null; // TODO generic PUA image?
+  }
 
   Collection.prototype.fetchItems = function () {
     var self = this;
