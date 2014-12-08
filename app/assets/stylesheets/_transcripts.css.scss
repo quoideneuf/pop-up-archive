@@ -119,24 +119,15 @@
 
 .key-commands {
   font-size: 13px;
-  background: #f2cfa5;
-  padding: 10px;
-  p {
-    font-family: freight-text-pro, serif;
-    font-weight: bold;
+  ul {
     margin: 0;
   }
-  td {
-    padding-right: 5px;
+  li {
+    display: inline;
   }
 }
 
 .transcript-options {
-  position: absolute;
-  margin-right: 20px;
-  right: 0;
-  text-align: right;
-
   .search-group {
     display: inline-block;
     position: relative;
