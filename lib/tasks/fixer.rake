@@ -44,23 +44,65 @@ namespace :fixer do
     recover = ENV['RECOVER']
 
     report     = Hash.new{ |h,k| h[k] = 1 }
-    unfinished = Task.without_status([Task::COMPLETE, Task::CANCELLED])
+    unfinished = Task.incomplete
     verbose and puts "Nudging #{unfinished.count} unfinished tasks"
 
     unfinished.find_in_batches do |taskgroup|
       taskgroup.each do |task|
-        if limit and limit.to_i > report[task.type]
+        if limit and limit.to_i <= report[task.type]
           next
         end
 
         debug and puts "Task.find(#{task.id}) -> #{task.type}"
         report[task.type] += 1
 
-        if task.stuck? and recover
-          task.recover!
+        if task.stuck?
+          report[task.type+'-stuck'] += 1
+          task.recover! if recover
         end
       end
     end
+
+    verbose and pp report
+
+  end
+
+#########################################################################################################
+  desc "nudge unfinished uploads toward the finish line"
+  task nudge_uploads: [:environment] do
+
+    verbose = ENV['VERBOSE']
+    debug   = ENV['DEBUG']
+    limit   = ENV['LIMIT']
+    recover = ENV['RECOVER']
+
+    report     = Hash.new{ |h,k| h[k] = 1 }
+    unfinished = Task.upload.incomplete
+    verbose and puts "Nudging #{unfinished.count} unfinished Upload tasks"
+ 
+    unfinished.find_in_batches do |taskgroup|
+      taskgroup.each do |task|
+        if limit and limit.to_i <= report[task.type]
+          next
+        end 
+
+        debug and puts "Task::UploadTask.find(#{task.id})"
+        report[:incomplete] += 1
+
+        if task.num_chunks == 0
+          report[:zero_chunks] += 1
+        end
+
+        if task.num_chunks > 0 and task.num_chunks != task.chunks_uploaded.size
+          report[:chunks_unfinished] += 1
+        end
+
+        if task.stuck?
+          report[:stuck] += 1
+          task.recover! if recover
+        end 
+      end 
+    end 
 
     verbose and pp report
 

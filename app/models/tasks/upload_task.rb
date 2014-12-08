@@ -33,10 +33,20 @@ class Tasks::UploadTask < Task
     logger.error e.backtrace.join("\n")
   end
 
+  def stuck?
+    return true if super
+
+    if self.num_chunks > 0 and self.num_chunks == self.chunks_uploaded.size
+      return true
+    end
+
+    return false
+  end
+
   def recover!
     if !self.owner
       self.cancel!
-    elsif self.num_chunks != self.chunks_uploaded
+    elsif self.num_chunks != self.chunks_uploaded.size
       self.cancel!
     else
       self.finish!
