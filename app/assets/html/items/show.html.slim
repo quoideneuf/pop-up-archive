@@ -88,31 +88,6 @@ meta view-head="view-head" property="og:description" content="{{item.description
             span ng-show="item.duration" &#47; {{item.getDurationString()}}
 
       .row-fluid.ts-info-row ng-show="audioFile.transcript.parts.length"
-        .span12           
-          .key-commands ng-show="editTable"
-            .span3
-              ul
-                li.icon-hand-right
-                li.bold Enter:
-                li Next Line
-            .span3
-              ul
-                li.icon-arrow-up
-                li.bold Up:
-                li Prev Line
-            .span3
-              ul
-                li.icon-step-forward
-                li.bold Tab:
-                li Pause/Play
-            .span3
-              ul
-                li.icon-chevron-up
-                li.icon-step-forward
-                li.bold Shift+Tab:
-                li Play from beginning of line
-
-      .row-fluid.ts-info-row ng-show="audioFile.transcript.parts.length"
         //Basic or Premium label
         .span3.transcript-label
           span.ts-type {{audioFile.transcriptType}} Transcript
@@ -147,6 +122,32 @@ meta view-head="view-head" property="og:description" content="{{item.description
           .search-group.pull-right
             input.search-query ng-class="{extended:!!transcriptFilter}" ng-model="transcriptFilter" placeholder="Search"
             a.clear-filter.icon-remove-sign ng-show="transcriptFilter.length > 0" ng-click="transcriptFilter=''"
+            .row-fluid.ts-info-row ng-show="audioFile.transcript.parts.length"
+
+      //Key commands
+      .row-fluid.key-commands ng-show="editTable"
+        .span12           
+          .span3
+            ul
+              li.icon-hand-right
+              li.bold Enter:
+              li Next Line
+          .span3
+            ul
+              li.icon-arrow-up
+              li.bold Up:
+              li Prev Line
+          .span3
+            ul
+              li.icon-step-forward
+              li.bold Tab:
+              li Pause/Play
+          .span3
+            ul
+              li.icon-chevron-up
+              li.icon-step-forward
+              li.bold Shift+Tab:
+              li Play from start of line
 
       div ng-class="transcriptClass()"
         .row-fluid
