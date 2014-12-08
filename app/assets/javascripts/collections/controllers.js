@@ -133,12 +133,13 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     if ($scope.collection && $scope.collection.imageFiles.length) {
       var images = $scope.collection.imageFiles;
       var image = images[0];
+      // TODO why this loop?
       for (var i=1;i<images.length;i++) {
         if (images[i].id > image.id) {
           image = images[i];
         }
       }
-      return image.file.file.thumb.url;
+      return image.url.thumb[0];
     }
   };
 

@@ -34,32 +34,28 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   $scope.transcriptExpanded = false;
 
   $scope.updateImage = function(format) {
+    if (!format) format = 'thumb';
     if ($scope.item && $scope.item.imageFiles.length) {
       var images = $scope.item.imageFiles;
       var image = images[0];
+      // TODO why this loop?
       for (var i=1;i<images.length;i++) {
         if (images[i].id > image.id) {
           image = images[i];
         }
       }
-      if (format == "full") {
-        return image.file.file.url;
-      } else {
-        return image.file.file.thumb.url;
-      }
-    } else if ($scope.collection && $scope.collection.imageFiles.length) {
+      return image.url[format][0];
+    } 
+    else if ($scope.collection && $scope.collection.imageFiles.length) {
       var images = $scope.collection.imageFiles;
       var image = images[0];
+      // TODO why this loop?
       for (var i=1;i<images.length;i++) {
         if (images[i].id > image.id) {
           image = images[i];
         }
       }
-      if (format == "full") {
-        return image.file.file.url;
-      } else {
-        return image.file.file.thumb.url;
-      }
+      return image.url[format][0];
     }
   };
 
