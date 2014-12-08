@@ -67,8 +67,8 @@ describe Tasks::TranscodeTask do
     job.original.should eq @task.original 
     job.priority.should eq 4
     job.call_back.should eq nil
-    job.retry_delay.should eq 3600
-    job.retry_max.should eq 24
+    job.retry_delay.should eq Task::RETRY_DELAY
+    job.retry_max.should eq Task::MAX_WORKTIME / Task::RETRY_DELAY
     job.tasks.size.should eq 1
   end
 
