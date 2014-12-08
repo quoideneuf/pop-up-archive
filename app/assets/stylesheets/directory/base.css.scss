@@ -24,7 +24,10 @@ p {
   font-weight: bold;
 }
 
-xmp { white-space: pre-wrap }
+xmp { 
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
 
 p {
   font-family: helvetica, sans-serif;
