@@ -195,4 +195,12 @@ class Tasks::AddToAmaraTask < Task
     }.to_json)
   end
 
+  def recover!
+    if !self.owner
+      self.cancel!
+    else
+      self.finish!
+    end 
+  end
+
 end

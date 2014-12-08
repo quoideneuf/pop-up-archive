@@ -40,7 +40,15 @@ class Tasks::DetectDerivativesTask < Task
     any_nil = versions.detect{|version| version_info(version)['detected_at'].nil?}
     !any_nil
   end
-  
+
+  def recover!
+    if !self.owner
+      self.cancel!
+    else
+      self.finish_if_all_detected
+    end 
+  end
+
   def mark_version_detected(version)
     vi = version_info(version)
     if (vi && !vi['detected_at'])

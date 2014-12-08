@@ -95,12 +95,16 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     # cancelled jobs are final.
     return false if status == CANCELLED
 
-    # older than a day and incomplete
-    if status != COMPLETE && (DateTime.now - 1) > created_at
+    # older than max worktime and incomplete
+    if status != COMPLETE && (DateTime.now.to_time - MAX_WORKTIME).to_datetime > created_at
       return true
 
     # we failed to register a SM job_id
     elsif !extras['job_id']
+      return true
+
+    # process() seems to have failed
+    elsif !extras['sm_name']
       return true
 
     end
@@ -111,11 +115,17 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
   def recover!
 
-    # couple easy cases first.
+    # easy cases first.
     if !owner
       self.extras[:error] = "No owner/audio_file found"
       cancel!
       return
+
+    # if we have no sm_name, then we never downloaded in prep for SM job
+    elsif !self.extras['sm_name']
+      self.process()
+      return
+
     elsif !self.extras['job_id']
       # try to look it up, one last time
       if !self.lookup_sm_job_by_name

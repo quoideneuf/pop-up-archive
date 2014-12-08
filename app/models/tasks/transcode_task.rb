@@ -51,8 +51,8 @@ class Tasks::TranscodeTask < Task
       job.job_type    = 'audio'
       job.original    = original
       job.priority    = 4
-      job.retry_delay = 3600
-      job.retry_max   = 24
+      job.retry_delay = Task::RETRY_DELAY
+      job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
       job.add_task({
         task_type: 'transcode',
         result:    destination,

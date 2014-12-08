@@ -87,8 +87,8 @@ class Tasks::TranscribeTask < Task
         job.job_type    = 'audio'
         job.original    = original
         job.priority    = 2
-        job.retry_delay = 3600 # 1 hour
-        job.retry_max   = 24 # try for a whole day
+        job.retry_delay = Task::RETRY_DELAY
+        job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
         job.add_sequence do |seq|
           seq.add_task({task_type: 'cut', options: {length: 120, fade: 0}})
           seq.add_task({
@@ -105,8 +105,8 @@ class Tasks::TranscribeTask < Task
         job.job_type = 'audio'
         job.original = original
         job.priority = 3
-        job.retry_delay = 3600 # 1 hour
-        job.retry_max = 24 # try for a whole day
+        job.retry_delay = Task::RETRY_DELAY
+        job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
         job.add_task({
           task_type: 'transcribe',
           result:    destination,

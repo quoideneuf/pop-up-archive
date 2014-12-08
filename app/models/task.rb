@@ -13,6 +13,9 @@ class Task < ActiveRecord::Base
   COMPLETE = 'complete'
   CANCELLED = 'cancelled'
 
+  MAX_WORKTIME = 60 * 60 * 4  # 4 hours, expressed in seconds
+  RETRY_DELAY  = 900          # 15 minutes, expressed in seconds
+
   scope :incomplete, where('status not in (?)', [COMPLETE, CANCELLED])
 
   # convenient scopes for subclass types
@@ -205,14 +208,14 @@ class Task < ActiveRecord::Base
     self.where("status=? and extras->'results' not like ?", task_status, "%_status_:_#{task_status}_%'").order('created_at asc')
   end
 
-  # methods for dislodging stuck tasks
+  # determine whether task is "stuck" and needs to be recovered
   def stuck?
 
     # cancelled jobs are final.
     return false if status == CANCELLED
 
-    # older than a day and incomplete
-    if status != COMPLETE && (DateTime.now - 1) > created_at
+    # older than MAX_WORKTIME and incomplete
+    if status != COMPLETE && (DateTime.now.to_time - MAX_WORKTIME).to_datetime > created_at
       return true
 
     # job claims to be finished but task hasn't heard that yet.

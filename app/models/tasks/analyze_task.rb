@@ -110,8 +110,8 @@ class Tasks::AnalyzeTask < Task
     j = create_job do |job|
       job.job_type    = 'text'
       job.original    = original
-      job.retry_delay = 3600 # 1 hour
-      job.retry_max   = 24 # try for a whole day
+      job.retry_delay = Task::RETRY_DELAY
+      job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
       job.priority    = 3
 
       job.add_task({
