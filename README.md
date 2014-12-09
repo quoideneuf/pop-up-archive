@@ -37,6 +37,8 @@
 
 This guide expects that you have git and homebrew installed, and have a ruby environment set up with 2.0.0-p247 (using RVM or rbenv). We also assume you are using Pow, and have the development site running at http://pop-up-archive.dev. This is not required, but some aspects of the guide may not be appropriate for different configurations.
 
+On OS X:
+
     brew install redis elasticsearch postgres
     git clone git@github.com:popuparchive/pop-up-archive.git
     curl get.pow.cx | sh
@@ -44,6 +46,15 @@ This guide expects that you have git and homebrew installed, and have a ruby env
     cd pop-up-archive
     bundle install
     powder link
+    cp config/env_vars.example config/env_vars
+
+On Ubuntu:
+
+    sudo apt-get install imagemagick libmagickwand-dev libxslt-dev postgresql libpq-dev
+    git clone git@github.com:popuparchive/pop-up-archive.git
+    gem install bundler
+    cd pop-up-archive
+    bundle install
     cp config/env_vars.example config/env_vars
     
 
