@@ -381,7 +381,9 @@ class AudioFile < ActiveRecord::Base
   end
 
   def stuck?
-    self.tasks.any?{|t| t.stuck?}
+    return true if self.tasks.any?{|t| t.stuck?}
+    return true if !self.has_preview and self.needs_transcript?
+    return false
   end
 
   def recover!
