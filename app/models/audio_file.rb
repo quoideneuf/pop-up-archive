@@ -416,11 +416,6 @@ class AudioFile < ActiveRecord::Base
       return true
     end
 
-    # if the preview is complete and the basic is in process
-    if transcripts_alone.count == 1 and has_basic_transcribe_task_in_progress?
-      return true
-    end
-
     # compare plan expectations with reality
     if user and user.plan.has_premium_transcripts? and !has_premium_transcribe_task_in_progress? and !has_premium_transcript?
       return true
@@ -531,7 +526,7 @@ class AudioFile < ActiveRecord::Base
       status = TRANSCRIPT_PREVIEW_COMPLETE
     end
     # if the 2-min is done, and we do not expect any more, call it a "sample"
-    if self.has_preview? and !self.needs_transcript?
+    if self.has_preview? and !self.needs_transcript? and !has_basic_transcribe_task_in_progress?
       status = TRANSCRIPT_SAMPLE_COMPLETE
     end
     if self.has_basic_transcript?
