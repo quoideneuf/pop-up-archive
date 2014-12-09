@@ -228,6 +228,10 @@ class Task < ActiveRecord::Base
     end 
   end
 
+  def status_is_final?
+    status == COMPLETE or status == CANCELLED
+  end
+
   # required abstract method (if recovery matters to a subclass) 
   def recover!
     raise self.class.name + " does not implement recover! method"
