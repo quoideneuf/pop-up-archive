@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+
+#
+# heroku deployment wrapper
+# does proper git push and then sends notification email
+#
+
+require 'readline'
+require 'net/smtp'
+
+def send_email(to,opts={})
+  opts[:server]      ||= 'localhost'
+  opts[:from]        ||= ENV["PUA_EMAIL"] || (ENV['USER']+'@popuparchive.com')
+  opts[:from_alias]  ||= ENV["PUA_USER"]  || ENV['USER']
+  opts[:subject]     ||= "Deployment"
+  opts[:body]        ||= "Deployment happened"
+
+  msg = <<END_OF_MESSAGE
+From: #{opts[:from_alias]} <#{opts[:from]}>
+To: <#{to}>
+Subject: #{opts[:subject]}
+
+#{opts[:body]}
+END_OF_MESSAGE
+
+  Net::SMTP.start(opts[:server]) do |smtp|
+    smtp.send_message msg, opts[:from], to
+  end
+end
+
+def input(prompt="", newline=false)
+  prompt += "\n" if newline
+  Readline.readline(prompt, true).squeeze(" ").strip
+end
+
+notify_email = 'popuparchive-dev@googlegroups.com'
+usage        = "usage: #{$PROGRAM_NAME} branch environment"
+srcbranch    = ARGV[0]
+destenv      = ARGV[1]
+test_mode    = ARGV[2]
+
+if (!srcbranch or !destenv)
+  abort "Missing argument.\n#{usage}"
+end
+
+git_push_cmd = "git push --force #{destenv} #{srcbranch}:master"
+ok_to_deploy = input "Will deploy with: #{git_push_cmd}\nOk? [Y/n] "
+
+#puts "ok_to_deploy = #{ok_to_deploy.inspect}"
+
+if ok_to_deploy.match(/^n/i)
+  abort "Cancelled."
+end
+
+test_mode or deployed_ok = system(git_push_cmd)
+
+if deployed_ok or test_mode
+  last_commit = `git log --max-count=1 #{destenv}/master`
+  send_email(notify_email, {subject: "Deploy to #{destenv}", body: last_commit})
+end
