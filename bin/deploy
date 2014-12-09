@@ -7,9 +7,10 @@
 
 require 'readline'
 require 'net/smtp'
+require 'dotenv'
 
 def send_email(to,opts={})
-  opts[:server]      ||= 'localhost'
+  opts[:server]        = 'smtp.mandrillapp.com'
   opts[:from]        ||= ENV["PUA_EMAIL"] || (ENV['USER']+'@popuparchive.com')
   opts[:from_alias]  ||= ENV["PUA_USER"]  || ENV['USER']
   opts[:subject]     ||= "Deployment"
@@ -23,7 +24,7 @@ Subject: #{opts[:subject]}
 #{opts[:body]}
 END_OF_MESSAGE
 
-  Net::SMTP.start(opts[:server]) do |smtp|
+  Net::SMTP.start(opts[:server], 587, 'localhost', ENV["EMAIL_USERNAME"], ENV["EMAIL_PASSWORD"], :login) do |smtp|
     smtp.send_message msg, opts[:from], to
   end
 end
@@ -42,6 +43,9 @@ test_mode    = ARGV[2]
 if (!srcbranch or !destenv)
   abort "Missing argument.\n#{usage}"
 end
+
+# env vars used for sending email
+Dotenv.load 'config/env_vars'
 
 git_push_cmd = "git push --force #{destenv} #{srcbranch}:master"
 ok_to_deploy = input "Will deploy with: #{git_push_cmd}\nOk? [Y/n] "
