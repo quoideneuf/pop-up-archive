@@ -90,6 +90,67 @@ class Transcript < ActiveRecord::Base
     self.timed_texts.where("speaker_id is not null").count > 0 ? true : false
   end
 
+  # return array of timed texts, grouped by speaker change
+  # each item in the array is a HashWithIndifferentAccess object,
+  # with keys: start, speaker, text, offsets
+  def chunked_by_speaker
+    chunks = []
+    cur_chunk = nil
+    prev_speaker = nil
+    timed_texts.each do |tt|
+      speaker_name = self.speaker_name(tt.speaker_id)
+      if !cur_chunk or !prev_speaker or speaker_name != prev_speaker
+        prev_speaker = speaker_name
+        if cur_chunk
+          chunks.push cur_chunk
+        end
+        cur_chunk = HashWithIndifferentAccess.new
+        cur_chunk[:speaker] = speaker_name
+        cur_chunk[:start]   = tt.start_time
+        cur_chunk[:text]    = [tt.text]
+        cur_chunk[:offsets] = [tt.start_time]
+        next
+      end
+      cur_chunk[:text].push tt.text
+      cur_chunk[:offsets].push tt.start_time
+      prev_speaker = speaker_name
+    end
+    if cur_chunk and cur_chunk[:text].size > 0
+      chunks.push cur_chunk  # last one
+    end
+    chunks
+  end
+
+  # returns array of timed texts, grouped by 'chunk_size' seconds.
+  # default is '30' seconds per chunk.
+  # format of response is same as chunked_by_speaker() except for 'speaker'
+  def chunked_by_time(chunk_size=30)
+    chunks = []
+    cur_chunk = nil
+    prev_start = nil
+    timed_texts.each do |tt|
+      start_time = tt.start_time.to_i
+      if !cur_chunk or !prev_start or (start_time - prev_start) > chunk_size
+        puts "prev_start=#{prev_start.inspect}  start_time=#{start_time.inspect}  chunk_size=#{chunk_size.inspect}"
+        prev_start = start_time
+        if cur_chunk
+          chunks.push cur_chunk
+        end 
+        cur_chunk = HashWithIndifferentAccess.new
+        cur_chunk[:start]   = start_time
+        cur_chunk[:text]    = [tt.text]
+        cur_chunk[:offsets] = [tt.start_time]
+        next
+      end 
+      cur_chunk[:text].push tt.text
+      cur_chunk[:offsets].push tt.start_time
+    end 
+    if cur_chunk and cur_chunk[:text].size > 0 
+      chunks.push cur_chunk  # last one
+    end 
+    chunks
+  end
+
   # since billing ignores whether an audio_file was deleted, provide a getter
   # that ignores the paranoia deleted_at value.
   # NOTE that Rails 4.x w/ ActiveRecord 5.x may have the option of a :with_deleted
