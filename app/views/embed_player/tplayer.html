@@ -18,8 +18,39 @@
           });
         },
         loadedmetadata: function() {
+          var jplayer = this;
           //console.log('loadedmetadata', this);
-          this.pua_tplayer = new PUATPlayer($('#jp_container-<%= @file_id %>'), this);
+          jplayer.puaTplayer = new PUATPlayer($('#jp_container-<%= @file_id %>'), jplayer);
+          $('.pua-tplayer.scrolling .pua-tplayer-text').click(function() {
+            var clicked = this;
+            var offset  = $(clicked).data('offset');
+            //console.log('clicked on text with id', clicked.id, offset);
+            $(jplayer).jPlayer('play', offset);
+          });
+          $('.pua-tplayer.scrolling .pua-tplayer-text').hover(
+            function() { $(this).addClass('hover'); },
+            function() { $(this).removeClass('hover'); }
+          );
+        },
+        progress: function(ev) {
+          var player = this;
+          //console.log('player progress', player);
+        },
+        timeupdate: function(ev) {
+          var curOffset = Math.floor( ev.jPlayer.status.currentTime );
+          // if the current offset matches a text id, select the text
+          var target = $('#pua-tplayer-text-<%= @file_id %>-'+curOffset);
+          if (target && target.length) {
+            // de-select any currently selected first
+            $("#pua-tplayer-<%= @file_id %>-transcript .pua-tplayer-text.selected").removeClass('selected');
+            // select new target
+            target.addClass('selected');
+          }
+          //console.log('player timeupdate', curOffset);
+        },
+        ended: function() {
+          var player = this;
+          console.log('player ended', player);
         },
         cssSelectorAncestor: '#jp_container-<%= @file_id %>',
         smoothPlayBar: true,
@@ -93,15 +124,19 @@
    </td>
   </tr>
  </table>
- <table class="pua-tplayer scrolling">
+ <table id="pua-tplayer-<%= @file_id %>-transcript" class="pua-tplayer scrolling">
   <tbody>
-  <% @transcript.timed_texts.each do |tpart| %>
+  <% tparts = @transcript.has_speaker_ids ? @transcript.chunked_by_speaker : @transcript.chunked_by_time(@chunk_size.to_i) %>
+  <% tparts.each do |tpart| %>
   <tr class="timings-transcript">
    <td class="timings">
-     <%= tpart.offset_as_ts %>
+     <%= tpart[:speaker] %>
+     <%= tpart[:ts] %>
    </td>
    <td class="transcript">
-     <%= tpart.text %>
+     <% tpart[:text].each_with_index do |ttext,idx| %>
+     <div class="pua-tplayer-text" id="pua-tplayer-text-<%= @file_id %>-<%= tpart[:offsets][idx].to_i %>" data-offset="<%= tpart[:offsets][idx].to_i %>"><%= ttext %></div>
+     <% end %>
    </td>
   </tr>
   <% end %>

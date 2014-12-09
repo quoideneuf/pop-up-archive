@@ -25,8 +25,27 @@
   vertical-align: middle;
 }
 
+.pua-tplayer .timings-transcript .timings {
+  vertical-align: top;
+  text-align: right;
+  color: #aaa;
+}
+
 .pua-tplayer .tplayer {
   width: 100%;
+}
+
+.pua-tplayer-text {
+  cursor: pointer;
+  padding-left: 1em;
+}
+
+.pua-tplayer-text.hover {
+  background-color: #eee;
+}
+
+.pua-tplayer-text.selected {
+  background-color: #FFFBCC;
 }
 
 .pua-tplayer.scrolling tbody {

@@ -107,6 +107,7 @@ class Transcript < ActiveRecord::Base
         cur_chunk = HashWithIndifferentAccess.new
         cur_chunk[:speaker] = speaker_name
         cur_chunk[:start]   = tt.start_time
+        cur_chunk[:ts]      = tt.offset_as_ts
         cur_chunk[:text]    = [tt.text]
         cur_chunk[:offsets] = [tt.start_time]
         next
@@ -138,6 +139,7 @@ class Transcript < ActiveRecord::Base
         end 
         cur_chunk = HashWithIndifferentAccess.new
         cur_chunk[:start]   = start_time
+        cur_chunk[:ts]      = tt.offset_as_ts
         cur_chunk[:text]    = [tt.text]
         cur_chunk[:offsets] = [tt.start_time]
         next

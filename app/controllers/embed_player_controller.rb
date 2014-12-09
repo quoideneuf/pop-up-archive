@@ -16,6 +16,7 @@ class EmbedPlayerController < ApplicationController
     @ogg        = @audio_file.public_url(extension: :ogg)
     @transcript = @audio_file.best_transcript
     @title      = params[:title] || @audio_file.item.title
+    @chunk_size = params[:chunk] || 30
   end
 end
 
