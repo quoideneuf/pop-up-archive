@@ -108,6 +108,12 @@ class AudioFile < ActiveRecord::Base
     end || ''
     fn
   end
+
+  def is_mp3?
+    return true if self.format == "audio/mpeg"
+    return true if self.filename_extension == "mp3"
+    return false
+  end
   
   def remote_file_url=(url)
     self.original_file_url = url
@@ -218,7 +224,7 @@ class AudioFile < ActiveRecord::Base
 
   def premium_transcribe_audio(user=self.user)
     # only start this if transcode is complete
-    return unless transcoded_at or format == "audio/mpeg"
+    return unless transcoded_at or self.is_mp3?
     return unless (user.plan.has_premium_transcripts? || item.is_premium?)
     opts = {}
     # if the user is on a basic plan, but the item is flagged premium,
@@ -457,7 +463,7 @@ class AudioFile < ActiveRecord::Base
 
   def order_premium_transcript(cur_user)
     # TODO create named exception classes for these errors
-    if !transcoded_at and format != "audio/mpeg"
+    if !transcoded_at and !self.is_mp3?
       raise "Cannot order premium transcript for audio that has not been transcoded"
     end
     if !cur_user.active_credit_card
@@ -508,7 +514,7 @@ class AudioFile < ActiveRecord::Base
     if self.is_copied? and self.is_uploaded?
       status = TRANSCODING_INPROCESS
     end
-    if self.transcoded?
+    if self.transcoded? or self.is_mp3?
       status = TRANSCRIBE_INPROCESS
     end
 
