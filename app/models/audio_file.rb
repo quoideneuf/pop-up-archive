@@ -514,7 +514,7 @@ class AudioFile < ActiveRecord::Base
     if self.is_copied? and self.is_uploaded?
       status = TRANSCODING_INPROCESS
     end
-    if self.transcoded? or self.is_mp3?
+    if (self.transcoded? or self.is_mp3?) and (self.has_basic_transcribe_task_in_progress? or self.has_premium_transcribe_task_in_progress?)
       status = TRANSCRIBE_INPROCESS
     end
 
