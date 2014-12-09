@@ -104,9 +104,9 @@ meta view-head="view-head" property="og:description" content="{{item.description
         //Transcript-level buttons        
         .span6.transcript-options
           .btn-group.pull-right ng-show="audioFile.transcript.parts.length"
-            button.btn ng-disabled="allowEditButton(audioFile)" ng-show="currentUser.canEdit(item) && !editTable" ng-click="callEditor(); toggleTranscript()"
+            button.btn ng-show="currentUser.canEdit(item) && !editTable" ng-disabled="allowEditButton(audioFile)" ng-click="callEditor(); toggleTranscript(); play();"
               i.icon-edit
-              |  Edit
+              |  Edit Text
             button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave()"
               i.icon-save
               |  Save
@@ -126,28 +126,27 @@ meta view-head="view-head" property="og:description" content="{{item.description
 
       //Key commands
       .row-fluid.key-commands ng-show="editTable"
-        .span12           
-          .span3
-            ul
-              li.icon-hand-right
-              li.bold Enter:
-              li Next Line
-          .span3
-            ul
-              li.icon-arrow-up
-              li.bold Up:
-              li Prev Line
-          .span3
-            ul
-              li.icon-step-forward
-              li.bold Tab:
-              li Pause/Play
-          .span3
-            ul
-              li.icon-chevron-up
-              li.icon-step-forward
-              li.bold Shift+Tab:
-              li Play from start of line
+        .span3
+          ul
+            li.icon-chevron-up
+            li.icon-step-forward
+            li.bold Shift+Tab:
+            li Play from start of line 
+        .span3
+          ul
+            li.icon-step-forward
+            li.bold Tab:
+            li Pause/Play          
+        .span3
+          ul
+            li.icon-hand-right
+            li.bold Enter:
+            li Next Line
+        .span3
+          ul
+            li.icon-arrow-up
+            li.bold Up:
+            li Prev Line
 
       div ng-class="transcriptClass()"
         .row-fluid
