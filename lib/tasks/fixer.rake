@@ -224,11 +224,6 @@ namespace :fixer do
           ok_to_recover and af.process_file # has preview, needs full
         end
 
-        if !af.has_preview? and !af.has_premium_transcript?
-          verbose and puts "AudioFile.find(#{af.id}) needs premium transcript"
-          ok_to_recover and af.process_file # missing preview
-        end
-
       end # afgroup
     end # batches
 
