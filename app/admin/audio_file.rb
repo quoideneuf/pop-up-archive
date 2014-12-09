@@ -26,6 +26,7 @@ ActiveAdmin.register AudioFile do
         row("Transcoded") { audio_file.transcoded_at }
         row("Created") { audio_file.created_at }
         row("Updated") { audio_file.updated_at }
+        row("Status") { audio_file.current_status }
       end     
     end
     panel "Tasks" do
