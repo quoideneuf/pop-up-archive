@@ -52,9 +52,9 @@
       }, function error(response) {
         var errCode = response.status;
         // avoid recursion (error throwing error)
-        // and only re-route if this was the main request (matches window.location)
+        // and only re-route if this was the main request (matches window.location) or a non-404.
         //console.log("error " + errCode + " for path " + $location.path() + " for response", response);
-        if (!$location.search().was && response.config.url == '/api' + $location.path()) {
+        if (!$location.search().was && (response.config.url == '/api' + $location.path() || errCode != 404)) {
           console.log("redirect error " + errCode + " for response path " + response.config.url);
           $rootScope.errorLocation = response.config.url;
           $rootScope.prevLocation = $location.absUrl();
