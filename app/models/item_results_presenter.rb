@@ -42,10 +42,10 @@ class ItemResultsPresenter < BasicObject
 
         # child objects
         fres[:audio_files] = result.audio_files.map do |af|
-          { :url => af.url, :id => af.id, :filename => af.filename }
+          { :url => af.public_url, :id => af.id, :filename => af.filename }
         end
         fres[:image_files] = result.image_files.map do |imgf|
-          { :file => imgf.file, :upload_id => imgf.upload_id, :original_file_url => imgf.original_file_url }
+          { :filename => imgf.filename, :url => imgf.urls, :upload_id => imgf.upload_id, :original_file_url => imgf.original_file_url }
         end
         if result.entities.present?
           fres[:entities] = result.entities.map do |ent|

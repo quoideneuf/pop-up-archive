@@ -1,5 +1,6 @@
 class ImageFile < ActiveRecord::Base
 
+  include PublicAsset
   include FileStorage
 
   attr_accessible :file, :original_file_url, :storage_id, :is_uploaded, :remote_file_url, :imageable_id, :imageable_type
@@ -29,6 +30,14 @@ class ImageFile < ActiveRecord::Base
   rescue Exception => e
     logger.error e.message
     logger.error e.backtrace.join("\n")
+  end
+
+  # returns hash of array of urls for each derivative
+  def urls
+    {
+      :full  => [ public_url ],
+      :thumb => [ public_url({:use => 'thumb'}) ],
+    }
   end
 
   def save_thumb_version

@@ -18,7 +18,7 @@
     li.collection-box ng-repeat="collection in collections | notUploads"
       span class="ribbon" ng-class="{'public': collection.itemsVisibleByDefault, 'private': !collection.itemsVisibleByDefault}"
       a ng-href="/collections/{{collection.id}}"
-        .col-image ng-show="collection.imageFiles.length" style="background-image:url('{{collection.imageFiles[collection.imageFiles.length -1].file.file.thumb.url}}')"
+        .col-image ng-show="collection.imageFiles.length" style="background-image:url('{{collection.getThumbImage()}}')"
         .image ng-hide="collection.imageFiles.length"
             .box
       .collection-info

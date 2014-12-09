@@ -121,6 +121,15 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     if (this.imageFiles) {return this.imageFiles}
   }
 
+  Item.prototype.getThumbImage = function() {
+    var self = this;
+    if (self.imageFiles && self.imageFiles.length) {
+      // first url from last image
+      return self.imageFiles.slice(-1)[0].url.thumb[0];
+    }
+    return null;
+  }
+
   Item.prototype.getThumbClass = function () {
     if (this.audioFiles && this.audioFiles.length > 0) {
       return "icon-volume-up";
