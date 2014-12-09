@@ -50,7 +50,7 @@ On OS X:
 
 On Ubuntu:
 
-    sudo apt-get install imagemagick libmagickwand-dev libxslt-dev postgresql libpq-dev
+    sudo apt-get install imagemagick libmagickwand-dev libxslt-dev postgresql libpq-dev nodejs npm
     git clone git@github.com:popuparchive/pop-up-archive.git
     gem install bundler
     cd pop-up-archive
