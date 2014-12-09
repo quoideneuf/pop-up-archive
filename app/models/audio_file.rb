@@ -415,12 +415,20 @@ class AudioFile < ActiveRecord::Base
     if transcripts_alone.count == 0 and !has_basic_transcribe_task_in_progress? and !has_premium_transcribe_task_in_progress?
       return true
     end
+
+    # if the preview is complete and the basic is in process
+    if transcripts_alone.count == 1 and has_basic_transcribe_task_in_progress?
+      return true
+    end
+
+    # compare plan expectations with reality
     if user and user.plan.has_premium_transcripts? and !has_premium_transcribe_task_in_progress? and !has_premium_transcript?
       return true
     end
     if user and user.plan != SubscriptionPlanCached.community and !has_basic_transcribe_task_in_progress? and !has_basic_transcript?
       return true
     end
+
     return false
   end
 
@@ -429,7 +437,7 @@ class AudioFile < ActiveRecord::Base
   end
 
   def unfinished_tasks
-    self.tasks.without_status([:complete, :cancelled])
+    self.tasks.incomplete
   end
 
   def has_basic_transcribe_task_in_progress?
