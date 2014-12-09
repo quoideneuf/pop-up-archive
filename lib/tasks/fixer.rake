@@ -9,7 +9,8 @@ namespace :fixer do
     verbose = ENV['VERBOSE']
     debug   = ENV['DEBUG']
     limit   = ENV['LIMIT']
-    recover_types = Hash[ ENV['RECOVER'] ? ENV['RECOVER'].split(/\ *,\ */).map{|t| [t, true]} : [] ]
+    ok_to_recover = ENV['RECOVER']
+    recover_types = Hash[ ENV['RECOVER_TYPES'] ? ENV['RECOVER_TYPES'].split(/\ *,\ */).map{|t| [t, true]} : [] ]
     debug and pp recover_types.inspect
     puts "Finding all tasks with status mismatch..."
     puts "Will try to recover these types: #{ recover_types.keys.inspect }"
@@ -22,7 +23,7 @@ namespace :fixer do
         next
       end
       debug and puts "Task #{task.type} #{task.id} has status '#{task.status}' with results: " + task.results.inspect
-      if recover_types.has_key?(task.type)
+      if recover_types.has_key?(task.type) and ok_to_recover
         verbose and puts "Calling #{task.type}.find(#{task.id}).recover!"
         task.recover!
         verbose and puts "#{task.type}.find(#{task.id}) new status == #{task.status}"

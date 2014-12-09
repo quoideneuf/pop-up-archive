@@ -1,0 +1,10 @@
+#!/bin/sh
+set x
+
+export NEWRELIC_ENABLE=false
+
+rake fixer:check RECOVER_TASKS=Tasks::TranscodeTask,Tasks::CopyTask,Tasks::TranscribeTask,Tasks::AnalyzeAudioTask,Tasks::AnalyzeTask
+rake fixer:transcript_check
+rake fixer:speechmatics_poll
+rake fixer:nudge_uploads
+rake fixer:nudge
