@@ -11,66 +11,13 @@
           $(this).jPlayer("setMedia", {
             mp3: "<%= @mp3 %>",
           });
-          $("#jp-reverse-button-<%= @file_id %>").on('click', function() {
-            $("#pua-tplayer-<%= @file_id %>").jPlayer('playHead', 0);
-          });
         },
         loadedmetadata: function() {
           var jplayer = this;
-          console.log('loadedmetadata', this);
-          jplayer.puaTplayer = new PUATPlayer($('#jp_container-<%= @file_id %>'), jplayer);
-          $('#pua-tplayer-<%= @file_id %>-transcript .pua-tplayer-text').click(function() {
-            var clicked = this;
-            var offset  = $(clicked).data('offset');
-            //console.log('clicked on text with id', clicked.id, offset);
-            $(jplayer).jPlayer('play', offset);
+          jplayer.puaTplayer = new PUATPlayer({
+            fileId: '<%= @file_id %>', 
+            jplayer: jplayer
           });
-          $('#pua-tplayer-<%= @file_id %>-transcript .pua-tplayer-text').hover(
-            function() { $(this).addClass('hover'); },
-            function() { $(this).removeClass('hover'); }
-          );
-          console.log('metadata listeners set');
-        },
-        progress: function(ev) {
-          var player = this;
-          //console.log('player progress', player);
-        },
-        timeupdate: function(ev) {
-          var curOffset = Math.floor( ev.jPlayer.status.currentTime );
-          // if the current offset matches a text id, select the text
-          var target = $('#pua-tplayer-text-<%= @file_id %>-'+curOffset);
-          if (target && target.length && !target.hasClass('selected')) {
-            // de-select any currently selected first
-            var curSelected = $("#pua-tplayer-<%= @file_id %>-transcript .pua-tplayer-text.selected");
-            curSelected.removeClass('selected');
-            // select new target
-            target.addClass('selected');
-            // scroll
-            var scrollMath = {};
-            scrollMath.rowsBefore = 2;
-            scrollMath.lineNum    = parseInt( target.data('idx') );
-            var tgtWrap = $("#pua-tplayer-<%= @file_id %>-transcript.scrolling tbody");
-            // we want to scroll the sum of the heights of all rows before the current one, less rowsBefore height.
-            if (scrollMath.lineNum < scrollMath.rowsBefore) {
-              scrollMath.scrollTo = 0;  // already near the top
-            }
-            else {
-              // get the sum of heights for the range of rows.
-              // we can't assume that all rows are the same height because lines wrap.
-              scrollMath.scrollTo = 0;
-              scrollMath.stopper = scrollMath.lineNum - scrollMath.rowsBefore - 1;  // minus one because idx below is zero-based
-              if (scrollMath.stopper < 0) scrollMath.stopper = 0;
-              var allRows = $("#pua-tplayer-<%= @file_id %>-transcript .pua-tplayer-text");
-              allRows.each(function(idx,el) {
-                //console.log(idx + ' -> ' + $(el)[0].scrollHeight);
-                scrollMath.scrollTo += $(el)[0].scrollHeight;
-                if (idx == scrollMath.stopper) return false; // abort loop
-              });
-            }
-            console.log('scrollMath: ', scrollMath);
-            tgtWrap.animate({ scrollTop: scrollMath.scrollTo }, 200);
-          }
-          //console.log('player timeupdate', curOffset);
         },
         ended: function() {
           var player = this;
@@ -85,7 +32,6 @@
         solution: "html, flash",
         supplied: "mp3",
       });
-      $("#jplayer_inspector-<%= @file_id %>").jPlayerInspector({jPlayer:$("#pua-tplayer-<%= @file_id %>")});
     });
   </script>
 </head>
