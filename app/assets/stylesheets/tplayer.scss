@@ -49,6 +49,7 @@
 .pua-tplayer-text {
   cursor: pointer;
   padding-left: 1em;
+  font-size: 95%;
 }
 
 .pua-tplayer-text.hover {
@@ -176,5 +177,8 @@ div.jp-video .jp-progress {
   }
   .player .jp-controls {
     width: 10%;
+  }
+  .pua-tplayer-text {
+    font-size: 85%;
   }
 }

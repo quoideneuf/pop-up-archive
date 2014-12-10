@@ -52,7 +52,7 @@ PUATPlayer.prototype = {
     $('#pua-tplayer-'+this.fileId+'-transcript .pua-tplayer-text').click(function() {
       var clicked = this;
       var offset  = $(clicked).data('offset');
-      console.log('clicked on text with id', clicked.id, offset);
+      //console.log('clicked on text with id', clicked.id, offset);
       $(self.jplayer).jPlayer('play', offset);
     });
     $('#pua-tplayer-'+this.fileId+'-transcript .pua-tplayer-text').hover(
@@ -65,7 +65,7 @@ PUATPlayer.prototype = {
     var self = this;
     $(self.jplayer).bind($.jPlayer.event.timeupdate, function(ev) { self.scrollOnPlay(ev) });
     $(self.jplayer).bind($.jPlayer.event.seeking, function(ev) {
-      console.log('seeking');
+      //console.log('seeking');
     });
     $(self.jplayer).bind($.jPlayer.event.seeked, function(ev) { self.scrollOnSeek(ev) });
   },
