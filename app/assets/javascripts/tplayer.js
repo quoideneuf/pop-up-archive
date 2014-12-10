@@ -19,10 +19,10 @@ var PUATPlayer = function(opts) {
   this.element = this.el.find('.scrubber canvas')[0];
   this.jp_pbar = this.el.find('.jp-progress');
 
-  if (!opts.play) {
+  if (!opts.duration) {
     this.time    = parseInt(this.el.find('.jp-time-holder .jp-current-time').html());
     this.ms      = this.el.find('.jp-time-holder .jp-duration').html().split(':');
-    this.duration = parseInt(this.ms[0]*60 + this.ms[1]);
+    this.duration = parseInt(this.ms[0]*60) + parseInt(this.ms[1]);
   }
 
   this.context = this.element.getContext('2d');
@@ -41,6 +41,17 @@ var PUATPlayer = function(opts) {
   this.setListeners();
   this.bindEvents();
 
+  if (opts.play) {
+    if (opts.play.start) {
+      // playHead takes a percentage and 'start' is an int offset
+      this.newHead = Math.floor((opts.play.start / this.duration) * 100);
+      console.log('length', this.ms, 'start', opts.play.start, 'duration', this.duration, 'newHead', this.newHead);
+      $(this.jplayer).jPlayer('playHead', this.newHead);
+    }
+    if (opts.play.end) {
+      this.hardStop = opts.play.end;
+    }
+  }
 };
 
 PUATPlayer.prototype = {
@@ -76,6 +87,9 @@ PUATPlayer.prototype = {
     // if the current offset matches a text id, select the text
     var target = $('#pua-tplayer-text-'+self.fileId+'-'+curOffset);
     self.scrollToLine(target);
+    if (self.hardStop && curOffset > self.hardStop) {
+      $(self.jplayer).jPlayer('stop');
+    }
   },
 
   scrollToLine: function(target) {

@@ -17,6 +17,8 @@ class EmbedPlayerController < ApplicationController
     @transcript = @audio_file.best_transcript
     @title      = params[:title] || @audio_file.item.title
     @chunk_size = params[:chunk] || 30
+    @start      = params[:start] || 0
+    @end        = params[:end]   || false
   end
 end
 

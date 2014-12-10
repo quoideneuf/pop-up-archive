@@ -16,7 +16,8 @@
           var jplayer = this;
           jplayer.puaTplayer = new PUATPlayer({
             fileId: '<%= @file_id %>', 
-            jplayer: jplayer
+            jplayer: jplayer,
+            play: { start: parseInt(<%= @start %>), end: <%= @end %> }
           });
         },
         ended: function() {
