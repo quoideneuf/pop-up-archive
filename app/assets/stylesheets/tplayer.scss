@@ -8,20 +8,30 @@
 }
 
 .pua-tplayer {
-  border: 1px solid #ddd;
+  //border: 1px solid #ddd;
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
 }
 
 .pua-tplayer td {
-  border: 1px solid #ccc;
+  //border: 1px solid #ccc;
   vertical-align: top;
+}
+
+.pua-tplayer td.img {
+  border: 1px solid #eee;
+}
+
+.pua-tplayer td.img img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .pua-tplayer td.img,
 .pua-tplayer td.timings {
-  width: 80px;
+  width: 100px;
   vertical-align: middle;
 }
 
@@ -33,6 +43,7 @@
 
 .pua-tplayer .tplayer {
   width: 100%;
+  padding-left: 8px;
 }
 
 .pua-tplayer-text {
@@ -61,10 +72,6 @@
 
 .jp-controls {
   width: 20%;
-}
-
-.jp-progress {
-  width: 50%;
 }
 
 .player div {
@@ -136,9 +143,38 @@ div.jp-video .jp-progress {
   padding-left: 8px;
 }
 
+.pua-tplayer .tplayer-stats .jp-time-holder {
+  color: #aaa;
+  font-size: 90%;
+}
+
 .pua-up-link span {
   background: url(/assets/storage/pop.png) no-repeat center;
   display: inline-block;
   height: 29px;
   width: 29px;
+}
+
+/* responsive overrides
+   NOTE this section *MUST* come last in the file, so don't add anything here
+   unless you want it to affect mobile devices.
+   These particular break points are not tied to any specific device.
+   Instead they are tied directly to our specific layout.
+*/
+@media only screen and (max-width: 850px) {
+  .player .player-button i {
+    font-size: 18px;
+    line-height: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media only screen and (max-width: 765px) {
+  .player .player-button.jp-rewind { 
+    display: none;
+  }
+  .player .jp-controls {
+    width: 10%;
+  }
 }
