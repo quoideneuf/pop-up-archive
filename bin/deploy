@@ -60,5 +60,5 @@ test_mode or deployed_ok = system(git_push_cmd)
 
 if deployed_ok or test_mode
   last_commit = `git log --max-count=1 #{destenv}/master`
-  send_email(notify_email, {subject: "Deploy to #{destenv}", body: last_commit})
+  send_email(notify_email, {subject: "Deploy to #{destenv}", body: "I just deployed the #{srcbranch} branch to #{destdev}\n\n#{last_commit}" })
 end
