@@ -19,18 +19,19 @@
         },
         loadedmetadata: function() {
           var jplayer = this;
-          //console.log('loadedmetadata', this);
+          console.log('loadedmetadata', this);
           jplayer.puaTplayer = new PUATPlayer($('#jp_container-<%= @file_id %>'), jplayer);
-          $('.pua-tplayer.scrolling .pua-tplayer-text').click(function() {
+          $('#pua-tplayer-<%= @file_id %>-transcript .pua-tplayer-text').click(function() {
             var clicked = this;
             var offset  = $(clicked).data('offset');
             //console.log('clicked on text with id', clicked.id, offset);
             $(jplayer).jPlayer('play', offset);
           });
-          $('.pua-tplayer.scrolling .pua-tplayer-text').hover(
+          $('#pua-tplayer-<%= @file_id %>-transcript .pua-tplayer-text').hover(
             function() { $(this).addClass('hover'); },
             function() { $(this).removeClass('hover'); }
           );
+          console.log('metadata listeners set');
         },
         progress: function(ev) {
           var player = this;
@@ -40,11 +41,23 @@
           var curOffset = Math.floor( ev.jPlayer.status.currentTime );
           // if the current offset matches a text id, select the text
           var target = $('#pua-tplayer-text-<%= @file_id %>-'+curOffset);
-          if (target && target.length) {
+          if (target && target.length && !target.hasClass('selected')) {
             // de-select any currently selected first
             $("#pua-tplayer-<%= @file_id %>-transcript .pua-tplayer-text.selected").removeClass('selected');
             // select new target
             target.addClass('selected');
+            // scroll
+            var rowsBefore = 4;
+            var lineHeight = target[0].scrollHeight;
+            var cssHeight = target.height();
+            var lineNum    = parseInt( target.data('idx') );
+            var tgtWrap = $("#pua-tplayer-<%= @file_id %>-transcript.scrolling tbody");
+            var tgtTop = target.offset().top;
+            var wrapTop = tgtWrap.offset().top;
+            //var scrollTo = tgtTop - wrapTop;
+            var scrollTo = (lineNum * lineHeight) - (lineHeight * rowsBefore);
+            console.log('scrollTop: ', cssHeight, lineHeight, lineNum, tgtTop, wrapTop, scrollTo);
+            tgtWrap.animate({ scrollTop: scrollTo }, 400);
           }
           //console.log('player timeupdate', curOffset);
         },
@@ -127,7 +140,7 @@
  <table id="pua-tplayer-<%= @file_id %>-transcript" class="pua-tplayer scrolling">
   <tbody>
   <% tparts = @transcript.has_speaker_ids ? @transcript.chunked_by_speaker : @transcript.chunked_by_time(@chunk_size.to_i) %>
-  <% tparts.each do |tpart| %>
+  <% line_num = 0; tparts.each do |tpart| %>
   <tr class="timings-transcript">
    <td class="timings">
      <%= tpart[:speaker] %>
@@ -135,7 +148,7 @@
    </td>
    <td class="transcript">
      <% tpart[:text].each_with_index do |ttext,idx| %>
-     <div class="pua-tplayer-text" id="pua-tplayer-text-<%= @file_id %>-<%= tpart[:offsets][idx].to_i %>" data-offset="<%= tpart[:offsets][idx].to_i %>"><%= ttext %></div>
+     <div class="pua-tplayer-text" id="pua-tplayer-text-<%= @file_id %>-<%= tpart[:offsets][idx].to_i %>" data-idx="<%= line_num += 1 %>" data-offset="<%= tpart[:offsets][idx].to_i %>"><%= ttext %></div>
      <% end %>
    </td>
   </tr>
