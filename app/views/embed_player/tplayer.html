@@ -1,5 +1,5 @@
 <head>
-  <%= stylesheet_link_tag "http://jplayer.org/css/jPlayer.css" %>
+  <%= stylesheet_link_tag "jPlayer.css" %>
   <%= stylesheet_link_tag "tplayer" %>
   <%= javascript_include_tag "jquery" %>
   <%= javascript_include_tag "jquery.jplayer" %>
@@ -43,21 +43,34 @@
           var target = $('#pua-tplayer-text-<%= @file_id %>-'+curOffset);
           if (target && target.length && !target.hasClass('selected')) {
             // de-select any currently selected first
-            $("#pua-tplayer-<%= @file_id %>-transcript .pua-tplayer-text.selected").removeClass('selected');
+            var curSelected = $("#pua-tplayer-<%= @file_id %>-transcript .pua-tplayer-text.selected");
+            curSelected.removeClass('selected');
             // select new target
             target.addClass('selected');
             // scroll
-            var rowsBefore = 4;
-            var lineHeight = target[0].scrollHeight;
-            var cssHeight = target.height();
-            var lineNum    = parseInt( target.data('idx') );
+            var scrollMath = {};
+            scrollMath.rowsBefore = 2;
+            scrollMath.lineNum    = parseInt( target.data('idx') );
             var tgtWrap = $("#pua-tplayer-<%= @file_id %>-transcript.scrolling tbody");
-            var tgtTop = target.offset().top;
-            var wrapTop = tgtWrap.offset().top;
-            //var scrollTo = tgtTop - wrapTop;
-            var scrollTo = (lineNum * lineHeight) - (lineHeight * rowsBefore);
-            console.log('scrollTop: ', cssHeight, lineHeight, lineNum, tgtTop, wrapTop, scrollTo);
-            tgtWrap.animate({ scrollTop: scrollTo }, 400);
+            // we want to scroll the sum of the heights of all rows before the current one, less rowsBefore height.
+            if (scrollMath.lineNum < scrollMath.rowsBefore) {
+              scrollMath.scrollTo = 0;  // already near the top
+            }
+            else {
+              // get the sum of heights for the range of rows.
+              // we can't assume that all rows are the same height because lines wrap.
+              scrollMath.scrollTo = 0;
+              scrollMath.stopper = scrollMath.lineNum - scrollMath.rowsBefore - 1;  // minus one because idx below is zero-based
+              if (scrollMath.stopper < 0) scrollMath.stopper = 0;
+              var allRows = $("#pua-tplayer-<%= @file_id %>-transcript .pua-tplayer-text");
+              allRows.each(function(idx,el) {
+                //console.log(idx + ' -> ' + $(el)[0].scrollHeight);
+                scrollMath.scrollTo += $(el)[0].scrollHeight;
+                if (idx == scrollMath.stopper) return false; // abort loop
+              });
+            }
+            console.log('scrollMath: ', scrollMath);
+            tgtWrap.animate({ scrollTop: scrollMath.scrollTo }, 200);
           }
           //console.log('player timeupdate', curOffset);
         },
