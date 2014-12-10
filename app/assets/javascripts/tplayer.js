@@ -45,7 +45,7 @@ var PUATPlayer = function(opts) {
     if (opts.play.start) {
       // playHead takes a percentage and 'start' is an int offset
       this.newHead = Math.floor((opts.play.start / this.duration) * 100);
-      console.log('length', this.ms, 'start', opts.play.start, 'duration', this.duration, 'newHead', this.newHead);
+      //console.log('length', this.ms, 'start', opts.play.start, 'duration', this.duration, 'newHead', this.newHead);
       $(this.jplayer).jPlayer('playHead', this.newHead);
     }
     if (opts.play.end) {
@@ -74,11 +74,16 @@ PUATPlayer.prototype = {
 
   bindEvents: function() {
     var self = this;
-    $(self.jplayer).bind($.jPlayer.event.timeupdate, function(ev) { self.scrollOnPlay(ev) });
+    $(self.jplayer).bind($.jPlayer.event.timeupdate, function(ev) { 
+      self.scrollOnPlay(ev);
+    });
     $(self.jplayer).bind($.jPlayer.event.seeking, function(ev) {
       //console.log('seeking');
+      // TODO spinner display so user knows something is happening.
     });
-    $(self.jplayer).bind($.jPlayer.event.seeked, function(ev) { self.scrollOnSeek(ev) });
+    $(self.jplayer).bind($.jPlayer.event.seeked, function(ev) { 
+      self.scrollOnSeek(ev);
+    });
   },
 
   scrollOnPlay: function(ev) {
@@ -95,6 +100,7 @@ PUATPlayer.prototype = {
   scrollToLine: function(target) {
     var self = this;
     if (target && target.length && !target.hasClass('selected')) {
+      //console.log('scrolling to line');
       // de-select any currently selected first
       var curSelected = $("#pua-tplayer-"+self.fileId+"-transcript .pua-tplayer-text.selected");
       curSelected.removeClass('selected');
@@ -116,11 +122,22 @@ PUATPlayer.prototype = {
         scrollMath.stopper = scrollMath.lineNum - scrollMath.rowsBefore - 1;  // minus one because idx below is zero-based
         if (scrollMath.stopper < 0) scrollMath.stopper = 0;
         var allRows = $("#pua-tplayer-"+self.fileId+"-transcript .pua-tplayer-text");
+        //console.log('starting row sum');
         allRows.each(function(idx,el) {
           //console.log(idx + ' -> ' + $(el)[0].scrollHeight);
           scrollMath.scrollTo += $(el)[0].scrollHeight;
+          // edge case.
+          // if the el is the only element within its parent row,
+          // and the row's height is > the el's height, that means it is a singleton line with whitespace beneath.
+          // compensate by reflecting the whitespace in the sum.
+          if ($(el).parent()[0].scrollHeight > $(el)[0].scrollHeight*2 && !$(el).siblings().length) {
+            //console.log('row', idx, 'is a singleton');
+            scrollMath.scrollTo += $(el)[0].scrollHeight;
+          }
+
           if (idx == scrollMath.stopper) return false; // abort loop
         });
+        //console.log('row sum complete');
       }
       //console.log('scrollMath: ', scrollMath);
       tgtWrap.animate({ scrollTop: scrollMath.scrollTo }, 200);
@@ -129,6 +146,7 @@ PUATPlayer.prototype = {
   },
 
   scrollOnSeek: function(ev) {
+    //console.log('seek finished');
     var self = this;
     var curOffset = Math.floor( ev.jPlayer.status.currentTime );
     // find nearest target
@@ -140,6 +158,7 @@ PUATPlayer.prototype = {
     // look for a target matching offset, working backward till we find one.
     var self = this;
     var target = $('#pua-tplayer-text-'+self.fileId+'-'+offset);
+    //console.log('looking for line nearest to', offset);
     while (!target.length) {
       offset--;
       target = $('#pua-tplayer-text-'+self.fileId+'-'+offset);
@@ -209,7 +228,7 @@ PUATPlayer.prototype = {
     this.element.width = width;
     this.element.height = height;
     var scrubberEnd = Math.round(width * this.time / this.duration) || 0;
-    console.log('scrubberEnd=', scrubberEnd, 'width=', width, 'height=', height);
+    //console.log('scrubberEnd=', scrubberEnd, 'width=', width, 'height=', height);
     this.context.clearRect(0, 0, width + 200, height + 200);
     if (color) {
       this.context.fillStyle = color;
