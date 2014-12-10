@@ -104,19 +104,19 @@ meta view-head="view-head" property="og:description" content="{{item.description
         //Transcript-level buttons        
         .span6.transcript-options
           .btn-group.pull-right ng-show="audioFile.transcript.parts.length"
-            button.btn ng-disabled="allowEditButton(audioFile)" ng-show="currentUser.canEdit(item) && !editTable" ng-click="callEditor(); toggleTranscript()"
+            button.btn ng-show="currentUser.canEdit(item) && !editTable" ng-disabled="allowEditButton(audioFile)" ng-click="callEditor(); expandTranscript(); play();"
               i.icon-edit
-              |  Edit
-            button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave()"
+              |  Edit Text
+            button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave(); collapseTranscript()"
               i.icon-save
-              |  Save
+              |  Save Text
             button.btn ng-show="currentUser.canEdit(item) && audioFile.transcriptType != 'Basic'" bs-modal="'#{asset_path 'items/assign_speakers_form.html'}'"
               i.icon-user
               |  Assign Speakers
-            button.btn.expand-transcript ng-click="toggleTranscript()" ng-show="transcriptExpanded"
+            button.btn.expand-transcript ng-click="collapseTranscript()" ng-show="transcriptExpanded"
               i.icon-double-angle-up
               |  Collapse
-            button.btn.expand-transcript ng-click="toggleTranscript()" ng-show="!transcriptExpanded"
+            button.btn.expand-transcript ng-click="expandTranscript()" ng-show="!transcriptExpanded"
               i.icon-double-angle-down
               |  Expand
           .search-group.pull-right
@@ -126,28 +126,27 @@ meta view-head="view-head" property="og:description" content="{{item.description
 
       //Key commands
       .row-fluid.key-commands ng-show="editTable"
-        .span12           
-          .span3
-            ul
-              li.icon-hand-right
-              li.bold Enter:
-              li Next Line
-          .span3
-            ul
-              li.icon-arrow-up
-              li.bold Up:
-              li Prev Line
-          .span3
-            ul
-              li.icon-step-forward
-              li.bold Tab:
-              li Pause/Play
-          .span3
-            ul
-              li.icon-chevron-up
-              li.icon-step-forward
-              li.bold Shift+Tab:
-              li Play from start of line
+        .span3
+          ul
+            li.icon-chevron-up
+            li.icon-step-forward
+            li.bold Shift+Tab:
+            li Play from start of line 
+        .span3
+          ul
+            li.icon-step-forward
+            li.bold Tab:
+            li Pause/Play          
+        .span3
+          ul
+            li.icon-hand-right
+            li.bold Enter:
+            li Next Line
+        .span3
+          ul
+            li.icon-arrow-up
+            li.bold Up:
+            li Prev Line
 
       div ng-class="transcriptClass()"
         .row-fluid

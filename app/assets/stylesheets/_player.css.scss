@@ -1,27 +1,21 @@
 .player {
 
-  background: #fff;
-  padding: 20px 0 20px 20px;
-  border-radius: 20px;
+  padding: 1.5em 0 1.5em 1.5em;
   .timecodes {
-    float: left;
-    padding: 20px 0 10px 25px;
+    padding-top: 18%;
   }
   .player-button {
-    float: left;
     color: #fff;
-    border: 5px solid #ccc;
+    border: .3em solid #ccc;
     background: transparent;
     border-radius: 50%;
-    padding: 5px;
-    margin-right: 10px;
+    padding: .3em;
 
     i {
-      font-size: 24px;
-      line-height: 24px;
-      padding: 8px;
-      width: 24px;
-      height: 24px;
+      font-size: 1.8em;
+      padding: .4em;
+      width: 1em;
+      height: 1em;
       display: block;
       border-radius: 50%;
       background: #ccc;
@@ -36,9 +30,26 @@
     }
   }
 
-  width: 875px;
+  @media all and (max-width: 800px){
+    .player-button{
+      border: none;
+      color: #ccc;
+
+      i{
+        background: none;
+        padding: 0.5em 0 0 0;
+      }
+      &:hover {
+        border-color: none;
+        i {
+          background: none;
+        }
+      }
+    }
+  }
+
   .scrubber {
-    height: 60px;
+    height: 4.5em;
     overflow: hidden;
     width: 100%;
 

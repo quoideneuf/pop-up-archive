@@ -45,21 +45,23 @@
     .row-fluid
       h2 Basic and Premium Transcript Comparison
       p.center Press play below to view a side-by-side comparison of our Basic and Premium machine transcripts.
-    .row-fluid
-      .span12
-        section
-          .player
-            button.player-button ng-disabled="player.time == 0" ng-click="rewind()"
-              i.icon-fast-backward
-            button.player-button ng-hide="isPlaying()" ng-click="play(exampleAudioFile.url)"
-              i.icon-play
-            button.player-button ng-show="isPlaying()" ng-click="pause()"
-              i.icon-pause
-            .scrubber
-              .bar ng-show="isLoaded()" ng-style="{width:player.time*100/player.duration+'%'}"
-            .timecodes
-              span {{exampleAudioFile.duration}}
-            .clearfix
+      
+    //Sample audio player  
+    .row-fluid.player
+      .span1
+        button.player-button ng-disabled="player.time == 0" ng-click="rewind()"
+          i.icon-fast-backward
+      .span1    
+        button.player-button ng-hide="isPlaying()" ng-click="play(exampleAudioFile.url)"
+          i.icon-play   
+        button.player-button ng-show="isPlaying()" ng-click="pause()"
+          i.icon-pause
+      .span8     
+        .scrubber
+          .bar ng-show="isLoaded()" ng-style="{width:player.time*100/player.duration+'%'}"
+      .span2
+        .timecodes
+          span {{exampleAudioFile.duration}}
 
     .row-fluid
       table.speakers

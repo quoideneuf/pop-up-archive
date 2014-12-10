@@ -31,8 +31,6 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   $scope.previousItem = SearchResults.getItem(SearchResults.currentIndex - 1);
   $scope.searchResults = SearchResults;
 
-  $scope.transcriptExpanded = false;
-
   $scope.updateImage = function(format) {
     if (!format) format = 'thumb';
     if ($scope.item && $scope.item.imageFiles.length) {
@@ -97,9 +95,15 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     }
     return found;
   }
+  
+  $scope.transcriptExpanded = false;
 
-  $scope.toggleTranscript = function () {
-    $scope.transcriptExpanded = !$scope.transcriptExpanded;
+  $scope.expandTranscript = function () {
+    $scope.transcriptExpanded = true;
+  };
+
+  $scope.collapseTranscript = function () {
+    $scope.transcriptExpanded = false;
   };
 
   $scope.transcriptClass = function () {
