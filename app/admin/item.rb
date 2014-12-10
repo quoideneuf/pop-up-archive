@@ -17,7 +17,8 @@ ActiveAdmin.register Item do
         row("Title") { item.title }
         row("Collection") { link_to item.collection.title, superadmin_collection_path(item.collection) }
         row("Duration") { item.duration }
-        row("Transcript Type") { item.transcript_type }
+        # this is confusing to most people because it is only applied to on-demand uploads.
+        #row("Transcript Type") { item.transcript_type }
         row("Created") { item.created_at }
         row("Updated") { item.updated_at }
       end     
