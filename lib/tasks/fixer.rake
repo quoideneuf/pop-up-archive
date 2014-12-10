@@ -221,7 +221,7 @@ namespace :fixer do
 
         if af.has_preview? and af.needs_transcript?
           verbose and puts "AudioFile.find(#{af.id}) needs any transcript"
-          ok_to_recover and af.process_file # has preview, needs full
+          ok_to_recover and af.process_update_file # has preview, needs full
         end
 
       end # afgroup
