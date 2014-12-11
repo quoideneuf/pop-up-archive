@@ -42,7 +42,7 @@ class AudioFile < ActiveRecord::Base
   COPYING_INPROCESS           = 'Copying'
   TRANSCODING_INPROCESS       = 'Transcoding'
   TRANSCRIBE_INPROCESS        = 'Transcribing'
-  STUCK                       = 'Stuck'
+  STUCK                       = 'Processing'
 
   # returns object to which this audio_file should be accounted.
   # should be a User or Organization
