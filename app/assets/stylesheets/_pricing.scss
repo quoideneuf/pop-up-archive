@@ -5,6 +5,9 @@
 		border: 2px solid gray;
 		border-radius: 21px;
 	}
+	.premul {
+		padding-bottom: 3px;
+	}
 
 	@mixin word-pill {
 	  border: 0;
