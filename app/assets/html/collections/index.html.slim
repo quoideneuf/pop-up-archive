@@ -44,9 +44,9 @@
             i.icon-question-sign style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['status']" data-placement="right"
         ul.items-list
           li ng-repeat="file in collection.recentFiles"
-            .col-xs-4 ng-class-odd=" 'odd-file' " {{file.fileName}}
+            .col-xs-4 ng-class-odd=" 'odd-file' " {{file.fileName  | limitTo : 32}}
             .col-xs-4 ng-class-odd=" 'odd-file' "
-              a ng-href="/collections/{{collection.id}}/items/{{file.itemId}}"{{file.itemName}}
+              a ng-href="/collections/{{collection.id}}/items/{{file.itemId}}"{{file.itemName  | limitTo : 32}}
             .col-xs-4 ng-class-odd=" 'odd-file' " {{file.fileStatus}}
           li
             a ng-show="collection.numberOfAudioFiles > 5" ng-href="/collections/{{collection.id}}" more...
