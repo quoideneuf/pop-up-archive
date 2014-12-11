@@ -150,4 +150,24 @@ namespace :reports do
     progress.finish
   end
 
+  desc "prints non-zero premium usage for a given month, for customers on basic plans"
+  task ondemand_billing: [:environment] do
+    now = DateTime.now
+    yearmonth = ENV['MONTH'] || sprintf("%d-%02d", now.year, now.month)
+    puts "Generating report for basic-plan customers with on-demand charges for #{yearmonth}..."
+    puts '='*100
+    recs = MonthlyUsage.where(:yearmonth => yearmonth).where(:use => MonthlyUsage::PREMIUM_TRANSCRIPTS).where('value > 0')
+    num = 0
+    printf("%6s %12s %40s  %s      %s\n", 'ID', 'Type', 'Name', 'Time', 'Cost')
+    puts '-'*100
+    recs.find_each do |mu|
+      if !mu.entity.plan.has_premium_transcripts?
+        printf("%6d %12s %40s  %s  $%0.2f\n", mu.entity_id, mu.entity_type, mu.entity.name, mu.value_as_hms, mu.retail_cost)
+        num += 1
+      end
+    end
+    puts '='*100
+    puts "Total: #{num}" 
+  end
+
 end

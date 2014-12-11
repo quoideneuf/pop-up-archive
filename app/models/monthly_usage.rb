@@ -25,4 +25,8 @@ class MonthlyUsage < ActiveRecord::Base
     Transcript.find_by_sql(sql)
   end
 
+  def value_as_hms
+    Time.at(self.value).getgm.strftime('%H:%M:%S')
+  end
+
 end
