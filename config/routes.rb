@@ -7,6 +7,7 @@ PopUpArchive::Application.routes.draw do
   # get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'pop-up-archive.herokuapp.com' }
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'beta.popuparchive.org' }
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'www.popuparchive.org', protocol: "http://" }
+  get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'www.popuparchive.org', protocol: "https://" }
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'www.popuparchive.com', protocol: "http://" }
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'popuparchive.com'}
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'popuparchive.org'}
