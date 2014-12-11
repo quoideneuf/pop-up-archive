@@ -103,7 +103,7 @@ section ng-controller="ItemFormCtrl"
             i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['title']" data-placement="bottom"
           .controls
             input.text.input-xlarge#title type='text' name="title" ng-model='item.title' ng-required="true" ng-class="{ 'empty-title' : newItemForm.title.$invalid }"
-        .control-group ng-show="!item.id && defaultTranscriptType == 'basic' && currentUser.hasCreditCard()"
+        .control-group ng-show="!item.id && currentUser.defaultTranscriptType() == 'basic' && currentUser.hasCreditCard()"
           label.control-label
             | Type
             i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom"

@@ -367,11 +367,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         $scope.item.title = newFiles[0].name;
       }
 
-      // set default transcriptType based on subscriber plan
-      // NOTE that we only want them to change the transcriptType
-      // when user is directly uploading files.
-      $scope.defaultTranscriptType = $scope.currentUser.hasPremiumTranscripts() ? "premium" : "basic";
-      $scope.item.transcriptType = $scope.defaultTranscriptType;
+      $scope.item.transcriptType = $scope.currentUser.defaultTranscriptType();
 
       if (!$scope.item.files) {
         $scope.item.files = [];

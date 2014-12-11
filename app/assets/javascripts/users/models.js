@@ -62,6 +62,10 @@ angular.module('Directory.users.models', ['RailsModel'])
     return this.plan.isPremium;
   };
 
+  User.prototype.defaultTranscriptType = function() {
+    return this.hasPremiumTranscripts() ? "premium" : "basic";
+  };
+
   User.prototype.subscribe = function (planId, offerCode) {
     var sub = new Subscription({planId: planId});
     var self = this;
