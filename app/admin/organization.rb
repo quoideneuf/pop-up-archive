@@ -32,6 +32,7 @@ ActiveAdmin.register Organization do
             span(I18n.t('active_admin.empty'), class: "empty")
           end
         end
+        row("Premium Plan") do |org| org.owner ? org.owner.plan.has_premium_transcripts? : false end
         row("Metered Storage") { Api::BaseHelper::time_definition(organization.used_metered_storage_cache||0) }
         row("Unmetered Storage") { Api::BaseHelper::time_definition(organization.used_unmetered_storage_cache||0) }
         row("Total Premium Transcripts (Billable)") { Api::BaseHelper::time_definition(organization.transcript_usage_report[:premium_billable_seconds].to_i||0) }

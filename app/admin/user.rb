@@ -37,6 +37,7 @@ ActiveAdmin.register User do
         row("Metered Storage") { Api::BaseHelper::time_definition(user.used_metered_storage_cache||0) }
         row("Unmetered Storage") { Api::BaseHelper::time_definition(user.used_unmetered_storage_cache||0) }
         row("Plan") { user.plan.name + ' ' + user.plan.hours.to_s + 'h (billed per ' + user.plan.interval + ')' }
+        row("Premium Plan") { user.plan.has_premium_transcripts? }
         row("Total Premium Transcripts (Billable)") { Api::BaseHelper::time_definition(user.transcript_usage_report[:premium_billable_seconds].to_i||0) }
         row("Total Premium Cost (Billable)") { number_to_currency(user.transcript_usage_report[:premium_billable_cost].to_f||'0.00') }
         row("Total Basic Transcripts (Billable)") { Api::BaseHelper::time_definition(user.transcript_usage_report[:basic_billable_seconds].to_i||0) }
