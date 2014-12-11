@@ -13,6 +13,11 @@ class Transcript < ActiveRecord::Base
 
   RETAIL    = 2 
   WHOLESALE = 1 
+  COST_TYPES = {RETAIL => "Retail", WHOLESALE => "Wholesale"}
+
+  def billed_as
+    COST_TYPES[self.cost_type]
+  end
 
   def update_item
     IndexerWorker.perform_async(:update, item.class.to_s, item.id) if item
