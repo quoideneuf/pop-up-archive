@@ -184,7 +184,6 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
 
         // set initial item transcript type based on user default
         $scope.item.transcriptType = $scope.currentUser.defaultTranscriptType();
-        console.log('item.transcriptType set to', $scope.item.transcriptType);
 
         // add files to the item
         if (!$scope.item.files) {
