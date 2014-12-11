@@ -44,11 +44,11 @@ describe AudioFile do
 
     it "should provide a list of urls when transcoded" do
       @audio_file.transcoded_at = Time.now
-      @audio_file.urls.sort.should eq [@audio_file.url(:mp3), @audio_file.url(:ogg)]
+      @audio_file.urls.sort.should eq [@audio_file.public_url({:extension => :mp3}), @audio_file.public_url({:extension => :ogg})].sort
     end
 
     it "should provide original url for urls when not transcoded" do
-      @audio_file.urls.should eq [@audio_file.url]
+      @audio_file.urls.should eq [@audio_file.public_url]
     end
 
     it "should provide url for private file" do
