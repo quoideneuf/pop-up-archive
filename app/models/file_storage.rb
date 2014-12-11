@@ -104,6 +104,12 @@ module FileStorage
     if task = tasks.copy.where(identifier: dest).last
       logger.debug "copy task #{task.id} already exists for file #{self.class.name}:#{self.id}"
     else
+
+      # protocol-free links are valid for browsers but not for us
+      if orig.match('^//')
+        orig = 'http:' + orig
+      end 
+
       task = Tasks::CopyTask.new(
         identifier: dest,
         storage_id: stor.id,

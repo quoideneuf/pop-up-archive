@@ -82,6 +82,12 @@ class PBCoreImporter
         if url.blank? || !Utils.is_audio_file?(url)
           url = pbcInstance.detect_element(:identifiers, match_attr: :source, match_value: ['URL', nil])
         end
+
+        # protocol-free links are valid for browsers but not for us
+        if url.match('^//')
+          url = 'http:' + url
+        end
+
         # puts "url: #{url}"
 
         next unless Utils.is_audio_file?(url)
