@@ -74,23 +74,24 @@ class AudioFileUploader < CarrierWave::Uploader::Base
 
   def full_filename(for_file)
     if !version_name
-      return super(for_file)
+      fn = super(for_file)
+      return fn.gsub(",","_")
     else
       ext = File.extname(for_file)
-      base = File.basename(for_file, ext)
+      base = File.basename(for_file.gsub(",","_"), ext)
       "#{base}.#{version_name}"
     end
   end
 
   def full_original_filename
     if !version_name
-      super
+      super.gsub(",","_")
     else
       fn = super
       ext = File.extname(fn)
-      base = File.basename(fn, ext)
+      base = File.basename(fn.gsub(",","_"), ext)
       "#{base}.#{version_name}"
     end
   end
-
+  
 end
