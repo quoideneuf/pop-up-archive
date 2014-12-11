@@ -139,7 +139,7 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
     else
       extras = {
         'user_id'       => current_user.id,
-        'filename'      => params[:filename],
+        'filename'      => params[:filename].gsub(",","_"),
         'filesize'      => params[:filesize].to_i,
         'last_modified' => params[:last_modified],
         'key'           => params[:key]
@@ -193,7 +193,7 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
   def upload_identifier(options=nil)
     o = options || {
       user_id:       current_user.id,
-      filename:      params[:filename],
+      filename:      params[:filename].gsub(",","_"),
       filesize:      params[:filesize],
       last_modified: params[:last_modified]
     }
