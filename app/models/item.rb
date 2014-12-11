@@ -278,6 +278,16 @@ class Item < ActiveRecord::Base
     self.transcript_type == "premium"
   end
 
+  def image_url
+    if image 
+      image.file.url
+    elsif collection and collection.image_files and collection.image_files.size > 0
+      collection.image_files.first.file.url
+    else
+      nil
+    end
+  end
+
   private
 
   def tags_for_index
