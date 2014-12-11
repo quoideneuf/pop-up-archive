@@ -210,23 +210,17 @@ namespace :fixer do
     ok_to_recover = ENV['RECOVER']
     verbose       = ENV['VERBOSE']
 
-    AudioFile.find_in_batches do |afgroup|
-      afgroup.each do |af|
-        if !af.has_file? && af.original_file_url.blank?
-          next  # can't do anything
-        end
+    AudioFile.find_by_sql('select * from audio_files where duration is not null and id not in (select audio_file_id from transcripts)').each do |af|
+      if !af.has_file? && af.original_file_url.blank?
+        next  # can't do anything
+      end
 
-        if af.transcripts_alone.count >= 2
-          next  # has enough
-        end
+      if af.needs_transcript?
+        verbose and puts "AudioFile.find(#{af.id}) needs any transcript"
+        ok_to_recover and af.process_update_file # has preview, needs full
+      end
 
-        if af.has_preview? and af.needs_transcript?
-          verbose and puts "AudioFile.find(#{af.id}) needs any transcript"
-          ok_to_recover and af.process_update_file # has preview, needs full
-        end
-
-      end # afgroup
-    end # batches
+    end 
 
   end # task
 
