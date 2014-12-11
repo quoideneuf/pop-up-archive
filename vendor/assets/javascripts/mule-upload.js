@@ -273,7 +273,7 @@ function mule_upload(settings) {
                         "x-amz-acl": settings.acl,
                         "Authorization": authorization,
                         "Content-Type": u.settings.content_type,
-                        "Content-Disposition": "attachment; filename=" + u.file.name.replace(",","_")
+                        "Content-Disposition": "attachment; filename=" + u.file.name.replace(/,/g,"_")
                     }
                 });
             } else {
@@ -560,7 +560,7 @@ function mule_upload(settings) {
                     "x-amz-date": date,
                     "Authorization": authorization,
                     "Content-Type": u.settings.content_type,
-                    "Content-Disposition": "attachment; filename=" + u.file.name.replace(",","_")
+                    "Content-Disposition": "attachment; filename=" + u.file.name.replace(/,/g,"_")
                 },
                 body: blob
             });
@@ -693,7 +693,7 @@ function mule_upload(settings) {
                         "x-amz-date": date,
                         "Authorization": authorization,
                         "Content-Type": u.settings.content_type,
-                        "Content-Disposition": "attachment; filename=" + u.file.name.replace(",","_")
+                        "Content-Disposition": "attachment; filename=" + u.file.name.replace(/,/g,"_")
                     },
                     body: data
                 });
@@ -894,7 +894,7 @@ function mule_upload(settings) {
         };
         var url = u.settings.ajax_base + "/get_init_signature/?key=" + u.settings.key
                 + "&mime_type=" + escape(u.settings.content_type)
-                + "&filename=" + escape(u.file.name.replace(",","_"))
+                + "&filename=" + escape(u.file.name.replace(/,/g,"_"))
                 + "&filesize=" + u.file.size
                 + "&last_modified=" + u.file.lastModifiedDate.valueOf()
                 + (force ? "&force=true" : "");
@@ -930,7 +930,7 @@ function mule_upload(settings) {
                 + "&mime_type=" + escape(u.settings.content_type)
                 + "&num_chunks=" + num_chunks
                 + "&upload_id=" + upload_id
-                + "&filename=" + escape(u.file.name.replace(",","_"))
+                + "&filename=" + escape(u.file.name.replace(/,/g,"_"))
                 + "&filesize=" + u.file.size
                 + "&last_modified=" + u.file.lastModifiedDate.valueOf();
         XHR({
@@ -950,7 +950,7 @@ function mule_upload(settings) {
         var key = u.settings.key;
         var upload_id = u.upload_id;
         var url = u.settings.ajax_base + '/chunk_loaded/?key=' + key + "&chunk=" + (chunk + 1)
-            + "&upload_id=" + upload_id + "&filename=" + escape(u.file.name.replace(",","_"))
+            + "&upload_id=" + upload_id + "&filename=" + escape(u.file.name.replace(/,/g,"_"))
             + "&filesize=" + u.file.size + "&last_modified=" + u.file.lastModifiedDate.valueOf();
         XHR({
             url: url
@@ -965,7 +965,7 @@ function mule_upload(settings) {
         var key = u.settings.key;
         var upload_id = u.upload_id;
         var url = u.settings.ajax_base + '/upload_finished/?key=' + key
-            + "&upload_id=" + upload_id + "&filename=" + escape(u.file.name.replace(",","_"))
+            + "&upload_id=" + upload_id + "&filename=" + escape(u.file.name.replace(/,/g,"_"))
             + "&filesize=" + u.file.size + "&last_modified=" + u.file.lastModifiedDate.valueOf();
         XHR({
             url: url
