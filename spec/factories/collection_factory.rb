@@ -15,12 +15,14 @@ FactoryGirl.define do
     factory :collection_private do
       items_visible_by_default false
       association :default_storage, factory: :storage_configuration_popup
+      association :creator, factory: :user
     end
     
     factory :collection_no_copy_media do
       copy_media false
       items_visible_by_default false
       association :default_storage, factory: :storage_configuration_popup
+      association :creator, factory: :user
     end
 
   end
