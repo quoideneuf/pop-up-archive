@@ -123,14 +123,16 @@ describe User do
       user.calculate_monthly_usages!
       user.update_usage_report!
       user.usage_summary[:this_month][:hours].should eq 1.0
+      Rails.logger.warn("-------------------------------- BEFORE TEST COMPLETE ----------------------------------")
 
       # delete and try again
-      audio.item.collection.delete
+      audio.item.collection.destroy
 
       user = audio.billable_to
       user.calculate_monthly_usages!
       user.update_usage_report!
       user.usage_summary[:this_month][:hours].should eq 1.0
+      Rails.logger.warn("-------------------------------- DELETED COLLECTION TEST COMPLETE ----------------------------------")
     end
 
   end
