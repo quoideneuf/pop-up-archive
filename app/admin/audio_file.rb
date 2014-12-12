@@ -12,6 +12,18 @@ ActiveAdmin.register AudioFile do
 
   filter :file
 
+  member_action :nudge, method: :post do
+    Rails.logger.warn("recover: #{params}")
+    af = AudioFile.find params[:id]
+    af.recover_async
+    flash[:notice] = "On the road to recovery!"
+    redirect_to :action => :show
+  end
+
+  action_item :only => :show do
+    link_to "Recover", superadmin_audio_file_path(audio_file)+'/nudge', method: :post
+  end 
+
   show do 
     panel "Audio File Details" do
       attributes_table_for audio_file do
