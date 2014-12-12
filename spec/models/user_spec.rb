@@ -106,7 +106,33 @@ describe User do
       Rails.logger.warn("-------------------------------- DELETED AUDIO TEST COMPLETE ----------------------------------")
             
     end
- 
+
+    it "treats deleted collection toward monthly usage" do
+      audio = FactoryGirl.create(:audio_file_private)
+      audio.duration = 3600
+      transcript = FactoryGirl.create :transcript
+      transcript.transcriber = Transcriber.basic
+      transcript.audio_file_id = audio.id
+      transcript.save!
+      audio.save!
+      transcript.billable_seconds.should eq 3600
+      Rails.logger.warn("-------------------------------- TEST FIXTURES COMPLETE ----------------------------------")
+
+      # before and after delete should match
+      user = audio.billable_to
+      user.calculate_monthly_usages!
+      user.update_usage_report!
+      user.usage_summary[:this_month][:hours].should eq 1.0
+
+      # delete and try again
+      audio.item.collection.delete
+
+      user = audio.billable_to
+      user.calculate_monthly_usages!
+      user.update_usage_report!
+      user.usage_summary[:this_month][:hours].should eq 1.0
+    end
+
   end
 
   context 'storage' do
