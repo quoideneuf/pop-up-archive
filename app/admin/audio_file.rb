@@ -20,7 +20,7 @@ ActiveAdmin.register AudioFile do
     redirect_to :action => :show
   end
 
-  action_item :only => :show do
+  action_item :only => :show, if: proc{ audio_file.stuck? } do
     link_to "Recover", superadmin_audio_file_path(audio_file)+'/nudge', method: :post
   end 
 
