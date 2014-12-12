@@ -66,6 +66,8 @@ class Utils
           file_exists = directory.files.head(key)
         rescue Excon::Errors::SocketError => err
           logger.warn "Excon error: #{err} - retrying..."
+        rescue Excon::Errors::TemporaryRedirect => err
+          logger.warn "Excon error: #{err} - retrying..."
         rescue => err
           raise err # re-throw it if we did not recognize it
         end
