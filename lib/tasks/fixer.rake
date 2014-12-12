@@ -42,12 +42,12 @@ namespace :fixer do
     verbose = ENV['VERBOSE']
     debug   = ENV['DEBUG']
     limit   = ENV['LIMIT']
-    recover = ENV['RECOVER']
-
+    ok_to_recover = ENV['RECOVER']
+    recover_types = Hash[ ENV['RECOVER_TYPES'] ? ENV['RECOVER_TYPES'].split(/\ *,\ */).map{|t| [t, true]} : [] ]
     report     = Hash.new{ |h,k| h[k] = 1 }
     unfinished = Task.incomplete
     verbose and puts "Nudging #{unfinished.count} unfinished tasks"
-
+    verbose and puts "Will try to recover these types: #{ recover_types.keys.inspect }"
     unfinished.find_in_batches do |taskgroup|
       taskgroup.each do |task|
         if limit and limit.to_i <= report[task.type]
@@ -59,7 +59,10 @@ namespace :fixer do
 
         if task.stuck?
           report[task.type+'-stuck'] += 1
-          task.recover! if recover
+          if ok_to_recover and recover_types.has_key?(task.type)
+            task.recover!
+            report[task.type+'-recovered'] += 1
+          end
         end
       end
     end
