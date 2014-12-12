@@ -288,14 +288,14 @@ module Billable
         if msum[:type] == MonthlyUsage::PREMIUM_TRANSCRIPTS && msum[:hours] > 0 
           summary[:this_month][:ondemand][:cost]  = msum[:cost]
           summary[:this_month][:ondemand][:hours] = msum[:hours].round(3)
-          summary[:this_month][:cost] += summary[:this_month][:ondemand][:cost]
-          summary[:this_month][:hours] += summary[:this_month][:ondemand][:hours].round(3)
+          summary[:this_month][:cost]            += msum[:cost]
+          summary[:this_month][:hours]           += msum[:hours].round(3)
 
         # basic plan, basic usage. 
         elsif msum[:type] == MonthlyUsage::BASIC_TRANSCRIPTS
 
            # month-to-date hours
-           summary[:this_month][:hours] = msum[:hours]
+           summary[:this_month][:hours] += msum[:hours].round(3)
 
            # check for overage
            if msum[:hours] > plan_hours
