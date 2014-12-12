@@ -56,7 +56,7 @@ describe User do
       user.usage_for('test', time).should eq 1000
     end
 
-    it "treats counts deleted audio toward monthly usage" do
+    it "counts deleted audio toward monthly usage" do
       audio_persist = FactoryGirl.create(:audio_file_private)
       audio_deleted = FactoryGirl.create(:audio_file_private)
       audio_persist_transcript = FactoryGirl.create :transcript
@@ -107,7 +107,7 @@ describe User do
             
     end
 
-    it "treats deleted collection toward monthly usage" do
+    it "counts deleted collection toward monthly usage" do
       audio = FactoryGirl.create(:audio_file_private)
       audio.duration = 3600
       transcript = FactoryGirl.create :transcript
