@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141117224535) do
+ActiveRecord::Schema.define(:version => 20141212183249) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(:version => 20141117224535) do
     t.datetime "updated_at",                            :null => false
     t.boolean  "uploads_collection", :default => false
     t.string   "collector_type"
+    t.datetime "deleted_at"
   end
 
   add_index "collection_grants", ["collection_id"], :name => "index_collection_grants_on_collection_id"
@@ -290,8 +291,9 @@ ActiveRecord::Schema.define(:version => 20141117224535) do
   end
 
   create_table "organizations_roles", :id => false, :force => true do |t|
-    t.integer "organization_id"
-    t.integer "role_id"
+    t.integer  "organization_id"
+    t.integer  "role_id"
+    t.datetime "deleted_at"
   end
 
   add_index "organizations_roles", ["organization_id", "role_id"], :name => "index_organizations_roles_on_organization_id_and_role_id"
@@ -309,6 +311,7 @@ ActiveRecord::Schema.define(:version => 20141117224535) do
     t.string   "resource_type"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+    t.datetime "deleted_at"
   end
 
   add_index "roles", ["name", "resource_type", "resource_id"], :name => "index_roles_on_name_and_resource_type_and_resource_id"
@@ -446,8 +449,9 @@ ActiveRecord::Schema.define(:version => 20141117224535) do
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
   create_table "users_roles", :id => false, :force => true do |t|
-    t.integer "user_id"
-    t.integer "role_id"
+    t.integer  "user_id"
+    t.integer  "role_id"
+    t.datetime "deleted_at"
   end
 
   add_index "users_roles", ["user_id", "role_id"], :name => "index_users_roles_on_user_id_and_role_id"
