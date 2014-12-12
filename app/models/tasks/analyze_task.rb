@@ -39,6 +39,10 @@ class Tasks::AnalyzeTask < Task
 
   def recover!
     if !owner
+      extras['error'] = 'No Owner defined'
+      cancel!
+    elsif !storage
+      extras['error'] = 'No Storage defined'
       cancel!
     else
       finish!
