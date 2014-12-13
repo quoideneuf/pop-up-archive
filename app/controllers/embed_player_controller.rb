@@ -19,7 +19,23 @@ class EmbedPlayerController < ApplicationController
     @chunk_size = params[:chunk] || 30
     @start      = params[:start] || 0
     @end        = params[:end]   || false
+
+    respond_to do |format|
+      format.html {
+        render :formats => [:html]
+      }
+      format.json {
+        render :json => {
+          file_id: @file_id,
+          mp3:     @mp3,
+          title:   @title,
+          start:   @start,
+          end:     @end
+        }.to_json, :callback => params[:callback]
+      }
+    end
   end
+
 end
 
 

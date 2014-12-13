@@ -1,4 +1,7 @@
-/* Pop Up Archive embedded transcript/player */
+/* Pop Up Archive embedded transcript/player 
+   Copyright 2014 Pop Up Archive
+   Licensed under the AGPL -- see https://github.com/popuparchive/pop-up-archive/blob/master/LICENSE.txt
+*/
 
 "use strict"
 
