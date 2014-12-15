@@ -6,9 +6,16 @@ class Tasks::TranscribeTask < Task
   def finish_task
     return unless audio_file
     return if cancelled?
-    if destination and destination.length > 0
+    begin
+      dest = destination
+    rescue URI::InvalidComponentError => err
+      self.extras[:error] = "#{err}"
+      self.cancel!
+      return true
+    end
+    if dest and dest.length > 0
       connection = Fog::Storage.new(storage.credentials)
-      uri        = URI.parse(destination)
+      uri        = URI.parse(dest)
       begin
         transcript = get_file(connection, uri)
         new_trans  = process_transcript(transcript)
