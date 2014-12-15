@@ -111,8 +111,7 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
             // use the oembed service to get the HTML to inject.
             // pass the nojs=1 flag because *we* are the JS.
             $('<div id="pua-tplayer-embed-wrapper-'+fileId+'"></div>').insertAfter(el);
-            $('#pua-tplayer-embed-wrapper-'+fileId).ajax(
-              rootUrl+'/oembed?nojs=1&format=json&url='+rootUrl+'/tplayer/'+fileId, {
+            $.ajax( rootUrl+'/oembed?nojs=1&format=json&url='+rootUrl+'/tplayer/'+fileId, {
               dataType: 'jsonp'
             }) 
             .fail(function(data2, stat2, jqXHR2) {
@@ -122,9 +121,10 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
               $('#pua-tplayer-embed-wrapper-'+fileId).html(data2.html);
               initPlayer(data); 
             });
-          }
-        });
-      }
-    });
-  });
+          } // end if container else
+        }); // end outer xhr
+      } // end data-main=tplayer-embed
+    }); // end script.each
+  }); // end document.ready
+
 });

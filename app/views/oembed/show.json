@@ -1,3 +1,6 @@
+<% if @callback %>
+<%= @callback %>(
+<% end %>
 <% if @type == "rich" %>
 <%== 
 {
@@ -9,4 +12,7 @@
   html: render( partial: @partial_path ),
 }.to_json
 %>
+<% end %>
+<% if @callback %>
+)
 <% end %>

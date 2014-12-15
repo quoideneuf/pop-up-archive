@@ -9,6 +9,9 @@ class OembedController < ApplicationController
       return
     end
 
+    # templates handle jsonp response, if necessary.
+    @callback = params[:callback]
+
     # extract the asset from the url
     route_action = Rails.application.routes.recognize_path(params[:url])
     Rails.logger.warn( route_action.inspect )
@@ -40,7 +43,7 @@ class OembedController < ApplicationController
         render :formats => [:json], :content_type => "application/json"
       }
       format.json {
-        render :formats => [:json], :callback => params[:callback]
+        render :formats => [:json]
       }
       format.xml {
         render :formats => [:xml]  # TODO
