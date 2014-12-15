@@ -10,6 +10,7 @@ class EmbedPlayerController < ApplicationController
 
   # embedable player with transcript
   def tplayer
+    @embed      = params[:embed] ? true : false
     @file_id    = params[:file_id]
     @audio_file = AudioFile.find(@file_id)
     @mp3        = @audio_file.public_url(extension: :mp3)

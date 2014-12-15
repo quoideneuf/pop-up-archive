@@ -34,9 +34,9 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
       if (!css || !css.href) {
         continue;
       }
-      console.log("css:", css.href);
+      //console.log("css:", css.href);
       if (css.href == rootUrl+'/'+cssName) {
-        console.log('css already loaded:', cssName);
+        //console.log('css already loaded:', cssName);
         return true;
       }
     }
@@ -48,7 +48,7 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
       loadCss(cssName);
     } 
   }); 
-  console.log("everything loaded");
+  //console.log("everything loaded");
 
   var initPlayer = function(conf) {
     $("#pua-tplayer-"+conf.file_id).jPlayer({
@@ -99,6 +99,20 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
         })
         .done(function(data, stat, jqXHR) {
           console.log("OK:", data, stat);
+          // look for HTML container, fetching it if necessary
+          var containerId = '#pua-tplayer-'+fileId;
+          var container   = $(containerId);
+          if (container && container.length) {
+            initPlayer(data);
+          }
+          else {
+            $('<div id="pua-tplayer-embed-wrapper-'+fileId+'"></div>').insertAfter(el);
+            $('#pua-tplayer-embed-wrapper-'+fileId).load(
+              rootUrl+'/tplayer/'+fileId+'?embed=true', 
+              null, 
+              function(html, stat, jqXHR2) { initPlayer(data); }
+            );
+          }
         });
       }
     });

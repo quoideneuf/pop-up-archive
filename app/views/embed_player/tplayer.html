@@ -1,7 +1,16 @@
+<!DOCTYPE HTML>
+<html>
 <head>
+  <% if !@embed %>
   <%= stylesheet_link_tag "jPlayer.css" %>
   <%= stylesheet_link_tag "tplayer" %>
-  <%= javascript_include_tag "jquery" %>
+  <% end %>
+</head>
+<body>
+ <%= render "embed_player/tplayer_player" %>
+ <%= render "embed_player/tplayer_transcript" %>
+ <% if !@embed %>
+ <%= javascript_include_tag "jquery" %>
   <%= javascript_include_tag "jquery.jplayer" %>
   <%= javascript_include_tag "tplayer" %>
   <script type="text/javascript">
@@ -35,8 +44,6 @@
       });
     });
   </script>
-</head>
-<body>
- <%= render "embed_player/tplayer_player" %>
- <%= render "embed_player/tplayer_transcript" %>
+  <% end %>
 </body>
+</html>
