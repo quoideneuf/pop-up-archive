@@ -11,10 +11,12 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
   var sc = $("script");
   var rootUrl = null;
   $.each(sc, function(idx, tag) {
-    if (!tag.src) {
+    console.log(tag);
+    if (!tag.src || rootUrl) {
         return;
     }   
     var url = tag.src.match(/^(.+)\/assets\/tplayer-embed\.js\??/);
+    console.log(url);
     if (url && url.length && url[1]) {
         rootUrl = url[1];
     }   
@@ -92,7 +94,7 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
         }
         // fire XHR for data
         $.ajax(rootUrl+'/tplayer/'+fileId+'.json', {
-          dataType: 'jsonp',
+          dataType: 'jsonp'
         })
         .fail(function(data, stat, jqXHR) {
           console.log("FAIL:", data, stat);
@@ -106,12 +108,20 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
             initPlayer(data);
           }
           else {
+            // use the oembed service to get the HTML to inject.
+            // pass the nojs=1 flag because *we* are the JS.
             $('<div id="pua-tplayer-embed-wrapper-'+fileId+'"></div>').insertAfter(el);
-            $('#pua-tplayer-embed-wrapper-'+fileId).load(
-              rootUrl+'/tplayer/'+fileId+'?embed=true', 
-              null, 
-              function(html, stat, jqXHR2) { initPlayer(data); }
-            );
+            $('#pua-tplayer-embed-wrapper-'+fileId).ajax(
+              rootUrl+'/oembed?nojs=1&format=json&url='+rootUrl+'/tplayer/'+fileId, {
+              dataType: 'jsonp'
+            }) 
+            .fail(function(data2, stat2, jqXHR2) {
+              console.log("FAIL2:", data2, stat2);
+            })
+            .done(function(data2, stat, jqXHR2) {
+              $('#pua-tplayer-embed-wrapper-'+fileId).html(data2.html);
+              initPlayer(data); 
+            });
           }
         });
       }
