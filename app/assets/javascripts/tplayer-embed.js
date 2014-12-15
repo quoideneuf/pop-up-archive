@@ -87,7 +87,7 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
     $('script').each(function(idx) {
       var el = $(this);
       if (!el.data('main')) return true; // skip
-      if (el.data('main') == 'assets/tplayer-embed') {
+      if (el.data('main').match(/assets\/tplayer-embed$/)) {
         var fileId = el.data('pua');
         if (!fileId) {
           throw new Error("Missing data-pua attribute on script tag -- cannot embed tplayer");
