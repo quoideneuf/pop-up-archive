@@ -10,7 +10,7 @@
  <%= render "embed_player/tplayer_player" %>
  <%= render "embed_player/tplayer_transcript" %>
  <% if !@embed %>
- <%= javascript_include_tag "jquery" %>
+  <%= javascript_include_tag "jquery" %>
   <%= javascript_include_tag "jquery.jplayer" %>
   <%= javascript_include_tag "tplayer" %>
   <script type="text/javascript">
@@ -31,7 +31,7 @@
         },
         ended: function() {
           var player = this;
-          console.log('player ended', player);
+          //console.log('player ended', player);
         },
         cssSelectorAncestor: '#jp_container-<%= @file_id %>',
         smoothPlayBar: true,
@@ -44,6 +44,6 @@
       });
     });
   </script>
-  <% end %>
+ <% end %>
 </body>
 </html>
