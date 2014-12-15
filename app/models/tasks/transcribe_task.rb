@@ -56,6 +56,9 @@ class Tasks::TranscribeTask < Task
     if !owner
       self.extras[:error] = "No owner/audio_file found"
       cancel!
+    elsif !storage
+      self.extras[:error] = 'No Storage defined'
+      cancel!
     else
       finish!
     end 
