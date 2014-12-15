@@ -55,7 +55,7 @@ class Utils
 
       directory = connection.directories.get(bucket)
       if !directory
-        raise "Failed to get directory for bucket #{bucket}"
+        raise Exceptions::PrivateFileNotFound.new "Failed to get directory for bucket #{bucket}"
       end
 
       try_count = 0
