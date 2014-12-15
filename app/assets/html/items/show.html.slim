@@ -10,6 +10,10 @@ meta view-head="view-head" property="og:description" content="{{item.description
       ul.pager ng-show="nextItem || previousItem || searchResults.query"
         li.previous ng-class="{disabled: !previousItem}"
           a ng-href='{{previousItem.link()}}' &larr; Previous
+        a href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651284-SHARING-POP-UP-DATA"
+          button.btn.btn-info.promotebtn
+            i.icon-bolt
+            |  Promote your story
         / li.centered
         /   a ng-href='{{searchResults.link()}}'
         /     | Back to Search Results
