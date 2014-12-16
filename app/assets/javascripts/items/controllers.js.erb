@@ -31,6 +31,8 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   $scope.previousItem = SearchResults.getItem(SearchResults.currentIndex - 1);
   $scope.searchResults = SearchResults;
 
+  $scope.defaultShareImage = '<%= asset_path "pua-fb1200x650.png"%>';
+
   $scope.updateImage = function(format) {
     if (!format) format = 'thumb';
     if ($scope.item && $scope.item.imageFiles.length) {

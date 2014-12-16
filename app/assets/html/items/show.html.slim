@@ -1,7 +1,9 @@
 //Social sharing data
 meta view-head="view-head" property="og:title" content="{{item.title}}"
-meta ng-if="(item.imageFiles && item.imageFiles.length) || (collection.imageFiles && collection.imageFiles.length)" view-head="view-head" property="og:image" content="{{ updateImage('full') }}"
+meta view-head="view-head" property="og:image" content="{{ updateImage('full') || defaultShareImage }}"
 meta view-head="view-head" property="og:description" content="{{item.description}}"
+meta view-head="view-head" property="og:url" content="https://www.popuparchive.com/collections/{{collection.id}}/items/{{item.id}}"
+meta view-head="view-head" property="og:type" content="article"
 
 .container ng-show="currentUser.canEdit(item) || collection.itemsVisibleByDefault"
   //Search Results Navigation
