@@ -280,9 +280,11 @@ class Item < ActiveRecord::Base
 
   def image_url
     if image 
-      image.file.url
+      image.public_url
+    elsif image_files and image_files.size > 0
+      image_files.first.public_url
     elsif collection and collection.image_files and collection.image_files.size > 0
-      collection.image_files.first.file.url
+      collection.image_files.first.public_url
     else
       nil
     end
