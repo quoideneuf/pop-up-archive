@@ -96,7 +96,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     return false if status == CANCELLED
 
     # older than max worktime and incomplete
-    if status != COMPLETE && (DateTime.now.to_time - MAX_WORKTIME).to_datetime > created_at
+    if status != COMPLETE && (DateTime.now.to_time - MAX_WORKTIME).to_datetime.utc > created_at
       return true
 
     # we failed to register a SM job_id
