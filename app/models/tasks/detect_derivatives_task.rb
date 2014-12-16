@@ -71,6 +71,7 @@ class Tasks::DetectDerivativesTask < Task
 
   def finish_if_all_detected
     return if complete?
+    return if cancelled?
     begin
       any_nil = versions.detect{|version| version_info(version)['detected_at'].nil?}
       self.finish! if !any_nil
