@@ -1,6 +1,21 @@
+<!DOCTYPE HTML>
+<html>
 <head>
+  <% if !@embed %>
   <%= stylesheet_link_tag "jPlayer.css" %>
   <%= stylesheet_link_tag "tplayer" %>
+  <title><%= @title %></title>
+  <meta property="og:title" content="<%= @title %>" />
+  <meta property="og:type" content="audio.other" /  >
+  <meta property="og:url" content="<%= request.original_url %>" />
+  <meta property="og:image" content="<%= @audio_file.item.image_url || url_for('assets/minimark.png') %>" />
+  <meta property="og:audio" content="<%= @mp3 %>" />
+  <% end %>
+</head>
+<body>
+ <%= render "embed_player/tplayer_player" %>
+ <%= render "embed_player/tplayer_transcript" %>
+ <% if !@embed %>
   <%= javascript_include_tag "jquery" %>
   <%= javascript_include_tag "jquery.jplayer" %>
   <%= javascript_include_tag "tplayer" %>
@@ -22,7 +37,7 @@
         },
         ended: function() {
           var player = this;
-          console.log('player ended', player);
+          //console.log('player ended', player);
         },
         cssSelectorAncestor: '#jp_container-<%= @file_id %>',
         smoothPlayBar: true,
@@ -35,87 +50,6 @@
       });
     });
   </script>
-</head>
-<body>
- <table class="pua-tplayer">
-  <tr class="img-player">
-   <td class="img">
-    <a href="/collections/<%= @audio_file.item.collection_id %>/items/<%= @audio_file.item_id %>/" target="_blank">
-      <img src="<%= @audio_file.item.image_url || '/assets/minimark.png' %>" />
-    </a>
-   </td>
-   <td class="tplayer"> 
-    <div id="pua-tplayer-<%= @file_id %>" class="jp-jplayer pua-tplayer"></div>
-    <div id="jp_container-<%= @file_id %>" class="jp-audio player">
-      <div class="jp-type-single">
-        <div class="jp-gui jp-interface">
-          <div class="jp-title">
-            <h2><%= @title %></h2>
-          </div>
-          <table class="tplayer-bar">
-           <tr>
-           <td class="jp-controls">
-            <button id="jp-reverse-button-<%= @file_id %>" class="jp-rewind player-button">
-                <i class="icon-fast-backward"></i>
-            <button id="jp-play-button-<%= @file_id %>" class="jp-play player-button">
-                <i class="icon-play"></i>
-            <button id="jp-pause-button-<%= @file_id %>" class="jp-pause player-button">
-                <i class="icon-pause"></i>
-           </td>
-           <td class="jp-progress">
-            <div class="calculating"><i class="icon-cog icon-spin"></i> Calculating</div>
-            <div class="jp-seek-bar">
-              <div class="jp-play-bar"></div>
-            </div>
-           </td>
-           <td class="tplayer-stats">
-  
-            <div class="jp-time-holder">
-              <div class="jp-current-time" role="timer" aria-label="time"></div> / 
-              <div class="jp-duration" role="timer" aria-label="duration"></div>
-            </div>
-  
-            <div class="pua-links">
-              <a class="jp-popuplink pua-up-link" href="/collections/<%= @audio_file.item.collection_id %>/items/<%= @audio_file.item_id %>/" target="_blank"><span title="up"></span></a>
-            </div>
-  
-           <!-- scrubber used for drawing waveform, not displayed -->
-            <div class="scrubber"><canvas></canvas></div>
-           </td>
-  
-          </tr>
-          </table>
-        </div>
-        
-        <div class="jp-no-solution">
-          <span>Update Required</span>
-          To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
-        </div>
-      </div>
-    </div>
-   </td>
-  </tr>
- </table>
- <table id="pua-tplayer-<%= @file_id %>-transcript" class="pua-tplayer scrolling">
-  <thead>
-   <tr class="hidden loading-indicator"><td></td><td><i class="icon-cog icon-spin"></i> Seeking</td></tr>
-  </thead>
-  <tbody>
-  <% tparts = @transcript.has_speaker_ids ? @transcript.chunked_by_speaker : @transcript.chunked_by_time(@chunk_size.to_i) %>
-  <% line_num = 0; tparts.each do |tpart| %>
-  <tr class="timings-transcript">
-   <td class="timings">
-     <%= tpart[:speaker] %>
-     <%= tpart[:ts] %>
-   </td>
-   <td class="transcript">
-     <% tpart[:text].each_with_index do |ttext,idx| %>
-     <div class="pua-tplayer-text" id="pua-tplayer-text-<%= @file_id %>-<%= tpart[:offsets][idx].to_i %>" data-idx="<%= line_num += 1 %>" data-offset="<%= tpart[:offsets][idx].to_i %>"><%= ttext %></div>
-     <% end %>
-   </td>
-  </tr>
-  <% end %>
-  </tbody>
- </table>
- </div>
+ <% end %>
 </body>
+</html>

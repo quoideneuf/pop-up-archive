@@ -1,4 +1,7 @@
-/* Pop Up Archive embedded transcript/player */
+/* Pop Up Archive embedded transcript/player 
+   Copyright 2014 Pop Up Archive
+   Licensed under the AGPL -- see https://github.com/popuparchive/pop-up-archive/blob/master/LICENSE.txt
+*/
 
 "use strict"
 
@@ -113,39 +116,12 @@ PUATPlayer.prototype = {
       target.addClass('selected');
       // scroll
       var scrollMath = {};
-      scrollMath.rowsBefore = 2;
-      scrollMath.lineNum    = parseInt( target.data('idx') );
+      scrollMath.pxBefore = 20;
+      scrollMath.lineNum  = parseInt( target.data('idx') );
       var tgtWrap = $("#pua-tplayer-"+self.fileId+"-transcript.scrolling tbody");
-      // we want to scroll the sum of the heights of all rows before the current one, less rowsBefore height.
-      if (scrollMath.lineNum < scrollMath.rowsBefore) {
-        scrollMath.scrollTo = 0;  // already near the top
-      }
-      else {
-        // get the sum of heights for the range of rows.
-        // we can't assume that all rows are the same height because lines wrap.
-        scrollMath.scrollTo = 0;
-        scrollMath.stopper = scrollMath.lineNum - scrollMath.rowsBefore - 1;  // minus one because idx below is zero-based
-        if (scrollMath.stopper < 0) scrollMath.stopper = 0;
-        var allRows = $("#pua-tplayer-"+self.fileId+"-transcript .pua-tplayer-text");
-        //console.log('starting row sum');
-        allRows.each(function(idx,el) {
-          //console.log(idx + ' -> ' + $(el)[0].scrollHeight);
-          scrollMath.scrollTo += $(el)[0].scrollHeight;
-          // edge case.
-          // if the el is the only element within its parent row,
-          // and the row's height is > the el's height, that means it is a singleton line with whitespace beneath.
-          // compensate by reflecting the whitespace in the sum.
-          if ($(el).parent()[0].scrollHeight > $(el)[0].scrollHeight*2 && !$(el).siblings().length) {
-            //console.log('row', idx, 'is a singleton');
-            scrollMath.scrollTo += $(el)[0].scrollHeight;
-          }
-
-          if (idx == scrollMath.stopper) return false; // abort loop
-        });
-        //console.log('row sum complete');
-      }
+      scrollMath.simple = tgtWrap.scrollTop() - tgtWrap.offset().top + target.offset().top - scrollMath.pxBefore;
       //console.log('scrollMath: ', scrollMath);
-      tgtWrap.animate({ scrollTop: scrollMath.scrollTo }, 200);
+      tgtWrap.animate({ scrollTop: scrollMath.simple }, 200);
     }
     //console.log('player timeupdate', curOffset, target, target.length, target.hasClass('selected'));
   },

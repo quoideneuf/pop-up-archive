@@ -1,0 +1,21 @@
+<table id="pua-tplayer-<%= @file_id %>-transcript" class="pua-tplayer scrolling">
+ <thead>
+  <tr class="hidden loading-indicator"><td></td><td><i class="icon-cog icon-spin"></i> Seeking</td></tr>
+ </thead>
+ <tbody>
+  <% tparts = @transcript.has_speaker_ids ? @transcript.chunked_by_speaker : @transcript.chunked_by_time(@chunk_size.to_i) %>
+  <% line_num = 0; tparts.each do |tpart| %>
+  <tr class="timings-transcript">
+   <td class="timings">
+     <%= tpart[:speaker] %>
+     <%= tpart[:ts] %>
+   </td>
+   <td class="transcript">
+     <% tpart[:text].each_with_index do |ttext,idx| %>
+     <div class="pua-tplayer-text" id="pua-tplayer-text-<%= @file_id %>-<%= tpart[:offsets][idx].to_i %>" data-idx="<%= line_num += 1 %>" data-offset="<%= tpart[:offsets][idx].to_i %>"><%= ttext %></div>
+     <% end %>
+   </td>
+  </tr>
+  <% end %>
+ </tbody>
+</table>

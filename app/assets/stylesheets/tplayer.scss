@@ -36,6 +36,10 @@
   vertical-align: middle;
 }
 
+.pua-tplayer .timings-transcript td {
+  padding-bottom: 1em;
+}
+
 .pua-tplayer .timings-transcript .timings {
   vertical-align: top;
   text-align: right;
@@ -51,6 +55,7 @@
   cursor: pointer;
   padding-left: 1em;
   font-size: 95%;
+  line-height: 1.2;
 }
 
 .pua-tplayer-text.hover {
@@ -99,12 +104,14 @@ div.jp-seeking-bg {
   margin-bottom: 4px;
   overflow:hidden;
   margin-right: 8px;
+  position: relative;
 }
 
 .jp-progress .calculating {
-  position: fixed;
-  top: 10%;
   color: #ddd;
+  position: absolute;
+  top: 20px;
+  left: 20px;
 }
 
 div.jp-video .jp-progress {
@@ -212,15 +219,17 @@ div.jp-video .jp-progress {
    Instead they are tied directly to our specific layout.
 */
 @media only screen and (max-width: 850px) {
+/*
   .player .player-button i {
     font-size: 18px;
     line-height: 18px;
     width: 18px;
     height: 18px;
   }
+*/
 }
 
-@media only screen and (max-width: 765px) {
+@media only screen and (max-width: 600px) {
   .player .player-button.jp-rewind { 
     display: none;
   }

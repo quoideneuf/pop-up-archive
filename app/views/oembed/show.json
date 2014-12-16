@@ -1,0 +1,18 @@
+<% if @callback %>
+<%= @callback %>(
+<% end %>
+<% if @type == "rich" %>
+<%== 
+{
+  version: '1.0',
+  title: @title,
+  url: @url,
+  width: @width,
+  height: @height,
+  html: render( partial: @partial_path ),
+}.to_json
+%>
+<% end %>
+<% if @callback %>
+)
+<% end %>
