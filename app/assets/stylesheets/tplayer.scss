@@ -36,6 +36,10 @@
   vertical-align: middle;
 }
 
+.pua-tplayer .timings-transcript td {
+  padding-bottom: 1em;
+}
+
 .pua-tplayer .timings-transcript .timings {
   vertical-align: top;
   text-align: right;
@@ -51,6 +55,7 @@
   cursor: pointer;
   padding-left: 1em;
   font-size: 95%;
+  line-height: 1.2;
 }
 
 .pua-tplayer-text.hover {
