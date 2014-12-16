@@ -5,7 +5,7 @@ class OembedController < ApplicationController
   def show
     # :url param is required
     if !params[:url]
-      render :text => { :error => "not found", :status => 404 }.to_json, :status => :not_found
+      render :json => { :error => "not found", :status => 404 }.to_json, :status => :not_found
       return
     end
 
@@ -14,7 +14,7 @@ class OembedController < ApplicationController
 
     # extract the asset from the url
     route_action = Rails.application.routes.recognize_path(params[:url])
-    Rails.logger.warn( route_action.inspect )
+    #Rails.logger.warn( route_action.inspect )
     if route_action[:action] == 'tplayer'
       # set up instance vars based on :url
       @url        = params[:url]
@@ -35,7 +35,12 @@ class OembedController < ApplicationController
       @partial_path = 'oembed/tplayer.html'
       
       # response type for tplayer
-      @type = "rich" 
+      @type = "rich"
+
+    else
+      # no matching service
+      render :json => { :error => "not found", :status => 404 }.to_json, :status => :not_found
+      return
     end
 
     respond_to do |format|
