@@ -81,10 +81,11 @@ $transcriptViewHeight: 200px;
 
 .tplayer-bar {
   width: 100%;
+  line-height: 1;
 }
 
 .jp-controls {
-  width: 20%;
+  //width: 20%;
 }
 
 .player div {
@@ -165,6 +166,11 @@ div.jp-video .jp-progress {
 .pua-tplayer .tplayer-stats {
   vertical-align: middle;
   padding-left: 8px;
+  white-space: nowrap;
+}
+
+.pua-tplayer .tplayer-stats div {
+  width: auto;
 }
 
 .pua-tplayer .tplayer-stats .jp-time-holder {
