@@ -6,7 +6,7 @@
   <%= stylesheet_link_tag "tplayer" %>
   <title><%= @title %></title>
   <meta property="og:title" content="<%= @title %>" />
-  <meta property="og:type" content="audio.other" /  >
+  <meta property="og:type" content="audio.other" />
   <meta property="og:url" content="<%= request.original_url %>" />
   <meta property="og:image" content="<%= @audio_file.item.image_url || url_for('assets/minimark.png') %>" />
   <meta property="og:audio" content="<%= @mp3 %>" />
