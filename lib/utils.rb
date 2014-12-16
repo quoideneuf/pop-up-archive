@@ -44,7 +44,7 @@ class Utils
       # turning off ssl check is a Bad Idea, but since some archive.org URLs fail
       # with the check on, and failure is Worse than a Bad Idea, we turn it off.
       # NOTE that the root cause is probably a bad ssl_ca_path at heroku.
-      Excon.ssl_verify_peer = false
+      Excon.defaults[:ssl_verify_peer] = false
       Excon.new(uri)
     end
 

@@ -239,7 +239,7 @@ class Task < ActiveRecord::Base
   end
 
   def cancel_task
-    Rails.logger.warn "#{self.class.name}.cancel_task called by task #{self.id}"
+    #Rails.logger.warn "#{self.class.name}.cancel_task called by task #{self.id}"
   end
   
 end

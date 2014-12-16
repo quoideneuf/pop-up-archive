@@ -17,6 +17,7 @@ class Tasks::DetectDerivativesTask < Task
 
   def recover!
     if !audio_file
+      self.extras[:error] = 'No owner/audio_file assigned'
       cancel!
     else
       # most often status is working but job has completed,
@@ -53,6 +54,7 @@ class Tasks::DetectDerivativesTask < Task
 
   def recover!
     if !self.owner
+      self.extras[:error] = 'No owner/audio_file assigned'
       self.cancel!
     else
       self.finish_if_all_detected
@@ -69,8 +71,14 @@ class Tasks::DetectDerivativesTask < Task
 
   def finish_if_all_detected
     return if complete?
-    any_nil = versions.detect{|version| version_info(version)['detected_at'].nil?}
-    self.finish! if !any_nil
+    return if cancelled?
+    begin
+      any_nil = versions.detect{|version| version_info(version)['detected_at'].nil?}
+      self.finish! if !any_nil
+    rescue JSON::ParserError => err
+      self.extras[:error] = "#{err}"
+      self.cancel!
+    end
   end
 
   def start_detective
