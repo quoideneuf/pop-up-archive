@@ -12,7 +12,7 @@
    </td>
    <td class="transcript">
      <% tpart[:text].each_with_index do |ttext,idx| %>
-     <div class="pua-tplayer-text" id="pua-tplayer-text-<%= @file_id %>-<%= tpart[:offsets][idx].to_i %>" data-idx="<%= line_num += 1 %>" data-offset="<%= tpart[:offsets][idx].to_i %>"><%= ttext %></div>
+     <div class="pua-tplayer-text" id="pua-tplayer-text-<%= @file_id %>-<%= tpart[:offsets][idx].to_i %>" data-idx="<%= line_num += 1 %>" data-offset="<%= tpart[:offsets][idx].to_i %>"><span class="ts"><%= tpart[:offsets][idx].to_i %></span><%= ttext %></div>
      <% end %>
    </td>
   </tr>

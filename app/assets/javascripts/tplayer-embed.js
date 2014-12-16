@@ -56,7 +56,9 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
     $("#pua-tplayer-"+conf.file_id).jPlayer({
       ready: function () {
         $(this).jPlayer("setMedia", {
-          mp3: conf.mp3,
+          title: conf.title,
+          oga: conf.ogg,
+          mp3: conf.mp3
         });
       },
       loadedmetadata: function() {
@@ -74,7 +76,7 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
       toggleDuration: true,
       swfPath: rootUrl+"/assets/Jplayer.swf",
       solution: "html, flash",
-      supplied: "mp3",
+      supplied: "oga, mp3"
     });
   };
 

@@ -66,6 +66,16 @@
   background-color: #FFFBCC;
 }
 
+.pua-tplayer-text .ts {
+  display: none;
+  //display: inline-block;
+  // to debug, toggle comments above
+  color: #aaa;
+  margin-right: 1em;
+  width: 3em;
+  text-align: right;
+}
+
 $transcriptViewHeight: 200px;
 
 .pua-tplayer.scrolling tbody {

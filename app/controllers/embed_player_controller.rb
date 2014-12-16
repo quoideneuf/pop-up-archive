@@ -28,6 +28,7 @@ class EmbedPlayerController < ApplicationController
       format.json {
         render :json => {
           file_id: @file_id,
+          ogg:     @ogg,
           mp3:     @mp3,
           title:   @title,
           start:   @start,

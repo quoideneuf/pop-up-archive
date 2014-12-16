@@ -22,8 +22,12 @@
   <script type="text/javascript">
     $(document).ready(function(){
       $("#pua-tplayer-<%= @file_id %>").jPlayer({
-        ready: function () {
+        ready: function (ev) {
+          var playerUsed = ev.jPlayer.html.used ? 'html' : 'flash';
+          //console.log('player used:', playerUsed);
           $(this).jPlayer("setMedia", {
+            title: "<%= @title %>",
+            oga: "<%= @ogg %>",
             mp3: "<%= @mp3 %>",
           });
         },
@@ -46,7 +50,7 @@
         toggleDuration: true,
         swfPath: "<%= asset_path 'Jplayer.swf' %>",
         solution: "html, flash",
-        supplied: "mp3",
+        supplied: "oga, mp3"
       });
     });
   </script>

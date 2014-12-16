@@ -66,7 +66,7 @@ PUATPlayer.prototype = {
     });
     $('#pua-tplayer-'+self.fileId+'-transcript .pua-tplayer-text').click(function() {
       var clicked = this;
-      var offset  = $(clicked).data('offset');
+      var offset  = parseInt( $(clicked).data('offset') );
       //console.log('clicked on text with id', clicked.id, offset);
       $(self.jplayer).jPlayer('play', offset);
     });
@@ -99,8 +99,11 @@ PUATPlayer.prototype = {
     var curOffset = Math.floor( ev.jPlayer.status.currentTime );
     // if the current offset matches a text id, select the text
     var target = $('#pua-tplayer-text-'+self.fileId+'-'+curOffset);
-    self.scrollToLine(target);
-    if (self.hardStop && curOffset > self.hardStop) {
+    //console.log('play:', ev.jPlayer.status.currentTime, curOffset, target);
+    if (target && target.length) {
+      self.scrollToLine(target);
+    }
+    if (self.hardStop && curOffset >= self.hardStop) {
       $(self.jplayer).jPlayer('stop');
     }
   },
@@ -123,7 +126,7 @@ PUATPlayer.prototype = {
       //console.log('scrollMath: ', scrollMath);
       tgtWrap.animate({ scrollTop: scrollMath.simple }, 200);
     }
-    //console.log('player timeupdate', curOffset, target, target.length, target.hasClass('selected'));
+    //console.log('scrollToLine', target, target.length, target.hasClass('selected'));
   },
 
   scrollOnSeek: function(ev) {
@@ -132,6 +135,7 @@ PUATPlayer.prototype = {
     var curOffset = Math.floor( ev.jPlayer.status.currentTime );
     // find nearest target
     var target = self.findNearestLine(curOffset);
+    //console.log('seek:', curOffset, target);
     self.scrollToLine(target);
   },
 
@@ -145,6 +149,7 @@ PUATPlayer.prototype = {
       target = $('#pua-tplayer-text-'+self.fileId+'-'+offset);
       if (offset <= 0) { break; }
     }
+    //console.log('nearest line:', offset, target);
     return target;
   },
 
