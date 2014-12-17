@@ -553,5 +553,31 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
     };
 
   }]);
+  // Directive for showing the loading mask on all except static pages
+  window.directory.directive('loadingMask', ['$location', function($location) {
+    return {
+      template: "<div class='loading-overlay' ng-show='loading()' ui-animate=''>" +
+                          "<div class='loading-indicator'>" +
+                            "<i class='icon-cog icon-spin'></i>" +
+                            "Loading" +
+                        "</div></div>",
+      link: function(scope, el, attrs) {
+        scope.$on('$routeChangeStart', function() {
+          if ($location.path() != '/' &&
+            $location.path() != '/enterprise' &&
+            $location.path() != '/team' &&
+            $location.path() != '/pricing' &&
+            $location.path() != '/terms_of_use' &&
+            $location.path() != '/faq' &&
+            $location.path() != '/about' &&
+            $location.path() != '/explore') {
+              el.css({display: 'block'});
+          } else {
+            el.css({display: 'none'});
+          }
+        })
+      }
+    }
+  }]);
 
 }());
