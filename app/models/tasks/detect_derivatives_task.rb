@@ -15,17 +15,6 @@ class Tasks::DetectDerivativesTask < Task
     audio_file.update_attribute(:transcoded_at, DateTime.now)
   end
 
-  def recover!
-    if !audio_file
-      self.extras[:error] = 'No owner/audio_file assigned'
-      cancel!
-    else
-      # most often status is working but job has completed,
-      # and there's just a timing issue between the db commit and the worker running.
-      finish!
-    end 
-  end
-
   def urls
     deserialize_extra('urls', HashWithIndifferentAccess.new)
   end
