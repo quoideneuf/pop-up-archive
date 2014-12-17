@@ -46,7 +46,17 @@ class Tasks::DetectDerivativesTask < Task
       self.extras[:error] = 'No owner/audio_file assigned'
       self.cancel!
     else
-      self.finish_if_all_detected
+      begin
+        if self.all_detected?
+          self.finish!
+        else
+          self.extras[:error] = 'One or more versions un-detected'
+          self.cancel!
+        end
+      rescue JSON::ParserError => err
+        self.extras[:error] = "#{err}"
+        self.cancel!
+      end
     end 
   end
 
