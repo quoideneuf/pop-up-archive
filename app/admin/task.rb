@@ -21,6 +21,7 @@ ActiveAdmin.register Task do
         row("Status") { task.status }
         row("Owner") { task.owner }
         row("Identifier") { task.identifier }
+        row("Storage") { task.storage }
         row("Extras") do |task| 
           attributes_table_for task.extras do  
             task.extras.keys.each do |e| 
