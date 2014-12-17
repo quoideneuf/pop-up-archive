@@ -111,7 +111,7 @@ angular.module('Directory.analytics.directives',['d3'])
                 for (var i = collections.length - 1; i >= 0; i--) {
                   col_ids.push(collections[i].collection.id);
                 };
-                return '/search?query=' + encodeURIComponent(idValue(d)) + ',collection_id%3A(' + col_ids.join('%20OR%20') + ')';
+                return '/search?query="' + encodeURIComponent(idValue(d)) + '",collection_id%3A(' + col_ids.join('%20OR%20') + ')';
               } )
               .append('circle');
             nodeEnter.append('text').attr('class', 'name');
