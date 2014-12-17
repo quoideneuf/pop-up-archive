@@ -14,6 +14,8 @@ ActiveAdmin.register Item do
     panel "Item Details" do
       attributes_table_for item do
         row("ID") { item.id }
+        row("Token") { item.token }
+        row("Language") { item.language }
         row("Title") { item.title }
         row("Collection") { link_to item.collection.title, superadmin_collection_path(item.collection) }
         row("Duration") { item.duration }
