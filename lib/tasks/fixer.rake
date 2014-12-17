@@ -171,7 +171,13 @@ namespace :fixer do
             next
           end
 
-          task.recover!  # should cancel it with err msg if can't reverse lookup job_id
+          begin
+            task.recover!  # should cancel it with err msg if can't reverse lookup job_id
+          rescue Exception => err
+            puts "Task.find(#{task.id}).recover failed with #{err}"
+            next
+          end
+
           if task.status == "cancelled"
             report['cancelled, no job_id'] += 1
           elsif task.status == "complete"
