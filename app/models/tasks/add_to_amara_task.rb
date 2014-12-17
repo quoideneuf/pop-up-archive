@@ -66,11 +66,16 @@ class Tasks::AddToAmaraTask < Task
 
   def finish_task
     return unless audio_file
-    subtitles = get_latest_subtitles
-    transcript = load_subtitles(subtitles)
-    if transcript
-      audio_file.analyze_audio(true)
-      notify_user
+    begin
+      subtitles = get_latest_subtitles
+      transcript = load_subtitles(subtitles)
+      if transcript
+        audio_file.analyze_audio(true)
+        notify_user
+      end
+    rescue Exception => err
+      self.extras[:error] = "#{err}"
+      self.cancel!
     end
   end
 
@@ -197,6 +202,7 @@ class Tasks::AddToAmaraTask < Task
 
   def recover!
     if !self.owner
+      self.extras[:error] = 'No owner/audio_file'
       self.cancel!
     else
       self.finish!
