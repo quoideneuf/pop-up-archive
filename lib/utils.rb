@@ -40,6 +40,31 @@ class Utils
       result
     end
 
+    def head_resp(uri, retry_count=10)
+      try_count = 0
+      head_resp = nil
+      request_uri = uri.to_s
+      while(!head_resp && (try_count < retry_count)) do
+
+        # logger.debug "head: #{request_uri}"
+        response = new_connection(request_uri).head(idempotent: true, retry_limit: retry_count)
+
+        # logger.debug "response: #{response.inspect}"
+
+        if response.status.to_s.start_with?('2')
+          head_resp = response
+        elsif response.status.to_s.start_with?('3')
+          # logger.debug "redirect: #{response.headers['Location']}"
+          request_uri = response.headers['Location']
+        else
+          sleep(1)
+        end 
+        try_count += 1
+      end 
+
+      head_resp
+    end
+
     def new_connection(uri)
       # turning off ssl check is a Bad Idea, but since some archive.org URLs fail
       # with the check on, and failure is Worse than a Bad Idea, we turn it off.
