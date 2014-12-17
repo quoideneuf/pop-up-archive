@@ -62,8 +62,7 @@ class Tasks::DetectDerivativesTask < Task
     return if complete?
     return if cancelled?
     begin
-      any_nil = versions.detect{|version| version_info(version)['detected_at'].nil?}
-      self.finish! if !any_nil
+      self.finish! if self.all_detected?
     rescue JSON::ParserError => err
       self.extras[:error] = "#{err}"
       self.cancel!
