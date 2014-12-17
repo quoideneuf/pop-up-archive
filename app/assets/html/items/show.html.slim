@@ -10,10 +10,9 @@ meta view-head="view-head" property="og:description" content="{{item.description
       ul.pager ng-show="nextItem || previousItem || searchResults.query"
         li.previous ng-class="{disabled: !previousItem}"
           a ng-href='{{previousItem.link()}}' &larr; Previous
-        a href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651284-SHARING-POP-UP-DATA"
-          button.btn.btn-info.promotebtn
-            i.icon-bolt
-            |  Promote your story
+        a.btn.btn-info.promotebtn ng-show="currentUser.canEdit(item)" href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651284-SHARING-POP-UP-DATA"
+          i.icon-bolt
+          |  Promote your story
         / li.centered
         /   a ng-href='{{searchResults.link()}}'
         /     | Back to Search Results
@@ -21,7 +20,6 @@ meta view-head="view-head" property="og:description" content="{{item.description
         /     i.icon-level-up
         li.next ng-class="{disabled: !nextItem}"
           a ng-href="{{nextItem.link()}}" Next &rarr;
-
   .row-fluid.item-detail
     //Breadcrumbs
     .span6 
@@ -37,8 +35,7 @@ meta view-head="view-head" property="og:description" content="{{item.description
           |  Edit Item
         button.btn.btn-danger ng-show="currentUser.canEdit(item)" ng-click="deleteItem()"
           i.icon-trash
-          |  Delete Item
-    
+          |  Delete Item    
   .row-fluid.thumb-and-title
     //Thumb and Title
     .span11
@@ -49,12 +46,10 @@ meta view-head="view-head" property="og:description" content="{{item.description
     .span1
       a ng-show="currentUser.canEdit(item)" ng-click="itemStorage()"
         span.storage ng-class="Storage.storageClass(item.storage)"
-
   //Description      
   .row-fluid
     .span12
       p ng-show="item.description" ng-bind-html="item.description"
-
   //Audio file repeat
   .item-detail ng-show="item.audioFiles.length"
     section.audio-file ng-repeat="audioFile in item.audioFiles" ng-controller="AudioFileCtrl"
