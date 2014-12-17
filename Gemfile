@@ -93,6 +93,7 @@ gem 'language_list'
 
 gem 'stripe'
 
+gem 'redis-namespace', '>= 1.3.1'
 gem 'redis-rails'
 
 gem 'jplayer-rails'
