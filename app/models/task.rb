@@ -215,7 +215,7 @@ class Task < ActiveRecord::Base
     return false if status == CANCELLED
 
     # older than MAX_WORKTIME and incomplete
-    ago = (DateTime.now - (MAX_WORKTIME/86400)).utc
+    ago = (DateTime.now - (MAX_WORKTIME.fdiv(86400))).utc
     if status != COMPLETE && ago > created_at
       return true
 
