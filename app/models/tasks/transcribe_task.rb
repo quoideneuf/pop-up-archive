@@ -28,8 +28,8 @@ class Tasks::TranscribeTask < Task
 
       rescue Exceptions::PrivateFileNotFound => err
         # can't find the file.
-        # if the task is older than 3 days, consider the file gone for good.
-        if self.created_at < DateTime.now-3
+        # if the task is older than a day, consider the file gone for good.
+        if self.created_at < DateTime.now-1
           self.extras[:error] = "#{err}"
           self.cancel!
           return true
@@ -67,7 +67,14 @@ class Tasks::TranscribeTask < Task
       self.extras[:error] = 'No Storage defined'
       cancel!
     else
-      finish!
+      begin
+        finish!
+      rescue Exceptions::PrivateFileNotFound => err
+        # just log these, since we'll try again later
+        puts err
+      rescue
+        raise  # re-throw
+      end
     end 
   end
 
