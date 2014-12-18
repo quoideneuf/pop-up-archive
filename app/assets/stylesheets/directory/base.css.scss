@@ -1720,8 +1720,9 @@ ul.pricing {
   }
 }
 .facebookShare {
-  float: right;
-  margin-top: 8px;
+  button {
+    vertical-align: inherit;
+  }
   .facebookCount {
     display: none;
   }
