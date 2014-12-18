@@ -12,7 +12,7 @@ meta view-head="view-head" property="og:type" content="article"
       ul.pager ng-show="nextItem || previousItem || searchResults.query"
         li.previous ng-class="{disabled: !previousItem}"
           a ng-href='{{previousItem.link()}}' &larr; Previous
-        a.btn.btn-info.promotebtn ng-show="currentUser.canEdit(item)" href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651284-SHARING-POP-UP-DATA"
+        a.btn.btn-info.promotebtn ng-show="currentUser.canEdit(item) && collection.itemsVisibleByDefault" href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651284-SHARING-POP-UP-DATA"
           i.icon-bolt
           |  Promote your story
         / li.centered
