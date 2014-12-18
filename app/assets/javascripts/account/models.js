@@ -58,10 +58,12 @@ angular.module('Directory.account.models', [])
     plans.forEach(function(plan){
       switch(plan.id){
         case 'community':
-        case '5_professional_mo':
-        case '5_professional_yr':
+        // case '5_professional_mo':
+        // case '5_professional_yr':
         case '10_small_business_mo':
         case '10_small_business_yr':
+        case '1_small_business_mo':
+        case '1_small_business_yr':
           $rootScope.plans.push(plan);
       }
     });
@@ -82,6 +84,9 @@ angular.module('Directory.account.models', [])
     switch(plan.id){
       case '10_small_business_mo':
       case '10_small_business_yr':
+      //add new small business case for new 1 hr premium prof plan
+      case '1_small_business_mo':
+      case '1_small_business_yr':
       case 'enterprise':
         return true;
     }
