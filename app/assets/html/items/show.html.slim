@@ -42,12 +42,13 @@ meta view-head="view-head" property="og:type" content="article"
     .span11
       img ng-if="(item.imageFiles && item.imageFiles.length) || (collection.imageFiles && collection.imageFiles.length)" ng-src="{{ updateImage() }}"
       h1 view-title="view-title" {{item.title}}
-      a style="display:none;" facebook="facebook" class="facebookShare" data-url='https://www.popuparchive.com/collections/{{collection.id}}/items/{{item.id}}'
     //Storage location
     .span1
       a ng-show="currentUser.canEdit(item)" ng-click="itemStorage()"
-        span.storage ng-class="Storage.storageClass(item.storage)"
+        span.storage.pull-right ng-class="Storage.storageClass(item.storage)"
 
+  //Facebook share button
+  a facebook="facebook" class="facebookShare" data-url='https://www.popuparchive.com/collections/{{collection.id}}/items/{{item.id}}'
   //Description      
   .row-fluid
     .span12
