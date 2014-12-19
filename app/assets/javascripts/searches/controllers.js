@@ -25,6 +25,7 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
     fetchPage();
   });
 
+  //This is supposed to refresh the collection page when an Item is updated, but it doesn't seem to work
   $scope.$on("datasetChanged", function () {
     fetchPage();
   });
