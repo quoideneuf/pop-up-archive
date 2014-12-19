@@ -73,22 +73,24 @@ class AudioFileUploader < CarrierWave::Uploader::Base
   private
 
   def full_filename(for_file)
-    fn = for_file
-    select_extension(fn)
+    if !version_name
+      fn = super(for_file)
+      return fn.gsub(",","_")
+    else
+      ext = File.extname(for_file)
+      base = File.basename(for_file.gsub(",","_"), ext)
+      "#{base}.#{version_name}"
+    end
   end
 
   def full_original_filename
-    fn = super
-    select_extension(fn)
-  end
-
-  def select_extension(fn)
-    ext = File.extname(fn)
-    base = File.basename(fn, ext)
     if !version_name
-      "#{base.gsub(/\W/,"_")}#{ext}"
+      super.gsub(",","_")
     else
-      "#{base.gsub(/\W/,"_")}.#{version_name}"
+      fn = super
+      ext = File.extname(fn)
+      base = File.basename(fn.gsub(",","_"), ext)
+      "#{base}.#{version_name}"
     end
   end
   
