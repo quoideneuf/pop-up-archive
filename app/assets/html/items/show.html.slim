@@ -12,9 +12,6 @@ meta view-head="view-head" property="og:type" content="article"
       ul.pager ng-show="nextItem || previousItem || searchResults.query"
         li.previous ng-class="{disabled: !previousItem}"
           a ng-href='{{previousItem.link()}}' &larr; Previous
-        a.btn.btn-info.promotebtn ng-show="currentUser.canEdit(item) && collection.itemsVisibleByDefault" href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651284-SHARING-POP-UP-DATA"
-          i.icon-bolt
-          |  Promote your story
         / li.centered
         /   a ng-href='{{searchResults.link()}}'
         /     | Back to Search Results
@@ -22,6 +19,16 @@ meta view-head="view-head" property="og:type" content="article"
         /     i.icon-level-up
         li.next ng-class="{disabled: !nextItem}"
           a ng-href="{{nextItem.link()}}" Next &rarr;
+  //Buttons in between the previous and next buttons
+  .row-fluid style="text-align:center;"
+    //Donate Button
+    a href="http://www.radiotopia.fm/#donate"
+      .donatediv ng-show="displayDonate()"
+        .donatetext Donate now
+        #{image_tag('radiotopia.png')}
+    a.btn.btn-info.promotebtn ng-show="currentUser.canEdit(item) && collection.itemsVisibleByDefault" href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651284-SHARING-POP-UP-DATA"
+      i.icon-bolt
+      |  Promote your story
   .row-fluid.item-detail
     //Breadcrumbs
     .span6 
