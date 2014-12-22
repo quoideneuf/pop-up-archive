@@ -15,7 +15,7 @@
           // p ng-show="isCurrentPlan(plan)" Current Plan
           h3 {{plan.name}}
           object ng-show="plan.name == 'Community'" type="image/svg+xml" data="/assets/pricing/free.svg"
-          object ng-show="plan.name == 'Professional'" type="image/svg+xml" data="/assets/pricing/tie.svg" 
+          object ng-show="plan.name == 'Premium Professional'" type="image/svg+xml" data="/assets/pricing/tie.svg" 
           object ng-show="plan.name == 'Small Business'" type="image/svg+xml" data="/assets/pricing/building.svg"
           object ng-show="plan.name == 'Enterprise'" type="image/svg+xml" data="/assets/pricing/castle.svg"
           img ng-show="isDisabled(plan.name)" src="#{asset_path('pricing/coming_soon.png')}"
@@ -177,6 +177,7 @@
               | You will not be charged again unless you choose to either upgrade or order more Premium Transcripts on demand. In addition, all uploads to the Internet Archive will remain available at 
               a href="http://archive.org" target="_blank" archive.org
               | .
+            p You will recieve the prorated value for the remainder of that month in the form of processing credits, available if you ever decide to upgrade back to a paid plan.
 
           li 
             p.question What happens if I go over my monthly hour limit?
@@ -184,8 +185,6 @@
           li 
             p.question Do unused hours carry over to the next month? 
             p Unused hours do not carry over. The number of hours available to your plan will reset each month from the day you signed up.
-
-            p For example, if you sign up for a Professional Plan (five hours of processing) on June 1, and upload an hour of audio that month, on July 1 you will have five, and not nine, hours of audio available to process.
           li 
             p.question If I delete audio, do I get more upload space? 
             p No, our monthly limits refer to the total amount of audio that has successfully uploaded, regardless of whether audio has been deleted.
