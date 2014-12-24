@@ -22,11 +22,11 @@ meta view-head="view-head" property="og:type" content="article"
   //Buttons in between the previous and next buttons
   .row-fluid style="text-align:center;"
     //Donate Button
-    a href="http://www.radiotopia.fm/#donate"
+    a href="http://www.radiotopia.fm/#donate" ng-click="clickDonate()" target="_blank"
       .donatediv ng-show="displayDonate()"
         .donatetext Donate now
         #{image_tag('radiotopia.png')}
-    a.btn.btn-info.promotebtn ng-show="currentUser.canEdit(item) && collection.itemsVisibleByDefault" href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651284-SHARING-POP-UP-DATA"
+    a.btn.btn-info.promotebtn ng-show="currentUser.canEdit(item) && collection.itemsVisibleByDefault" href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651284-SHARING-POP-UP-DATA" ng-click="clickPromote()"
       i.icon-bolt
       |  Promote your story
   .row-fluid.item-detail
