@@ -43,6 +43,18 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     };
   };
 
+  $scope.clickDonate = function () {
+    console.log("clicked");
+    mixpanel.track(
+      "Donation Button Clicked"
+    );
+  };
+  $scope.clickPromote = function() {
+    mixpanel.track(
+      "Promote Button Clicked"
+    );
+  };
+
   $scope.defaultShareImage = 'https://www.popuparchive.com/assets/pua-fb-1200x630.png';
 
   $scope.updateImage = function(format) {
