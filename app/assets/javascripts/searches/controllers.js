@@ -19,7 +19,29 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
   $scope.$watch('location.search().query', function (searchquery) {
     $scope.query = new Query(searchquery);
     fetchPage();
+    console.log(searchquery);
+    //Display the correct Sort Option. Recency for empty queries and relevancy for all others.
+    if (searchquery) {
+      $scope.selectedSort = $scope.sortOptions[0];
+    }
+    else {
+      $scope.selectedSort = $scope.sortOptions[1]; // should match actual search controller logic on server
+    }
   });
+
+  $scope.sortOptions = [{name: "Relevancy", sort_by: "_score", sort_order: "desc"},
+                      {name: "Newest Added to Oldest Added", sort_by: "date_added", sort_order: "desc"}, 
+                      {name: "Oldest Added to Newest Added", sort_by: "date_added", sort_order: "asc"},
+                      {name: "Newest Created to Oldest Created", sort_by: "date_created", sort_order: "desc"},
+                      {name: "Oldest Created to Newest Created", sort_by: "date_created", sort_order: "asc"}];
+                        
+  $scope.sortResults = function (args) {
+    $location.search('sortBy', args.sort_by);
+    $location.search('sortOrder', args.sort_order);
+    $scope.$on('$locationChangeSuccess', function () {
+        fetchPage();
+    });
+  };
 
   $scope.$watch('location.search().page', function (page) {
     fetchPage();
@@ -48,22 +70,6 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
   $scope.termSearch = function (args) {
     $location.path('/search');
     $scope.query.add(args.field+":"+'"'+args.term+'"');
-  };
-  
-  $scope.sortOptions = [{name: "Relevancy", sort_by: "_score", sort_order: "desc"},
-                        {name: "Newest Added to Oldest Added", sort_by: "date_added", sort_order: "desc"}, 
-                        {name: "Oldest Added to Newest Added", sort_by: "date_added", sort_order: "asc"},
-                        {name: "Newest Created to Oldest Created", sort_by: "date_created", sort_order: "desc"},
-                        {name: "Oldest Created to Newest Created", sort_by: "date_created", sort_order: "asc"}];
-                        
-  $scope.selectedSort = $scope.sortOptions[1]; // should match actual search controller logic on server
-  
-  $scope.sortResults = function (args) {
-    $location.search('sortBy', args.sort_by);
-    $location.search('sortOrder', args.sort_order);
-    $scope.$on('$locationChangeSuccess', function () {
-        fetchPage();
-    });
   };
 
   function fetchPage () {

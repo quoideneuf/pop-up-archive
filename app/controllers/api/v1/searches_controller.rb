@@ -25,7 +25,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
       end
 
       # determine sort order
-      if !filters and (!query_str.present? or query_str.length == 0)
+      if !query_str.present? or query_str.length == 0
         sort do
           by 'created_at', 'desc'
         end
@@ -35,7 +35,6 @@ class Api::V1::SearchesController < Api::V1::BaseController
         end
       else
         sort do
-          by 'created_at', 'desc'
           by '_score', 'desc'
         end
       end
