@@ -61,8 +61,28 @@ class FeedPopUp
     p = Person.for_name(n) if n
     p
   end
- 
+
+  def etag(entry)
+    url = entry.try(:enclosure_url) || entry.try(:guid) || entry.try(:url)
+    url = CGI.unescapeHTML(url)
+    #puts "etag(#{url})"
+    head_resp = Utils.head_resp(url)
+    etag = head_resp.headers['ETag']
+    #puts head_resp.headers.inspect
+    if etag
+      etag.gsub!(/\A"|"\Z/, '')  # strip enclosing quotes
+      # if this is NPR-style : delimited, we just want the checksum, not the timestamp
+      if m = etag.match(/^(\w+):(\d+)$/)
+        return m[1]
+      else
+        return etag
+      end
+    end
+    nil
+  end
+       
   def id(entry)
+    etag(entry) ||
     entry.try(:enclosure_url) ||
     entry.try(:entry_id) ||
     entry.try(:guid) ||
