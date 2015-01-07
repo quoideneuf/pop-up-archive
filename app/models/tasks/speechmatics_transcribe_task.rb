@@ -12,6 +12,13 @@ class Tasks::SpeechmaticsTranscribeTask < Task
   end
 
   def process
+
+    # sanity check -- have we already created a remote request?
+    if self.extras['job_id']
+      self.extras['log'] = 'process() called on existing job_id'
+      return self
+    end
+
     # download audio file
     data_file = download_audio_file
 
