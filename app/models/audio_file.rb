@@ -462,10 +462,13 @@ class AudioFile < ActiveRecord::Base
     end
 
     # compare plan expectations with reality
+    if user and user.plan == SubscriptionPlanCached.community
+      return false  # preview only
+    end
     if user and user.plan.has_premium_transcripts? and !has_premium_transcribe_task_in_progress? and !has_premium_transcript?
       return true
     end
-    if user and user.plan != SubscriptionPlanCached.community and !has_basic_transcribe_task_in_progress? and !has_basic_transcript?
+    if user and !user.plan.has_premium_transcripts? and !has_basic_transcribe_task_in_progress? and !has_basic_transcript?
       return true
     end
 
