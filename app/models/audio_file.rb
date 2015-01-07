@@ -228,6 +228,10 @@ class AudioFile < ActiveRecord::Base
     # only start this if transcode is complete
     return unless transcoded_at or self.is_mp3?
     return unless (user.plan.has_premium_transcripts? || item.is_premium?)
+
+    # do not re-create if we have one already
+    return if has_premium_transcript?
+
     opts = {}
     # if the user is on a basic plan, but the item is flagged premium,
     # then the user must have requested a premium treatment at upload time.
