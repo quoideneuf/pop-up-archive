@@ -50,4 +50,25 @@ desc "Import PBCore 2.0 pbcoreCollection XML file from a URL"
     importer = RemoteImporter.new(collection_id: args.collection_id, url: args.url, folder: args.folder, user: args.user, password: args.password, first_item: args.first_item, last_item: args.last_item )
     importer.get_ftp_folder
   end
+
+  desc "Reconcile existing data with a feed, populating the Item.identifier"
+  task :reconcile_feed, [:collection_id, :url] => [:environment] do |t, args|
+    # load the feed
+    able_to_parse = true
+    collection = Collection.find(args.collection_id)
+    feed = Feedzirra::Feed.fetch_and_parse(url, :on_failure => lambda {|url, response_code, header, body| able_to_parse = false if response_code == 200 })
+ 
+    if !able_to_parse || !feed.entries || feed.entries.size == 0 
+      puts "Bad feed or no entries found: #{url}"
+      return
+    end
+
+    # look for existing items
+    feed.entries.each do |entry|
+      puts "#{entry.inspect}"
+
+      # update identifier if found
+    end
+
+  end
 end
