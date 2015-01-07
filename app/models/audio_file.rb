@@ -244,7 +244,7 @@ class AudioFile < ActiveRecord::Base
   def premium_transcribe_audio(user=self.user)
     # only start this if transcode is complete
     return unless transcoded_at or self.is_mp3?
-    return unless (user.plan.has_premium_transcripts? || item.is_premium?)
+    return unless ((user && user.plan.has_premium_transcripts?) || item.is_premium?)
 
     # do not re-create if we have one already
     return if has_premium_transcript?
