@@ -49,6 +49,19 @@ GIT
       sax-machine (~> 0.2.0.rc1)
 
 GIT
+  remote: git://github.com/popuparchive/speechmatics.git
+  revision: 135378c0d3f0be17666649ad7ca2c84b2428fb1f
+  specs:
+    speechmatics (0.1.1)
+      activesupport
+      excon
+      faraday
+      faraday_middleware
+      hashie
+      mimemagic
+      multi_json
+
+GIT
   remote: git://github.com/rails/etagger.git
   revision: 0a6c1e3ee66fb6926c06660538766530fa675c2f
   specs:
@@ -541,14 +554,6 @@ GEM
       hashie
       httmultiparty (>= 0.3)
       httparty (>= 0.7.3)
-    speechmatics (0.0.2)
-      activesupport
-      excon
-      faraday
-      faraday_middleware
-      hashie
-      mimemagic
-      multi_json
     spring (1.1.3)
     sprockets (2.2.2)
       hike (~> 1.2)
@@ -698,7 +703,7 @@ DEPENDENCIES
   sinatra
   slim-rails (~> 1.0)
   soundcloud
-  speechmatics (~> 0.0.2)
+  speechmatics!
   spring
   sprockets
   state_machine
