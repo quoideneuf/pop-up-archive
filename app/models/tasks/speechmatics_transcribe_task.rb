@@ -41,6 +41,10 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
       # save the speechmatics job reference
       self.extras['job_id'] = info.id
+      # if we previously had an error, zap it
+      if self.extras[:error] == "No Speechmatics job_id found"
+        self.extras.delete(:error)
+      end
       self.save!
 
     rescue Faraday::Error::TimeoutError => err
@@ -182,6 +186,12 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
       # create audit xref
       self.extras[:transcript_id] = new_trans.id
+
+      # if we previously had an error, zap it
+      if self.extras[:error]
+        self.extras.delete(:error)
+      end
+
       self.save!
 
       # share the glad tidings
