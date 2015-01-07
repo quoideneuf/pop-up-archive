@@ -56,7 +56,7 @@ desc "Import PBCore 2.0 pbcoreCollection XML file from a URL"
     # load the feed
     able_to_parse = true
     collection = Collection.find(args.collection_id)
-    feed = Feedzirra::Feed.fetch_and_parse(url, :on_failure => lambda {|url, response_code, header, body| able_to_parse = false if response_code == 200 })
+    feed = Feedzirra::Feed.fetch_and_parse(args.url, :on_failure => lambda {|url, response_code, header, body| able_to_parse = false if response_code == 200 })
  
     if !able_to_parse || !feed.entries || feed.entries.size == 0 
       puts "Bad feed or no entries found: #{url}"
@@ -65,9 +65,54 @@ desc "Import PBCore 2.0 pbcoreCollection XML file from a URL"
 
     # look for existing items
     feed.entries.each do |entry|
-      puts "#{entry.inspect}"
+      #puts "#{entry.inspect}"
+      uri = entry.enclosure_url.to_s
+      next if Item.where(identifier: uri, collection_id: collection.id).exists?
+      
+      # search by title
+      title = entry.title.to_s
+      item = Item.where(title: title, collection_id: collection.id).last
+      if item
+        item.identifier = uri
+        item.save!
+        next
+      end
 
-      # update identifier if found
+      # search by audio filename
+      filename = File.basename(URI(uri).path)
+      puts "filename==#{filename}"
+      afs = AudioFile.where(file: filename)
+      if afs.count == 1
+        puts "Found possible AudioFile #{afs.first.id} : #{afs.first.item.inspect}"
+        af = afs.first
+        if af.item.collection_id == collection.id
+          af.item.identifier = uri
+          af.item.save!
+          next
+        end
+      else
+        afs.each do |af|
+          puts "Possible audiofile match: #{af.file}"
+        end
+      end
+
+      # search by date
+      pubdate = DateTime.parse(entry.published.to_s).utc
+      items = Item.where(date_broadcast: pubdate.to_date.iso8601, collection_id: collection.id)
+      if items.count == 1
+        item = items.first
+        item.identifier = uri
+        item.save!
+        next
+      end
+
+      # too many possibilities, so just warn
+      items.each do |item|
+        puts "Possible item #{item.id} : >>#{item.title}<< for >>#{title}<<"
+      end
+
+      puts "Failed to find item: #{pubdate} #{title} #{uri}"
+      puts '=' * 80
     end
 
   end
