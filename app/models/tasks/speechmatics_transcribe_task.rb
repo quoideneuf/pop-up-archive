@@ -19,6 +19,13 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       return self
     end
 
+    # do we actually have an owner?
+    if !owner
+      self.extras['error'] = 'No owner/audio_file found'
+      self.save!
+      return
+     end
+
     # download audio file
     data_file = download_audio_file
 
