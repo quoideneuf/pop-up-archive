@@ -17,6 +17,7 @@ class Task < ActiveRecord::Base
   RETRY_DELAY  = 900          # 15 minutes, expressed in seconds
 
   scope :incomplete, where('status not in (?)', [COMPLETE, CANCELLED])
+  scope :unfinished, where('status not in (?)', [COMPLETE, CANCELLED])
 
   # convenient scopes for subclass types
   [:analyze_audio, :analyze, :copy, :detect_derivatives, :order_transcript, :transcode, :transcribe, :upload, :speechmatics_transcribe].each do |task_subclass|

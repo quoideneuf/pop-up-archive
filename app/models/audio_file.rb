@@ -190,12 +190,14 @@ class AudioFile < ActiveRecord::Base
 
   def analyze_audio(force=false)
     result = nil
-    if !force && task = tasks.analyze_audio.without_status(:failed).pop
-      logger.debug "analyze task #{task.id} already exists for audio_file #{self.id}"
-    else
-      result = Tasks::AnalyzeAudioTask.new(extras: { 'original' => process_file_url })
-      self.tasks << result
+    if !force
+      if unfinished_task = tasks.analyze_audio.unfinished.pop
+        logger.debug "unfinished analyze task #{unfinished_task.id} already exists for audio_file #{self.id}"
+        return nil
+      end
     end
+    result = Tasks::AnalyzeAudioTask.new(extras: { 'original' => process_file_url })
+    self.tasks << result
     result
   end
 
