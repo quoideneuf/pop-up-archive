@@ -45,6 +45,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       if self.extras[:error] == "No Speechmatics job_id found"
         self.extras.delete(:error)
       end
+      self.status = :working
       self.save!
 
     rescue Faraday::Error::TimeoutError => err
