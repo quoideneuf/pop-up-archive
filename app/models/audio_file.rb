@@ -333,9 +333,14 @@ class AudioFile < ActiveRecord::Base
       return
     end
 
-    task = tasks.detect_derivatives.without_status(:failed).where(identifier: 'detect_derivatives').last
+    task = tasks.detect_derivatives.unfinished.where(identifier: 'detect_derivatives').last
     if task
       logger.debug "detect_derivatives task #{task.id} already exists for audio_file #{self.id}"
+      return
+    end
+    completed_task = tasks.detect_derivatives.with_status(:complete).where(identifier: 'detect_derivatives').last
+    if completed_task
+      logger.debug "detect_derivatives task #{task.id} already complete for audio_file #{self.id}"
       return
     end
 
