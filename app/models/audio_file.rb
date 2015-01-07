@@ -194,6 +194,7 @@ class AudioFile < ActiveRecord::Base
     analyze_audio
     copy_original
     transcode_audio
+    copy_to_item_storage
     transcribe_audio
     premium_transcribe_audio
   end
