@@ -254,7 +254,8 @@ class AudioFile < ActiveRecord::Base
   def start_premium_transcribe_job(user, identifier, options={})
     return if (duration.to_i <= 0)
 
-    if task = has_premium_transcribe_task?
+    if has_premium_transcribe_task_progress?
+      task = get_unfinished_premium_transcribe_task
       logger.warn "speechmatics transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
       task
     else
@@ -437,20 +438,20 @@ class AudioFile < ActiveRecord::Base
     return false
   end
 
-  def has_premium_transcribe_task?
-    self.tasks.select{|task| task.type == 'Tasks::SpeechmaticsTranscribeTask' && task.status != "failed"}.first
+  def get_unfinished_premium_transcribe_task
+    self.unfinished_tasks.speechmatics_transcribe.pop
   end
 
   def unfinished_tasks
-    self.tasks.incomplete
+    self.tasks.unfinished
   end
 
   def has_basic_transcribe_task_in_progress?
-    self.unfinished_tasks.any?{|t| t.type == 'Tasks::TranscribeTask'}
+    self.unfinished_tasks.transcribe.count > 0
   end
 
   def has_premium_transcribe_task_in_progress?
-    self.unfinished_tasks.any?{|t| t.type == 'Tasks::SpeechmaticsTranscribeTask'}
+    self.unfinished_tasks.speechmatics_transcribe.count > 0
   end
 
   def transcript_type
