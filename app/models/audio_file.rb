@@ -197,6 +197,9 @@ class AudioFile < ActiveRecord::Base
     copy_to_item_storage
     transcribe_audio
     premium_transcribe_audio
+    if !needs_transcript? && !tasks.analyze.pop
+      analyze_transcript
+    end
   end
  
   def analyze_audio(force=false)
@@ -394,6 +397,14 @@ class AudioFile < ActiveRecord::Base
   end
 
   def analyze_transcript
+    if task = tasks.unfinished.analyze.pop
+      logger.debug "AudioFile #{self.id} already has unfinished analyze task #{task.id}"
+      return
+    end
+    if task = tasks.analyze.with_status(:complete).pop
+      logger.debug "AudioFile #{self.id} already has completed analyze task #{task.id}"
+      return
+    end
     self.tasks << Tasks::AnalyzeTask.new(extras: { 'original' => transcript_text_url })
   end
 
