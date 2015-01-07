@@ -197,7 +197,7 @@ class AudioFile < ActiveRecord::Base
     copy_to_item_storage
     transcribe_audio
     premium_transcribe_audio
-    if !needs_transcript? && !tasks.analyze.pop
+    if !needs_transcript?
       analyze_transcript
     end
   end
