@@ -258,7 +258,7 @@ class AudioFile < ActiveRecord::Base
   def start_premium_transcribe_job(user, identifier, options={})
     return if (duration.to_i <= 0)
 
-    if has_premium_transcribe_task_progress?
+    if has_premium_transcribe_task_in_progress?
       task = get_unfinished_premium_transcribe_task
       logger.warn "speechmatics transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
       task
