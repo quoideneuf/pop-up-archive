@@ -188,11 +188,24 @@ class AudioFile < ActiveRecord::Base
     logger.error e.backtrace.join("\n")
   end
 
+  # make sure all the relevant tasks have been created.
+  # note that each method called is responsible for checking whether it should be created.
+  def check_tasks
+    analyze_audio
+    copy_original
+    transcode_audio
+    transcribe_audio
+    premium_transcribe_audio
+  end
+ 
   def analyze_audio(force=false)
     result = nil
     if !force
       if unfinished_task = tasks.analyze_audio.unfinished.pop
-        logger.debug "unfinished analyze task #{unfinished_task.id} already exists for audio_file #{self.id}"
+        logger.debug "unfinished analyze_audio task #{unfinished_task.id} already exists for audio_file #{self.id}"
+        return nil
+      elsif finished_task = tasks.analyze_audio.with_status(:complete).pop
+        logger.debug "complete analyze_audio task #{finished_task.id} already exists for audio_file #{self.id}"
         return nil
       end
     end
