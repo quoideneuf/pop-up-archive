@@ -42,7 +42,7 @@ meta view-head="view-head" property="og:type" content="article"
         button.btn ng-show="currentUser.canEdit(item)" ng-click="uploadFile()"
           i.icon-edit
           |  Edit Item
-        button.btn.btn-danger ng-show="currentUser.canEdit(item)" ng-click="deleteItem()"
+        button.btn.btn-danger ng-show="currentUser.canEdit(item)" ng-disabled="!currentUser.isAdmin()" ng-click="deleteItem()"
           i.icon-trash
           |  Delete Item    
   .row-fluid.thumb-and-title
