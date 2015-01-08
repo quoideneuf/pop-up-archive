@@ -91,6 +91,18 @@ class User < ActiveRecord::Base
     email
   end
 
+  # all_items is different than items relationship because it uses
+  # the overridden collections method to reflect org assignments.
+  def all_items
+    all_items = []
+    collections.each do |c|
+      c.items.each do |i|
+        all_items.push i
+      end
+    end
+    all_items
+  end
+
   def collections
     organization ? organization.collections : super
   end
@@ -291,7 +303,14 @@ class User < ActiveRecord::Base
   def invalidate_cache
     Rails.cache.delete(customer_cache_id)
     @_customer = nil
-  end 
+  end
+
+  def can_admin_org?
+    return false unless self.organization_id
+    return true if self.organization.owner_id == self.id
+    return true if self.has_role?(:admin, self.organization)
+    return false
+  end
 
   private
 
