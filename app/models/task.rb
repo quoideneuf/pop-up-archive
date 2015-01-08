@@ -18,6 +18,7 @@ class Task < ActiveRecord::Base
 
   scope :incomplete, where('status not in (?)', [COMPLETE, CANCELLED])
   scope :unfinished, where('status not in (?)', [COMPLETE, CANCELLED])
+  scope :valid, where('status not in (?)', [CANCELLED])
 
   # convenient scopes for subclass types
   [:analyze_audio, :analyze, :copy, :detect_derivatives, :order_transcript, :transcode, :transcribe, :upload, :speechmatics_transcribe].each do |task_subclass|

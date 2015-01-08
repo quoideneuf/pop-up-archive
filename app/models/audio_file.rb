@@ -205,11 +205,8 @@ class AudioFile < ActiveRecord::Base
   def analyze_audio(force=false)
     result = nil
     if !force
-      if unfinished_task = tasks.analyze_audio.unfinished.pop
-        logger.debug "unfinished analyze_audio task #{unfinished_task.id} already exists for audio_file #{self.id}"
-        return nil
-      elsif finished_task = tasks.analyze_audio.with_status(:complete).pop
-        logger.debug "complete analyze_audio task #{finished_task.id} already exists for audio_file #{self.id}"
+      if task = (tasks.analyze_audio.valid.pop || tasks.select { |t| t.type == "Tasks::AnalyzeAudioTask" }.pop)
+        logger.debug "AudioFile #{self.id} already has analyze_audio task #{unfinished_task.id}"
         return nil
       end
     end
@@ -275,8 +272,7 @@ class AudioFile < ActiveRecord::Base
   def start_premium_transcribe_job(user, identifier, options={})
     return if (duration.to_i <= 0)
 
-    if has_premium_transcribe_task_in_progress?
-      task = get_unfinished_premium_transcribe_task
+    if task = (tasks.speechmatics_transcribe.valid.pop || tasks.select { |t| t.type == "Tasks::SpeechmaticsTranscribeTask" }.pop)
       logger.warn "speechmatics transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
       task
     else
@@ -290,8 +286,8 @@ class AudioFile < ActiveRecord::Base
   def start_transcribe_job(user, identifier, options={})
     extras = { 'original' => process_file_url, 'user_id' => user.try(:id) }.merge(options)
 
-    if task = tasks.transcribe.without_status(:failed).where(identifier: identifier).last
-      logger.debug "transcribe task #{identifier} #{task.id} already exists for audio file #{self.id}"
+    if task = (tasks.transcribe.valid.where(identifier: identifier).pop || tasks.select { |t| t.type == "Tasks::TranscribeTask" }.pop)
+      logger.warn "transcribe task #{identifier} #{task.id} already exists for audio file #{self.id}"
     else
       self.tasks << Tasks::TranscribeTask.new( identifier: identifier, extras: extras )
     end
@@ -317,7 +313,7 @@ class AudioFile < ActiveRecord::Base
       AudioFileUploader.version_formats.each do |label, info|
         next if (label == filename_extension) # skip this version if that is already the file's format
         #log and skip if transcode task already exists
-        if task = tasks.transcode.without_status(:failed).where(identifier: "#{label}_transcode").last
+        if task = (tasks.transcode.valid.where(identifier: "#{label}_transcode").pop || tasks.select { |t| t.type == "Tasks::TranscodeTask" }.pop)
           logger.debug "transcode task #{identifier} #{task.id} already exists for audio file #{self.id}"
           task
         else
@@ -336,14 +332,8 @@ class AudioFile < ActiveRecord::Base
       return
     end
 
-    task = tasks.detect_derivatives.unfinished.where(identifier: 'detect_derivatives').last
-    if task
+    if task = (tasks.detect_derivatives.valid.where(identifier: 'detect_derivatives').pop || tasks.select { |t| t.type == "Tasks::DetectDerivativesTask" }.pop)
       logger.debug "detect_derivatives task #{task.id} already exists for audio_file #{self.id}"
-      return
-    end
-    completed_task = tasks.detect_derivatives.with_status(:complete).where(identifier: 'detect_derivatives').last
-    if completed_task
-      logger.debug "detect_derivatives task #{task.id} already complete for audio_file #{self.id}"
       return
     end
 
@@ -398,12 +388,8 @@ class AudioFile < ActiveRecord::Base
 
   def analyze_transcript
     return unless transcripts_alone.count > 0
-    if task = tasks.unfinished.analyze.pop
-      logger.debug "AudioFile #{self.id} already has unfinished analyze task #{task.id}"
-      return
-    end
-    if task = tasks.analyze.with_status(:complete).pop
-      logger.debug "AudioFile #{self.id} already has completed analyze task #{task.id}"
+    if task = (tasks.analyze.valid.pop || tasks.select { |t| t.type == "Tasks::AnalyzeTask" }.pop)
+      logger.debug "AudioFile #{self.id} already has analyze task #{task.id}"
       return
     end
     self.tasks << Tasks::AnalyzeTask.new(extras: { 'original' => transcript_text_url })
@@ -474,10 +460,6 @@ class AudioFile < ActiveRecord::Base
     end
 
     return false
-  end
-
-  def get_unfinished_premium_transcribe_task
-    self.unfinished_tasks.speechmatics_transcribe.pop
   end
 
   def unfinished_tasks
