@@ -21,9 +21,9 @@ describe Utils do
   end
 
   it "downloads a public file to tmp file" do
-    url = "https://www.popuparchive.com/assets/prx_logo-e88984ad067c1491be8eb941112b393e.png"
+    url = "https://www.popuparchive.com/assets/prx_logo.png"
     pf = Utils.download_public_file(URI.parse(url))
-    pf.size.should == 58432
+    pf.size.should == 4128
   end
 
   it "croaks when unable to download a public file" do
