@@ -207,7 +207,7 @@ GEM
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
     diff-lcs (1.2.4)
-    doorkeeper (1.1.0)
+    doorkeeper (1.4.1)
       railties (>= 3.1)
     dotenv (0.8.0)
     elasticsearch (1.0.4)
@@ -636,7 +636,7 @@ DEPENDENCIES
   decent_exposure (~> 2.1.0)
   devise (~> 3.2)
   devise_invitable!
-  doorkeeper
+  doorkeeper (~> 1.4.1)
   elasticsearch-extensions
   elasticsearch-model (~> 0.1.5)
   elasticsearch-rails (~> 0.1.5)
