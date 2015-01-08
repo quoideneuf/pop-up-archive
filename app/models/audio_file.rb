@@ -206,7 +206,7 @@ class AudioFile < ActiveRecord::Base
     result = nil
     if !force
       if task = (tasks.analyze_audio.valid.pop || tasks.select { |t| t.type == "Tasks::AnalyzeAudioTask" }.pop)
-        logger.debug "AudioFile #{self.id} already has analyze_audio task #{unfinished_task.id}"
+        logger.warn "AudioFile #{self.id} already has analyze_audio task #{task.id}"
         return nil
       end
     end
@@ -314,7 +314,7 @@ class AudioFile < ActiveRecord::Base
         next if (label == filename_extension) # skip this version if that is already the file's format
         #log and skip if transcode task already exists
         if task = (tasks.transcode.valid.where(identifier: "#{label}_transcode").pop || tasks.select { |t| t.type == "Tasks::TranscodeTask" }.pop)
-          logger.debug "transcode task #{identifier} #{task.id} already exists for audio file #{self.id}"
+          logger.warn "transcode task #{identifier} #{task.id} already exists for audio file #{self.id}"
           task
         else
           self.tasks << Tasks::TranscodeTask.new(
@@ -333,7 +333,7 @@ class AudioFile < ActiveRecord::Base
     end
 
     if task = (tasks.detect_derivatives.valid.where(identifier: 'detect_derivatives').pop || tasks.select { |t| t.type == "Tasks::DetectDerivativesTask" }.pop)
-      logger.debug "detect_derivatives task #{task.id} already exists for audio_file #{self.id}"
+      logger.warn "detect_derivatives task #{task.id} already exists for audio_file #{self.id}"
       return
     end
 
@@ -389,7 +389,7 @@ class AudioFile < ActiveRecord::Base
   def analyze_transcript
     return unless transcripts_alone.count > 0
     if task = (tasks.analyze.valid.pop || tasks.select { |t| t.type == "Tasks::AnalyzeTask" }.pop)
-      logger.debug "AudioFile #{self.id} already has analyze task #{task.id}"
+      logger.warn "AudioFile #{self.id} already has analyze task #{task.id}"
       return
     end
     self.tasks << Tasks::AnalyzeTask.new(extras: { 'original' => transcript_text_url })
