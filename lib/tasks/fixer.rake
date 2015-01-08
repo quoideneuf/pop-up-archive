@@ -228,7 +228,7 @@ namespace :fixer do
 
         if af.needs_transcript?
           verbose and puts "AudioFile.find(#{af.id}) needs any transcript"
-          ok_to_recover and af.process_update_file # calls both basic and premium to Do the Right Thing
+          ok_to_recover and af.check_tasks
         end
 
       end

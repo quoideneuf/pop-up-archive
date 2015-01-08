@@ -397,6 +397,7 @@ class AudioFile < ActiveRecord::Base
   end
 
   def analyze_transcript
+    return unless transcripts_alone.count > 0
     if task = tasks.unfinished.analyze.pop
       logger.debug "AudioFile #{self.id} already has unfinished analyze task #{task.id}"
       return
