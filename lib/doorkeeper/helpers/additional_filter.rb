@@ -7,7 +7,7 @@ module Doorkeeper
           doorkeeper_for = DoorkeeperForBuilder.create_doorkeeper_for(*args)
 
           before_filter doorkeeper_for.filter_options do
-            doorkeeper_for.validate_token(doorkeeper_token)
+            valid_token(doorkeeper_for.scopes)
             return true
           end
         end
@@ -15,6 +15,12 @@ module Doorkeeper
 
       def self.included(base)
         base.extend ClassMethods
+      end
+
+      private
+
+      def valid_token(scopes)
+        doorkeeper_token && doorkeeper_token.acceptable?(scopes)
       end
 
     end
