@@ -351,9 +351,6 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
 
         var collMenu = [];
         angular.forEach(user.collections, function(coll_title, coll_id) {
-          if (coll_id == user.uploadsCollectionId) {
-            return; // skip My Uploads
-          }
           collMenu.push({
             text: coll_title, // TODO html escape
             href: '/collections/'+coll_id,

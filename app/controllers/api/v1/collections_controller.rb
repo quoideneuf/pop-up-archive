@@ -1,7 +1,7 @@
 class Api::V1::CollectionsController < Api::V1::BaseController
   expose :collections do
     if user_signed_in?
-      current_user.collections
+      current_user.collections_without_my_uploads
     else
       []
     end

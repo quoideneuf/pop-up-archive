@@ -101,10 +101,14 @@ class User < ActiveRecord::Base
 
   def collections_title_id
     colls = {}
-    collections.each do |c|
+    collections_without_my_uploads.each do |c|
       colls[c.id.to_s] = c.title
     end
     colls
+  end
+
+  def collections_without_my_uploads
+    collections.reject {|c| c.id == self.uploads_collection.id }
   end
 
   def uploads_collection
