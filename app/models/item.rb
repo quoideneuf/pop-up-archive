@@ -39,25 +39,30 @@ class Item < ActiveRecord::Base
         indexes :position, type: 'geo_point'
       end
 
-      indexes :confirmed_entities do
-        indexes :entity, type: 'string', boost: 2.0
+      indexes :entities, index_name: "entity" do
+        indexes :entity, type: 'string', index: "not_analyzed"
         indexes :category, type: 'string', include_in_all: false
       end
 
-      indexes :low_unconfirmed_entities do
-        indexes :entity, type: 'string', boost: 0.2
-        indexes :category, type: 'string', include_in_all: false
-      end
+      # indexes :confirmed_entities do
+      #   indexes :entity, type: 'string', boost: 2.0
+      #   indexes :category, type: 'string', include_in_all: false
+      # end
 
-      indexes :mid_unconfirmed_entities do
-        indexes :entity, type: 'string', boost: 0.5
-        indexes :category, type: 'string', include_in_all: false
-      end
+      # indexes :low_unconfirmed_entities do
+      #   indexes :entity, type: 'string', boost: 0.2
+      #   indexes :category, type: 'string', include_in_all: false
+      # end
 
-      indexes :high_unconfirmed_entities do
-        indexes :entity, type: 'string', boost: 1.0
-        indexes :category, type: 'string', include_in_all: false
-      end
+      # indexes :mid_unconfirmed_entities do
+      #   indexes :entity, type: 'string', boost: 0.5
+      #   indexes :category, type: 'string', include_in_all: false
+      # end
+
+      # indexes :high_unconfirmed_entities do
+      #   indexes :entity, type: 'string', boost: 1.0
+      #   indexes :category, type: 'string', include_in_all: false
+      # end
 
       STANDARD_ROLES.each do |role|
         indexes role.pluralize.to_sym, type: 'string', include_in_all: false, index_name: role, index: "not_analyzed"
@@ -204,6 +209,7 @@ class Item < ActiveRecord::Base
       json[:tags]        = tags_for_index
       json[:location]    = geolocation.as_indexed_json if geolocation.present?
       json[:transcripts] = transcripts_for_index
+      json[:entities] = entities.map(&:as_indexed_json)
       json[:collection_title] = collection.title if collection.present?
       json[:confirmed_entities] = confirmed_entities.map(&:as_indexed_json)
       json[:low_unconfirmed_entities] = low_scoring_entities.map(&:as_indexed_json)
