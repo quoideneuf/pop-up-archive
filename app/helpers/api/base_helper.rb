@@ -10,6 +10,7 @@ module Api::BaseHelper
   def format_time(seconds)
     Time.at(seconds).getgm.strftime('%H:%M:%S')
   end
+  module_function :format_time
 
   def total_hours_on_pua
     hours = Rails.cache.fetch(:pua_total_hours_on_pua, expires_in: 60.minutes) do

@@ -590,7 +590,11 @@ class AudioFile < ActiveRecord::Base
     else
       self.transcripts.first # TODO will this ever yield anything?
     end
-  end      
+  end
+
+  def duration_hms
+    Api::BaseHelper::format_time(duration||0)
+  end
 
   private
 
