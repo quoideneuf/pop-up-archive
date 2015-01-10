@@ -249,6 +249,16 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   }
 
   $scope.my_path= $window.location.protocol + "//" + $window.location.host;
+
+  $scope.searchEntity = function(entity) {
+    mixpanel.track("Entity search", {
+      "Location": "Item Page",
+      "Entity": entity,
+      "Item": $scope.item.title,
+      "Collection": $scope.collection.title
+    });
+  }
+
 }])
 .controller('ItemStorageCtrl', [ '$scope', 'Item', 'Loader', 'Me', function ItemsCtrl($scope, Item, Loader, Me) {
 

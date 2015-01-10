@@ -106,6 +106,14 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
       SearchResults.setResults(search);
     });
   }
+
+  $scope.searchEntity = function(entity, item, collection) {
+    mixpanel.track("Entity search", {
+      "Location": "Search Results Page",
+      "Entity": entity,
+      "Item": item,
+      "Collection": collection});
+  }
   
   $scope.letters= ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
 
