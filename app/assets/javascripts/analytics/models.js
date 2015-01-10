@@ -20,19 +20,20 @@ angular.module('Directory.analytics.models', ['RailsModel', 'Directory.collectio
 
     if (this.currentFacet.name === 'tag') {
       data = {'tag': {}, 'entity': {}};
-      angular.forEach(this.currentFacet.entries(), function (entry) {
-        var count = data['tag'][entry.nameForPresenting()] || 0;
-        data['tag'][entry.nameForPresenting()] = count + 1;
+
+      angular.forEach(this.search.facets.tag.terms, function (entry) {
+        var count = entry.count;
+        var term = entry.term;
+        data['tag'][term] = count;         
       }, this);
 
-      angular.forEach(this.results, function (result) {
-        angular.forEach(result['entities'], function (entity) {
-          //don't duplicate a tag name
-          if (!data['tag'][entity.name]) {
-            var count = data['entity'][entity.name] || 0;
-            data['entity'][entity.name] = count + 1;
-          }
-        })
+      angular.forEach(this.search.facets.entity.terms, function (entry) {
+        var count = entry.count;
+        var term = entry.term;
+        //don't duplicate a tag name
+        if (!data['tag'][term]) {
+          data['entity'][term] = count;
+        }
       }, this)
     }
     this.currentData = data;
