@@ -2,7 +2,7 @@
 set -x
 
 export NEWRELIC_ENABLE=false
-export RECOVER_TYPES=Tasks::TranscodeTask,Tasks::CopyTask,Tasks::TranscribeTask,Tasks::AnalyzeAudioTask,Tasks::AnalyzeTask
+export RECOVER_TYPES=Tasks::TranscodeTask,Tasks::CopyTask,Tasks::TranscribeTask,Tasks::AnalyzeAudioTask,Tasks::AnalyzeTask,Tasks::DetectDerivativesTask
 
 rake fixer:check
 rake fixer:transcript_check
