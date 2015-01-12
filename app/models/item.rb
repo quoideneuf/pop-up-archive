@@ -19,10 +19,10 @@ class Item < ActiveRecord::Base
       indexes :date_created,          type: 'date',   include_in_all: false
       indexes :date_broadcast,        type: 'date',   include_in_all: false
       indexes :created_at,            type: 'date',   include_in_all: false, index_name: 'date_added'
-      indexes :description,           type: 'string'
-      indexes :identifier,            type: 'string',  boost: 2.0
+      indexes :description,           type: 'string',  boost: 1.5
+      indexes :identifier,            type: 'string',  boost: 1.0
       indexes :title,                 type: 'string',  boost: 2.0
-      indexes :tags,                  type: 'string',  index_name: 'tag',    index: 'not_analyzed'
+      indexes :tags,                  type: 'string',  index_name: 'tag',    index: 'not_analyzed', boost: 1.2
       indexes :contributors,          type: 'string',  index_name: 'contributor'
       indexes :physical_location,     type: 'string'
 
