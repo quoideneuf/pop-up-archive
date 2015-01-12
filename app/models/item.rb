@@ -40,7 +40,7 @@ class Item < ActiveRecord::Base
       end
 
       indexes :entities, index_name: 'entity' do
-        indexes :entity, type: 'string', index: 'not_analyzed'
+        indexes :entity, type: 'string', index: 'not_analyzed', boost: 0.1
         indexes :category, type: 'string', include_in_all: false
       end
 
