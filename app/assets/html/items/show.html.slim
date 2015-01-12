@@ -251,7 +251,7 @@ meta view-head="view-head" property="og:type" content="article"
         h5 Tags
         ul
           li ng-repeat="tag in item.tags track by $index"
-            a.btn ng-href='/search?query=entity:%22{{tag}}%22,tag:%22{{tag}}%22,filter:0R' {{tag}}
+            a.btn ng-href='/search?query=entity:%22{{tag}}%22,tag:%22{{tag}}%22,filter:OR' {{tag}}
             
   //Item notes
   .row-fluid
