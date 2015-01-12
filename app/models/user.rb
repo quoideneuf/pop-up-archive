@@ -141,7 +141,13 @@ class User < ActiveRecord::Base
   # everyone is considered an admin on their own, role varies for those in orgs
   def role
     return :admin unless organization
-    has_role?(:admin, organization) ? :admin : :member
+    if has_role?(:admin, organization)
+      return :admin
+    elsif organization.owner_id == self.id
+      return :owner
+    else
+      return :member
+    end
   end
 
   def super_admin?
