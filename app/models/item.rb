@@ -15,20 +15,20 @@ class Item < ActiveRecord::Base
       indexes :id, index: :not_analyzed
       indexes :is_public, index: :not_analyzed
       indexes :collection_id, index: :not_analyzed
-      indexes :collection_title,      type: 'string', index: "not_analyzed"
+      indexes :collection_title,      type: 'string', index: 'not_analyzed'
       indexes :date_created,          type: 'date',   include_in_all: false
       indexes :date_broadcast,        type: 'date',   include_in_all: false
-      indexes :created_at,            type: 'date',   include_in_all: false, index_name:"date_added"
+      indexes :created_at,            type: 'date',   include_in_all: false, index_name: 'date_added'
       indexes :description,           type: 'string'
       indexes :identifier,            type: 'string',  boost: 2.0
       indexes :title,                 type: 'string',  boost: 2.0
-      indexes :tags,                  type: 'string',  index_name: "tag",    index: "not_analyzed"
-      indexes :contributors,          type: 'string',  index_name: "contributor"
+      indexes :tags,                  type: 'string',  index_name: 'tag',    index: 'not_analyzed'
+      indexes :contributors,          type: 'string',  index_name: 'contributor'
       indexes :physical_location,     type: 'string'
 
       indexes :transcripts do
-        indexes :audio_file_id, type: 'long', index: "not_analyzed"
-        indexes :start_time, type: 'double', index: "not_analyzed"
+        indexes :audio_file_id, type: 'long', index: 'not_analyzed'
+        indexes :start_time, type: 'double', index: 'not_analyzed'
         indexes :confidence, type: 'float', index: 'not_analyzed'
         indexes :transcript, type: 'string', store: true, boost: 0.1
       end
@@ -39,8 +39,8 @@ class Item < ActiveRecord::Base
         indexes :position, type: 'geo_point'
       end
 
-      indexes :entities, index_name: "entity" do
-        indexes :entity, type: 'string', index: "not_analyzed"
+      indexes :entities, index_name: 'entity' do
+        indexes :entity, type: 'string', index: 'not_analyzed'
         indexes :category, type: 'string', include_in_all: false
       end
 
@@ -65,7 +65,7 @@ class Item < ActiveRecord::Base
       # end
 
       STANDARD_ROLES.each do |role|
-        indexes role.pluralize.to_sym, type: 'string', include_in_all: false, index_name: role, index: "not_analyzed"
+        indexes role.pluralize.to_sym, type: 'string', include_in_all: false, index_name: role, index: 'not_analyzed'
       end
     end
   end
