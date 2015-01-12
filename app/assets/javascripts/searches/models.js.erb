@@ -272,10 +272,12 @@ angular.module('Directory.searches.models', ['RailsModel', 'Directory.items.mode
     var filter = query[0];
     var parts = query[1];
     if (filter.length) {
-      var string = "\""+parts.join(" "+filter+" ")+"\"";
+      var string = parts.join(" "+filter+" ");
+      console.log(string);
     }
     else {
       var string = parts.join(" AND ");
+      console.log(string);
       if (string == '') {
         return null;
       }
