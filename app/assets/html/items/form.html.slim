@@ -6,7 +6,10 @@ section ng-controller="ItemFormCtrl"
     h3 ng-hide='item.id > 0' Create an Audio Item
 
   .modal-body
-    form.item-form.form-horizontal name='newItemForm'
+    h3 ng-show="currentUser.overMonthlyLimit && !currentUser.hasCreditCard()"
+     | You are over your monthly limit and do not have a credit card on file.
+     a href="/account/plan"  Upgrade now!
+    form.item-form.form-horizontal name='newItemForm' ng-show="!currentUser.overMonthlyLimit || (currentUser.overMonthlyLimit && currentUser.hasCreditCard())"
 
       div ng-hide='(item.id > 0) || (item.files.length > 0)' style="text-align:center;"
         h3 Drag and drop a file anywhere on the site
