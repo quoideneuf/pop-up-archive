@@ -255,6 +255,10 @@ class User < ActiveRecord::Base
     customer.card
   end
 
+  def has_active_credit_card?
+    active_credit_card.has_key?("last4")
+  end
+
   def update_usage_report!
     update_attribute :used_metered_storage_cache, used_metered_storage
     update_attribute :used_unmetered_storage_cache, used_unmetered_storage
