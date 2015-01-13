@@ -37,7 +37,10 @@ angular.module('Directory.users.models', ['RailsModel'])
 
   User.prototype.isAdmin = function () {
     if (this.authenticated()) {
-      return (this.role == 'admin');
+      if (this.role == 'admin' || this.role == 'owner') {
+        return true;
+      }
+      return false;
     } else {
       return false;
     }

@@ -56,13 +56,26 @@ class Api::V1::ItemsController < Api::V1::BaseController
   end
 
   def destroy
-    users_item.destroy
-    respond_with :api, users_item
+    cur_item = item
+    cur_item_ok = false
+    users_item.each do |i|
+      if cur_item.id == i.id
+        #logger.warn "cur_item amongst user.all_items: #{i.id}"
+        cur_item_ok = true
+      end
+    end
+    ability = Ability.new(current_user)
+    if cur_item_ok && ability.can?(:destroy, cur_item)
+      cur_item.destroy
+      respond_with :api, cur_item
+    else
+      render status: 403, json: { error: 'Permission denied' }
+    end
   end
 
   private
 
   def current_users_items
-    current_user.items
+    current_user.all_items  # includes any items via org grants
   end
 end

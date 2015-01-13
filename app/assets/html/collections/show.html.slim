@@ -7,7 +7,7 @@
       button.btn ng-show="canEdit" ng-click="newCollection()"
         i.icon-edit
         |  Edit Collection
-      button.btn.btn-danger ng-click="delete()" ng-show="canEdit"
+      button.btn.btn-danger ng-click="delete()" ng-disabled="!currentUser.isAdmin()" ng-show="canEdit"
         i.icon-trash
         |  Delete Collection
 

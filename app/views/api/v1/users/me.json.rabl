@@ -24,6 +24,7 @@ if current_user
       name: current_user.organization.name,
       amara_team: current_user.organization.amara_team,
       usage: current_user.organization.usage_summary,
+      owner_id: current_user.organization.owner_id,
     } if current_user.organization.present?
   }
 
