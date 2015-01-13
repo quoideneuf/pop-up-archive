@@ -60,6 +60,6 @@ test_mode or deployed_ok = system(git_push_cmd)
 
 if deployed_ok or test_mode
   last_commit = `git log --max-count=1 #{destenv}/master`
-  repo_info   = `git remote show #{destenv} | grep 'Fetch URL' | sed -e 's/.*heroku.com://' | sed -e 's/\.git//'`
+  repo_info   = `git remote show #{destenv} | grep 'Fetch URL' | sed -e 's/.*heroku.com://' | sed -e 's/\.git//'`.chomp
   send_email(notify_email, {subject: "Deploy #{repo_info} to #{destenv}", body: "I just deployed the #{repo_info} #{srcbranch} branch to #{destenv}.\n\n#{last_commit}" })
 end
