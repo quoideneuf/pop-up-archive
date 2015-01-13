@@ -30,10 +30,7 @@ angular.module('Directory.analytics.models', ['RailsModel', 'Directory.collectio
       angular.forEach(this.search.facets.entity.terms, function (entry) {
         var count = entry.count;
         var term = entry.term;
-        //don't duplicate a tag name
-        if (!data['tag'][term]) {
-          data['entity'][term] = count;
-        }
+        data['entity'][term] = count;
       }, this)
     }
     this.currentData = data;
