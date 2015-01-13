@@ -187,6 +187,11 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
         $scope.clear();  // close window immediately.
         $scope.onDemandRequiresCC = true;
         $scope.orderPremiumCCModal = $modal({template: '/assets/account/credit_card_ondemand.html', persist: true, show: true, backdrop: 'static', scope: $scope});
+        //track in Mixpanel
+        mixpanel.track(
+          "Ordered Premium Transcript",{
+            "User": $scope.currentUser.name + ' ' + $scope.currentUser.email}
+            );
       }
       else {
         $scope.audioFile.orderPremiumTranscript(me).then(function(respTask) {

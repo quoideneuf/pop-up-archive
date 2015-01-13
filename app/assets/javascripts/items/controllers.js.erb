@@ -45,14 +45,20 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.clickDonate = function () {
     mixpanel.track(
-      "Donation Button Clicked"
+      "Donation Button Clicked",{
+          "User": $scope.currentUser.name + ' ' + $scope.currentUser.email
+          }
     );
   };
+
   $scope.clickPromote = function() {
     mixpanel.track(
-      "Promote Button Clicked"
+      "Promote Button Clicked",{
+          "User": $scope.currentUser.name + ' ' + $scope.currentUser.email
+          }
     );
   };
+
 
   $scope.defaultShareImage = 'https://www.popuparchive.com/assets/pua-fb-1200x630.png';
 
@@ -177,6 +183,12 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     jQuery('button.ts-upgrade').not('.disabled').prop('disabled', true);
 
     $scope.getPremiumCostAndPromptOrder();
+    //mixpanel tracking
+    mixpanel.track(
+      "Reprocess Button Clicked",{
+          "User": $scope.currentUser.name + ' ' + $scope.currentUser.email
+          }
+    );
   };
 
   $scope.itemStorage = function() {
