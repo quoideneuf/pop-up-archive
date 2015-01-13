@@ -19,7 +19,6 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
   $scope.$watch('location.search().query', function (searchquery) {
     $scope.query = new Query(searchquery);
     fetchPage();
-    console.log(searchquery);
     //Display the correct Sort Option. Recency for empty queries and relevancy for all others.
     if (searchquery) {
       $scope.selectedSort = $scope.sortOptions[0];
