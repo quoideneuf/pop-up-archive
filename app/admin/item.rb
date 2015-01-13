@@ -32,6 +32,7 @@ ActiveAdmin.register Item do
         tbl.column("Type") {|af| af.transcript_type }
         tbl.column("Transcoded") {|af| af.transcoded_at }
         tbl.column("Duration") {|af| af.duration }
+        tbl.column("Status") {|af| af.current_status }
         tbl.column("Tasks") do |af| 
           link_to "#{af.tasks.count} tasks", :action => 'index', :controller => "tasks", q: { owner_id_equals: af.id.to_s, owner_type_equals: 'AudioFile' } 
         end 
