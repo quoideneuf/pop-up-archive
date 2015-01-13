@@ -182,7 +182,8 @@ angular.module('Directory.searches.models', ['RailsModel', 'Directory.items.mode
       if (angular.isArray(queryString)) {
         return queryString;
       }
-      var match = queryString.match(/([^,\"]*\"[^\"]+\"|[^,]+)/g);
+      //don't break apart strings in quotes or in parentheses
+      var match = queryString.match(/(\([^\)]+\))|[^,\"]*\"[^\"]+\"|[^,]+/g);
       if (match) {
         return getUnique(match);
       } else {
@@ -250,39 +251,23 @@ angular.module('Directory.searches.models', ['RailsModel', 'Directory.items.mode
 
   Query.prototype.partsForQuery = function () {
     var parts = [];
-    var filters = [];
     angular.forEach(this.queryParts, function (part) {
       var val = part;
-      if (part.match(/(filter:(\D+))/)){
-        val = part.replace(/(filter:)/,"");
-        filters.push(val);
-      }
-      else {
-        if (part.match(/(.+_id):\"(\d+)-(.*)\"/)) {
-          val = part.replace(/(.+_id):\"(\d+)-(.*)\"/,"$1:\"$2\"");
-        }
-        parts.push(val);
-      }
+      if (part.match(/(.+_id):\"(\d+)-(.*)\"/)) {
+        val = part.replace(/(.+_id):\"(\d+)-(.*)\"/,"$1:\"$2\"");
+      } 
+      parts.push(val);
     });
-    return [filters, parts];
+    return parts;
   }
 
   Query.prototype.toSearchQuery = function () {
-    var query = this.partsForQuery();
-    var filter = query[0];
-    var parts = query[1];
-    if (filter.length) {
-      var string = parts.join(" "+filter+" ");
-      console.log(string);
+    var string = this.partsForQuery().join(" AND ");
+    if (string == '') {
+      return null;
+    } else {
+      return string; 
     }
-    else {
-      var string = parts.join(" AND ");
-      console.log(string);
-      if (string == '') {
-        return null;
-      }
-    }
-    return string;
   }
 
   Query.prototype.toSearchQueryParam = function () {
