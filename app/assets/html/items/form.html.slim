@@ -6,14 +6,19 @@ section ng-controller="ItemFormCtrl"
     h3 ng-hide='item.id > 0' Create an Audio Item
 
   .modal-body
-    h3.warning ng-show="currentUser.overMonthlyLimit" You are over your monthly upload limit
-    form.item-form.form-horizontal name='newItemForm' ng-hide="currentUser.overMonthlyLimit"
+    form.item-form.form-horizontal name='newItemForm'
 
       div ng-hide='(item.id > 0) || (item.files.length > 0)' style="text-align:center;"
         h3 Drag and drop a file anywhere on the site
         div style="margin:-10px 0 10px 0;" or
         span file-button="" style='margin-right: 4px;'
           button.btn.btn-large style="margin-bottom:10px;" Upload one file at a time
+
+        .alert.alert-danger ng-show="currentUser.overMonthlyLimit"
+          h4
+           | You are over your monthly limit.
+           br
+           | Additional uploads will be charged at the rate of $#{Billable::OVERAGE_HOURLY_RATE}/hour.
 
         .alert.alert-danger 
           p
@@ -116,7 +121,7 @@ section ng-controller="ItemFormCtrl"
             input.radio_button type='radio' name="transcriptType" value="premium" ng-model='item.transcriptType' ng-click="premiumSelected=true"
             label.radio-label
               | Premium
-              span.charge ng-show="premiumSelected"  $22/hour will be charged to your credit card
+              span.charge ng-show="premiumSelected"  $#{Billable::OVERAGE_HOURLY_RATE}/hour will be charged to your credit card
         .control-group
           label.control-label
             | Upload Images
