@@ -57,6 +57,8 @@ meta view-head="view-head" property="og:type" content="article"
 
   //Facebook share button
   a ng-show="collection.itemsVisibleByDefault" facebook="facebook" class="facebookShare" data-url='https://www.popuparchive.com/collections/{{collection.id}}/items/{{item.id}}'
+  //Twitter button
+  a twitter="twitter" class="tweetButton" data-lang="en" data-count='none' data-url='https://www.popuparchive.com/collections/{{collection.id}}/items/{{item.id}}' data-via='PopUpArchive' data-size="medium" data-text='{{item.title}}'
 
   //Description      
   .row-fluid
