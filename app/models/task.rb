@@ -216,13 +216,16 @@ class Task < ActiveRecord::Base
     # cancelled jobs are final.
     return false if status == CANCELLED
 
+    # finished jobs are ok
+    return false if status == COMPLETE
+
     # older than MAX_WORKTIME and incomplete
     ago = (DateTime.now - (MAX_WORKTIME.fdiv(86400))).utc
-    if status != COMPLETE && ago > created_at
+    if ago > created_at
       return true
 
     # job claims to be finished but task hasn't heard that yet.
-    elsif status != COMPLETE && results['status'] == COMPLETE
+    elsif results['status'] == COMPLETE
       return true
 
     # ok
