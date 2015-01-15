@@ -113,9 +113,10 @@ class Tasks::SpeechmaticsTranscribeTask < Task
   def stuck?
     # cancelled jobs are final.
     return false if status == CANCELLED
+    return false if status == COMPLETE
 
     # older than max worktime and incomplete
-    if status != COMPLETE && (DateTime.now.to_time - MAX_WORKTIME).to_datetime.utc > created_at
+    if (DateTime.now.to_time - MAX_WORKTIME).to_datetime.utc > created_at
       return true
 
     # we failed to register a SM job_id
