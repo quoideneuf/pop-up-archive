@@ -5,12 +5,11 @@ angular.module("Directory.searches.filters", [])
     var val = text;
     if (val.match(/(.+_id):\"(\d+)-(.*)\"/)) {
       val = val.replace(/(.+)_id:\"(\d+)-(.*)\"/,"\"$3\"");
-    } else {
-      val = val.replace(/\w+:/,'');
     }
 
     return val;
   }
+
 })
 .filter('highlightMatches', function() {
   var ary = [];

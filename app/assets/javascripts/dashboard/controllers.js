@@ -17,8 +17,7 @@ angular.module('Directory.dashboard.controllers', ['Directory.loader', 'Director
   }; 
   minutes();
 
-  $scope.subscribe = function () {
-    window.location = "/users/sign_up?plan_id=community";
+  $scope.getStarted = function () {
     mixpanel.track(
       "Clicked Get Started"
     );
