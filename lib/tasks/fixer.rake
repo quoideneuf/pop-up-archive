@@ -236,5 +236,50 @@ namespace :fixer do
 
   end # task
 
+#########################################################################################################
+  desc "fix broken audio file links"
+  task sc_fix: [:environment] do
+    filename = ENV['FILE'] or raise "FILE required"
+    File.readlines(filename).each do |line|
+      item_id = line.chomp
+      item = Item.find item_id
+      item.audio_files.each do |af|
+        if af.stuck?
+          puts '='*80
+          puts "af #{af.id} #{af.current_status}"
+          puts "token=#{af.item.token}"
+          puts "url=#{af.url}"
+          puts "dest_path=#{af.destination_path}"
+          puts "process_file_url=#{af.process_file_url}"
+          copy_url = URI(af.tasks.copy.valid.first.identifier)
+          puts "actual=#{copy_url}"
+          bucket = copy_url.host
+          real_token = bucket+'/'+copy_url.path.split(/\//)[1]
+          puts "real_token=#{real_token}"
+          cmd = "aws ls #{real_token}"
+          puts "#{cmd}"
+          #system(cmd)
+          aws_info = `#{cmd}`.split("\n")
+          orig_path = nil
+          aws_info.grep(/^\|/).slice(2..-1).each do |awsi|
+            aws_parts = awsi.split(/\ *\|\ */)
+            puts "aws_parts=#{aws_parts.inspect}"
+            orig_path = aws_parts[6]
+            if orig_path.match(/\S/)
+              orig_filename = File.basename(orig_path)
+              copier = "aws copy #{bucket}/#{af.item.token}/#{orig_filename} /#{bucket}/#{orig_path}"
+              deleter = "aws rm /#{bucket}/#{orig_path}"
+              puts "copier=#{copier}"
+              puts "deleter=#{deleter}"
+              system(copier) && system(deleter)
+            end
+          end
+          #resp = Utils::head_resp(af.url, 1)
+          #puts resp.inspect
+        end
+      end
+    end
+  end
+
 end
 
