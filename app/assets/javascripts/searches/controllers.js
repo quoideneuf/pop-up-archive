@@ -19,7 +19,6 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
   $scope.$watch('location.search().query', function (searchquery) {
     $scope.query = new Query(searchquery);
     fetchPage();
-    console.log(searchquery);
     //Display the correct Sort Option. Recency for empty queries and relevancy for all others.
     if (searchquery) {
       $scope.selectedSort = $scope.sortOptions[0];
@@ -105,6 +104,14 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
     $scope.$watch('search', function (search) {
       SearchResults.setResults(search);
     });
+  }
+
+  $scope.searchEntity = function(entity, item, collection) {
+    mixpanel.track("Entity search", {
+      "Location": "Search Results Page",
+      "Entity": entity,
+      "Item": item,
+      "Collection": collection});
   }
   
   $scope.letters= ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];

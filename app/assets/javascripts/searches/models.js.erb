@@ -182,7 +182,8 @@ angular.module('Directory.searches.models', ['RailsModel', 'Directory.items.mode
       if (angular.isArray(queryString)) {
         return queryString;
       }
-      var match = queryString.match(/([^,\"]*\"[^\"]+\"|[^,]+)/g);
+      //don't break apart strings in quotes or in parentheses
+      var match = queryString.match(/(\([^\)]+\))|[^,\"]*\"[^\"]+\"|[^,]+/g);
       if (match) {
         return getUnique(match);
       } else {
@@ -254,18 +255,19 @@ angular.module('Directory.searches.models', ['RailsModel', 'Directory.items.mode
       var val = part;
       if (part.match(/(.+_id):\"(\d+)-(.*)\"/)) {
         val = part.replace(/(.+_id):\"(\d+)-(.*)\"/,"$1:\"$2\"");
-      }
+      } 
       parts.push(val);
     });
     return parts;
-  };
+  }
 
   Query.prototype.toSearchQuery = function () {
     var string = this.partsForQuery().join(" AND ");
     if (string == '') {
       return null;
+    } else {
+      return string; 
     }
-    return string;
   }
 
   Query.prototype.toSearchQueryParam = function () {
