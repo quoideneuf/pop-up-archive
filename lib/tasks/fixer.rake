@@ -15,7 +15,7 @@ namespace :fixer do
     puts "Finding all tasks with status mismatch..."
     puts "Will try to recover these types: #{ recover_types.keys.inspect }"
     mismatched_tasks = Task.get_mismatched_status('working')
-    mismatched_report = Hash.new{ |h,k| h[k] = 1 }
+    mismatched_report = Hash.new{ |h,k| h[k] = 0 }
     mismatched_tasks.each do |task|
       mismatched_report[task.type] += 1
       if limit and limit.to_i <= mismatched_report[task.type]
@@ -44,7 +44,7 @@ namespace :fixer do
     limit   = ENV['LIMIT']
     ok_to_recover = ENV['RECOVER']
     recover_types = Hash[ ENV['RECOVER_TYPES'] ? ENV['RECOVER_TYPES'].split(/\ *,\ */).map{|t| [t, true]} : [] ]
-    report     = Hash.new{ |h,k| h[k] = 1 }
+    report     = Hash.new{ |h,k| h[k] = 0 }
     unfinished = Task.incomplete
     verbose and puts "Nudging #{unfinished.count} unfinished tasks"
     verbose and puts "Will try to recover these types: #{ recover_types.keys.inspect }"
@@ -80,7 +80,7 @@ namespace :fixer do
     limit   = ENV['LIMIT']
     recover = ENV['RECOVER']
 
-    report     = Hash.new{ |h,k| h[k] = 1 }
+    report     = Hash.new{ |h,k| h[k] = 0 }
     unfinished = Task.upload.incomplete
     verbose and puts "Nudging #{unfinished.count} unfinished Upload tasks"
  
@@ -180,7 +180,7 @@ namespace :fixer do
 
           if task.status == "cancelled"
             report['cancelled, no job_id'] += 1
-          elsif task.status == "complete"
+          elsif task.status == "complete" || task.status == "working"
             report['recovered'] += 1
           else
             puts "Called Task.find(#{task.id}).recover! and ended with status '#{task.status}'"
