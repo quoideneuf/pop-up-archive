@@ -7,6 +7,11 @@ require 'pp'
 # % heroku run --size=2X rake search:mindex NEWRELIC_ENABLE=false NPROCS=2 BATCH=200 -a pop-up-archive
 #
 # add the FORCE=y option to nuke the whole index prior to re-building it
+#
+# to stage a tmp index while the production index continues to serve live requests:
+#
+# % heroku run --size=2X rake search:stage search:commit NEWRELIC_ENABLE=false NPROCS=2 BATCH=200 -a pop-up-archive
+#
 
 namespace :search do
   desc 're-index all items'
@@ -33,6 +38,24 @@ namespace :search do
     nprocs     = nprocs.to_i
     batch_size = batch_size.to_i
 
+    create_mindex({
+      :klass => klass, 
+      :idx_name => klass.index_name,
+      :nprocs => nprocs.to_i, 
+      :batch_size => batch_size.to_i, 
+      :max => max, 
+      :force => ENV['FORCE']
+    })
+  end
+
+  def create_mindex(opts)
+    klass    = opts[:klass] or raise "klass required"
+    idx_name = opts[:idx_name] or raise "idx_name required"
+    nprocs   = opts[:nprocs] or raise "nprocs required"
+    batch_size = opts[:batch_size] or raise "batch_size required"
+    max        = opts[:max]
+    force      = opts[:force]
+
     # calculate array of offsets based on nprocs
     total_expected = klass.count
     pool_size = (total_expected / nprocs).round
@@ -45,11 +68,11 @@ namespace :search do
       #puts "chunk: size=#{chunk.size} #{chunk.first}..#{chunk.last}"
       offsets.push( chunk.first )
     end
-    puts "total=#{total_expected} nprocs=#{nprocs} pool_size=#{pool_size} offsets=#{offsets} "
+    puts "index=#{idx_name} total=#{total_expected} nprocs=#{nprocs} pool_size=#{pool_size} offsets=#{offsets} "
 
-    if ENV['FORCE']
+    if force
       puts "Force creating new index"
-      klass.__elasticsearch__.create_index! force: true
+      klass.__elasticsearch__.create_index! force: true, index: idx_name
       klass.__elasticsearch__.refresh_index!
     end
 
@@ -98,65 +121,118 @@ namespace :search do
     Process.waitall
   end
 
-
   desc 'stage a reindex of all items'
   task stage: [:environment] do
-    abort("TODO re-write to use elasticsearch tasks")
-    Tire.index('items_ip').delete
-    Tire.index(items_index_name) do
-      add_alias 'items_ip'
-      create mappings: Item.tire.mapping_to_hash
-      import_all_items self
-      remove_alias 'items_ip'
-      Tire.index('items_st') do
-        remove_alias 'items_st'
-        delete
+    nprocs     = ENV['NPROCS'] || 1
+    batch_size = ENV['BATCH']  || 100
+    max        = ENV['MAX']    || nil
+    klass      = eval( ENV['CLASS']  || 'Item' )
+    nprocs     = nprocs.to_i
+    batch_size = batch_size.to_i
+
+    tmp_idx_name = tmp_index_name(klass)
+    stage_idx_name = klass.index_name + '_staged'
+
+    # create temp index
+    create_mindex({
+      :klass => klass,
+      :idx_name => tmp_idx_name,
+      :nprocs => nprocs.to_i,
+      :batch_size => batch_size.to_i,
+      :max => max,
+      :force => true
+    })
+
+    # create alias
+    es_client = klass.__elasticsearch__.client
+    
+    es_client.indices.delete index: stage_idx_name rescue false
+    es_client.indices.update_aliases body: {
+      actions: [
+        { add: { index: tmp_idx_name, alias: stage_idx_name } },
+      ]
+    }
+
+    # clean up
+    old_aliases = es_client.indices.get_aliases(index: stage_idx_name).keys
+    old_aliases.each do |alias_name|
+      begin
+        if Time.parse(alias_name.gsub(/^.+_/, '')) < 1.weeks.ago
+          es_client.indices.delete index: alias_name
+          puts "Cleaned up old alias #{alias_name}"
+        end
+      rescue => err
+        puts "Failed to clean up alias #{alias_name}: #{err}"
       end
-      add_alias 'items_st'
-      puts "finshed generating staging index #{name}"
     end
+
+    puts "[#{Time.now.utc.iso8601}] #{klass} index staged as #{stage_idx_name}"
   end
 
   desc 'commit the staged index to be the new index'
-  task :commit do
-    abort("TODO re-write to use elasticsearch tasks")
-    Tire.index('items').remove_alias('items')
-    Tire.index 'items_st' do
-      add_alias 'items'
-      remove_alias 'items_st'
+  task commit: [:environment] do
+    klass = eval( ENV['CLASS']  || 'Item' )
+    stage_idx_name = klass.index_name + '_staged'
+
+    es_client = klass.__elasticsearch__.client
+
+    # find the newest tmp index to which staged is aliased.
+    # we need this because we want to re-alias it.
+    stage_aliased_to = nil
+    stage_aliases = es_client.indices.get_aliases(index: stage_idx_name)
+    stage_aliases.each do |k,v|
+      stage_aliased_to ||= k
+      stage_tstamp = stage_aliased_to.gsub(/^.+_/, '')
+      tstamp = k.gsub(/^.+_/, '')
+      if Time.parse(stage_tstamp) < Time.parse(tstamp)
+        stage_aliased_to = k
+      end
     end
-    puts "promoted staging to items"
-  end
-
-
-  def items_index_name
-    "items-rebuild-#{Digest::SHA1.hexdigest(Time.now.to_s)[0,8]}"
-  end
-
-  def set_up_progress
-    print '|' + ' ' * 100 + '|' + '     '
-    $stdout.flush
-  end
-
-  def progress(amount)
-    print "\b" * 107
-    print '|' + '#' * amount + ' ' * (100 - amount) + '| '
-    print ' ' if amount < 10
-    print ' ' if amount < 100
-    print amount
-    print '%'
-    $stdout.flush
-  end
-
-  def import_all_items(index)
-    count = Item.count
-    done = 0
-    set_up_progress
-    Item.includes(:collection, :hosts, :creators, :interviewers, :interviewees, :producers, :geolocation, :contributors, :guests, :confirmed_entities, :low_scoring_entities, :middle_scoring_entities, :high_scoring_entities).includes(audio_files: :transcripts).find_in_batches batch_size: 10 do |items|
-      index.import items
-      done += items.size
-      progress done * 100 / count
+    if !stage_aliased_to
+      raise "Cannot identify index aliased to by '#{stage_idx_name}'"
     end
-    puts
+
+    # the renaming actions (performed atomically by ES)
+    rename_actions = [
+      { remove: { index: stage_aliased_to, alias: stage_idx_name } },
+      {    add: { index: stage_idx_name, alias: klass.index_name } }
+    ]
+
+    # zap any existing index known as index_name,
+    # but do it conditionally since it is reasonable that it does not exist.
+    to_delete = []
+    existing_live_index = es_client.indices.get_aliases(index: klass.index_name)
+    existing_live_index.each do |k,v|
+       
+      # if the index is merely aliased, remove its alias as part of the aliasing transaction.
+      if k != klass.index_name
+        rename_actions.unshift({ remove: { index: k, alias: klass.index_name } })
+
+        # and mark it for deletion when we've successfully updated aliases
+        to_delete.push k
+
+      # otherwise, this is a real, unaliased index with this name, so it must be deleted.
+      # (This usually happens the first time we implement the aliasing scheme against an existing installation.)
+      else
+        es_client.indices.delete index: klass.index_name rescue false
+      end
+    end
+
+    # re-alias
+    es_client.indices.update_aliases body: { actions: rename_actions }
+
+    # clean up
+    to_delete.each do |idxname|
+      es_client.indices.delete index: idxname rescue false
+    end
+
+    # all done.
+    puts "[#{Time.now.utc.iso8601}] #{klass} promoted #{stage_idx_name} to #{klass.index_name}"
   end
+
+
+  def tmp_index_name(klass)
+    klass.index_name + '_' + Time.now.strftime('%Y%m%d%H%M%S')
+  end
+
 end
