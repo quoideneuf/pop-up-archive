@@ -95,7 +95,8 @@ namespace :search do
           checkpoint = true
         end
 
-        klass.__elasticsearch__.import :return => 'errors', 
+        klass.__elasticsearch__.import :return => 'errors',
+        :index => idx_name,
         :start => start_at,
         :batch_size => batch_size    do |resp|
           # show errors immediately (rather than buffering them)
