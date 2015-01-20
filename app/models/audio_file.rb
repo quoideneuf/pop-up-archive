@@ -120,6 +120,14 @@ class AudioFile < ActiveRecord::Base
     self.should_trigger_fixer_copy = !!url
   end
 
+  def player_url
+    if transcoded?
+      public_url({:extension => 'mp3'})
+    else
+      public_url
+    end
+  end
+
   def url(*args)
     if has_file? and !file.nil?
       file.try(:url, *args) 

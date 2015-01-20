@@ -42,7 +42,7 @@ class ItemResultsPresenter < BasicObject
 
         # child objects
         fres[:audio_files] = result.audio_files.map do |af|
-          { :url => af.public_url(extension: :mp3), :id => af.id, :filename => af.filename }
+          { :url => af.player_url, :id => af.id, :filename => af.filename }
         end
         fres[:image_files] = result.image_files.map do |imgf|
           { :filename => imgf.filename, :url => imgf.urls, :upload_id => imgf.upload_id, :original_file_url => imgf.original_file_url }
