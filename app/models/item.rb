@@ -4,7 +4,7 @@ class Item < ActiveRecord::Base
 
   include Searchable
 
-  index_name { Rails.env.test? ? "test_#{items}" : ENV['ITEMS_INDEX_NAME'] || 'items'}
+  index_name { Rails.env.test? ? "test_items" : ENV['ITEMS_INDEX_NAME'] || 'items'}
 
   DEFAULT_INDEX_PARAMS = {except: [:transcription, :rights, :storage_id, :token, :geolocation_id, :csv_import_id, :deleted_at]}
 
