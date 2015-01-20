@@ -4,24 +4,24 @@
 */
 
 requirejs.config({
-  baseUrl: 'assets'
+  baseUrl: require.toUrl('')
 });
 
 requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
   var sc = $("script");
   var rootUrl = null;
   $.each(sc, function(idx, tag) {
-    console.log(tag);
+    //console.log(tag);
     if (!tag.src || rootUrl) {
         return;
     }   
     var url = tag.src.match(/^(.+)\/assets\/tplayer-embed\.js\??/);
-    console.log(url);
+    //console.log(url);
     if (url && url.length && url[1]) {
         rootUrl = url[1];
     }   
   });
-  console.log('rootUrl:', rootUrl);
+  //console.log('rootUrl:', rootUrl);
   var loadCss = function(url) {
     var link = document.createElement("link");
     link.type = "text/css";
@@ -102,7 +102,7 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
           console.log("FAIL:", data, stat);
         })
         .done(function(data, stat, jqXHR) {
-          console.log("OK:", data, stat);
+          //console.log("OK:", data, stat);
           // look for HTML container, fetching it if necessary
           var containerId = '#pua-tplayer-'+fileId;
           var container   = $(containerId);
