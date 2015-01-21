@@ -10,7 +10,10 @@ class RecoverTaskWorker
     ActiveRecord::Base.connection_pool.with_connection do
       task = Task.find_by_id(task_id)
       begin
-        task.recover! if task
+        if task
+          task.recover!
+          task.owner.check_tasks
+        end
       rescue StateMachine::InvalidTransition => err
         logger.warn "RecoverTaskWorker: StateMachine::InvalidTransition: task: #{task_id}, err: #{err.message}"
       end
