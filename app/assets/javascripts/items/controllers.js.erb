@@ -371,7 +371,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         $scope.uploadAudioFiles(saveItem, uploadFiles);
         $scope.updateAudioFiles(saveItem, audioFiles);
         $scope.updateContributions(saveItem, contributions);
-        //prerenderRequest(saveItem);
+        prerenderRequest(saveItem);
         delete $scope.item;
         // console.log('scope after update', $scope);
         // $scope.item = saveItem;
@@ -390,7 +390,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         $scope.updateAudioFiles(saveItem, audioFiles);
         $scope.updateContributions(saveItem, contributions);
         $timeout(function(){ $scope.$broadcast('datasetChanged')}, 750);
-        //prerenderRequest(saveItem);
+        prerenderRequest(saveItem);
         delete $scope.item;
         // console.log('scope after create', $scope);
       });
