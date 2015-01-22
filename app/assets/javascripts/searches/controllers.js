@@ -111,7 +111,9 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
       "Location": "Search Results Page",
       "Entity": entity,
       "Item": item,
-      "Collection": collection});
+      "Collection": collection,
+      "User": $scope.currentUser.name + ' ' + $scope.currentUser.email
+     });    
   }
   
   $scope.letters= ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
