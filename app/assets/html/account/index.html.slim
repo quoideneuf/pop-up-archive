@@ -62,16 +62,17 @@
     .usage-organization ng-show="me.organization"
       h5 {{me.organization.name}}, This Month ({{me.organization.usage.thisMonth.period}})
       dl.dl-horizontal
-        dt Percentage
+        dt Usage
         dd.usage-meter
           .bar ng-style="{width: me.organization.usage.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
           .meter-words {{me.organization.usage.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Plan Hours
         dd.usage {{me.organization.usage.thisMonth.hours}}
         dt Total Cost
-        dd.usage {{me.organization.usage.thisMonth.cost | currency:"USD $"}}
+        dd.usage 
+          | {{me.organization.usage.thisMonth.cost | currency:"USD $"}}
           .overage ng-show="me.organization.usage.thisMonth.overage.cost"
-          |  ({{me.organization.usage.thisMonth.overage.hours}} overage hours * $#{Billable::OVERAGE_HOURLY_RATE}/hour)
+            |  ({{me.organization.usage.thisMonth.overage.hours}} overage hours * $#{Billable::OVERAGE_HOURLY_RATE}/hour)
         dt.subtotal ng-show="me.organization.usage.thisMonth.ondemand.hours" Premium Hours
         dd.subtotal ng-show="me.organization.usage.thisMonth.ondemand.hours" {{me.organization.usage.thisMonth.ondemand.hours}}
         dt.subtotal ng-show="me.organization.usage.thisMonth.ondemand.cost" Premium Cost
@@ -80,16 +81,17 @@
       h5 ng-show="me.organization" Me, This Month ({{me.usage.thisMonth.period}})
       h5 ng-hide="me.organization" This Month ({{me.usage.thisMonth.period}})
       dl.dl-horizontal
-        dt Percentage 
+        dt Usage 
         dd.usage-meter
           .bar ng-style="{width: me.usage.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
           .meter-words {{me.usage.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Hours
         dd.usage {{me.usage.thisMonth.hours}}
         dt Total Cost
-        dd.usage {{me.usage.thisMonth.cost | currency:"USD $"}}
+        dd.usage 
+          | {{me.usage.thisMonth.cost | currency:"USD $"}}
           .overage ng-show="me.organization.usage.thisMonth.overage.cost"
-          |  ({{me.organization.usage.thisMonth.overage.hours}} overage hours * $#{Billable::OVERAGE_HOURLY_RATE}/hour)
+            |  ({{me.organization.usage.thisMonth.overage.hours}} overage hours * $#{Billable::OVERAGE_HOURLY_RATE}/hour)
         dt.subtotal ng-show="me.usage.thisMonth.ondemand.hours" Premium Hours
         dd.subtotal ng-show="me.usage.thisMonth.ondemand.hours" {{me.usage.thisMonth.ondemand.hours}}
         dt.subtotal ng-show="me.usage.thisMonth.ondemand.cost" Premium Cost
