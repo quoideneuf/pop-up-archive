@@ -27,12 +27,16 @@ class FeedPopUp
  
   def add_entries(entries, collection)
     newItems = 0
+    oldest_entry = DateTime.parse(ENV['OLDEST_ENTRY'] || '1900-01-01')
     entries.each do |entry|
+      puts entry.published.inspect
+      next if entry.published < oldest_entry
       unless Item.where(identifier: id(entry), collection_id: collection.id).exists?
         item = add_item_from_entry(entry, collection)
         newItems += 1
       end
     end
+    newItems
   end
  
   def add_item_from_entry(entry, collection)
