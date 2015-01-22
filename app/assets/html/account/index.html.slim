@@ -63,7 +63,7 @@
       h5 {{me.organization.name}}, This Month ({{me.organization.usage.thisMonth.period}})
       dl.dl-horizontal
         dt Usage
-        dd.usage-meter
+        dd.usage-meter ng-class="{warning: me.organization.usage.thisMonth.secs >= me.totalMeteredStorage, full: me.organization.usage.thisMonth.secs >= me.totalMeteredStorage }"
           .bar ng-style="{width: me.organization.usage.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
           .meter-words {{me.organization.usage.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Plan Hours
@@ -82,7 +82,7 @@
       h5 ng-hide="me.organization" This Month ({{me.usage.thisMonth.period}})
       dl.dl-horizontal
         dt Usage 
-        dd.usage-meter
+        dd.usage-meter ng-class="{warning: me.usage.thisMonth.secs >= me.totalMeteredStorage, full: me.usage.thisMonth.secs >= me.totalMeteredStorage }"
           .bar ng-style="{width: me.usage.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
           .meter-words {{me.usage.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Hours
