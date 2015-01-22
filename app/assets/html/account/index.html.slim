@@ -34,7 +34,7 @@
       a href="/account/plan" Upgrade to a paid plan!
 .row-fluid
   .well.span6
-    h4 Account Information
+    h4 My Account
     hr/
     dl.dl-horizontal
       dt Name
@@ -44,17 +44,17 @@
       dt Current Plan
       dd {{ me.plan.name }}
   .well.span6
-    h4 Storage Information
+    h4 Storage Summary
     hr/  
     dl.dl-horizontal
       dt Internet Archive
       dd.usage-meter
-        .bar ng-style="{width: me.usedUnmeteredStorage / 36000000 + '%'}"
-        .meter-words {{me.usedUnmeteredStorage | timeCode: 'words'}} / UNLIMITED
+        .bar
+        .meter-words {{me.usedUnmeteredStorage | timeCode: 'words'}}
       dt Pop Up Archive 
-      dd.usage-meter ng-class="{warning: me.usedMeteredStorage >= me.totalMeteredStorage, full: me.usedMeteredStorage >= me.totalMeteredStorage }"
-        .bar ng-style="{width: me.usedMeteredStorage / me.totalMeteredStorage * 100 + '%'}"
-        .meter-words {{me.usedMeteredStorage | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
+      dd.usage-meter 
+        .bar 
+        .meter-words {{me.usedMeteredStorage | timeCode: 'words'}}
 
 .row-fluid
   .well.usage
@@ -62,10 +62,14 @@
     .usage-organization ng-show="me.organization"
       h5 {{me.organization.name}}, This Month ({{me.organization.usage.thisMonth.period}})
       dl.dl-horizontal
+        dt Percentage
+        dd.usage-meter
+          .bar ng-style="{width: me.organization.usage.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
+          .meter-words {{me.organization.usage.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Plan Hours
-        dd {{me.organization.usage.thisMonth.hours}}
+        dd.usage {{me.organization.usage.thisMonth.hours}}
         dt Total Cost
-        dd {{me.organization.usage.thisMonth.cost | currency:"USD $"}}
+        dd.usage {{me.organization.usage.thisMonth.cost | currency:"USD $"}}
         dt.subtotal ng-show="me.organization.usage.thisMonth.ondemand.hours" Premium Hours
         dd.subtotal ng-show="me.organization.usage.thisMonth.ondemand.hours" {{me.organization.usage.thisMonth.ondemand.hours}}
         dt.subtotal ng-show="me.organization.usage.thisMonth.ondemand.cost" Premium Cost
@@ -74,10 +78,14 @@
       h5 ng-show="me.organization" Me, This Month ({{me.usage.thisMonth.period}})
       h5 ng-hide="me.organization" This Month ({{me.usage.thisMonth.period}})
       dl.dl-horizontal
+        dt Percentage 
+        dd.usage-meter
+          .bar ng-style="{width: me.usage.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
+          .meter-words {{me.usage.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Hours
-        dd {{me.usage.thisMonth.hours}}
+        dd.usage {{me.usage.thisMonth.hours}}
         dt Total Cost
-        dd {{me.usage.thisMonth.cost | currency:"USD $"}}
+        dd.usage {{me.usage.thisMonth.cost | currency:"USD $"}}
         dt.subtotal ng-show="me.usage.thisMonth.ondemand.hours" Premium Hours
         dd.subtotal ng-show="me.usage.thisMonth.ondemand.hours" {{me.usage.thisMonth.ondemand.hours}}
         dt.subtotal ng-show="me.usage.thisMonth.ondemand.cost" Premium Cost
