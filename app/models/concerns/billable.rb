@@ -254,7 +254,7 @@ module Billable
   # the transcripts themselves, unlike overages, which use a constant OVERAGE_HOURLY_RATE.
   def usage_summary(now=DateTime.now)
     summary = { 
-      this_month: { hours: 0, overage: {}, ondemand: {}, cost: 0.00 },  
+      this_month: { secs: 0, hours: 0, overage: {}, ondemand: {}, cost: 0.00 },  
       current: [], 
       history: [], 
     }   
@@ -266,6 +266,7 @@ module Billable
       msum = { 
         period: mu.yearmonth,
         type:   mu.use,
+        secs:   mu.value.to_i,
         hours:  mu.value.fdiv(3600).round(3),
         cost:   mu.retail_cost.round(2),  # expose only what we charge customers, whether we charge them or not.
       }
@@ -290,12 +291,14 @@ module Billable
           summary[:this_month][:ondemand][:hours] = msum[:hours].round(3)
           summary[:this_month][:cost]            += msum[:cost]
           summary[:this_month][:hours]           += msum[:hours].round(3)
+          summary[:this_month][:secs]            += msum[:secs]
 
         # basic plan, basic usage. 
         elsif msum[:type] == MonthlyUsage::BASIC_TRANSCRIPTS
 
            # month-to-date hours
            summary[:this_month][:hours] += msum[:hours].round(3)
+           summary[:this_month][:secs]  += msum[:secs]
 
            # check for overage
            if msum[:hours] > plan_hours
@@ -311,6 +314,7 @@ module Billable
     else
       summary[:current].each do |msum|
         summary[:this_month][:hours] += msum[:hours].round(3)
+        summary[:this_month][:secs]  += msum[:secs]
         summary[:this_month][:cost]  += msum[:cost]
 
         if msum[:type] == MonthlyUsage::PREMIUM_TRANSCRIPTS
@@ -320,6 +324,12 @@ module Billable
             summary[:this_month][:cost] += summary[:this_month][:overage][:cost]
           end
         end
+      end
+      if summary[:this_month][:overage][:cost]
+        # since we had an overage for the month, ignore any specific retail costs for this month,
+        # and treat the overage as the total for the month. This is because we don't want to charge 2x
+        # if an on-demand retail cost contributed to the overage.
+        summary[:this_month][:cost] = summary[:this_month][:overage][:cost]
       end
     end
 

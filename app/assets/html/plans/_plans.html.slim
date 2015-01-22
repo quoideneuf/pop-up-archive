@@ -30,7 +30,7 @@
             li ng-show="isPremiumPlan(plan)" Premium Machine Transcripts 
             li ng-show="!isPremiumPlan(plan)" Basic Machine Transcripts
             li ng-show="plan.name=='Community'" (2 min per file)
-            li ng-show="!isPremiumPlan(plan)" Order Premium Transcripts On Demand ($22/hr)
+            li ng-show="!isPremiumPlan(plan)" Order Premium Transcripts On Demand ($#{Billable::OVERAGE_HOURLY_RATE}/hr)
             ul ng-show="isPremiumPlan(plan)"
               li Improved Accuracy
               li Automatic Speaker Differentiation
@@ -181,7 +181,7 @@
 
           li 
             p.question What happens if I go over my monthly hour limit?
-            p You will be notified upon login when you have gone over your hourly limit. You will still be able to pay as you go for Premium Transcripts at the rate of $22/hr, but will be unable to upload anything at the plan rate unless you upgrade or wait until the next month.
+            p You will be notified upon login when you have gone over your hourly limit. You will still be able to pay as you go for Premium Transcripts at the rate of $#{Billable::OVERAGE_HOURLY_RATE}/hr, but will be unable to upload anything at the plan rate unless you upgrade or wait until the next month.
           li 
             p.question Do unused hours carry over to the next month? 
             p Unused hours do not carry over. The number of hours available to your plan will reset each month from the day you signed up.
@@ -192,6 +192,6 @@
             p.question How am I billed for Premium Transcripts ordered on demand?
             p The cost of on demand Premium Transcripts, orderable on Community and Professional plans, will be added to your bill and charged at the end of the month using the credit card stored during sign up (Professional) or during your first Premium Transcript order (Community).
 
-            p On demand Premium Transcripts are charged at the rate of $22/hr. You can review all of the charges to expect beforehand on your account page.
+            p On demand Premium Transcripts are charged at the rate of $#{Billable::OVERAGE_HOURLY_RATE}/hr. You can review all of the charges to expect beforehand on your account page.
 
   
