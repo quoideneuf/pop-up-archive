@@ -70,6 +70,8 @@
         dd.usage {{me.organization.usage.thisMonth.hours}}
         dt Total Cost
         dd.usage {{me.organization.usage.thisMonth.cost | currency:"USD $"}}
+          .overage ng-show="me.organization.usage.thisMonth.overage.cost"
+          |  ({{me.organization.usage.thisMonth.overage.hours}} overage hours * $#{Billable::OVERAGE_HOURLY_RATE}/hour)
         dt.subtotal ng-show="me.organization.usage.thisMonth.ondemand.hours" Premium Hours
         dd.subtotal ng-show="me.organization.usage.thisMonth.ondemand.hours" {{me.organization.usage.thisMonth.ondemand.hours}}
         dt.subtotal ng-show="me.organization.usage.thisMonth.ondemand.cost" Premium Cost
@@ -86,6 +88,8 @@
         dd.usage {{me.usage.thisMonth.hours}}
         dt Total Cost
         dd.usage {{me.usage.thisMonth.cost | currency:"USD $"}}
+          .overage ng-show="me.organization.usage.thisMonth.overage.cost"
+          |  ({{me.organization.usage.thisMonth.overage.hours}} overage hours * $#{Billable::OVERAGE_HOURLY_RATE}/hour)
         dt.subtotal ng-show="me.usage.thisMonth.ondemand.hours" Premium Hours
         dd.subtotal ng-show="me.usage.thisMonth.ondemand.hours" {{me.usage.thisMonth.ondemand.hours}}
         dt.subtotal ng-show="me.usage.thisMonth.ondemand.cost" Premium Cost

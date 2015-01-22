@@ -325,6 +325,12 @@ module Billable
           end
         end
       end
+      if summary[:this_month][:overage][:cost]
+        # since we had an overage for the month, ignore any specific retail costs for this month,
+        # and treat the overage as the total for the month. This is because we don't want to charge 2x
+        # if an on-demand retail cost contributed to the overage.
+        summary[:this_month][:cost] = summary[:this_month][:overage][:cost]
+      end
     end
 
     # return
