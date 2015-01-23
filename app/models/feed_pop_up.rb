@@ -5,13 +5,14 @@ class FeedPopUp
   # adding this for testing feed parsing in an easier way
   attr_accessor :dry_run
   
-  def self.update_from_feed(feed_url, collection_id, dry_run=false)
-    feed_pop_up = FeedPopUp.new(dry_run)
+  def self.update_from_feed(feed_url, collection_id, dry_run=false, oldest_entry=nil)
+    feed_pop_up = FeedPopUp.new(dry_run, oldest_entry)
     feed_pop_up.parse(feed_url, collection_id)
   end
  
-  def initialize(dry_run=false)
+  def initialize(dry_run=false, oldest_entry='1900-01-01')
     self.dry_run = dry_run
+    @oldest_entry = DateTime.parse(oldest_entry)
   end
  
   def parse(feed_url, collection_id)
@@ -27,10 +28,8 @@ class FeedPopUp
  
   def add_entries(entries, collection)
     newItems = 0
-    oldest_entry = DateTime.parse(ENV['OLDEST_ENTRY'] || '1900-01-01')
     entries.each do |entry|
-      puts entry.published.inspect
-      next if entry.published < oldest_entry
+      next if entry.published < @oldest_entry
       unless Item.where(identifier: id(entry), collection_id: collection.id).exists?
         item = add_item_from_entry(entry, collection)
         newItems += 1
