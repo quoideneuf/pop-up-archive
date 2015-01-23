@@ -477,6 +477,8 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   $scope.addItemFromURL = function() {
     var inputField = angular.element('#remote-item-url');
     var remoteFileUrl = inputField.val();
+    // clear field for re-use
+    inputField.val('');
     //console.log('remoteFileUrl', remoteFileUrl);
     if (!remoteFileUrl || !remoteFileUrl.length) {
       return;
