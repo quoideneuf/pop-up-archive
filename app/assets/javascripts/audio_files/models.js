@@ -1,6 +1,6 @@
 angular.module('Directory.audioFiles.models', ['RailsModel', 'S3Upload'])
 .factory('AudioFile', ['$window', 'Model', 'S3Upload', '$http', function ($window, Model, S3Upload, $http) {
-  var AudioFile = Model({url:'/api/items/{{itemId}}/audio_files/{{id}}', name: 'audio_file', only: ['url', 'filename']});
+  var AudioFile = Model({url:'/api/items/{{itemId}}/audio_files/{{id}}', name: 'audio_file', only: ['remoteFileUrl', 'url', 'filename']});
 
   AudioFile.transcribeRatePerMinute = 2;
 

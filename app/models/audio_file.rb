@@ -18,7 +18,7 @@ class AudioFile < ActiveRecord::Base
 
   belongs_to :storage_configuration, class_name: "StorageConfiguration", foreign_key: :storage_id
 
-  attr_accessible :storage_id
+  attr_accessible :storage_id, :remote_file_url
 
   mount_uploader :file, ::AudioFileUploader
 
