@@ -375,7 +375,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         delete $scope.item;
 
         // reload current page so we can see the change
-        $route.reload();
+        $timeout(function() { $route.reload() }, 1000);
 
         // console.log('scope after update', $scope);
         // $scope.item = saveItem;
@@ -398,7 +398,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         delete $scope.item;
 
         // reload current page so we can see the change
-        $route.reload();
+        $timeout(function() { $route.reload() }, 1000);
 
         // console.log('scope after create', $scope);
       });
