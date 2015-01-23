@@ -52,6 +52,15 @@ section ng-controller="ItemFormCtrl"
                 td.file-remove
                   a href="#" ng-click="removeAudioFile(audioFile)" style='text-decoration: none; color: #da4f49;'
                     i.icon-remove-sign
+            
+          / p.alert.alert-info.pull-right 
+          /   i.icon-star-empty
+          /   |   Upload and save one audio file at a time. Click "Add Files to Item" only for multi-part recordings.
+
+          .clearfix.controls
+            span.pull-right file-button="" ng-hide="remoteFileUrl"
+              button.btn Add Files to Item
+
         .control-group ng-show="remoteFileUrl"
           label.control-label
             | Add File
@@ -66,14 +75,6 @@ section ng-controller="ItemFormCtrl"
                   a href="#" ng-click="remoteFileUrl=''" style='text-decoration: none; color: #da4f49;'
                     i.icon-remove-sign
 
-            
-          / p.alert.alert-info.pull-right 
-          /   i.icon-star-empty
-          /   |   Upload and save one audio file at a time. Click "Add Files to Item" only for multi-part recordings.
-
-          .clearfix.controls
-            span.pull-right file-button="" ng-hide="remoteFileUrl"
-              button.btn Add Files to Item
 
         .control-group ng-show='item.id > 0'
           label.control-label
