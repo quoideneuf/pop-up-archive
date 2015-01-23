@@ -16,7 +16,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   }
 
 }])
-.controller('ItemCtrl', ['$scope', '$timeout', '$q', '$modal', '$http', 'Item', 'Loader', 'Me', '$routeParams', 'Collection', 'Entity', '$location', 'SearchResults', 'Storage', '$window', 'Speaker', function ItemCtrl($scope, $timeout, $q, $modal, $http, Item, Loader, Me, $routeParams, Collection, Entity, $location, SearchResults, Storage, $window, Speaker) {
+.controller('ItemCtrl', ['$scope', '$timeout', '$q', '$modal', '$http', '$route', 'Item', 'Loader', 'Me', '$routeParams', 'Collection', 'Entity', '$location', 'SearchResults', 'Storage', '$window', 'Speaker', function ItemCtrl($scope, $timeout, $q, $modal, $http, $route, Item, Loader, Me, $routeParams, Collection, Entity, $location, SearchResults, Storage, $window, Speaker) {
 
   $scope.Storage = Storage;
 
@@ -373,6 +373,10 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         $scope.updateContributions(saveItem, contributions);
         prerenderRequest(saveItem);
         delete $scope.item;
+
+        // reload current page so we can see the change
+        $route.reload();
+
         // console.log('scope after update', $scope);
         // $scope.item = saveItem;
         // if ($scope.item != $scope.$parent.item) {
@@ -392,6 +396,10 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         $timeout(function(){ $scope.$broadcast('datasetChanged')}, 750);
         prerenderRequest(saveItem);
         delete $scope.item;
+
+        // reload current page so we can see the change
+        $route.reload();
+
         // console.log('scope after create', $scope);
       });
     }
