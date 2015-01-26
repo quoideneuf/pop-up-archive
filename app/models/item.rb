@@ -247,15 +247,14 @@ class Item < ActiveRecord::Base
     collection_was = Collection.find(collection_id_was)
     collection_is  = Collection.find(collection_id)
 
-    # if this is the same storage bucket and provider, leave it be
-    return true if (collection_was.default_storage == collection_is.default_storage)
-
-    # ----------
-    # OK - if we are here, then we need to move the item and deal with the consequences
-    # ----------
-
     # set the item visibility to that of the new collection
     self.is_public = collection_is.items_visible_by_default
+
+    # if this is the same storage bucket and provider, then flipping is_public (above)
+    # is all we are required to do.
+    return true if (collection_was.default_storage == collection_is.default_storage)
+
+    # if we get here, then move the associated assets too.
 
     # move each audio file to new collection storage
     self.audio_files.each do |af|
