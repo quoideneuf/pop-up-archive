@@ -153,6 +153,10 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     return i;
   }
 
+  Item.prototype.titleURISafe = function() {
+    return encodeURIComponent(this.formattedTitle.replace(/\./g, '&#46;'));
+  }
+
   Item.prototype.getDurationString = function (secs) {
     var self = this;
     if (!secs) secs = this.duration;

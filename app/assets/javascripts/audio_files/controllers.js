@@ -1,5 +1,5 @@
 angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
-.controller("AudioFileCtrl", ['$scope', '$timeout', '$modal', 'Player', 'Me', 'TimedText', 'AudioFile', '$http', function($scope, $timeout, $modal, Player, Me, TimedText, AudioFile, $http) {
+.controller("AudioFileCtrl", ['$scope', '$timeout', '$modal', '$q', 'Player', 'Me', 'TimedText', 'AudioFile', '$http', function($scope, $timeout, $modal, $q, Player, Me, TimedText, AudioFile, $http) {
   $scope.fileUrl = $scope.audioFile.url;
 
   $scope.downloadLinks = [
@@ -31,6 +31,14 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
        "content": "<xmp><iframe frameborder='0' width='508' height='95' scrolling='no' seamless='yes' name='"+ $scope.item.formattedTitle + "' src='"+ $scope.my_path + "/embed_player/" + encodeURIComponent($scope.item.formattedTitle.replace(/\./g, '&#46;')) + "/" + $scope.audioFile.id + "/" + $scope.item.id + "/" + $scope.collection.id + "'></iframe></xmp>"
     };
   }
+
+  $scope.embedCodesModal = $modal({template: '/assets/items/embed_codes.html', persist: true, show: false, backdrop: 'static', scope: $scope, modalClass: 'embed-codes-modal'});
+
+  $scope.showEmbedCodesModal = function() {
+    $q.when($scope.embedCodesModal).then(function(modalEl) {
+      modalEl.modal('show');
+    });
+  };
 
   $scope.play = function () {
     $scope.audioFile = new AudioFile($scope.audioFile);
