@@ -186,10 +186,10 @@ class AudioFile < ActiveRecord::Base
     analyze_audio
 
     copy_original
+    
+    transcode_audio
 
     transcribe_audio
-
-    transcode_audio
 
   rescue Exception => e
     logger.error e.message
@@ -264,6 +264,8 @@ class AudioFile < ActiveRecord::Base
   end
 
   def transcribe_audio(user=self.user)
+    # only start if transcode is complete
+    return unless self.transcoded? or self.is_mp3?
     # don't bother if this is premium plan
     return if (user && user.plan.has_premium_transcripts?)
     # or if parent Item was created with premium-on-demand
