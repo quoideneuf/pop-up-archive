@@ -30,6 +30,7 @@ gem 'omniauth-twitter'
 gem 'omniauth-facebook'
 gem 'devise', '~> 3.2'
 gem 'devise_invitable', github: 'scambra/devise_invitable'
+gem 'switch_user'
 gem 'bootstrap_form'
 gem 'cancan'
 
