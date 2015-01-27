@@ -135,6 +135,11 @@ class Organization < ActiveRecord::Base
     user.organization_id = self.id
     user.save!
     colls.each do |coll|
+      if coll.items.size == 0
+        # empty collections are simply soft-deleted
+        coll.destroy
+        next
+      end
       self.collections << coll
       coll.set_owner(self)
     end
