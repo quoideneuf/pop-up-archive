@@ -126,4 +126,19 @@ class Organization < ActiveRecord::Base
     return org_ids
   end
 
+  # assigns the org to the user,
+  # gives Org access to all the User's collections,
+  # sets Org as billable owner of all User's collections.
+  def add_to_team(user)
+    # get billable collections first, since after we assign org, they will be == org's collections.
+    colls = user.billable_collections
+    user.organization_id = self.id
+    user.save!
+    colls.each do |coll|
+      self.collections << coll
+      coll.set_owner(self)
+    end
+    user
+  end
+
 end

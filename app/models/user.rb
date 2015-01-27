@@ -322,6 +322,10 @@ class User < ActiveRecord::Base
     return false
   end
 
+  def add_to_team(org)
+    org.add_to_team(self)
+  end
+
   private
 
   def delete_customer
