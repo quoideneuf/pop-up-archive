@@ -22,11 +22,6 @@ class Organization < ActiveRecord::Base
 
   has_many :monthly_usages, as: :entity
 
-  has_one  :uploads_collection_grant, class_name: 'CollectionGrant', as: :collector, conditions: {uploads_collection: true}
-  has_one  :uploads_collection, through: :uploads_collection_grant, source: :collection
-
-  after_commit :add_uploads_collection, on: :create
-
   scope :premium_usage_desc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) desc"
   scope :premium_usage_asc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) asc"
 
@@ -39,11 +34,6 @@ class Organization < ActiveRecord::Base
 
   def owns_collection?(coll)
     has_role?(:owner, coll)
-  end
-
-  def add_uploads_collection
-    self.uploads_collection = Collection.new(title: "Uploads", items_visible_by_default: false)
-    create_uploads_collection_grant collection: uploads_collection
   end
 
   def plan

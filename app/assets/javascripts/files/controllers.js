@@ -3,8 +3,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
 
   Me.authenticated(function (me) {
 
-    Loader.page(Collection.query(), Collection.get(me.uploadsCollectionId), 'Collections', $scope).then(function (data) {
-      $scope.uploadsCollection = data[1];
+    Loader.page(Collection.query(), 'Collections', $scope).then(function (data) {
     });
 
     // for uploads
@@ -70,7 +69,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
       var cols = $scope.collections;
       var mostRecent = cols[0];
       for (var i=1; i<cols.length; i++) {
-        if ((cols[i].id > mostRecent.id) && (cols[i].id != $scope.uploadsCollection.id)){
+        if ((cols[i].id > mostRecent.id)){
           mostRecent = cols[i];
         }
       }
@@ -235,6 +234,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
 
 
     $scope.uploadAudioFile = function (item, file) {
+      throw new Error("uploadAudioFile is deprecated along with My Uploads");
       var item = item;
       var alert = new Alert();
       alert.category = 'upload';
@@ -242,19 +242,13 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
       alert.progress = 1;
       alert.message  = file.name;
       alert.add();
-
-      if (item.collectionId == $scope.currentUser.uploadsCollectionId) {
-        alert.path = "/collections";
-      } else {
-        alert.path = item.link();
-      }
+      alert.path = item.link();
 
       file.alert = alert;
 
       var audioFile = item.addAudioFile(file,
       {
         onComplete: function () {
-          console.log($scope.item.id, $scope.currentUser.uploadsCollectionId);
           var msg = '"' + file.name + '" upload completed.';
           if (item.collectionId == $scope.currentUser.uploadsCollectionId && $route.current.controller == 'CollectionsCtrl') {
             msg = msg + ' To see transcripts and tags, move the item from My Uploads to a collection.';
@@ -317,6 +311,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
     }
 
     $scope.uploadImageFile = function (item, file) {
+      throw new Error('uploadImageFile is deprecated along with My Uploads');
       var item = item;
       var alert = new Alert();
       alert.category = 'upload';
@@ -324,12 +319,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
       alert.progress = 1;
       alert.message  = file.name;
       alert.add();
-
-      if (item.collectionId == $scope.currentUser.uploadsCollectionId) {
-        alert.path = "/collections";
-      } else {
-        alert.path = item.link();
-      }
+      alert.path = item.link();
 
       file.alert = alert;
 
