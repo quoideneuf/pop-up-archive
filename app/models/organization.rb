@@ -36,6 +36,15 @@ class Organization < ActiveRecord::Base
     has_role?(:owner, coll)
   end
 
+  def has_grant_for?(coll)
+    collection_grants.each do |cg|
+      if cg.collection_id == coll.id
+        return true
+      end
+    end
+    return false
+  end
+
   def plan
     owner ? owner.plan : SubscriptionPlanCached.community
   end

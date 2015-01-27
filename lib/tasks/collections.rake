@@ -38,4 +38,25 @@ namespace :collections do
     end
   end
 
+  desc "grant org permission on all users' collections"
+  task check_org_permissions: [:environment] do
+    verbose = ENV['VERBOSE'] || false
+    dry_run = ENV['DRY_RUN'] || false
+
+    Organization.find_in_batches do |orggrp|
+      orggrp.each do |org|
+        org.users.each do |user|
+          user.billable_collections.each do |coll|
+            verbose and puts "Checking Collection '#{coll.title}'[#{coll.id}] for Org #{org.name}[#{org.id}] via User #{user.name}[#{user.id}]"
+            if !org.has_grant_for?(coll)
+              verbose and puts "  Collection #{coll.id} needs grant for Org #{org.id} via User #{user.id}"
+              next if dry_run
+              org.collections << coll
+            end
+          end
+        end
+      end
+    end
+  end
+
 end
