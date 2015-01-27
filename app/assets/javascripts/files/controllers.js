@@ -234,7 +234,6 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
 
 
     $scope.uploadAudioFile = function (item, file) {
-      throw new Error("uploadAudioFile is deprecated along with My Uploads");
       var item = item;
       var alert = new Alert();
       alert.category = 'upload';
@@ -250,31 +249,14 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
       {
         onComplete: function () {
           var msg = '"' + file.name + '" upload completed.';
-          if (item.collectionId == $scope.currentUser.uploadsCollectionId && $route.current.controller == 'CollectionsCtrl') {
-            msg = msg + ' To see transcripts and tags, move the item from My Uploads to a collection.';
-            mixpanel.track(
-              "Audio Upload Complete",{
-                "Collection": "My Uploads",
-                "Storage": "Temporary",
-                "User": $scope.currentUser.name + ' ' + $scope.currentUser.email}
+          msg    += '<a ng-href="' + item.link() + '"> View and edit the item!</a>';
+          mixpanel.track(
+            "Audio Upload Complete", {
+              "Collection": item.collectionId + ' ' +item.collectionTitle,
+              "Storage": item.storage,
+              "User": $scope.currentUser.name + ' ' + $scope.currentUser.email
+            }
           );
-          } else if (item.collectionId == $scope.currentUser.uploadsCollectionId && $route.current.controller != 'CollectionsCtrl'){
-            msg = msg + ' To see transcripts and tags, move the item from My Uploads to a collection. <a href="/collections">Click here to get back to My Collections.</a>';
-            mixpanel.track(
-              "Audio Upload Complete", {
-                "Collection": "My Uploads",
-                "Storage": "Temporary",
-                "User": $scope.currentUser.name + ' ' + $scope.currentUser.email}
-            );
-          } else {
-            msg = msg + '<a ng-href="' + item.link() + '"> View and edit the item!</a>';
-            mixpanel.track(
-              "Audio Upload Complete", {
-                "Collection": item.collectionId + ' ' +item.collectionTitle,
-                "Storage": item.storage,
-                "User": $scope.currentUser.name + ' ' + $scope.currentUser.email}
-            );
-          }
 
           $scope.addMessage({
             'type': 'success',
@@ -311,7 +293,6 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
     }
 
     $scope.uploadImageFile = function (item, file) {
-      throw new Error('uploadImageFile is deprecated along with My Uploads');
       var item = item;
       var alert = new Alert();
       alert.category = 'upload';
@@ -328,13 +309,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
         onComplete: function () {
           // console.log($scope.item.id, $scope.currentUser.uploadsCollectionId);
           var msg = '"' + file.name + '" upload completed.';
-          if (item.collectionId == $scope.currentUser.uploadsCollectionId && $route.current.controller == 'CollectionsCtrl') {
-            msg = msg + ' To see transcripts and tags, move the item from My Uploads to a collection.';
-          } else if (item.collectionId == $scope.currentUser.uploadsCollectionId && $route.current.controller != 'CollectionsCtrl'){
-            msg = msg + ' To see transcripts and tags, move the item from My Uploads to a collection. <a href="/collections">Click here to get back to My Collections.</a>';
-          } else {
-            msg = msg + '<a ng-href="' + item.link() + '"> View and edit the item!</a>';
-          }
+          msg    += '<a ng-href="' + item.link() + '"> View and edit the item!</a>';
 
           $scope.addMessage({
             'type': 'success',
