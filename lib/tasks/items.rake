@@ -38,14 +38,33 @@ namespace :items do
     by_title.each do |key, value|
       next unless value[:count] > 1
       verbose and puts "Dupe: #{key} #{value.inspect}"
-      next if dry_run
 
-      # keep the first one
-      keeper = value[:ids].shift
+      # keep (the first) with premium transcript
+      keeper = nil
+      value[:ids].each do |item_id|
+        next if keeper
+        item = Item.find item_id
+        has_premium = false
+        item.audio_files.each do |af|
+          af.transcripts_alone.each do |t|
+            if t.is_premium?
+              has_premium = true
+            end
+          end
+        end
+        keeper = item_id if has_premium
+      end
+
+      # no keeper? keep the first one
+      keeper ||= value[:ids].shift
+
+      verbose and puts "  keep #{keeper}"
+      next if dry_run
       
       # for others, flag all transcripts as not billable,
       # and then soft-delete the item
       value[:ids].each do |item_id|
+        next if item_id == keeper
         item = Item.find item_id
         item.transcripts.each do |tr|
           tr.is_billable = false
