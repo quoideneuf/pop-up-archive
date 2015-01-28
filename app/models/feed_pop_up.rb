@@ -56,6 +56,10 @@ class FeedPopUp
     add_image_files(item, entry, collection)
   
     item.save! unless dry_run
+    if ENV['VERBOSE']
+      puts entry.inspect
+      puts item.inspect
+    end
     item
   end
  
