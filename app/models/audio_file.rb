@@ -241,8 +241,12 @@ class AudioFile < ActiveRecord::Base
       options[:extras]['amara_team'] = user.organization.amara_team
     end
 
-    task = Tasks::AddToAmaraTask.new(options)
-    self.tasks << task
+    if task = (tasks.add_to_amara.valid.pop || tasks.select { |t| t.type == "Tasks::AddToAmaraTask" && !t.cancelled? }.pop)
+      logger.warn "AddToAmaraTask already exists #{task.id} for audio_file #{self.id}"
+    else
+      task = Tasks::AddToAmaraTask.new(options)
+      self.tasks << task
+    end
     task
   end
 
@@ -303,11 +307,15 @@ class AudioFile < ActiveRecord::Base
   
   def order_transcript(user=self.user)
     raise 'cannot create transcript when duration is 0' if (duration.to_i <= 0)
-    task = Tasks::OrderTranscriptTask.new(
-      identifier: 'order_transcript',
-      extras: { 'user_id' => user.id, 'amount' => amount_for_transcript }
-    )
-    self.tasks << task
+    if task = (tasks.order_transcript.valid.where(identifier: 'order_transcript').pop || tasks.select { |t| t.type == "Tasks::OrderTranscriptTask" && t.identifier == 'order_transcript' && !t.cancelled? }.pop)
+      logger.warn "order_transcript task #{task.id} already exists for audio file #{self.id}"
+    else
+      task = Tasks::OrderTranscriptTask.new(
+        identifier: 'order_transcript',
+        extras: { 'user_id' => user.id, 'amount' => amount_for_transcript }
+      )
+      self.tasks << task
+    end
     task
   end  
 
