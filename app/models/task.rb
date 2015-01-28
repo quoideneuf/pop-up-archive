@@ -21,7 +21,7 @@ class Task < ActiveRecord::Base
   scope :valid, where('status not in (?)', [CANCELLED])
 
   # convenient scopes for subclass types
-  [:analyze_audio, :analyze, :copy, :detect_derivatives, :order_transcript, :transcode, :transcribe, :upload, :speechmatics_transcribe].each do |task_subclass|
+  [:add_to_amara, :analyze_audio, :analyze, :copy, :detect_derivatives, :order_transcript, :transcode, :transcribe, :upload, :speechmatics_transcribe].each do |task_subclass|
     scope task_subclass, where('type = ?', "Tasks::#{task_subclass.to_s.camelize}Task")
   end
 
