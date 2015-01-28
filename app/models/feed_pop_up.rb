@@ -12,7 +12,7 @@ class FeedPopUp
  
   def initialize(dry_run=false, oldest_entry='1900-01-01')
     self.dry_run = dry_run
-    @oldest_entry = DateTime.parse(oldest_entry)
+    @oldest_entry = DateTime.parse(oldest_entry||'1900-01-01')
   end
  
   def parse(feed_url, collection_id)
