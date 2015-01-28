@@ -169,6 +169,7 @@ group :test do
   gem 'simplecov'
   gem 'coveralls'
   gem 'elasticsearch-extensions'
+  gem 'test_after_commit'
 end
 
 group :development, :production, :staging do
