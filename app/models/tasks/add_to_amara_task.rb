@@ -19,7 +19,7 @@ class Tasks::AddToAmaraTask < Task
     video = create_video
     # save the video_id, which is useful for crafting a url
     self.extras['video_id'] = video.id
-    self.save!
+    update_column(:extras, extras)
 
     start_add_subtitles_worker
 
