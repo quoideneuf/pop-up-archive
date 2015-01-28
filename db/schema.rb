@@ -14,7 +14,6 @@
 ActiveRecord::Schema.define(:version => 20150128041703) do
 
   add_extension "hstore"
-  add_extension "pg_stat_statements"
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "namespace"
