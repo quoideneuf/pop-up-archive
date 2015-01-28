@@ -110,20 +110,13 @@ describe User do
       transcript.audio_file_id = audio.id
       transcript.save!
       audio.save!
-      collection = audio.item.collection
-      audio.billable_to.collections << collection
       transcript.billable_seconds.should eq 3600
-      #Rails.logger.warn("collection_grants == #{collection.collection_grants.inspect}")
-      #Rails.logger.warn("audio.billable_to = #{audio.billable_to.inspect}")
-      #Rails.logger.warn("collection.billable_to = #{collection.billable_to.inspect}")
-      #Rails.logger.warn("-------------------------------- TEST FIXTURES COMPLETE ----------------------------------")
 
       # before and after delete should match
       user = audio.billable_to
       user.calculate_monthly_usages!
       user.update_usage_report!
       user.usage_summary[:this_month][:hours].should eq 1.0
-      #Rails.logger.warn("-------------------------------- BEFORE TEST COMPLETE ----------------------------------")
 
       # delete and try again
       audio.item.collection.destroy
@@ -131,7 +124,6 @@ describe User do
       user.calculate_monthly_usages!
       user.update_usage_report!
       user.usage_summary[:this_month][:hours].should eq 1.0
-      #Rails.logger.warn("-------------------------------- DELETED COLLECTION TEST COMPLETE ----------------------------------")
     end
 
   end
