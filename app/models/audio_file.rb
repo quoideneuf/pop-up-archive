@@ -211,6 +211,8 @@ class AudioFile < ActiveRecord::Base
   end
  
   def analyze_audio(force=false)
+    #for IA only start if transcode complete
+    return if !self.transcoded? and storage.at_internet_archive?
     result = nil
     if !force
       if task = (tasks.analyze_audio.valid.pop || tasks.select { |t| t.type == "Tasks::AnalyzeAudioTask" && !t.cancelled? }.pop)
