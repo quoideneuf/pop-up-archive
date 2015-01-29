@@ -22,9 +22,66 @@ namespace :items do
     verbose = ENV['VERBOSE'] || false
     dry_run = ENV['DRY_RUN'] || false
 
+    # ugh. hardcoded list ugly. would be nice if collection had some meta on it.
+    coll_ids_from_feed = [
+      438,
+      799,
+      676,
+      800,
+      801,
+      810,
+      810,
+      1573,
+      1574,
+      1575,
+      1586,
+      1587,
+      1588,
+      1654,
+      1596,
+      1705,
+      1633,
+      1653,
+      1655,
+      1656,
+      1657,
+      1686,
+      1687,
+      1703,
+      1754,
+      1780,
+      1781,
+      1782,
+      1785,
+      1868,
+      1928,
+      1975,
+      2082,
+      2088,
+      2064,
+      2594,
+      3246,
+      3247,
+      3653,
+      3722,
+      3758,
+      1673,
+      4239,
+      3626,
+      4258,
+      4261,
+      4262,
+      4263,
+      4264,
+      4265,
+      4266,
+      2347
+    ]
+    colls_from_feed = Hash[coll_ids_from_feed.map{|i| [i, 1]}]
     by_title = {}
     Item.find_in_batches do |itemgrp|
       itemgrp.each do |item|
+        next unless colls_from_feed.has_key?(item.collection_id)
         k = item.title + ':' + item.collection_id.to_s + ':' + item.date_broadcast.to_s
         if by_title.has_key?(k)
           by_title[k][:count] += 1
