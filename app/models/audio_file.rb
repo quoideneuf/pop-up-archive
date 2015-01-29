@@ -555,6 +555,19 @@ class AudioFile < ActiveRecord::Base
     status
   end
 
+  def is_finished?
+    status = current_status
+    if status == TRANSCRIPT_SAMPLE_COMPLETE
+      return true
+    elsif status == TRANSCRIPT_BASIC_COMPLETE
+      return true
+    elsif status == TRANSCRIPT_PREMIUM_COMPLETE
+      return true
+    else
+      return false
+    end
+  end
+
   def best_transcript
     if self.has_premium_transcript?
       self.transcripts.each do |t|
