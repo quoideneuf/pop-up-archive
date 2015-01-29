@@ -134,8 +134,8 @@ module FileStorage
   end
 
   def process_file_url
+    return file.url('mp3')   if storage.is_public? && file.url('mp3')
     return original_file_url if use_original_file_url? && original_file_url
-    return file.url          if storage.is_public? && file.url
     destination
   end
 
