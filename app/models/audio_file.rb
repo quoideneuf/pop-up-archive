@@ -389,7 +389,10 @@ class AudioFile < ActiveRecord::Base
   # kick off an async worker which will call the recover! method.
   def recover_async
     return if !stuck?
-    RecoverTaskWorker.perform_async(id) unless Rails.env.test?
+    tasks.each do |task|
+      next unless task.stuck?
+      RecoverTaskWorker.perform_async(task.id) unless Rails.env.test?
+    end
   end
 
   def recover!
