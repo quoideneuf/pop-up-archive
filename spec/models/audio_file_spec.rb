@@ -179,6 +179,7 @@ describe AudioFile do
       @audio_file = FactoryGirl.build :audio_file
       @audio_file.original_file_url="test.mp3"
       @audio_file.user.plan.should eq SubscriptionPlanCached.community
+      @audio_file.transcoded_at = Time.now
       @audio_file.should_receive(:start_transcribe_job)
       @audio_file.should_receive(:start_transcribe_job)
       @audio_file.transcribe_audio
