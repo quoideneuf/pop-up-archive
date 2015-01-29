@@ -434,7 +434,7 @@ class AudioFile < ActiveRecord::Base
     end
 
     # compare plan expectations with reality
-    if user
+    if user && user.plan
       # expect premium transcript
       if user.plan.has_premium_transcripts?
         if has_premium_transcript?
