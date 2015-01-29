@@ -25,7 +25,7 @@ ActiveAdmin.register Item do
     end
     panel "Audio Files" do
       table_for item.audio_files do |tbl|
-        tbl.column("File") {|af| link_to af.filename, superadmin_audio_file_path(af) }
+        tbl.column("File") {|af| link_to (af.filename.present? ? af.filename : af.id), superadmin_audio_file_path(af) }
         tbl.column("Type") {|af| af.transcript_type }
         tbl.column("Transcoded") {|af| af.transcoded_at }
         tbl.column("Duration") {|af| af.duration }

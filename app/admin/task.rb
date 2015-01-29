@@ -19,7 +19,7 @@ ActiveAdmin.register Task do
         row("ID") { task.id }
         row("Type") { task.type }
         row("Status") { task.status }
-        row("Owner") { task.owner }
+        row("Owner") { link_to (task.owner.filename.present? ? task.owner.filename : task.owner_id), superadmin_audio_file_path(task.owner) } }
         row("Identifier") { task.identifier }
         row("Extras") do |task| 
           attributes_table_for task.extras do  
