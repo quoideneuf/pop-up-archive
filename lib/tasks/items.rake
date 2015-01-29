@@ -79,6 +79,7 @@ namespace :items do
     ]
     colls_from_feed = Hash[coll_ids_from_feed.map{|i| [i, 1]}]
     by_title = {}
+    deleted = {}
     Item.find_in_batches do |itemgrp|
       itemgrp.each do |item|
         next unless colls_from_feed.has_key?(item.collection_id)
@@ -128,9 +129,12 @@ namespace :items do
           tr.save!
         end
         item.destroy
+        deleted[item.id] = true
       end
 
     end
+
+    verbose and puts "deleted #{deleted.keys.count} Items"
 
   end
 
