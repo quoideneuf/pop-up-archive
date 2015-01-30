@@ -1,5 +1,5 @@
 attributes :id, :filename, :transcoded_at, :duration, :current_status
-attributes :urls => :permanent_public_url
+attributes :urls => :url
 attributes :transcript_type
 attributes :has_premium_transcribe_task_in_progress? => :premium_in_progress
 node :premium_retail_cost do |af|

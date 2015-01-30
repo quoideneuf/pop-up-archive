@@ -10,8 +10,8 @@ module PublicAsset
   end
 
   # returns "permanent" URL suitable for use when content is being pre-rendered/cached.
-  def permanent_public_url
-    opts = set_defaults({})
+  def permanent_public_url(options={})
+    opts = set_defaults(options)
     ext  = opts[:extension]
     # 'id' is slightly obfuscated as hexadecimal string
     url = root_url + ["media",opts[:class],opts[:id].to_i.to_s(16),opts[:name]].join('/')
