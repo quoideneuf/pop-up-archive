@@ -13,6 +13,31 @@ class EmbedPlayerController < ApplicationController
     @embed      = params[:embed] ? true : false
     @file_id    = params[:file_id]
     @audio_file = AudioFile.find(@file_id)
+    may_read    = true
+    if !@audio_file.item.is_public
+      logger.warn("private item");
+      if current_user
+        ability = Ability.new(current_user)
+        if !ability.can?(:read, @audio_file.item)
+          logger.warn("current_user may not read")
+          may_read = false
+        end
+      else
+        logger.warn("no current_user")
+        may_read = false
+      end
+    end
+    if !may_read
+      respond_to do |format|
+        format.html {
+          render :formats => [:html], :file => File.join(Rails.root, 'public', '403'), :status => 403
+        }
+        format.json {
+          render :text => { :error => "permission denied", :status => 403 }.to_json, :status => 403
+        }
+      end
+      return
+    end
     @mp3        = @audio_file.public_url(extension: :mp3)
     @ogg        = @audio_file.public_url(extension: :ogg)
     @transcript = @audio_file.best_transcript
