@@ -2,15 +2,27 @@ ActiveAdmin.register AudioFile do
   actions :index, :show
   menu false
   index do
-    column :filename, sortable: :file do |af| link_to af.filename, superadmin_audio_file_path(af) end
+    column :filename, sortable: :file do |af| link_to truncate(af.filename||af.id, :length => 20), superadmin_audio_file_path(af) end
     column :created_at
     column :duration
-    column :metered
-    column('Collection') do |af| link_to af.collection.title, superadmin_collection_path(af.collection) end
-    column('Item') do |af| link_to af.item.title, superadmin_item_path(af.item) end
+    column('Collection') do |af| link_to truncate(af.collection.title, :length => 20), superadmin_collection_path(af.collection) end
+    column('Item') do |af| link_to truncate(af.item.title, :length => 20), superadmin_item_path(af.item) end
+    column('Status') do |af| af.current_status end
   end
 
   filter :file
+
+  member_action :nudge, method: :post do
+    Rails.logger.warn("recover: #{params}")
+    af = AudioFile.find params[:id]
+    af.recover_async
+    flash[:notice] = "On the road to recovery!"
+    redirect_to :action => :show
+  end
+
+  action_item :only => :show, if: proc{ audio_file.stuck? } do
+    link_to "Recover", superadmin_audio_file_path(audio_file)+'/nudge', method: :post
+  end 
 
   show do 
     panel "Audio File Details" do

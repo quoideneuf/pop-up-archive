@@ -234,6 +234,12 @@ class Task < ActiveRecord::Base
     end 
   end
 
+  # kick off an async worker which will call the recover! method.
+  def recover_async
+    return if status_is_final?
+    RecoverTaskWorker.perform_async(id) unless Rails.env.test?
+  end
+
   def status_is_final?
     status == COMPLETE or status == CANCELLED
   end

@@ -420,8 +420,17 @@ class AudioFile < ActiveRecord::Base
 
   def stuck?
     return true if self.tasks.any?{|t| t.stuck?}
-    return true if !self.has_preview? and self.needs_transcript?
+    return true if self.needs_transcript?
     return false
+  end
+
+  # kick off an async worker which will call the recover! method.
+  def recover_async
+    return if !stuck?
+    tasks.each do |task|
+      next unless task.stuck?
+      RecoverTaskWorker.perform_async(task.id) unless Rails.env.test?
+    end
   end
 
   def recover!
@@ -463,14 +472,31 @@ class AudioFile < ActiveRecord::Base
     end
 
     # compare plan expectations with reality
-    if user and user.plan == SubscriptionPlanCached.community
-      return false  # preview only
-    end
-    if user and user.plan.has_premium_transcripts? and !has_premium_transcribe_task_in_progress? and !has_premium_transcript?
-      return true
-    end
-    if user and !user.plan.has_premium_transcripts? and !has_basic_transcribe_task_in_progress? and !has_basic_transcript?
-      return true
+    if user && user.plan
+      # expect 2-minute preview only
+      if user.plan == SubscriptionPlanCached.community
+        return false
+      end
+      # expect premium transcript
+      if user.plan.has_premium_transcripts?
+        if has_premium_transcript?
+          return false
+        elsif has_premium_transcribe_task_in_progress?
+          return false
+        else
+          return true
+        end
+      end
+      # expect basic transcript
+      if user.plan != SubscriptionPlanCached.community
+        if has_basic_transcript?
+          return false
+        elsif has_basic_transcribe_task_in_progress?
+          return false
+        else
+          return true
+        end
+      end
     end
 
     return false
@@ -584,6 +610,19 @@ class AudioFile < ActiveRecord::Base
     # TODO do we care about communicating the analyze status?
 
     status
+  end
+
+  def is_finished?
+    status = current_status
+    if status == TRANSCRIPT_SAMPLE_COMPLETE
+      return true
+    elsif status == TRANSCRIPT_BASIC_COMPLETE
+      return true
+    elsif status == TRANSCRIPT_PREMIUM_COMPLETE
+      return true
+    else
+      return false
+    end
   end
 
   def best_transcript
