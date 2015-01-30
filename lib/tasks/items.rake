@@ -100,7 +100,6 @@ namespace :items do
       # keep (the first) with premium transcript
       keeper = nil
       value[:ids].each do |item_id|
-        next if keeper
         item = Item.find item_id
         has_premium = false
         item.audio_files.each do |af|
@@ -110,7 +109,11 @@ namespace :items do
             end
           end
         end
-        keeper = item_id if has_premium
+        if has_premium
+          keeper ||= item_id
+          # prefer the oldest
+          keeper = item_id if keeper > item_id
+        end
       end
 
       # no keeper? keep the first one
