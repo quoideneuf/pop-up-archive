@@ -366,7 +366,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         // reset tags
         saveItem.tagList2Tags();
         $scope.addRemoteImageFile(saveItem, $scope.urlForImage);
-        $scope.addRemoteAudioFile(saveItem, $scope.remoteFileUrl);
+        $scope.addRemoteAudioFiles(saveItem);
         $scope.uploadImageFiles(saveItem, uploadImageFiles);        
         $scope.uploadAudioFiles(saveItem, uploadFiles);
         $scope.updateAudioFiles(saveItem, audioFiles);
@@ -388,7 +388,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         // reset tags
         saveItem.tagList2Tags();
         $scope.addRemoteImageFile(saveItem, $scope.urlForImage);
-        $scope.addRemoteAudioFile(saveItem, $scope.remoteFileUrl);
+        $scope.addRemoteAudioFiles(saveItem);
         $scope.uploadImageFiles(saveItem, uploadImageFiles);
         $scope.uploadAudioFiles(saveItem, uploadFiles);
         $scope.updateAudioFiles(saveItem, audioFiles);
@@ -406,14 +406,17 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   };
 
-  $scope.addRemoteAudioFile = function (saveItem, audioUrl){
-    if (!$scope.remoteFileUrl) {
+  $scope.addRemoteAudioFiles = function (saveItem){
+    if (!$scope.remoteFileUrls) {
       return;
     }
-    var af = new AudioFile({remoteFileUrl: audioUrl, itemId: saveItem.id});
-    af.create();
-    $scope.item.files.push({ name: 'name', remoteFileUrl: audioUrl, size: ''});
-    delete $scope.remoteFileUrl;
+    angular.forEach($scope.remoteFileUrls, function(url) {
+      console.log('addRemoteAudioFile:', url);
+      var af = new AudioFile({remoteFileUrl: url, itemId: saveItem.id});
+      af.create();
+      $scope.item.files.push({ name: 'name', remoteFileUrl: url, size: ''});
+    });
+    delete $scope.remoteFileUrls;
   };
 
   $scope.addRemoteImageFile = function (saveItem, imageUrl){
@@ -482,19 +485,51 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     });
   };
 
-  $scope.addItemFromURL = function() {
-    var inputField = angular.element('#remote-item-url');
+  $scope.addItemFromURL = function(ev) {
+    //console.log('remoteFileUrls currently:', $scope.remoteFileUrls);
+    var btn = angular.element(ev.target);
+    // find the closest input to btn
+    var inputField = btn.closest('.remote-item').children('.remote-item-url');
+    //console.log(btn, inputField);
     var remoteFileUrl = inputField.val();
-    // clear field for re-use
-    inputField.val('');
-    //console.log('remoteFileUrl', remoteFileUrl);
+    //console.log('remoteFileUrl:', remoteFileUrl);
     if (!remoteFileUrl || !remoteFileUrl.length) {
       return;
     }
     else {
-      $scope.remoteFileUrl = remoteFileUrl;
+      // clear any error first
+      inputField.closest('.control-group').removeClass('error');
+      inputField.next('.help-inline').remove();
+
+      // validate the URL string
+      var urlPattern = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?$/;
+      if (!remoteFileUrl.match(urlPattern)) {
+        // add warning to input field
+        //console.log("bad url:", remoteFileUrl);
+        inputField.closest('.control-group').addClass('error');
+        inputField.after('<span class="help-inline">Fix the URL</span>');
+        return;
+      }
+
+      // looks ok. go ahead and add it.
+      inputField.val(''); // clear field for re-use
+      if (!$scope.remoteFileUrls) {
+        $scope.remoteFileUrls = [];
+      }
+      $scope.remoteFileUrls.push( remoteFileUrl );
+      //console.log('remoteFileUrls now:', $scope.remoteFileUrls);
     }
 
+  };
+
+  $scope.removeRemoteUrl = function(url) {
+    var pruned = [];
+    angular.forEach($scope.remoteFileUrls, function(rfu) {
+      if (url != rfu) {
+        pruned.push( rfu );
+      }
+    });
+    $scope.remoteFileUrls = pruned;
   };
 
   $scope.removeAudioFile = function(file) {
