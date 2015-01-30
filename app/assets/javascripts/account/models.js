@@ -1,12 +1,12 @@
 angular.module('Directory.account.models', [])
 .factory('Plan', ['Model', function (Model) {
-  var Plan = Model({url:'/api/plans', name: 'plan'});
+  var Plan = new Model({url:'/api/plans', name: 'plan'});
 
   Plan.community = function () {
   	return this.get().then(function (plans) {
       var community;
       angular.forEach(plans, function (plan) {
-        if (typeof community == 'undefined' && plan.id == "community") {
+        if (typeof community === 'undefined' && plan.id === "community") {
           community = plan;
         }
       });
@@ -28,23 +28,23 @@ angular.module('Directory.account.models', [])
     Player.play(file);
     $rootScope.fileUrl = file;
     console.log('tried to play');
-  }
+  };
 
   $rootScope.pause = function () {
     Player.pause();
-  }
+  };
 
   $rootScope.rewind = function () {
     Player.rewind();
-  }
+  };
 
   $rootScope.isLoaded = function () {
-    return Player.nowPlayingUrl() == $rootScope.fileUrl;
-  }
+    return Player.nowPlayingUrl() === $rootScope.fileUrl;
+  };
 
   $rootScope.isPlaying = function () {
     return $rootScope.isLoaded() && !Player.paused();
-  }
+  };
 
 }])
 
