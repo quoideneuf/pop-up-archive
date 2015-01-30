@@ -161,6 +161,10 @@ namespace :reports do
     printf("%6s %12s %40s  %s      %s\n", 'ID', 'Type', 'Name', 'Time', 'Cost')
     puts '-'*100
     recs.find_each do |mu|
+      if !mu.entity
+        puts "No entity defined for #{mu.inspect}"
+        next
+      end
       if !mu.entity.plan.has_premium_transcripts?
         printf("%6d %12s %40s  %s  $%0.2f\n", mu.entity_id, mu.entity_type, mu.entity.name, mu.value_as_hms, mu.retail_cost)
         num += 1
