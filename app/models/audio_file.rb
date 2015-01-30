@@ -429,7 +429,7 @@ class AudioFile < ActiveRecord::Base
     return if !stuck?
     tasks.each do |task|
       next unless task.stuck?
-      RecoverTaskWorker.perform_async(task.id) unless Rails.env.test?
+      task.recover_async
     end
   end
 
