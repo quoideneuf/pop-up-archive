@@ -896,7 +896,7 @@ form.with-tags {
 
 //item
 
-.item-modal {
+.item-modal, .embed-codes-modal {
   width: 690px;
   margin-left: -330px;
   max-height: 80%;
@@ -1776,3 +1776,8 @@ ul.pricing {
   vertical-align: 2px;
   margin-left: 4px;
 }
+
+input[readonly].copy-widget {
+  cursor:pointer;
+}
+
