@@ -9,6 +9,16 @@ module PublicAsset
     include Rails.application.routes.url_helpers  
   end
 
+  # returns "permanent" URL suitable for use when content is being pre-rendered/cached.
+  def permanent_public_url
+    opts = set_defaults({})
+    ext  = opts[:extension]
+    # 'id' is slightly obfuscated as hexadecimal string
+    url = root_url + ["media",opts[:class],opts[:id].to_i.to_s(16),opts[:name]].join('/')
+    url += ".#{ext}" unless ext.blank?
+    url
+  end
+
   # validates token with or without expires option
   def public_url_token(options={})
     o = set_defaults(options)

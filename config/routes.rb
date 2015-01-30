@@ -31,6 +31,7 @@ PopUpArchive::Application.routes.draw do
   end
 
   get 'media/:token/:expires/:use/:class/:id/:name.:extension', controller: 'media', action: 'show', constraints: {name: /[^\/]+/}
+  get 'media/:class/:idhex/:name.:extension', controller: 'media', action: 'permanent', constraints: {name: /[^\/]+/}
   
   get 'embed_player/:name/:file_id/:item_id/:collection_id', to: 'embed_player', action: 'show'
 
