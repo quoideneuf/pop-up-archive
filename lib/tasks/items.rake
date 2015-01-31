@@ -116,8 +116,8 @@ namespace :items do
         end
       end
 
-      # no keeper? keep the first one
-      keeper ||= value[:ids].shift
+      # no keeper? keep the oldest one
+      keeper ||= value[:ids].sort_by(&:to_i).shift
 
       verbose and puts "  keep #{keeper}"
       next if dry_run
