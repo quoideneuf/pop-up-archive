@@ -122,9 +122,9 @@ class AudioFile < ActiveRecord::Base
 
   def player_url
     if transcoded?
-      public_url({:extension => 'mp3'})
+      permanent_public_url({:extension => 'mp3'})
     else
-      public_url
+      permanent_public_url
     end
   end
 
