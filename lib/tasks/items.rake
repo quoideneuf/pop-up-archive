@@ -131,6 +131,7 @@ namespace :items do
           tr.is_billable = false
           tr.save!
         end
+        item.extras['error'] = 'deleted as duplicate'
         item.destroy
         deleted[item.id] = true
       end
