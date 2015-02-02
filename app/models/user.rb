@@ -328,6 +328,14 @@ class User < ActiveRecord::Base
     return false
   end
 
+  def is_over_monthly_limit?
+    if organization
+      organization.is_over_monthly_limit?
+    else
+      super
+    end
+  end
+
   private
 
   def delete_customer
