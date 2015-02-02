@@ -1,5 +1,5 @@
 angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.models', 'Directory.imageFiles.models'])
-.factory('Item', ['Model', '$http', '$q', 'Contribution', 'Person', 'AudioFile', 'Player', 'ImageFile', function (Model, $http, $q, Contribution, Person, AudioFile, Player, ImageFile) {
+.factory('Item', ['Model', '$http', '$location', '$q', 'Contribution', 'Person', 'AudioFile', 'Player', 'ImageFile', function (Model, $http, $location, $q, Contribution, Person, AudioFile, Player, ImageFile) {
 
   var attrAccessible = "dateBroadcast dateCreated datePeg description digitalFormat digitalLocation episodeTitle identifier language musicSoundUsed notes physicalFormat physicalLocation rights seriesTitle tags title transcription adoptToCollection tagList text id originalFileUrl transcriptType".split(' ');
 
@@ -13,6 +13,8 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     } else {
       dataList = [data];
     }
+
+    //console.log('beforeRequest:', data, resource);
 
     angular.forEach(dataList, function(value, key){
 
@@ -29,7 +31,9 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
       delete value.images;
 
       if ((!value.id || parseInt(value.id, 10) <= 0) || (value.adoptToCollection == value.collectionId)) {
+        //console.log('deleting value.adoptToCollection from: ', value.adopt_to_collection, value.collection_id, value);
         delete value.adoptToCollection;
+        Item.newCollectionId = value.adopt_to_collection;
       }
 
       // console.log("item value:", value);
@@ -43,7 +47,19 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     return data;
   });
 
-  Item.beforeResponse(function(data, resource) {
+  Item.afterResponse(function(data, resource, ctxt) {
+    //console.log('afterResponse: ', data, resource, ctxt, data.adoptCollectionId, data.collectionId);
+    if (Item.newCollectionId) {
+      //console.log('new collection id: ', Item.newCollectionId);
+      data.collectionId = Item.newCollectionId;
+      delete Item.newCollectionId;
+      $location.path('/collections/'+data.collectionId+'/items/'+data.id); // redirect to new item URL
+    }
+    return data;
+  });
+
+  Item.beforeResponse(function(data, resource, ctxt) {
+    //console.log('beforeResponse: ', data, resource, ctxt);
     data.tagList = [];
     data.images = [];    
     angular.forEach((data.tags || []), function (v,k) {
@@ -57,6 +73,7 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     data.language = {id: data.language, text: Item.languageLookup[data.language]};
 
     if (data.id) {
+      //console.log('data.adoptToCollection set to', data.collectionId, data); // set on initial page load
       data.adoptToCollection = data.collectionId;
     }
 
@@ -170,6 +187,7 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     var self = this;
     this.adoptToCollection = collectionId;
     return this.update().then(function (data) {
+      //console.log('Item updated, then:', data, self);
       self.adoptToCollection = undefined;
       return data;
     });
