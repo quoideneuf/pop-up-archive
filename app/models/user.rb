@@ -269,8 +269,14 @@ class User < ActiveRecord::Base
     active_credit_card.as_json.try(:slice, *%w(last4 type exp_month exp_year))
   end
 
+  # if this user is in an organization and not the owner, use the owner's credit card.
+  # otherwise, use the user's customer record.
   def active_credit_card
-    customer.card
+    if organization && (organization.owner_id != id)
+      return organization.owner.active_credit_card
+    else
+      customer.card
+    end
   end
 
   def has_active_credit_card?
@@ -320,6 +326,14 @@ class User < ActiveRecord::Base
     return true if self.organization.owner_id == self.id
     return true if self.has_role?(:admin, self.organization)
     return false
+  end
+
+  def is_over_monthly_limit?
+    if organization
+      organization.is_over_monthly_limit?
+    else
+      super
+    end
   end
 
   private
