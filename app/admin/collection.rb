@@ -21,6 +21,7 @@ ActiveAdmin.register Collection do
             link_to collection.billable_to.name, superadmin_organization_path(collection.billable_to)
           end
         }
+        row("Public")  { collection.items_visible_by_default }
         row("Storage") { collection.storage }
         row("Created") { collection.created_at }
         row("Updated") { collection.updated_at }
@@ -32,6 +33,7 @@ ActiveAdmin.register Collection do
         tbl.column("Title") {|item| link_to item.title, superadmin_item_path(item) }
         tbl.column("Created") {|item| item.created_at }
         tbl.column("Duration") {|item| item.duration }
+        tbl.column("Public")   {|item| item.is_public }
       end
     end
    
