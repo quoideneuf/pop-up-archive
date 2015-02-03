@@ -123,7 +123,7 @@ group :assets do
   gem 'sass-rails', '~> 3.2'
   gem 'uglifier', '>= 1.0.3'
   gem 'bootstrap-sass'
-  gem 'angularjs-rails-resource'
+  gem 'angularjs-rails-resource', '~> 0.2.5'
   gem 'font-awesome-sass-rails', github: 'iterion/font-awesome-sass-rails'
   gem 'ng_player_hater-rails', '~> 0.0.4'
 end

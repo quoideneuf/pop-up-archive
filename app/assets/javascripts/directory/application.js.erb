@@ -557,10 +557,11 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
   window.directory.directive('loadingMask', ['$location', function($location) {
     return {
       template: "<div class='loading-overlay' ng-show='loading()' ui-animate=''>" +
-                          "<div class='loading-indicator'>" +
-                            "<i class='icon-cog icon-spin'></i>" +
-                            "Loading" +
-                        "</div></div>",
+                   "<div class='loading-indicator'>" +
+                     "<i class='icon-cog icon-spin'></i>" +
+                     "  Loading" +
+                   "</div>" +
+                "</div>",
       link: function(scope, el, attrs) {
         scope.$on('$routeChangeStart', function() {
           if ($location.path() != '/' &&
