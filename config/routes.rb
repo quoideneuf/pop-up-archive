@@ -28,6 +28,7 @@ PopUpArchive::Application.routes.draw do
     resources :soundcloud_callback
     get 'total_usage', to: 'accounts#total_usage'
     resources :accounts
+    get 'switch_user' => 'switch_user#set_current_user'
   end
 
   get 'media/:token/:expires/:use/:class/:id/:name.:extension', controller: 'media', action: 'show', constraints: {name: /[^\/]+/}

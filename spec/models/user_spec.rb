@@ -7,11 +7,6 @@ describe User do
   before { StripeMock.start }
   after { StripeMock.stop }
 
-
-  it 'gets a holding collection automatically' do
-    user.uploads_collection.should_not be_nil
-  end
-
   context 'oauth' do
     it 'applies oauth info' do
       auth = OpenStruct.new(provider: 'foo', uid: 'bar', info: OpenStruct.new(name: 'test', email: 'test@popuparchive.org'))
@@ -115,20 +110,13 @@ describe User do
       transcript.audio_file_id = audio.id
       transcript.save!
       audio.save!
-      collection = audio.item.collection
-      audio.billable_to.collections << collection
       transcript.billable_seconds.should eq 3600
-      #Rails.logger.warn("collection_grants == #{collection.collection_grants.inspect}")
-      #Rails.logger.warn("audio.billable_to = #{audio.billable_to.inspect}")
-      #Rails.logger.warn("collection.billable_to = #{collection.billable_to.inspect}")
-      #Rails.logger.warn("-------------------------------- TEST FIXTURES COMPLETE ----------------------------------")
 
       # before and after delete should match
       user = audio.billable_to
       user.calculate_monthly_usages!
       user.update_usage_report!
       user.usage_summary[:this_month][:hours].should eq 1.0
-      #Rails.logger.warn("-------------------------------- BEFORE TEST COMPLETE ----------------------------------")
 
       # delete and try again
       audio.item.collection.destroy
@@ -136,7 +124,6 @@ describe User do
       user.calculate_monthly_usages!
       user.update_usage_report!
       user.usage_summary[:this_month][:hours].should eq 1.0
-      #Rails.logger.warn("-------------------------------- DELETED COLLECTION TEST COMPLETE ----------------------------------")
     end
 
   end
@@ -277,61 +264,6 @@ describe User do
     end
   end
 
-  context '#uploads_collection' do
-    it 'is a collection' do
-      user.uploads_collection.should be_a Collection
-    end
-
-    it 'returns the same collection across multiple calls' do
-      user.uploads_collection.should eq user.uploads_collection
-    end
-
-    it 'is persisted in the database' do
-      user.uploads_collection.should be_persisted
-    end
-
-    it 'works when the user is not saved' do
-      user = FactoryGirl.build :user
-      user.uploads_collection.should eq user.uploads_collection
-    end
-
-    it 'saves with the user' do
-      user = FactoryGirl.build :user
-      collection = user.uploads_collection
-
-      user.save.should be true
-
-      user.should be_persisted
-      collection.should be_persisted
-      user.uploads_collection.should eq collection
-      user.uploads_collection.creator.should eq user
-    end
-
-    it 'persists as the uploads collection' do
-      user = FactoryGirl.build :user
-      collection = user.uploads_collection
-
-      user.save
-
-      User.find(user.id).uploads_collection.should eq collection
-    end
-
-    it 'handles situations where uploads collection is not there for some reason' do
-      user = FactoryGirl.create :user
-      user.uploads_collection.destroy
-      user.reload
-
-      collection = user.uploads_collection
-
-      user.uploads_collection.should eq collection
-      User.find(user.id).uploads_collection.should eq collection
-    end
-
-    it 'is not listed as searchable' do
-      user.searchable_collection_ids.should_not be_include(user.uploads_collection.id)
-    end
-  end
-
   context "in an organization" do
 
     it "can be added to an organization" do
@@ -356,12 +288,6 @@ describe User do
 
       ability = Ability.new(user)
       ability.should be_can(:order_transcript, audio_file)
-    end
-
-    it 'gets upload collection from the organization' do
-      user = FactoryGirl.create :organization_user
-      user.organization.run_callbacks(:commit)
-      user.uploads_collection.should eq user.organization.uploads_collection
     end
 
     it "gets list of collections from the organization" do

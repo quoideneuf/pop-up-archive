@@ -11,7 +11,6 @@ class Collection < ActiveRecord::Base
   belongs_to :creator, class_name: "User"
 
   has_many :collection_grants, dependent: :destroy
-  has_many :uploads_collection_grants, class_name: 'CollectionGrant', conditions: {uploads_collection: true}
   #has_many :users, through: :collection_grants # TODO this is broken
   has_many :items, dependent: :destroy
   has_many :audio_files, through: :items
@@ -170,11 +169,7 @@ class Collection < ActiveRecord::Base
   def grant_to_creator
     return unless creator
     collector = creator.organization || creator
-    collector.collections << self unless creator.collections.include? self || creator.uploads_collection == self
-  end
-
-  def uploads_collection?
-    uploads_collection_grants.present?
+    collector.collections << self unless creator.collections.include? self
   end
 
   def used_metered_storage

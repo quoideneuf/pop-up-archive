@@ -10,10 +10,4 @@ describe Organization do
     @organization.collections.count.should eq 1
   end
 
-  it "has an uploads collection" do
-    @organization = FactoryGirl.create :organization
-    @organization.run_callbacks(:commit)
-    @organization.uploads_collection.should_not be_nil
-  end
-
 end
