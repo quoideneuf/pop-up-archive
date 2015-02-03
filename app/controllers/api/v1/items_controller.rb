@@ -50,10 +50,9 @@ class Api::V1::ItemsController < Api::V1::BaseController
           error: 'Monthly limit exceeded',
         }
         return
+      else
+        item.transcript_type = 'premium' # force overage charge
       end
-    end
-    if current_user.is_over_monthly_limit?
-      item.transcript_type = 'premium' # force overage charge
     end
     item.valid?
     item.save
