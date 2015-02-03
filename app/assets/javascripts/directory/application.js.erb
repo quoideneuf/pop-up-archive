@@ -219,6 +219,10 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
       templateUrl: "<%= asset_path 'error/403.html' %>",
       title: "Permission Denied"
     })
+    .when('/error/413', {
+      templateUrl: "<%= asset_path 'error/413.html' %>",
+      title: "Over Monthly Limit"
+    })
     .when('/error/401', {
       templateUrl: "<%= asset_path 'error/401.html' %>",
       title: "Login Required"
