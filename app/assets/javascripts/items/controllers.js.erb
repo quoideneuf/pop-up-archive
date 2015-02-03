@@ -411,10 +411,9 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       return;
     }
     angular.forEach($scope.remoteFileUrls, function(url) {
-      console.log('addRemoteAudioFile:', url);
+      //console.log('addRemoteAudioFile:', url);
       var af = new AudioFile({remoteFileUrl: url, itemId: saveItem.id});
       af.create();
-      $scope.item.files.push({ name: 'name', remoteFileUrl: url, size: ''});
     });
     delete $scope.remoteFileUrls;
   };
