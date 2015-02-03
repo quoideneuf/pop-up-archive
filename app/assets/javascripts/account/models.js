@@ -54,14 +54,18 @@ angular.module('Directory.account.models', [])
   $rootScope.offer = $rootScope.offer || {};
   $rootScope.community = Plan.community();
   Plan.get().then(function(plans) {
-    $rootScope.plans = [{id: "enterprise", name: "Enterprise", amount: "Lots of audio?", hours: "custom", interval: "month"}];
+    $rootScope.plans = [];
     plans.forEach(function(plan){
       switch(plan.id){
         case 'community':
-        // case '5_professional_mo':
-        // case '5_professional_yr':
+        case '25_small_business_mo':
+        case '25_small_business_yr':
+        case '20_small_business_mo':
+        case '20_small_business_yr':
         case '10_small_business_mo':
         case '10_small_business_yr':
+        case '5_small_business_mo':
+        case '5_small_business_yr':
         case '1_small_business_mo':
         case '1_small_business_yr':
           $rootScope.plans.push(plan);
@@ -70,10 +74,11 @@ angular.module('Directory.account.models', [])
   });
 
   $rootScope.longInterval = false;
-
+  $rootScope.planOffset = 3;
   $rootScope.togglePlans = function () {
     $rootScope.interval = ( $rootScope.interval == 'year' ? 'month' : 'year');
     $rootScope.longInterval = !$rootScope.longInterval;
+    $rootScope.planOffset = ( $rootScope.planOffset == '2' ? '3' : '2');
   };
 
   $rootScope.getInterval = function() {
@@ -81,19 +86,12 @@ angular.module('Directory.account.models', [])
   };
 
   $rootScope.isPremiumPlan = function (plan) {
-    switch(plan.id){
-      case '10_small_business_mo':
-      case '10_small_business_yr':
-      //add new small business case for new 1 hr premium prof plan
-      case '1_small_business_mo':
-      case '1_small_business_yr':
-      case 'enterprise':
+    if (plan.name === "Community"){
+      return false;
+    } else {
         return true;
     }
   };
-
-  $rootScope.isDisabled = function  (name) {
-  }
 
   $rootScope.changePlan = function (plan) {
     switch(plan.id){

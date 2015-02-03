@@ -1,69 +1,93 @@
 #pricing
+  a.pull-right ng-click="togglePlans()"
+    |{{!longInterval && 'Get 10% off when you sign up for a yearly plan.' || 'Return to monthly plans.' }}
   .row-fluid
-    .row-fluid
-      / select.pull-right ng-model='interval' ng-options="interval as intervalName for (interval, intervalName) in {month: 'Monthly Plans', year: 'Annual Plans'}" 
+    .span12
+      h2.center Personal Plans
+  .row-fluid.parent
+    .plan-well.span4 ng-repeat="plan in plans | filter: {'interval': getInterval()} | orderBy:'amount' | limitTo: planOffset" ng-class="{current: isCurrentPlan(plan), selected: isSelectedPlan(plan), disabled: isDisabled(plan.name)}" ng-click="isDisabled(plan.name) ||changePlan(plan)"
+        h3 {{plan.name}}
+        h4 ng-show="plan.name == 'Community'" 1 hour of processing per month
+        h4 ng-show="plan.name != 'Community'" of processing per month
+        object ng-show="plan.name == 'Community'" type="image/svg+xml" data="/assets/pricing/free.svg"
+        object ng-show="plan.name == '1 Hour'" type="image/svg+xml" data="/assets/pricing/hourglass_1.svg"
+        object ng-show="plan.name == '5 Hours'" type="image/svg+xml" data="/assets/pricing/hourglass_5.svg"
+        //price
+        h3 ${{plan.amount/100}}
+        h4 per {{plan.interval}}
 
-      a.pull-right ng-click="togglePlans()"
-        |{{!longInterval && 'Get 10% off when you sign up for a yearly plan.' || 'Return to monthly plans.' }}
+        ul.pricing
+          li ng-show="isPremiumPlan(plan)" Premium Machine Transcripts 
+          li ng-show="!isPremiumPlan(plan)" Basic Machine Transcripts
+          li ng-show="!isPremiumPlan(plan)" On-Demand Premium Transcripts $#{Billable::OVERAGE_HOURLY_RATE}/hr
+          / ul ng-show="isPremiumPlan(plan)"
+          /   li Improved Accuracy
+          /   li Automatic Speaker Differentiation
+          /   li Punctuation & Capitalization
+          li ng-show="isPremiumPlan(plan)" Multiple users
+          li Public or Private Audio Storage
+          li Transcript Editing Tools
+          li Auto-generated Tags
+  .row-fluid
+    .span12
+      h2 Business Plans
+  .row-fluid.parent
+    .plan-well.span4.center ng-repeat="plan in plans | filter: {'interval': getInterval()} | orderBy:'amount' | limitTo: -3" ng-class="{current: isCurrentPlan(plan), selected: isSelectedPlan(plan), disabled: isDisabled(plan.name)}" ng-click="isDisabled(plan.name) ||changePlan(plan)"
+      // p ng-show="isCurrentPlan(plan)" Current Plan
+      h3 {{plan.name}}
+      h4 of processing per month
+      object ng-show="plan.name == '10 Hours'" type="image/svg+xml" data="/assets/pricing/hourglass_10.svg" 
+      object ng-show="plan.name == '20 Hours'" type="image/svg+xml" data="/assets/pricing/hourglass_20.svg"
+      object ng-show="plan.name == '25 Hours'" type="image/svg+xml" data="/assets/pricing/hourglass_25.svg"
+      / object ng-show="plan.name == 'Enterprise'" type="image/svg+xml" data="/assets/pricing/castle.svg"
+      
+      //price
+      h3 ${{plan.amount/100}}
+      h4 per {{plan.interval}}
 
-      / p.pull-right 
-      /   | Get 10% off with our 
-      /   a ng-click="selectInterval('year')" Yearly Plans
-      /   a.pull-right ng-click="selectInterval('month')" Monthly
-    .row-fluid.parent
-      .plan-well.span3 ng-repeat="plan in plans | filter: {'interval': getInterval()} | orderBy:'amount' | limitTo: 4" ng-class="{current: isCurrentPlan(plan), selected: isSelectedPlan(plan), disabled: isDisabled(plan.name)}" ng-click="isDisabled(plan.name) ||changePlan(plan)"
-          // p ng-show="isCurrentPlan(plan)" Current Plan
-          h3 {{plan.name}}
-          object ng-show="plan.name == 'Community'" type="image/svg+xml" data="/assets/pricing/free.svg"
-          object ng-show="plan.name == 'Premium Professional'" type="image/svg+xml" data="/assets/pricing/tie.svg" 
-          object ng-show="plan.name == 'Small Business'" type="image/svg+xml" data="/assets/pricing/building.svg"
-          object ng-show="plan.name == 'Enterprise'" type="image/svg+xml" data="/assets/pricing/castle.svg"
-          img ng-show="isDisabled(plan.name)" src="#{asset_path('pricing/coming_soon.png')}"
-          h3 ng-show="plan.id != 'enterprise'" ${{plan.amount/100}} 
-          h3 ng-show="plan.id == 'enterprise'" Lots of audio?
-          button.contact ng-show="plan.id == 'enterprise'"
-            | Contact us.
-          h4 ng-show="plan.id != 'enterprise'" per {{plan.interval}}
-          h3 {{plan.hours}} hours
-          h4 of processing per month
-          ul.pricing
-            li ng-show="isPremiumPlan(plan)" Premium Machine Transcripts 
-            li ng-show="!isPremiumPlan(plan)" Basic Machine Transcripts
-            li ng-show="plan.name=='Community'" (2 min per file)
-            li ng-show="!isPremiumPlan(plan)" Order Premium Transcripts On Demand ($#{Billable::OVERAGE_HOURLY_RATE}/hr)
-            ul ng-show="isPremiumPlan(plan)"
-              li Improved Accuracy
-              li Automatic Speaker Differentiation
-              li Punctuation & Capitalization
-            li ng-show="plan.name == 'Enterprise'" Hypermedia API
-            li ng-show="isPremiumPlan(plan)" Multiple users
-            li Public or Private Audio Storage
-            li Transcript Editing Tools
-            li Auto-generated Tags
+      ul.pricing
+        li Premium Machine Transcripts 
+        / ul
+        /   li Improved Accuracy
+        /   li Automatic Speaker Differentiation
+        /   li Punctuation & Capitalization
+        li Multiple users
+        li Public or Private Audio Storage
+        li Transcript Editing Tools
+        li Auto-generated Tags
 
-    .clearfix 
-    .row-fluid
+  .row-fluid
+    .span12
+      .contact-button
+        a href="mailto:edison@popuparchive.org"
+            object type="image/svg+xml" data="/assets/pricing/megaphone.svg"
+            h3 Lots of audio?      
+            h4 Contact us for business services and tools, including automated ingest, hypermedia API and media organization assistance.
+       
+  .row-fluid
+    .span12
       h2 Basic and Premium Transcript Comparison
       p.center Press play below to view a side-by-side comparison of our Basic and Premium machine transcripts.
-      
-    //Sample audio player  
-    .row-fluid.player
-      .span1
-        button.player-button ng-disabled="player.time == 0" ng-click="rewind()"
-          i.icon-fast-backward
-      .span1    
-        button.player-button ng-hide="isPlaying()" ng-click="play(exampleAudioFile.url)"
-          i.icon-play   
-        button.player-button ng-show="isPlaying()" ng-click="pause()"
-          i.icon-pause
-      .span8     
-        .scrubber
-          .bar ng-show="isLoaded()" ng-style="{width:player.time*100/player.duration+'%'}"
-      .span2
-        .timecodes
-          span {{exampleAudioFile.duration}}
+    
+  //Sample audio player  
+  .row-fluid.player
+    .span1
+      button.player-button ng-disabled="player.time == 0" ng-click="rewind()"
+        i.icon-fast-backward
+    .span1    
+      button.player-button ng-hide="isPlaying()" ng-click="play(exampleAudioFile.url)"
+        i.icon-play   
+      button.player-button ng-show="isPlaying()" ng-click="pause()"
+        i.icon-pause
+    .span8     
+      .scrubber
+        .bar ng-show="isLoaded()" ng-style="{width:player.time*100/player.duration+'%'}"
+    .span2
+      .timecodes
+        span {{exampleAudioFile.duration}}
 
-    .row-fluid
+  .row-fluid
+    .span12
       table.speakers
         tr
           th Basic
@@ -98,100 +122,101 @@
           td He says the troops are fighting armed militants at illegal checkpoints on the outskirts of the eastern city of Slovenia. 
 
   .row-fluid
-    h2 Plan FAQs
-    p.alert.alert-info.pull-center
-      i.icon-star-empty
-        strong
-          |  For more questions, read our  
-          a href="https://www.popuparchive.com/faq" general FAQs
-          | .
-    .row-fluid
-      .span6
-        ol
-          li 
-            p.question What are Basic and Premium Transcripts?
-            strong Basic Transcripts
-            a href="https://www.popuparchive.com/collections/799"  (See sample collection)
-            p 
-              | Basic software is based on a large, general corpus of English language words. Most useful for 
-              strong quick search
-              | ,
-              strong  keyword extraction,
-              |  and to serve as a 
-              strong starting point 
-              | for editing. 
+    .span12
+      h2 Plan FAQs
+      p.alert.alert-info.pull-center
+        i.icon-star-empty
+          strong
+            |  For more questions, read our  
+            a href="https://www.popuparchive.com/faq" general FAQs
+            | .
+  .row-fluid
+    .span6
+      ol
+        li 
+          p.question What are Basic and Premium Transcripts?
+          strong Basic Transcripts
+          a href="https://www.popuparchive.com/collections/799"  (See sample collection)
+          p 
+            | Basic software is based on a large, general corpus of English language words. Most useful for 
+            strong quick search
+            | ,
+            strong  keyword extraction,
+            |  and to serve as a 
+            strong starting point 
+            | for editing. 
 
-            strong Premium Transcripts
-            a href="https://www.popuparchive.com/collections/3247"  (See sample collection)
-            p 
-              | Generated using software specially trained to English language broadcast and oral history voices. Features include:
-            ul.premul
-              li 
-                | –Editable 
-                strong speaker differentiation
-              li 
-                | –Grammatical analysis for 
-                strong punctuation & capitalization 
-              li 
-                | –Often 
-                strong 80%+ word accuracy
-                |  for clear, high-quality audio.   
-            p 
-              | Currently only 
-              strong English language
-              |  audio is supported, with best performance for North American and British dialects. 
-            p              
-              a href="mailto:edison@popuparchive.com" Contact us
-              |  to request other languages.
+          strong Premium Transcripts
+          a href="https://www.popuparchive.com/collections/3247"  (See sample collection)
+          p 
+            | Generated using software specially trained to English language broadcast and oral history voices. Features include:
+          ul.premul
+            li 
+              | –Editable 
+              strong speaker differentiation
+            li 
+              | –Grammatical analysis for 
+              strong punctuation & capitalization 
+            li 
+              | –Often 
+              strong 80%+ word accuracy
+              |  for clear, high-quality audio.   
+          p 
+            | Currently only 
+            strong English language
+            |  audio is supported, with best performance for North American and British dialects. 
+          p              
+            a href="mailto:edison@popuparchive.com" Contact us
+            |  to request other languages.
 
-          li 
-            p.question Can I start with a monthly plan, and switch over to an annual plan?
-            p If you start with a monthly plan and decide that you like Pop Up Archive enough to get our discounted annual rate, you can switch to an annual plan anytime. You will be charged the annual rate from the day you switch over. Any remaining time from your monthly plan will be prorated.
-          li 
-            p.question When and how am I charged?
-            p 
-              | For monthly plans, you’ll be charged once each month from the day you signed up. For annual plans, you’ll be charged once annually from the day you signed up. We use 
-              a href="https://stripe.com/" target="_blank" Stripe 
-              | to process payments. 
+        li 
+          p.question Can I start with a monthly plan, and switch over to an annual plan?
+          p If you start with a monthly plan and decide that you like Pop Up Archive enough to get our discounted annual rate, you can switch to an annual plan anytime. You will be charged the annual rate from the day you switch over. Any remaining time from your monthly plan will be prorated.
+        li 
+          p.question When and how am I charged?
+          p 
+            | For monthly plans, you’ll be charged once each month from the day you signed up. For annual plans, you’ll be charged once annually from the day you signed up. We use 
+            a href="https://stripe.com/" target="_blank" Stripe 
+            | to process payments. 
 
-          li 
-            p.question I don't need a plan. Can I pay for the one time processing of a backlog of audio?
-            p If you'd like to use our services for the one time processing of a large collection, rather than on an ongoing basis, fill out the Enterprise form above to get a quote for your audio collection.
+        li 
+          p.question I don't need a plan. Can I pay for the one time processing of a backlog of audio?
+          p If you'd like to use our services for the one time processing of a large collection, rather than on an ongoing basis, fill out the Enterprise form above to get a quote for your audio collection.
 
-            p After upload, continued access to private uploaded content as well as the Pop Up Archive dashboard and editing features will always require a plan.
-          li
-            p.question What does “hours of processing” refer to?
-            p "Hours of processing" refers to the hours of audio that you've uploaded to Pop Up Archive collections that have received machine transcripts. You will not be charged for files that do not successfully transcribe.
+          p After upload, continued access to private uploaded content as well as the Pop Up Archive dashboard and editing features will always require a plan.
+        li
+          p.question What does “hours of processing” refer to?
+          p "Hours of processing" refers to the hours of audio that you've uploaded to Pop Up Archive collections that have received machine transcripts. You will not be charged for files that do not successfully transcribe.
 
-            p Track how much audio has been processed on your account page.
-      .span6
-        ol start="6"
-          li 
-            p.question I’d like for my whole audio team to use Pop Up Archive. Is there a team plan? 
-            p Yes, you can add multiple users to the Small Business and Enterprise plans. We also offer team training sessions and access controls.
-          li 
-            p.question Can I cancel at any time? 
-            p 
-              | Yes, absolutely. When you're logged in, just click your user name, select “account,” then click “Change My Plan.” Choose the free Community Plan to downgrade your account. 
-            p
-              | You will not be charged again unless you choose to either upgrade or order more Premium Transcripts on demand. In addition, all uploads to the Internet Archive will remain available at 
-              a href="http://archive.org" target="_blank" archive.org
-              | .
-            p You will recieve the prorated value for the remainder of that month in the form of processing credits, available if you ever decide to upgrade back to a paid plan.
+          p Track how much audio has been processed on your account page.
+    .span6
+      ol start="6"
+        li 
+          p.question I’d like for my whole audio team to use Pop Up Archive. Is there a team plan? 
+          p Yes, you can add multiple users to the Small Business and Enterprise plans. We also offer team training sessions and access controls.
+        li 
+          p.question Can I cancel at any time? 
+          p 
+            | Yes, absolutely. When you're logged in, just click your user name, select “account,” then click “Change My Plan.” Choose the free Community Plan to downgrade your account. 
+          p
+            | You will not be charged again unless you choose to either upgrade or order more Premium Transcripts on demand. In addition, all uploads to the Internet Archive will remain available at 
+            a href="http://archive.org" target="_blank" archive.org
+            | .
+          p You will recieve the prorated value for the remainder of that month in the form of processing credits, available if you ever decide to upgrade back to a paid plan.
 
-          li 
-            p.question What happens if I go over my monthly hour limit?
-            p You will be notified upon login when you have gone over your hourly limit. You will still be able to pay as you go for Premium Transcripts at the rate of $#{Billable::OVERAGE_HOURLY_RATE}/hr, but will be unable to upload anything at the plan rate unless you upgrade or wait until the next month.
-          li 
-            p.question Do unused hours carry over to the next month? 
-            p Unused hours do not carry over. The number of hours available to your plan will reset each month from the day you signed up.
-          li 
-            p.question If I delete audio, do I get more upload space? 
-            p No, our monthly limits refer to the total amount of audio that has successfully uploaded, regardless of whether audio has been deleted.
-          li 
-            p.question How am I billed for Premium Transcripts ordered on demand?
-            p The cost of on demand Premium Transcripts, orderable on Community and Professional plans, will be added to your bill and charged at the end of the month using the credit card stored during sign up (Professional) or during your first Premium Transcript order (Community).
+        li 
+          p.question What happens if I go over my monthly hour limit?
+          p You will be notified upon login when you have gone over your hourly limit. You will still be able to pay as you go for Premium Transcripts at the rate of $#{Billable::OVERAGE_HOURLY_RATE}/hr, but will be unable to upload anything at the plan rate unless you upgrade or wait until the next month.
+        li 
+          p.question Do unused hours carry over to the next month? 
+          p Unused hours do not carry over. The number of hours available to your plan will reset each month from the day you signed up.
+        li 
+          p.question If I delete audio, do I get more upload space? 
+          p No, our monthly limits refer to the total amount of audio that has successfully uploaded, regardless of whether audio has been deleted.
+        li 
+          p.question How am I billed for Premium Transcripts ordered on demand?
+          p The cost of on demand Premium Transcripts, orderable on Community and Professional plans, will be added to your bill and charged at the end of the month using the credit card stored during sign up (Professional) or during your first Premium Transcript order (Community).
 
-            p On demand Premium Transcripts are charged at the rate of $#{Billable::OVERAGE_HOURLY_RATE}/hr. You can review all of the charges to expect beforehand on your account page.
+          p On demand Premium Transcripts are charged at the rate of $#{Billable::OVERAGE_HOURLY_RATE}/hr. You can review all of the charges to expect beforehand on your account page.
 
-  
+
