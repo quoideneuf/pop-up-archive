@@ -47,6 +47,7 @@ namespace :collections do
       orggrp.each do |org|
         org.users.each do |user|
           user.billable_collections.each do |coll|
+            next if coll.deleted?  # billable_collections include deleted colls
             verbose and puts "Checking Collection '#{coll.title}'[#{coll.id}] for Org #{org.name}[#{org.id}] via User #{user.name}[#{user.id}]"
             if !org.has_grant_for?(coll)
               verbose and puts "  Collection #{coll.id} needs grant for Org #{org.id} via User #{user.id}"
