@@ -59,7 +59,7 @@ ActiveAdmin.register Organization do
         tbl.column("Last Sign In") {|user| user.last_sign_in_at }
         tbl.column("Metered Storage") {|user| Api::BaseHelper::time_definition(user.used_metered_storage_cache||0) }
         tbl.column("Unmetered Storage") {|user| Api::BaseHelper::time_definition(user.used_unmetered_storage_cache||0) }
-        tbl.column("Plan Name") {|user| user.plan.name }
+        tbl.column("Role") {|user| user.role }
       end
     end
     panel "Authorized Collections" do
