@@ -6,7 +6,7 @@ section ng-controller="ItemFormCtrl"
     h3 ng-hide='item.id > 0' Create an Audio Item
 
   .modal-body
-    h3 ng-show="currentUser.overMonthlyLimit && !currentUser.hasCreditCard()"
+    h3 ng-show="currentUser.overMonthlyLimit && !currentUser.hasCreditCard() && !currentUser.isOrgMember()"
      | You are over your monthly limit and do not have a credit card on file.
      a href="/account/plan"  Upgrade now!
     h3 ng-show="currentUser.overMonthlyLimit && currentUser.isOrgMember()"
