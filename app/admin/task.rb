@@ -19,7 +19,13 @@ ActiveAdmin.register Task do
         row("ID") { task.id }
         row("Type") { task.type }
         row("Status") { task.status }
-        row("Owner") { link_to (task.owner.filename.present? ? task.owner.filename : task.owner_id), superadmin_audio_file_path(task.owner) }
+        row("Owner") { 
+          if task.owner.present?
+            link_to (task.owner.filename.present? ? task.owner.filename : task.owner_id), superadmin_audio_file_path(task.owner) 
+          else
+            nil
+          end
+        }
         row("Identifier") { task.identifier }
         row("Storage") { task.storage }
         row("Extras") do |task| 
