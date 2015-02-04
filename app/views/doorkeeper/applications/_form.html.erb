@@ -8,7 +8,7 @@
       <%= f.label :name %>
       <div class="input">
         <%= f.text_field :name %>
-        <%= errors_for application, :name %>
+        <%= doorkeeper_errors_for application, :name %>
       </div>
     </div>
 
@@ -16,9 +16,9 @@
       <%= f.label :redirect_uri %>
       <div class="input">
         <%= f.text_field :redirect_uri %>
-        <%= errors_for application, :redirect_uri %>
-        <% if Doorkeeper.configuration.test_redirect_uri %>
-          <span class="help-inline">Use <%= Doorkeeper.configuration.test_redirect_uri %> for local tests</span>
+        <%= doorkeeper_errors_for application, :redirect_uri %>
+        <% if Doorkeeper.configuration.native_redirect_uri %>
+          <span class="help-inline">Use <%= Doorkeeper.configuration.native_redirect_uri %> for local tests</span>
         <% end %>
       </div>
     </div>
