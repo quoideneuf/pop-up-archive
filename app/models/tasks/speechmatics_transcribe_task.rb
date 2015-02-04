@@ -251,6 +251,9 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       speaker_idx = 0
       words.each do |row|
         speaker = speakers[speaker_idx]
+        if !speaker
+          raise "Failed to find speaker entry at idx #{speaker_idx}"
+        end
         row_end = BigDecimal.new(row['time'].to_s) + BigDecimal.new(row['duration'].to_s)
         speaker_end = BigDecimal.new(speaker['time'].to_s) + BigDecimal.new(speaker['duration'].to_s)
 
