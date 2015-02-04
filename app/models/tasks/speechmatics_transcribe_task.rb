@@ -249,19 +249,19 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       # iterate through the words and speakers
       tt = nil
       speaker_idx = 0
+      prev_speaker = 1
       words.each do |row|
         speaker = speakers[speaker_idx]
         if !speaker
           raise "Failed to find speaker entry at idx #{speaker_idx}"
         end
         row_end = BigDecimal.new(row['time'].to_s) + BigDecimal.new(row['duration'].to_s)
-        speaker_end = BigDecimal.new(speaker['time'].to_s) + BigDecimal.new(speaker['duration'].to_s)
-
+        speaker_end = speaker ? (BigDecimal.new(speaker['time'].to_s) + BigDecimal.new(speaker['duration'].to_s)) : row_end
         if tt
           if (row_end > speaker_end)
             tt.save
             speaker_idx += 1
-            speaker = speakers[speaker_idx]
+            speaker = speakers[speaker_idx] ? speakers[speaker_idx] : speakers[prev_speaker] 
             tt = nil
           elsif (row_end - tt[:start_time]) > 5.0
             tt.save
@@ -278,9 +278,11 @@ class Tasks::SpeechmaticsTranscribeTask < Task
             start_time: BigDecimal.new(row['time'].to_s),
             end_time:   row_end,
             text:       row['name'],
-            speaker_id: speaker ? speaker_lookup[speaker['name']].id : nil,
+            speaker_id: speaker ? speaker_lookup[speaker['name']].id : prev_speaker,
           })
+          prev_speaker = tt.speaker_id
         end
+        
       end
 
       trans.save!
