@@ -18,7 +18,7 @@ ActiveAdmin.register User do
       '&nbsp;' + number_to_currency(user.transcript_usage_report[:basic_billable_cost].to_f||'0.00')
     end
     column 'Switch', sortable: false do |user|
-      link_to( user.email, "/admin/switch_user?scope_identifier=user_#{user.id}" )
+      link_to( user.email, "/su?scope_identifier=user_#{user.id}" )
     end
   end
 
@@ -31,7 +31,7 @@ ActiveAdmin.register User do
       attributes_table_for user do
         row("ID") { user.id }
         row("Name") { user.name }
-        row("Email") { link_to( user.email, "/admin/switch_user?scope_identifier=user_#{user.id}" ) + raw(' &#171; become this User') }
+        row("Email") { link_to( user.email, "/su?scope_identifier=user_#{user.id}" ) + raw(' &#171; become this User') }
         row("Organization") {
           user.organization_id \
           ? (link_to user.organization.name, superadmin_organization_path(user.organization)) \
