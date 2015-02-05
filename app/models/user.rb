@@ -264,7 +264,7 @@ class User < ActiveRecord::Base
   # if this user is in an organization and not the owner, use the owner's credit card.
   # otherwise, use the user's customer record.
   def active_credit_card
-    if organization && (organization.owner_id != id)
+    if organization && (organization.owner_id != id) && organization.owner
       return organization.owner.active_credit_card
     else
       customer.card
