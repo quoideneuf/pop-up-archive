@@ -4,10 +4,8 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
   $scope.Storage = Storage;
 
   Me.authenticated(function (me) {
-    Loader.page(Collection.query(), Collection.get(me.uploadsCollectionId), 'Collections', $scope).then(function (data) {
+    Loader.page(Collection.query(), 'Collections', $scope).then(function (data) {
       $scope.collection = undefined;
-      $scope.uploadsCollection = data[1];
-      $scope.uploadsCollection.fetchItems();
     });
 
 		$scope.tour = {
@@ -43,16 +41,6 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
 		
     $scope.selectedItems = [];
 
-    $scope.$watch('uploadsCollection.items', function (is) {
-      if (angular.isArray(is)) {
-        angular.forEach(is, function (item) {
-          if (item.selected && $scope.selectedItems.indexOf(item) == -1) {
-            $scope.selectedItems.push(item);
-          }
-        });
-      }
-    }, true);
-
     $scope.toggleItemSelection = function (item) {
       if (item.selected) {
         item.selected = false;
@@ -73,18 +61,6 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
           $scope.toggleItemSelection(item);
         }
       });
-    };
-
-    $scope.deleteSelection = function () {
-      if (confirm("Are you sure you would like to delete these " + $scope.selectedItems.length + " items from My Uploads?\n\nThis is permanent and cannot be undone.")) {
-        angular.forEach($scope.selectedItems, function (item) {
-          item.delete();
-          if ($scope.uploadsCollection.items.indexOf(item) !== -1) {
-            $scope.uploadsCollection.items.splice($scope.uploadsCollection.items.indexOf(item), 1);
-          }
-        });
-        $scope.selectedItems.length = 0;
-      }
     };
 
     $scope.clearSelection = function () {
@@ -247,6 +223,8 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     }
   }
 }])
+
+// TODO this controller seems entirely vestigal
 .controller('UploadCategorizationCtrl', ['$scope', function ($scope) {
   var dismiss = $scope.dismiss;
 
@@ -255,10 +233,8 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
   $scope.$watch('collections', function (is, was) {
     if (typeof is !== 'undefined') {
       for (var i=0; i < $scope.collections.length; i++) {
-        if ($scope.collections[i].id != $scope.currentUser.uploadsCollectionId) {
-          $scope.selectedItems.collectionId = $scope.collections[i].id;
-          break;
-        }
+        $scope.selectedItems.collectionId = $scope.collections[i].id;
+        break;
       }
     }
   });
@@ -283,7 +259,6 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
   $scope.submit = function () {
     angular.forEach($scope.selectedItems, function (item) {
       item.adopt($scope.selectedItems.collectionId);
-      $scope.uploadsCollection.items.splice($scope.uploadsCollection.items.indexOf(item), 1);
       if (currentCollection && currentCollection.items && currentCollection.items.push)
         curcurrentCollection.items.push(item);
     });

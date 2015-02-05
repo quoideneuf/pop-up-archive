@@ -25,7 +25,7 @@ class Tasks::OrderTranscriptTask < Tasks::AddToAmaraTask
 
     invoice_item = user.add_invoice_item!(invoice_item)
     extras['invoice_item_id'] = invoice_item.id
-    save!
+    update_column(:extras, extras)
     invoice_item
   end
 

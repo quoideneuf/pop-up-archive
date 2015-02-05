@@ -46,9 +46,4 @@ describe Collection do
     @collection.collection_grants.count.should eq 1
   end
 
-  it "can be for uploads" do
-    @creator = FactoryGirl.create :user
-    @creator.uploads_collection.should be_uploads_collection
-  end
-
 end

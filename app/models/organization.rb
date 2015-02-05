@@ -22,11 +22,6 @@ class Organization < ActiveRecord::Base
 
   has_many :monthly_usages, as: :entity
 
-  has_one  :uploads_collection_grant, class_name: 'CollectionGrant', as: :collector, conditions: {uploads_collection: true}
-  has_one  :uploads_collection, through: :uploads_collection_grant, source: :collection
-
-  after_commit :add_uploads_collection, on: :create
-
   scope :premium_usage_desc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) desc"
   scope :premium_usage_asc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) asc"
 
@@ -41,9 +36,13 @@ class Organization < ActiveRecord::Base
     has_role?(:owner, coll)
   end
 
-  def add_uploads_collection
-    self.uploads_collection = Collection.new(title: "Uploads", items_visible_by_default: false)
-    create_uploads_collection_grant collection: uploads_collection
+  def has_grant_for?(coll)
+    collection_grants.each do |cg|
+      if cg.collection_id == coll.id
+        return true
+      end
+    end
+    return false
   end
 
   def plan
@@ -124,6 +123,26 @@ class Organization < ActiveRecord::Base
       org_ids << row.first
     end
     return org_ids
+  end
+
+  # assigns the org to the user,
+  # gives Org access to all the User's collections,
+  # sets Org as billable owner of all User's collections.
+  def add_to_team(user)
+    # get billable collections first, since after we assign org, user.collections == org.collections
+    colls = user.billable_collections
+    user.organization_id = self.id
+    user.save!
+    colls.each do |coll|
+      if coll.items.size == 0
+        # empty collections are simply soft-deleted
+        coll.destroy
+        next
+      end
+      self.collections << coll
+      coll.set_owner(self)
+    end
+    user
   end
 
 end

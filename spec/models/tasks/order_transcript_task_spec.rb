@@ -14,7 +14,6 @@ describe Tasks::OrderTranscriptTask do
     @task.should_receive(:user).at_least(:once).and_return(@user)
     @task.should_receive(:create_video).once.and_return(Hashie::Mash.new({id: 'NEWVIDEO'}))
     @task.save!
-    @task.run_callbacks(:commit)
   end
 
   it "should be valid with defaults" do

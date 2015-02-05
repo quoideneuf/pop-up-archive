@@ -3,8 +3,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
 
   Me.authenticated(function (me) {
 
-    Loader.page(Collection.query(), Collection.get(me.uploadsCollectionId), 'Collections', $scope).then(function (data) {
-      $scope.uploadsCollection = data[1];
+    Loader.page(Collection.query(), 'Collections', $scope).then(function (data) {
     });
 
     // for uploads
@@ -70,7 +69,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
       var cols = $scope.collections;
       var mostRecent = cols[0];
       for (var i=1; i<cols.length; i++) {
-        if ((cols[i].id > mostRecent.id) && (cols[i].id != $scope.uploadsCollection.id)){
+        if ((cols[i].id > mostRecent.id)){
           mostRecent = cols[i];
         }
       }
@@ -242,45 +241,22 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
       alert.progress = 1;
       alert.message  = file.name;
       alert.add();
-
-      if (item.collectionId == $scope.currentUser.uploadsCollectionId) {
-        alert.path = "/collections";
-      } else {
-        alert.path = item.link();
-      }
+      alert.path = item.link();
 
       file.alert = alert;
 
       var audioFile = item.addAudioFile(file,
       {
         onComplete: function () {
-          console.log($scope.item.id, $scope.currentUser.uploadsCollectionId);
           var msg = '"' + file.name + '" upload completed.';
-          if (item.collectionId == $scope.currentUser.uploadsCollectionId && $route.current.controller == 'CollectionsCtrl') {
-            msg = msg + ' To see transcripts and tags, move the item from My Uploads to a collection.';
-            mixpanel.track(
-              "Audio Upload Complete",{
-                "Collection": "My Uploads",
-                "Storage": "Temporary",
-                "User": $scope.currentUser.name + ' ' + $scope.currentUser.email}
+          msg    += '<a ng-href="' + item.link() + '"> View and edit the item!</a>';
+          mixpanel.track(
+            "Audio Upload Complete", {
+              "Collection": item.collectionId + ' ' +item.collectionTitle,
+              "Storage": item.storage,
+              "User": $scope.currentUser.name + ' ' + $scope.currentUser.email
+            }
           );
-          } else if (item.collectionId == $scope.currentUser.uploadsCollectionId && $route.current.controller != 'CollectionsCtrl'){
-            msg = msg + ' To see transcripts and tags, move the item from My Uploads to a collection. <a href="/collections">Click here to get back to My Collections.</a>';
-            mixpanel.track(
-              "Audio Upload Complete", {
-                "Collection": "My Uploads",
-                "Storage": "Temporary",
-                "User": $scope.currentUser.name + ' ' + $scope.currentUser.email}
-            );
-          } else {
-            msg = msg + '<a ng-href="' + item.link() + '"> View and edit the item!</a>';
-            mixpanel.track(
-              "Audio Upload Complete", {
-                "Collection": item.collectionId + ' ' +item.collectionTitle,
-                "Storage": item.storage,
-                "User": $scope.currentUser.name + ' ' + $scope.currentUser.email}
-            );
-          }
 
           $scope.addMessage({
             'type': 'success',
@@ -324,12 +300,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
       alert.progress = 1;
       alert.message  = file.name;
       alert.add();
-
-      if (item.collectionId == $scope.currentUser.uploadsCollectionId) {
-        alert.path = "/collections";
-      } else {
-        alert.path = item.link();
-      }
+      alert.path = item.link();
 
       file.alert = alert;
 
@@ -338,13 +309,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
         onComplete: function () {
           // console.log($scope.item.id, $scope.currentUser.uploadsCollectionId);
           var msg = '"' + file.name + '" upload completed.';
-          if (item.collectionId == $scope.currentUser.uploadsCollectionId && $route.current.controller == 'CollectionsCtrl') {
-            msg = msg + ' To see transcripts and tags, move the item from My Uploads to a collection.';
-          } else if (item.collectionId == $scope.currentUser.uploadsCollectionId && $route.current.controller != 'CollectionsCtrl'){
-            msg = msg + ' To see transcripts and tags, move the item from My Uploads to a collection. <a href="/collections">Click here to get back to My Collections.</a>';
-          } else {
-            msg = msg + '<a ng-href="' + item.link() + '"> View and edit the item!</a>';
-          }
+          msg    += '<a ng-href="' + item.link() + '"> View and edit the item!</a>';
 
           $scope.addMessage({
             'type': 'success',

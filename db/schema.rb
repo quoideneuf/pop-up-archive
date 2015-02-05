@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141212183249) do
+ActiveRecord::Schema.define(:version => 20150128041703) do
 
   add_extension "hstore"
 
@@ -64,8 +64,8 @@ ActiveRecord::Schema.define(:version => 20141212183249) do
     t.datetime "deleted_at"
   end
 
+  add_index "collection_grants", ["collection_id", "collector_id", "collector_type"], :name => "index_collection_grant_collector_type_collection", :unique => true
   add_index "collection_grants", ["collection_id"], :name => "index_collection_grants_on_collection_id"
-  add_index "collection_grants", ["collector_id", "collection_id"], :name => "index_collection_grants_on_user_id_and_collection_id", :unique => true
   add_index "collection_grants", ["collector_id"], :name => "index_collection_grants_on_user_id"
 
   create_table "collections", :force => true do |t|

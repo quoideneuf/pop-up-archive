@@ -25,9 +25,6 @@ class User < ActiveRecord::Base
   after_commit :add_default_collection, on: :create
 
   has_many :collection_grants, as: :collector
-  has_one  :uploads_collection_grant, class_name: 'CollectionGrant', as: :collector, conditions: {uploads_collection: true}, autosave: true
-
-  has_one  :uploads_collection, through: :uploads_collection_grant, source: :collection
   has_many :collections, through: :collection_grants, include: :default_storage
   has_many :items, through: :collections
   has_many :audio_files, through: :items
@@ -39,7 +36,6 @@ class User < ActiveRecord::Base
   has_many :owned_organizations, class_name: 'Organization', foreign_key: 'owner_id'
 
   validates_presence_of :name, if: :name_required?
-  validates_presence_of :uploads_collection
 
   OVERAGE_CALC = 'coalesce(used_metered_storage_cache - pop_up_hours_cache * 3600, 0)'
 
@@ -84,7 +80,7 @@ class User < ActiveRecord::Base
   end
 
   def searchable_collection_ids
-    collection_ids - [uploads_collection.id]
+    collection_ids
   end
 
   def to_s
@@ -120,11 +116,7 @@ class User < ActiveRecord::Base
   end
 
   def collections_without_my_uploads
-    collections.reject {|c| c.id == self.uploads_collection.id }
-  end
-
-  def uploads_collection
-    organization.try(:uploads_collection) || uploads_collection_grant.collection || add_uploads_collection
+    collections
   end
 
   def in_organization?
@@ -269,8 +261,14 @@ class User < ActiveRecord::Base
     active_credit_card.as_json.try(:slice, *%w(last4 type exp_month exp_year))
   end
 
+  # if this user is in an organization and not the owner, use the owner's credit card.
+  # otherwise, use the user's customer record.
   def active_credit_card
-    customer.card
+    if organization && (organization.owner_id != id)
+      return organization.owner.active_credit_card
+    else
+      customer.card
+    end
   end
 
   def has_active_credit_card?
@@ -322,28 +320,23 @@ class User < ActiveRecord::Base
     return false
   end
 
+  def is_over_monthly_limit?
+    if organization
+      organization.is_over_monthly_limit?
+    else
+      super
+    end
+  end
+
+  def add_to_team(org)
+    org.add_to_team(self)
+  end
+
   private
 
   def delete_customer
     customer.stripe_customer.delete
     invalidate_cache
-  end
-
-  def add_uploads_collection
-    uploads_collection_grant.collection = Collection.new(title: 'My Uploads', creator: self, items_visible_by_default: false)
-    if persisted?
-      uploads_collection_grant.collection.save
-      if grant = collection_grants.where(collection_id: uploads_collection_grant.collection.id).first
-        self.uploads_collection_grant = grant
-        grant.uploads_collection = true
-      end
-      uploads_collection_grant.save
-    end
-    uploads_collection_grant.collection
-  end
-
-  def uploads_collection_grant
-    super or self.uploads_collection_grant = CollectionGrant.new(collector: self, uploads_collection: true)
   end
 
   def customer_cache_id

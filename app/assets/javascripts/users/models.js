@@ -57,6 +57,10 @@ angular.module('Directory.users.models', ['RailsModel'])
     return !!this.creditCard;
   };
 
+  User.prototype.isOrgMember = function() {
+    return this.role == "member";
+  };
+
   User.prototype.hasCommunityPlan = function () {
     return !!(!this.plan || !this.plan.id || this.plan.name.match(/Community/));
   };

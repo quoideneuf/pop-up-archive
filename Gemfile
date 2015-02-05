@@ -30,8 +30,13 @@ gem 'omniauth-twitter'
 gem 'omniauth-facebook'
 gem 'devise', '~> 3.2'
 gem 'devise_invitable', github: 'scambra/devise_invitable'
+gem 'switch_user'
 gem 'bootstrap_form'
 gem 'cancan'
+
+# require a new enough rest-client on behalf of other gems that use it
+# NOTE that v 1.7.2 has a security bug but it is the newest version as of 2015-01-27
+gem 'rest-client', '~> 1.7.2'
 
 # search with elasticsearch
 gem 'elasticsearch-model', '~> 0.1.6'
@@ -118,7 +123,7 @@ group :assets do
   gem 'sass-rails', '~> 3.2'
   gem 'uglifier', '>= 1.0.3'
   gem 'bootstrap-sass'
-  gem 'angularjs-rails-resource'
+  gem 'angularjs-rails-resource', '~> 0.2.5'
   gem 'font-awesome-sass-rails', github: 'iterion/font-awesome-sass-rails'
   gem 'ng_player_hater-rails', '~> 0.0.4'
 end
@@ -164,6 +169,7 @@ group :test do
   gem 'simplecov'
   gem 'coveralls'
   gem 'elasticsearch-extensions'
+  gem 'test_after_commit'
 end
 
 group :development, :production, :staging do

@@ -114,9 +114,7 @@ angular.module('Directory.collections.models', ['RailsModel', 'Directory.imageFi
     if (angular.isArray(collections)) {
       c.splice(0, c.length);
       angular.forEach(collections, function (collection, index) {
-        if (collection.id != user.uploadsCollectionId) {
-          c.push(collection);
-        }
+        c.push(collection);
       });
       return c;
     } else {

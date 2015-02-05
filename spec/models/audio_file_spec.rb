@@ -110,7 +110,7 @@ describe AudioFile do
       audio_file.storage.should_not be_automatic_transcode
       audio_file.transcode_audio
       audio_file.transcode_audio
-      audio_file.tasks.count.should == 1
+      audio_file.tasks.transcode.count.should == 1
     end
 
     it "should check transcode complete" do
