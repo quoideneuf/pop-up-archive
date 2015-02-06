@@ -52,7 +52,9 @@
       }, function error(response) {
         var errCode = response.status;
         // avoid recursion (error throwing error)
-        // and only re-route if this was the main request (matches window.location) or a non-404.
+        // and only re-route if this was the main request (matches window.location) or 401, 403.
+        // NOTE we silently skip 5xx and 404 responses because we do not want to alarm or mislead users
+        // for ancillary objects that they are not requesting directly (as in search results, e.g.).
         //console.log("error " + errCode + " for path " + $location.path() + " for response", response);
         if (response && response.config) {
           var main_req = '/api' + $location.path();
