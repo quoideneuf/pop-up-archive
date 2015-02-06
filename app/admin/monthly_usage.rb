@@ -1,5 +1,6 @@
 ActiveAdmin.register MonthlyUsage do
   actions :index, :show
+  menu false
   index do
     column :entity
     #column :entity_type
