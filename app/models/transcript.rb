@@ -215,7 +215,11 @@ class Transcript < ActiveRecord::Base
       return end_time - start_time
 
     end
-  end 
+  end
+
+  def billable_hms(af=audio_file_lazarus)
+    format_time(billable_seconds(af))
+  end
 
   # returns a float representing 1000ths of a dollar
   # if billable? is false, always returns 0.0
@@ -242,7 +246,21 @@ class Transcript < ActiveRecord::Base
   def retail_cost_dollars(af=audio_file_lazarus)
     return retail_cost(af) / 1000
   end
-    
+
+  def as_usage_summary(af=audio_file_lazarus)
+    { 
+      :time => billable_hms(af),
+      :cost => billable? ? retail_cost_dollars(af) : 0.0,
+      :date => created_at,
+      :name => af.filename,
+      :title => af.item.title,
+      :user => { :id => af.user.id, :name => af.user.name },
+      :id   => id,
+      :coll_id => af.item.collection_id,
+      :item_id => af.item_id, 
+    }
+  end
+
   private
 
   def format_time(seconds)

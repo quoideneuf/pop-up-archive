@@ -100,6 +100,42 @@ module Billable
     return transcripts_sql
   end
 
+  def transcript_usage(limit=nil)
+    # must iterate through all transcribers
+    transcriber_ids = Transcriber.select(['id']).map(&:id)
+
+    # keyed by yyyymm in chron order
+    usage = {}
+
+    # no limit == all usage
+    if !limit
+      # use monthly_usages as a shortcut for "all the months"
+      monthly_usages.each do |mu|
+        ym = DateTime.parse(mu.yearmonth + '-01').utc
+        usage[mu.yearmonth] = []
+        transcriber_ids.each do |tr_id|
+          sql = self.sql_for_billable_transcripts_for_month_of(ym, tr_id)
+          Transcript.find_by_sql(sql).each do |tr|
+            af = tr.audio_file_lazarus
+            usage[mu.yearmonth].push tr.as_usage_summary(af)
+          end
+        end
+      end
+    else
+    # apply limit for one month only
+      trs = []
+      transcriber_ids.each do |tr_id|
+        sql = self.sql_for_billable_transcripts_for_month_of(limit, tr_id)
+        Transcript.find_by_sql(sql).each do |tr|
+          af = tr.audio_file_lazarus
+          trs.push tr.as_usage_summary(af)
+        end
+      end
+      usage[limit.strftime('%Y-%m')] = trs
+    end
+    usage
+  end
+
   # unlike total_transcripts_report, transcripts_billable_for_month_of returns hash of numbers not strings.
   def transcripts_billable_for_month_of(dtim=DateTime.now, transcriber_id)
     total_secs = 0
