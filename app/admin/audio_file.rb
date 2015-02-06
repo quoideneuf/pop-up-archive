@@ -28,7 +28,7 @@ ActiveAdmin.register AudioFile do
       attributes_table_for audio_file do
         row("ID") { audio_file.id }
         row("Filename") { audio_file.filename }
-        row("URL") { audio_file.permanent_public_url }
+        row("URL") { audio_file.permanent_public_url({extension: 'mp3'}) }
         row("Collection") { link_to audio_file.collection.title, superadmin_collection_path(audio_file.collection) }
         row("Item") { link_to audio_file.item.title, superadmin_item_path(audio_file.item) }
         row("Storage") { audio_file.storage_configuration }
