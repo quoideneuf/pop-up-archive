@@ -83,6 +83,29 @@ class Utils
         raise Exceptions::PrivateFileNotFound.new "Failed to get directory for bucket #{bucket}"
       end
 
+      if !private_file_exists?(connection, uri)
+        raise Exceptions::PrivateFileNotFound.new, "File not found on s3: #{bucket}: #{key}"
+      end
+
+      result = directory.files.get(key).body
+
+      if result.length <= 0
+        raise "Zero length file from: #{uri}"
+      end
+
+      result
+    end
+
+    def private_file_exists?(connection, uri, retry_count=10)
+      bucket = uri.host
+      key = uri.path[1..-1]
+      file_name = key.split("/").last
+
+      directory = connection.directories.get(bucket)
+      if !directory
+        raise Exceptions::PrivateFileNotFound.new "Failed to get directory for bucket #{bucket}"
+      end
+
       try_count = 0
       file_exists = false
       while !file_exists && try_count < retry_count
@@ -101,18 +124,7 @@ class Utils
           sleep(1)
         end
       end
-
-      if !file_exists
-        raise Exceptions::PrivateFileNotFound.new, "File not found on s3: #{bucket}: #{key}"
-      end
-
-      result = directory.files.get(key).body
-
-      if result.length <= 0
-        raise "Zero length file from: #{uri}"
-      end
-
-      result
+      file_exists
     end
 
     def download_file(connection, uri, retry_count=10)
