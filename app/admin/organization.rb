@@ -55,10 +55,10 @@ ActiveAdmin.register Organization do
     panel "Users" do
       table_for organization.users do |tbl|
         tbl.column("Name") {|user| link_to user.name, superadmin_user_path(user) }
-        tbl.column("Email") {|user| user.email }
+        tbl.column("Email") {|user| link_to( user.email, "/su?scope_identifier=user_#{user.id}" ) + raw(' &#171; switch')  }
         tbl.column("Last Sign In") {|user| user.last_sign_in_at }
-        tbl.column("Metered Storage") {|user| Api::BaseHelper::time_definition(user.used_metered_storage_cache||0) }
-        tbl.column("Unmetered Storage") {|user| Api::BaseHelper::time_definition(user.used_unmetered_storage_cache||0) }
+        #tbl.column("Metered Storage") {|user| Api::BaseHelper::time_definition(user.used_metered_storage_cache||0) }
+        #tbl.column("Unmetered Storage") {|user| Api::BaseHelper::time_definition(user.used_unmetered_storage_cache||0) }
         tbl.column("Role") {|user| user.role }
       end
     end
@@ -66,6 +66,7 @@ ActiveAdmin.register Organization do
       table_for organization.collections do |tbl|
         tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
         tbl.column("Created") {|coll| coll.created_at }
+        tbl.column("Created By") {|coll| coll.creator ? link_to(coll.creator, superadmin_user_path(coll.creator)) : nil }
         tbl.column("Storage Type") {|coll| coll.storage }
         tbl.column("Items") {|coll| link_to "#{coll.items.count} Items", :action => 'index', :controller => "items", q: { collection_id_equals: coll.id.to_s } }
       end
@@ -74,6 +75,7 @@ ActiveAdmin.register Organization do
       table_for organization.billable_collections do |tbl|
         tbl.column("Title") {|coll| link_to coll.title, superadmin_collection_path(coll) }
         tbl.column("Created") {|coll| coll.created_at }
+        tbl.column("Created By") {|coll| coll.creator ? link_to(coll.creator, superadmin_user_path(coll.creator)) : nil }
         tbl.column("Storage Type") {|coll| coll.storage }
         tbl.column("Items") {|coll| link_to "#{coll.items.count} Items", :action => 'index', :controller => "items", q: { collection_id_equals: coll.id.to_s } } 
       end 
