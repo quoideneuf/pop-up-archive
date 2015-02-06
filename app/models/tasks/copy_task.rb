@@ -31,7 +31,7 @@ class Tasks::CopyTask < Task
   def destination_exists?
     dest_url = URI.parse(extras['destination'])
     connection = Fog::Storage.new(storage.credentials)
-    private_file_exists?(connection, dest_url)
+    file_exists?(connection, dest_url)
   end 
 
   def create_copy_job

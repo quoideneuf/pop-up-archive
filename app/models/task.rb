@@ -185,6 +185,10 @@ class Task < ActiveRecord::Base
     Utils.get_private_file(connection, uri)
   end
 
+  def file_exists?(connection, uri)
+    Utils.private_file_exists?(connection, uri)
+  end
+
   def create_job
     return 1 if Rails.env.test?
 
