@@ -101,6 +101,7 @@ class Task < ActiveRecord::Base
       self.results = params['result_details']
       save!
     when 'error'
+      self.extras['fixer_error'] = params['result_details']
       failure!
     when 'retrying'
       logger.debug "task #{params['label']} retrying"
