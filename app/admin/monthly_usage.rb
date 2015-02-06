@@ -28,17 +28,18 @@ ActiveAdmin.register MonthlyUsage do
         row :entity_type
         row :yearmonth
         row :use
-        row("Wholesale Cost") { number_to_currency(monthly_usage.cost) }
-        row("Retail Cost") { number_to_currency(monthly_usage.retail_cost) }
-        row("Time") { Api::BaseHelper::time_definition(monthly_usage.value||0) }
+        row("Wholesale") { number_to_currency(monthly_usage.cost) }
+        row("Retail") { number_to_currency(monthly_usage.retail_cost) }
+        row("Duration") { monthly_usage.value_as_hms }
       end
     end
 
     panel "Transcripts" do
       table_for monthly_usage.transcripts do |tbl|
         tbl.column("ID") {|tr| link_to tr.identifier, superadmin_transcript_path(tr) }
-        tbl.column("Wholesale Cost") {|tr| number_to_currency(tr.cost_dollars) }
-        tbl.column("Retail Cost") {|tr| number_to_currency(tr.retail_cost_dollars) }
+        tbl.column("Duration") {|tr| tr.billable_hms }
+        tbl.column("Wholesale") {|tr| div :class => "cost" do number_to_currency(tr.cost_dollars); end }
+        tbl.column("Retail") {|tr| div :class => "cost" do number_to_currency(tr.billable? ? tr.retail_cost_dollars : 0); end }
         tbl.column("User") {|tr| user = tr.audio_file_lazarus.user; user ? link_to(user.name, superadmin_user_path(user)) : nil }
         tbl.column("Transcriber") {|tr| link_to tr.transcriber.name, superadmin_transcriber_path(tr.transcriber) }
         tbl.column("Created") {|tr| tr.created_at }
