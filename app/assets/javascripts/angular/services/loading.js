@@ -55,8 +55,9 @@
         // and only re-route if this was the main request (matches window.location) or a non-404.
         //console.log("error " + errCode + " for path " + $location.path() + " for response", response);
         if (response && response.config) {
-          if (!$location.search().was && (response.config.url == '/api' + $location.path() || errCode != 404)) {
-            console.log("redirect error " + errCode + " for response path " + response.config.url);
+          var main_req = '/api' + $location.path();
+          if (!$location.search().was && (response.config.url == main_req || !errCode.match(/^(404|5)/) ) ) {
+            //console.log("redirect error " + errCode + " for response path " + response.config.url);
             $rootScope.errorLocation = response.config.url;
             $rootScope.prevLocation = $location.absUrl();
             $location.path('/error/' + errCode).search({was:$rootScope.prevLocation})
