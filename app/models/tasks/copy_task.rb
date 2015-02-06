@@ -18,11 +18,21 @@ class Tasks::CopyTask < Task
 
   def recover!
     if !owner
+      extras['error'] = 'No owner defined'
+      cancel!
+    elsif !destination_exists?
+      extras['error'] = 'Destination URL does not exist'
       cancel!
     else
       finish!
     end
   end
+
+  def destination_exists?
+    dest_url = URI.parse(extras['destination'])
+    connection = Fog::Storage.new(storage.credentials)
+    private_file_exists?(connection, dest_url)
+  end 
 
   def create_copy_job
     j = create_job do |job|
