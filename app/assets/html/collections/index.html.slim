@@ -16,7 +16,7 @@
     | Create a Collection
   ul.collections-list
     li.collection-box ng-repeat="collection in collections | notUploads"
-      span class="ribbon" ng-class="{'public': collection.itemsVisibleByDefault, 'private': !collection.itemsVisibleByDefault}"
+      span bs-popover="itemHelp['privacy']" data-placement="left" class="ribbon" ng-class="{'public': collection.itemsVisibleByDefault, 'private': !collection.itemsVisibleByDefault}"
       a ng-href="/collections/{{collection.id}}"
         .col-image ng-show="collection.imageFiles.length" style="background-image:url('{{collection.getThumbImage()}}')"
         .image ng-hide="collection.imageFiles.length"

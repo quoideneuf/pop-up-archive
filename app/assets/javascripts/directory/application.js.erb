@@ -477,8 +477,24 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
                           },
       'status'         : { 
                             'content': '<p>The processing status for your audio upload.</p><p><a href="https://popuparchiveorg.zendesk.com/hc/en-us/articles/203693330">See all possible statuses.</a></p>'
-                          }
+                          },
+      'privacy'         : { 
+                            'content': '<a href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651254-Privacy-and-Audio-Storage">Find out who can see this collection.</a>'
+                          }, 
+      'simpleplayer'    : { 
+                            'content': '<p>Paste this code into the body of your HTML for a Pop Up Archive branded audio player.</p>'
+                          }, 
+      'jstplayer'       : { 
+                            'content': '<p>Paste this code into the body of your HTML for a Pop Up Archive audio player with an autoscrolling transcript, created with JavaScript. JS player text is unreliably indexed by search engines.</p>'
+                          },                                                                              
+      'iframetplayer'   : { 
+                            'content': '<p>Paste this code into the body of your HTML for a Pop Up Archive audio player with an autoscrolling transcript. Iframe player text is not indexed by search engines.</p>'
+                          },
+      'oembedtplayer'   : { 
+                            'content': '<p>Paste this code into the body of your HTML for a Pop Up Archive audio player with an autoscrolling transcript. oEmbed players require some <a href="https://github.com/popuparchive/pop-up-archive/wiki/Transcript-Player">server-side programming</a> to implement, but text is reliably indexed by search engines.</p>'
+                          }                                                                                                                                                                                                                                          
     };
+
 
     $scope.$on('$routeChangeStart', function(event, next) {
       if (typeof next !== 'undefined') {
