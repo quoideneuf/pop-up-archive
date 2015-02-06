@@ -4,6 +4,10 @@ node :number_of_items do |coll|
   coll.items.count
 end
 
+node :item_ids do |coll|
+  coll.item_ids
+end
+
 node :number_of_audio_files do |coll|
   coll.audio_files.count
 end
