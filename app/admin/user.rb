@@ -54,7 +54,7 @@ ActiveAdmin.register User do
 
     panel "Monthly Usage" do
       table_for user.monthly_usages.order('yearmonth desc') do|tbl|
-        tbl.column :yearmonth
+        tbl.column('Month') {|mu| link_to mu.yearmonth, superadmin_monthly_usage_path(mu) }
         tbl.column :use
         tbl.column('Wholesale Cost') {|mu| div :class => "cost" do number_to_currency(mu.cost); end }
         tbl.column('Retail Cost') {|mu| div :class => "cost" do number_to_currency(mu.retail_cost); end }
