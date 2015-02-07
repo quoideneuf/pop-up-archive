@@ -36,7 +36,8 @@ ActiveAdmin.register MonthlyUsage do
 
     panel "Transcripts" do
       table_for monthly_usage.transcripts do |tbl|
-        tbl.column("ID") {|tr| link_to tr.identifier, superadmin_transcript_path(tr) }
+        tbl.column("ID") {|tr| link_to tr.id, superadmin_transcript_path(tr) }
+        tbl.column("Plan") {|tr| tr.plan.name + ' ' + tr.plan.hours.to_s }
         tbl.column("Duration") {|tr| tr.billable_hms }
         tbl.column("Wholesale") {|tr| div :class => "cost" do number_to_currency(tr.cost_dollars); end }
         tbl.column("Retail") {|tr| div :class => "cost" do number_to_currency(tr.billable? ? tr.retail_cost_dollars : 0); end }
