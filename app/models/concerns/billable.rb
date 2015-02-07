@@ -89,7 +89,10 @@ module Billable
     end_dtim   = month_end.strftime('%Y-%m-%d %H:%M:%S')
 
     billable_collection_ids = billable_collections.map { |c| c.id.to_s }
-    return nil unless billable_collection_ids.size > 0
+
+    # return a non-matching query if we have 0 collections.
+    # this satisfies chained callers.
+    return "select * from transcripts where id < 0" unless billable_collection_ids.size > 0
 
     items_sql = "select i.id from items as i where i.collection_id in (#{billable_collection_ids.join(',')})"
     audio_files_sql = "select af.id from audio_files as af where af.duration is not null and af.item_id in (#{items_sql})"
