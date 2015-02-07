@@ -239,6 +239,9 @@ describe Tasks::SpeechmaticsTranscribeTask do
       # org has all the billable usage
       org.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS).should == 60
 
+      # plan is org's
+      audio_file.best_transcript.plan.should == org.plan
+
     end
 
   end
