@@ -31,7 +31,7 @@ ActiveAdmin.register User do
       attributes_table_for user do
         row("ID") { user.id }
         row("Name") { user.name }
-        row("Email") { link_to( user.email, "/su?scope_identifier=user_#{user.id}" ) + raw(' &#171; become this User') }
+        row("Email") { link_to( user.email, "/su?scope_identifier=user_#{user.id}" ) + raw(' &#171; switch') }
         row("Organization") {
           user.organization_id \
           ? (link_to user.organization.name, superadmin_organization_path(user.organization)) \
