@@ -77,11 +77,6 @@
         dd.subtotal ng-show="me.organization.usage.summary.thisMonth.ondemand.hours" {{me.organization.usage.summary.thisMonth.ondemand.hours}}
         dt.subtotal ng-show="me.organization.usage.summary.thisMonth.ondemand.cost" Premium Cost
         dd.subtotal ng-show="me.organization.usage.summary.thisMonth.ondemand.cost" {{me.organization.usage.summary.thisMonth.ondemand.cost | currency:"USD $"}}
-        dt
-        dd
-          button.btn
-            i.icon-expand-alt.icon-large
-            |  Details
     .usage-current
       h5 ng-show="me.organization" Me, This Month ({{me.usage.summary.thisMonth.period}})
       h5 ng-hide="me.organization" This Month ({{me.usage.summary.thisMonth.period}})
@@ -101,30 +96,37 @@
         dd.subtotal ng-show="me.usage.summary.thisMonth.ondemand.hours" {{me.usage.summary.thisMonth.ondemand.hours}}
         dt.subtotal ng-show="me.usage.summary.thisMonth.ondemand.cost" Premium Cost
         dd.subtotal ng-show="me.usage.summary.thisMonth.ondemand.cost" {{me.usage.summary.thisMonth.ondemand.cost | currency:"USD $"}}
-        dt  
-        dd  
-          button.btn
-            i.icon-expand-alt.icon-large
-            |  Details
     hr
     .usage-history
       h5 History
-      table.table
-        thead
-          tr
+      table.table.usage
+        tbody.usage-month-group data-period="{{mnthGrp.period}}" ng-repeat="mnthGrp in me.usageSummaryByMonth"
+          tr.usage-month data-period="{{mnthGrp.period}}"
             th Month
             th Type
-            th Hours
-            th Cost 
-            th 
-        tbody.usage-month-group ng-repeat="mnthGrp in me.usageSummaryByMonth"
-          tr.usage-month ng-repeat="msum in mnthGrp"
-            td {{msum.period}}
-            td {{msum.type}}
-            td {{msum.hours}}
-            td {{msum.cost | currency:"USD $"}}
-            td
-              button.btn  
+            th.time Hours
+            th.cost Cost 
+            th.last
+              button.btn ng-click="toggleDetails($event)"
                 i.icon-expand-alt.icon-large
                 |  Details
+          tr.usage-month ng-repeat="msum in mnthGrp.rows"
+            td {{msum.period}}
+            td {{msum.type}}
+            td.time {{msum.hours}}
+            td.cost {{msum.cost | currency:"USD $"}}
+            td
+          tr.usage-month-details data-period="{{mnthGrp.period}}" ng-show="usageDetailsVisible(mnthGrp.period)"
+            th.first Date
+            th Name
+            th.time Duration
+            th.cost Cost
+            th User
+          tr.usage-month-details ng-repeat="t in me.usageDetailsByMonth(mnthGrp.period)" ng-show="usageDetailsVisible(mnthGrp.period)"
+            td.first {{t.date | date:'yyyy-MM-dd HH:mm:ss'}}
+            td
+              a href="/collections/{{t.collId}}/items/{{t.itemId}}"  {{t.title}}
+            td.time {{t.time}}
+            td.cost {{t.cost | currency:"USD $"}}
+            td {{t.user.name}}
 

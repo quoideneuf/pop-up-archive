@@ -1709,6 +1709,29 @@ input[readonly].copy-widget {
   cursor:pointer;
 }
 
+table.usage {
+  background-color: #fff;
+}
+
+.usage-month-group {
+  border: 1px solid #ddd;
+  padding: 1em;
+}
+
+.usage-month-group .last {
+  text-align: right;
+  float: right;
+}
+
+.usage-month-details .first {
+  padding-left: 2em;
+}
+
+.usage .cost,
+.usage .time {
+  text-align: right;
+}
+
 /* responsive overrides
    NOTE this section *MUST* come last in the file, so don't add anything here
    unless you want it to affect mobile devices.

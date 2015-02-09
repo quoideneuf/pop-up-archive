@@ -84,6 +84,9 @@ angular.module('Directory.users.models', ['RailsModel'])
     var userInOrg = self.organization ? true : false;
     var mnthMap   = {};
     $.each(self.usage.summary.history, function(idx, msum) {
+      if (self.plan.isPremium && msum.type.match(/basic/)) {
+        return; // filter out some noise
+      }
       if (msum.type.match(/usage only/)) {
         // clarify label
         msum.type = msum.type.replace(/usage only/, 'me');
@@ -98,7 +101,7 @@ angular.module('Directory.users.models', ['RailsModel'])
       if (msum.period != curMonth) {
         // new group
         if (group.length > 0) {
-          groups.push(group);
+          groups.push({period: curMonth, rows: group});
           mnthMap[group[0].period] = groups.length - 1;
         }
         group = [msum];
@@ -109,12 +112,15 @@ angular.module('Directory.users.models', ['RailsModel'])
       }
     });
     if (group.length > 0) {
-      groups.push(group);
+      groups.push({period: curMonth, rows: group});
     }
 
     if (userInOrg) {
       // do the same with org usage, interleaving
       $.each(self.organization.usage.summary.history, function(idx, msum) {
+        if (self.plan.isPremium && msum.type.match(/basic/)) {
+          return; // filter out some noise
+        }
         msum.type = msum.type.charAt(0).toUpperCase() + msum.type.slice(1);
         msum.type += ' ('+self.organization.name+')';
         // find the correct groups index to push to
@@ -124,10 +130,19 @@ angular.module('Directory.users.models', ['RailsModel'])
           console.log('no idx for ', msum, mnthMap);
           return;
         }
-        groups[gIdx].unshift(msum); // prepend
+        groups[gIdx].rows.unshift(msum); // prepend
       });
     }
     return groups;
+  };
+
+  User.prototype.usageDetailsByMonth = function(ym) {
+    if (this.organization) {
+      return this.organization.usage.transcripts[ym];
+    }
+    else {
+      return this.usage.transcripts[ym];
+    } 
   };
 
   User.prototype.subscribe = function (planId, offerCode) {
