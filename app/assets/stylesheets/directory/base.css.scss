@@ -1692,6 +1692,23 @@ ul.pricing {
   color: #F25A4C;
 }
 
+.facebookShare {
+  button {
+    vertical-align: inherit;
+  }
+  .facebookCount {
+    display: none;
+  }
+}
+.tweetButton {
+  vertical-align: 2px; 
+  margin-left: 4px; 
+}
+
+input[readonly].copy-widget {
+  cursor:pointer;
+}
+
 /* responsive overrides
    NOTE this section *MUST* come last in the file, so don't add anything here
    unless you want it to affect mobile devices.
@@ -1763,21 +1780,5 @@ ul.pricing {
   .featurebtn2 {
     margin-left: 0;
   }
-}
-.facebookShare {
-  button {
-    vertical-align: inherit;
-  }
-  .facebookCount {
-    display: none;
-  }
-}
-.tweetButton {
-  vertical-align: 2px;
-  margin-left: 4px;
-}
-
-input[readonly].copy-widget {
-  cursor:pointer;
 }
 
