@@ -22,7 +22,11 @@ class MonthlyUsage < ActiveRecord::Base
     usage_type = use.match(/^(\w+)/)[0]
     transcriber_id = Transcriber.send(usage_type).id
     ymd = DateTime.parse(self.yearmonth + '-01')
-    sql = entity.sql_for_billable_transcripts_for_month_of(ymd, transcriber_id)
+    if entity_type == 'User' && use.match(/usage only/)
+      sql = entity.sql_for_transcripts_usage_for_month_of(ymd, transcriber_id)
+    else
+      sql = entity.sql_for_billable_transcripts_for_month_of(ymd, transcriber_id)
+    end
     Transcript.find_by_sql(sql)
   end
 
