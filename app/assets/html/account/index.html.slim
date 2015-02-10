@@ -102,8 +102,8 @@
       table.table.usage
         tbody.usage-month-group data-period="{{mnthGrp.period}}" ng-repeat="mnthGrp in me.usageSummaryByMonth"
           tr.usage-month data-period="{{mnthGrp.period}}"
-            th Month
-            th Type
+            th.first Month
+            th.second Type
             th.time Hours
             th.cost Cost 
             th.last
@@ -111,20 +111,20 @@
                 i.icon-expand-alt.icon-large
                 |  Details
           tr.usage-month ng-repeat="msum in mnthGrp.rows"
-            td {{msum.period}}
-            td {{msum.type}}
+            td.first {{msum.period}}
+            td.second {{msum.type}}
             td.time {{msum.hours}}
             td.cost {{msum.cost | currency:"USD $"}}
             td
           tr.usage-month-details data-period="{{mnthGrp.period}}" ng-show="usageDetailsVisible(mnthGrp.period)"
             th.first Date
-            th Name
+            th.second Name
             th.time Duration
             th.cost Cost
             th User
           tr.usage-month-details ng-repeat="t in me.usageDetailsByMonth(mnthGrp.period)" ng-show="usageDetailsVisible(mnthGrp.period)"
             td.first {{t.date | date:'yyyy-MM-dd HH:mm:ss'}}
-            td
+            td.second
               a href="/collections/{{t.collId}}/items/{{t.itemId}}"  {{t.title}}
             td.time {{t.time}}
             td.cost {{t.cost | currency:"USD $"}}
