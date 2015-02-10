@@ -100,6 +100,8 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       statusHTML += "<p>Preparing file.</p>";
     } else if (file.premiumInProgress && file.currentStatus != "<%= AudioFile::UPLOADING_INPROCESS %>") {
       statusHTML += "<p>Your Premium Transcript will be ready soon. We'll email you when the full transcript is loaded.</p>";
+    } else if (file.currentStatus == "<%= AudioFile::UPLOAD_FAILED %>") {
+      statusHTML += '<p>Something went wrong with your upload. Try re-uploading with a stronger internet connection.</p>';
     } else if (file.currentStatus == "<%= AudioFile::TRANSCRIBE_INPROCESS %>") {
       statusHTML += "<p>The first two minutes of your transcription will be ready momentarily. ";
       if ($scope.currentUser.hasCommunityPlan) {

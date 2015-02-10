@@ -138,6 +138,21 @@ namespace :fixer do
   end
 
 #########################################################################################################
+  desc "unfinished uploads"
+  task unfinished_uploads: [:environment] do
+    print "Finding all audio_file records with nil duration... "
+    affected = AudioFile.where('duration is null')
+    puts "found #{affected.count}"
+    affected.find_in_batches do |afgroup|
+      afgroup.each do |af|
+        if af.has_failed_upload?
+          puts "AudioFile.find(#{af.id}) has failed upload. Status==#{af.current_status}"
+        end
+      end
+    end
+  end
+
+#########################################################################################################
   desc "speechmatics sanity check"
   task speechmatics_poll: [:environment] do
     # No tasks are recovered by default, since that means notifying the user on success,

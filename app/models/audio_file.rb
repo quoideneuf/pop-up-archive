@@ -39,6 +39,7 @@ class AudioFile < ActiveRecord::Base
   TRANSCRIPT_BASIC_COMPLETE   = 'Basic transcript complete'
   TRANSCRIPT_PREMIUM_COMPLETE = 'Premium transcript complete'
   UPLOADING_INPROCESS         = 'Uploading'
+  UPLOAD_FAILED               = 'Upload failed'
   COPYING_INPROCESS           = 'Copying'
   TRANSCODING_INPROCESS       = 'Transcoding'
   TRANSCRIBE_INPROCESS        = 'Transcribing'
@@ -554,6 +555,33 @@ class AudioFile < ActiveRecord::Base
     self.tasks.count > 0
   end
 
+  # if there is only one task, and it is (a) a cancelled Upload task or (b) an unfinished Upload task > 1 hour old,
+  # consider it a failed upload. Do *NOT* nudge the task if older 1 hour; let the nudger do that.
+  def has_failed_upload?
+    # if we have any non-upload task, we must have already got our file
+    if tasks.select {|t| t.type != 'Tasks::UploadTask'}.count > 0
+      return false
+    end
+
+    # look for any successful upload
+    upload_task = nil
+    tasks.upload.each do |t|
+      if t.complete?
+        upload_task = t
+        break
+      end
+    end
+    if !upload_task and tasks.upload.count > 0
+      return true
+    end
+
+    # check upload_task age
+    if upload_task and upload_task.updated_at < (DateTime.now - (3600.fdiv(86400))).utc
+      return true
+    end
+    false   # TODO best default?
+  end
+
   def is_copied?
     if self.tasks.copy.count > 0
       return self.tasks.copy.with_status(:complete).count > 0
@@ -580,6 +608,10 @@ class AudioFile < ActiveRecord::Base
     status = UPLOADING_INPROCESS
     if self.is_uploaded?
       status = COPYING_INPROCESS
+    end
+    if self.has_failed_upload?
+      status = UPLOAD_FAILED
+      return status # abort early
     end
     if self.is_copied? and self.is_uploaded?
       status = TRANSCODING_INPROCESS

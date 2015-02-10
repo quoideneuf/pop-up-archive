@@ -32,7 +32,7 @@ ActiveAdmin.register AudioFile do
         row("Collection") { link_to audio_file.collection.title, superadmin_collection_path(audio_file.collection) }
         row("Item") { link_to audio_file.item.title, superadmin_item_path(audio_file.item) }
         row("Storage") { audio_file.storage_configuration }
-        row("User") { link_to audio_file.user.name,  superadmin_user_path(audio_file.user) }
+        row("User") { audio_file.user ? link_to( audio_file.user.name,  superadmin_user_path(audio_file.user)) : nil }
         row("Duration") { audio_file.duration }
         row("Format") { audio_file.format }
         row("Metered") { audio_file.metered }
