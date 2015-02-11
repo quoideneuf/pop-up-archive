@@ -558,8 +558,8 @@ class AudioFile < ActiveRecord::Base
   # if there is only one task, and it is (a) a cancelled Upload task or (b) an unfinished Upload task > 1 hour old,
   # consider it a failed upload. Do *NOT* nudge the task if older 1 hour; let the nudger do that.
   def has_failed_upload?
-    # if we have any non-upload task, we must have already got our file
-    if tasks.select {|t| t.type != 'Tasks::UploadTask'}.count > 0
+    # if we have any complete non-upload task, we must have already got our file
+    if tasks.select {|t| t.type != 'Tasks::UploadTask' && t.complete?}.count > 0
       return false
     end
 
