@@ -34,6 +34,7 @@ class AudioFile < ActiveRecord::Base
   TRANSCRIBE_RATE_PER_MINUTE = 2.00;  # TODO used?
 
   # status messages
+  UNKNOWN_STATE               = 'Unknown'
   TRANSCRIPT_PREVIEW_COMPLETE = 'Transcript preview complete'
   TRANSCRIPT_SAMPLE_COMPLETE  = 'Transcript sample complete'
   TRANSCRIPT_BASIC_COMPLETE   = 'Basic transcript complete'
@@ -279,7 +280,11 @@ class AudioFile < ActiveRecord::Base
     return if (user && user.plan.has_premium_transcripts?)
     # or if parent Item was created with premium-on-demand
     return if item.is_premium?
- 
+    # only start if we have a file
+    if has_file?
+      return unless is_uploaded? and is_copied?
+    end
+
     # always do the first 2 minutes
     start_transcribe_job(user, 'ts_start', {start_only: true})
 
@@ -552,41 +557,49 @@ class AudioFile < ActiveRecord::Base
   end
 
   def is_uploaded?
-    self.tasks.count > 0
-  end
-
-  # if there is only one task, and it is (a) a cancelled Upload task or (b) an unfinished Upload task > 1 hour old,
-  # consider it a failed upload. Do *NOT* nudge the task if older 1 hour; let the nudger do that.
-  def has_failed_upload?
-    # if we have any complete non-upload task, we must have already got our file
-    if tasks.select {|t| t.type != 'Tasks::UploadTask' && t.complete?}.count > 0
+    return true if original_file_url
+    if self.tasks.upload.count == 0 && self.tasks.count > 0
+      return true
+    elsif self.tasks.upload.with_status(Task::COMPLETE).count > 0
+      return true
+    else
       return false
     end
-
-    # look for any successful upload
-    upload_task = nil
-    tasks.upload.each do |t|
-      if t.complete?
-        upload_task = t
-        break
-      end
-    end
-    if !upload_task and tasks.upload.count > 0
-      return true
-    end
-
-    # check upload_task age
-    if upload_task and upload_task.updated_at < (DateTime.now - (3600.fdiv(86400))).utc
-      return true
-    end
-    false   # TODO best default?
   end
 
+  # if there are zero complete or working upload tasks, but at least one cancelled, consider the whole AF upload failed.
+  # Do *NOT* nudge the task if older 1 hour; let the nudger do that.
+  def has_failed_upload?
+    num_uploads           = tasks.upload.count
+    num_complete_uploads  = tasks.upload.with_status(Task::COMPLETE).count
+    num_valid_uploads     = tasks.upload.valid.count  # i.e. not-cancelled
+    num_cancelled_uploads = num_uploads - num_valid_uploads
+
+    # easy cases first
+    return false if num_uploads == 0
+    return false if num_complete_uploads == num_uploads
+    return false if num_complete_uploads > 1
+
+    # do we have any in-process, younger than an hour?
+    if num_valid_uploads > 0
+      unfinished_upload = tasks.upload.unfinished.pop # in theory, should only ever be one.
+      if unfinished_upload.updated_at > (DateTime.now - (3600.fdiv(86400))).utc
+        return false
+      end
+    end
+
+    # if we get here, at least one invalid (not-cancelled) upload, older than one hour
+    return true
+  end
+
+  # if audio should be copied, returns whether it has.
+  # if audio should not be copied, always returns true.
   def is_copied?
+    return true unless copy_media?
     if self.tasks.copy.count > 0
-      return self.tasks.copy.with_status(:complete).count > 0
+      return self.tasks.copy.with_status(Task::COMPLETE).count > 0
     else
-      return true  # no copy needed
+      return false
     end
   end
 
@@ -605,13 +618,17 @@ class AudioFile < ActiveRecord::Base
     # because all these tasks are async, we just evaluate the current state
     # in a fail-forward progression, assuming that all previous conditions are true
     # if the current condition is true.
-    status = UPLOADING_INPROCESS
-    if self.is_uploaded?
-      status = COPYING_INPROCESS
+    status = UNKNOWN_STATE
+    if self.tasks.upload.count > 0 && !self.is_uploaded? && !self.is_copied?
+      # abort status determination early if upload has not finished.
+      if self.has_failed_upload?
+        return UPLOAD_FAILED
+      else 
+        return UPLOADING_INPROCESS
+      end
     end
-    if self.has_failed_upload?
-      status = UPLOAD_FAILED
-      return status # abort early
+    if self.tasks.copy.count > 0 && !self.is_copied?
+      status = COPYING_INPROCESS
     end
     if self.is_copied? and self.is_uploaded?
       status = TRANSCODING_INPROCESS

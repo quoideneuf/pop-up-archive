@@ -30,10 +30,26 @@ describe Tasks::UploadTask do
     task = Tasks::UploadTask.new(extras: {'num_chunks' => 2, 'chunks_uploaded' => "1\n", 'key' => 'this/is/a/key.mp3'}, owner: audio_file)
     task.save!
     task.should be_created
-    task.run_callbacks(:commit)
+    #task.run_callbacks(:commit)
     task.add_chunk!('2')
-    task.run_callbacks(:commit)
+    #task.run_callbacks(:commit)
     task.should_not be_complete
+  end
+
+  it "should register failure correctly with parent audio_task" do
+    audio_file = FactoryGirl.create :audio_file_private
+    task = Tasks::UploadTask.new(extras: {'num_chunks' => 2, 'chunks_uploaded' => "1\n", 'key' => 'this/is/a/key.mp3'}, owner: audio_file)
+    task.save!
+    task.should be_created
+    #STDERR.puts "is_uploaded? #{audio_file.is_uploaded?}"
+    #STDERR.puts "is_copied? #{audio_file.is_copied?}"
+    #STDERR.puts "incomplete_tasks== #{audio_file.tasks.unfinished.inspect}"
+    audio_file.current_status.should eq AudioFile::UPLOADING_INPROCESS
+    task.cancel!
+    #STDERR.puts "is_uploaded? #{audio_file.is_uploaded?}"
+    #STDERR.puts "has_failed_upload? #{audio_file.has_failed_upload?}"
+    #STDERR.puts "all tasks== #{audio_file.tasks.inspect}"
+    audio_file.current_status.should eq AudioFile::UPLOAD_FAILED
   end
 
 end
