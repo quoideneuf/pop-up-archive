@@ -56,6 +56,9 @@ class Tasks::UploadTask < Task
     elsif self.num_chunks != self.chunks_uploaded.size
       self.extras[:error] = "Incomplete chunks uploaded"
       self.cancel!
+    elsif !destination_exists?
+      self.extras['error'] = 'Destination URL does not exist'
+      self.cancel!
     else
       self.finish!
     end 
