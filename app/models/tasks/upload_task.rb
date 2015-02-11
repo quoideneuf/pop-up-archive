@@ -34,7 +34,7 @@ class Tasks::UploadTask < Task
   end
 
   def destination_exists?
-    dest_url = self.owner.url
+    dest_url = URI.parse(self.owner.url)
     connection = Fog::Storage.new(storage.credentials)
     file_exists?(connection, dest_url)
   end
