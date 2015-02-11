@@ -13,6 +13,8 @@ class Tasks::DetectDerivativesTask < Task
     return unless audio_file
     # mark the audio_file as having processing complete?
     audio_file.update_attribute(:transcoded_at, DateTime.now)
+    # trigger any other tasks that were depending on transcoding
+    audio_file.check_tasks
   end
 
   def urls
