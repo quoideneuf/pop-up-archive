@@ -33,6 +33,12 @@ class Tasks::UploadTask < Task
     logger.error e.backtrace.join("\n")
   end
 
+  def destination_exists?
+    dest_url = self.owner.url
+    connection = Fog::Storage.new(storage.credentials)
+    file_exists?(connection, dest_url)
+  end
+
   def stuck?
     return true if super
 
