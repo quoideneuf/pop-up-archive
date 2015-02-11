@@ -18,7 +18,7 @@
 
         ul.pricing
           li ng-show="isPremiumPlan(plan)" Premium Machine Transcripts 
-          li ng-show="!isPremiumPlan(plan)" Basic Machine Transcripts
+          li ng-show="!isPremiumPlan(plan)" 2-Minute Basic Machine Transcripts
           li ng-show="!isPremiumPlan(plan)" On-Demand Premium Transcripts $#{Billable::OVERAGE_HOURLY_RATE}/hr
           / ul ng-show="isPremiumPlan(plan)"
           /   li Improved Accuracy
@@ -59,7 +59,7 @@
   .row-fluid
     .span12
       .contact-button
-        a href="mailto:edison@popuparchive.org"
+        a data-toggle="modal" data-target="#contact-modal"
             object type="image/svg+xml" data="/assets/pricing/megaphone.svg"
             h3 Lots of audio?      
             h4 Contact us for business services and tools, including automated ingest, hypermedia API and media organization assistance.
