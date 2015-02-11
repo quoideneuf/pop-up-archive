@@ -19,12 +19,22 @@ class Tasks::TranscodeTask < Task
 
   def recover!
     if !audio_file
+      extras['error'] = 'No owner defined'
+      cancel!
+    elsif !destination_exists?
+      extras['error'] = 'Destination URL does not exist'
       cancel!
     else
       # most often status is working but job has completed,
       # and there's just a timing issue between the db commit and the worker running.
       finish!
     end
+  end
+
+  def destination_exists?
+    dest_url = URI.parse(destination)
+    connection = Fog::Storage.new(storage.credentials)
+    file_exists?(connection, dest_url)
   end
 
   def audio_file
