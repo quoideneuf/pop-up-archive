@@ -1,7 +1,13 @@
 ActiveAdmin.register AudioFile do
   actions :index, :show
   index do
-    column :filename, sortable: :file do |af| link_to truncate(af.filename||af.id, :length => 20), superadmin_audio_file_path(af) end
+    column :filename, sortable: :file do |af|
+      if af.filename.length > 0
+        link_to truncate(af.filename, :length => 20), superadmin_audio_file_path(af)
+      else
+        link_to af.id, superadmin_audio_file_path(af)
+      end
+    end
     column :created_at
     column :duration
     column('Collection') do |af| link_to truncate(af.collection.title, :length => 20), superadmin_collection_path(af.collection) end
