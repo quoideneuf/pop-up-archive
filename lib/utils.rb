@@ -78,7 +78,12 @@ class Utils
       key = uri.path[1..-1]
       file_name = key.split("/").last
 
-      directory = connection.directories.get(bucket)
+      directory = nil
+      begin
+        directory = connection.directories.get(bucket)
+      rescue => err
+        raise Exceptions::PrivateFileNotFound.new "Failed to get directory for bucket #{bucket}: #{err}"
+      end
       if !directory
         raise Exceptions::PrivateFileNotFound.new "Failed to get directory for bucket #{bucket}"
       end
