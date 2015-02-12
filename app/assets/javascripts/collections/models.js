@@ -4,7 +4,7 @@ angular.module('Directory.collections.models', ['RailsModel', 'Directory.imageFi
   var collections = {};
 
 
-  var Collection = Model({url:'/api/collections/{{id}}', name: 'collection', only: ['title', 'description', 'itemsVisibleByDefault', 'storage']});
+  var Collection = Model({url:'/api/collections/{{id}}', name: 'collection', only: ['title', 'description', 'itemsVisibleByDefault', 'copyMedia', 'storage']});
 
   var PublicCollection = Model({url:'/api/collections/public', name:'collection'});
   Collection.public = function () {
