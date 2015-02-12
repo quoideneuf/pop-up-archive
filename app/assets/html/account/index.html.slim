@@ -33,7 +33,7 @@
       | Need more room?&nbsp;
       a href="/account/plan" Upgrade to a paid plan!
 .row-fluid
-  .well.span6
+  .well.usage
     h4 My Account
     hr/
     dl.dl-horizontal
@@ -43,18 +43,6 @@
       dd {{ me.email }}
       dt Current Plan
       dd {{ me.plan.name }}
-  .well.span6
-    h4 Storage Summary
-    hr/  
-    dl.dl-horizontal
-      dt Internet Archive
-      dd.usage-meter
-        .bar
-        .meter-words {{me.usedUnmeteredStorage | timeCode: 'words'}}
-      dt Pop Up Archive 
-      dd.usage-meter 
-        .bar 
-        .meter-words {{me.usedMeteredStorage | timeCode: 'words'}}
 
 .row-fluid
   .well.usage
