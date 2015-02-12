@@ -266,7 +266,8 @@ class Transcript < ActiveRecord::Base
       :user => { :id => af.user.id, :name => af.user.name },
       :id   => id,
       :coll_id => af.item.collection_id,
-      :item_id => af.item_id, 
+      :item_id => af.item_id,
+      :deleted => af.deleted? || af.item.deleted?
     }
   end
 

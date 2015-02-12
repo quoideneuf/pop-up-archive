@@ -125,7 +125,8 @@
           tr.usage-month-details ng-repeat="t in me.usageDetailsByMonth(mnthGrp.period)" ng-show="usageDetailsVisible(mnthGrp.period)"
             td.first {{t.date | date:'yyyy-MM-dd HH:mm:ss'}}
             td.second
-              a href="/collections/{{t.collId}}/items/{{t.itemId}}"  {{t.title}}
+              a ng-show="!t.deleted" href="/collections/{{t.collId}}/items/{{t.itemId}}" {{t.title}}
+              span ng-show="t.deleted" title="this item was deleted" {{t.title}}
             td.time {{t.time}}
             td.cost {{t.cost | currency:"USD $"}}
             td {{t.user.name}}
