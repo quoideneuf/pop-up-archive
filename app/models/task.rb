@@ -215,6 +215,14 @@ class Task < ActiveRecord::Base
     self.where("status=? and extras->'results' not like ?", task_status, "%_status_:_#{task_status}_%'").order('created_at asc')
   end
 
+  def self.work_window(dt=DateTime.now, window_def=MAX_WORKTIME)
+    (dt - (window_def.fdiv(86400))).utc
+  end
+
+  def outside_work_window?
+    created_at.utc < Task.work_window.utc
+  end 
+
   # determine whether task is "stuck" and needs to be recovered
   def stuck?
 
@@ -224,9 +232,8 @@ class Task < ActiveRecord::Base
     # finished jobs are ok
     return false if status == COMPLETE
 
-    # older than MAX_WORKTIME and incomplete
-    ago = (DateTime.now - (MAX_WORKTIME.fdiv(86400))).utc
-    if ago > created_at
+    # we know it is incomplete. is it older than MAX_WORKTIME?
+    if outside_work_window?
       return true
 
     # job claims to be finished but task hasn't heard that yet.

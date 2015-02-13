@@ -92,7 +92,18 @@ describe Task do
     end
 
   end
- 
+
+  describe "manage stuck definition" do
+
+    it "should identify work window" do
+      @task = FactoryGirl.create :task
+      # assume window is less than 1 day but test it so we fail explicitly
+      Task.work_window.should be > 1.day.ago
+      @task.created_at = 1.day.ago # do not save or it will overwrite
+      @task.outside_work_window?().should be_true
+      @task.stuck?().should be_true
+    end
+  end
 
 end
 

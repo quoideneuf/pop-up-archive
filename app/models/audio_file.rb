@@ -620,9 +620,8 @@ class AudioFile < ActiveRecord::Base
       end
     end
 
-    # if we have zero tasks and the file is older than MAX_WORKTIME consider it DOA.
-    ago = (DateTime.now - (MAX_WORKTIME.fdiv(86400))).utc
-    if self.tasks.count == 0 && updated_at > ago
+    # if we have zero tasks and the file is older than generic work window, consider it DOA.
+    if self.tasks.count == 0 && updated_at < Task.work_window
       return UPLOAD_FAILED
     end
 
