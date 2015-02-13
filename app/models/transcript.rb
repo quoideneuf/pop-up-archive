@@ -195,6 +195,7 @@ class Transcript < ActiveRecord::Base
   def flavor
     return 'Premium' if is_premium?
     return 'Basic'   if is_basic?
+    return 'Preview' if is_preview?
     return 'Unknown'
   end
 
