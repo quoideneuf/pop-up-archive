@@ -567,7 +567,7 @@ class AudioFile < ActiveRecord::Base
     end
   end
 
-  # if there are zero complete or working upload tasks, but at least one cancelled, consider the whole AF upload failed.
+  # if there are non-zero upload tasks and all of them are cancelled, it's a Fail.
   # Do *NOT* nudge the task if older 1 hour; let the nudger do that.
   def has_failed_upload?
     num_uploads           = tasks.upload.count
@@ -579,17 +579,9 @@ class AudioFile < ActiveRecord::Base
     return false if num_uploads == 0
     return false if num_complete_uploads == num_uploads
     return false if num_complete_uploads > 1
+    return true if num_cancelled_uploads == num_uploads
 
-    # do we have any in-process, younger than an hour?
-    if num_valid_uploads > 0
-      unfinished_upload = tasks.upload.unfinished.pop # in theory, should only ever be one.
-      if unfinished_upload.updated_at > (DateTime.now - (3600.fdiv(86400))).utc
-        return false
-      end
-    end
-
-    # if we get here, at least one invalid (not-cancelled) upload, older than one hour
-    return true
+    return false  # conservative default
   end
 
   # if audio should be copied, returns whether it has.
