@@ -137,7 +137,7 @@ module Billable
     if !limit
       # use monthly_usages as a shortcut for "all the months"
       monthly_usages.each do |mu|
-        usage[mu.yearmonth] = []
+        usage[mu.yearmonth] = [] unless usage.has_key?(mu.yearmonth)
         mu.transcripts.each do |tr|
           af = tr.audio_file_lazarus
           usage[mu.yearmonth].push tr.as_usage_summary(af)
