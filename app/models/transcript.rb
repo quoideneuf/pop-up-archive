@@ -192,6 +192,12 @@ class Transcript < ActiveRecord::Base
     self.transcriber_id == Transcriber.basic.id && !self.is_preview?
   end
 
+  def flavor
+    return 'Premium' if is_premium?
+    return 'Basic'   if is_basic?
+    return 'Unknown'
+  end
+
   def billable?
     self.is_billable
   end
@@ -267,7 +273,8 @@ class Transcript < ActiveRecord::Base
       :id   => id,
       :coll_id => af.item.collection_id,
       :item_id => af.item_id,
-      :deleted => af.deleted? || af.item.deleted?
+      :deleted => (af.deleted? || af.item.deleted?),
+      :flavor  => flavor,
     }
   end
 

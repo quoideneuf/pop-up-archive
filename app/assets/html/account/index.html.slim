@@ -93,7 +93,8 @@
             th.first Month
             th.second Type
             th.time Hours
-            th.cost Cost 
+            th.cost Cost
+            th
             th.last
               button.btn ng-show="me.usageDetailsByMonth(mnthGrp.period).length > 0" ng-click="toggleDetails($event)"
                 i.icon-expand-alt.icon-large
@@ -104,18 +105,21 @@
             td.time {{msum.hours}}
             td.cost {{msum.cost | currency:"USD $"}}
             td
+            td
           tr.usage-month-details data-period="{{mnthGrp.period}}" ng-show="usageDetailsVisible(mnthGrp.period)"
             th.first Date
             th.second Item
             th.time Duration
             th.cost Cost
+            th.type Type
             th User
-          tr.usage-month-details ng-repeat="t in me.usageDetailsByMonth(mnthGrp.period)" ng-show="usageDetailsVisible(mnthGrp.period)"
+          tr.usage-month-details.info ng-repeat="t in me.usageDetailsByMonth(mnthGrp.period)" ng-show="usageDetailsVisible(mnthGrp.period)"
             td.first {{t.date | date:'yyyy-MM-dd HH:mm:ss'}}
             td.second
               a title="{{t.id}}" ng-show="!t.deleted" href="/collections/{{t.collId}}/items/{{t.itemId}}" {{t.title}}
               span ng-show="t.deleted" title="this item was deleted {{t.id}}" {{t.title}}
             td.time {{t.time}}
             td.cost {{t.cost | currency:"USD $"}}
+            td.type {{t.flavor}}
             td {{t.user.name}}
 
