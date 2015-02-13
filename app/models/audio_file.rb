@@ -597,7 +597,7 @@ class AudioFile < ActiveRecord::Base
 
   def current_status
     # the order of progression, regardless of what order the tasks actually complete.
-    # upload
+    # upload (or copy)
     # analyze audio
     # copy
     # transcode
@@ -619,6 +619,12 @@ class AudioFile < ActiveRecord::Base
         return UPLOADING_INPROCESS
       end
     end
+
+    # if we have zero tasks and the file is older than generic work window, consider it DOA.
+    if self.tasks.count == 0 && updated_at < Task.work_window
+      return UPLOAD_FAILED
+    end
+
     if self.tasks.copy.count > 0 && !self.is_copied?
       status = COPYING_INPROCESS
     end

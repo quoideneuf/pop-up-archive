@@ -161,7 +161,7 @@ namespace :fixer do
  
     # find all status=created older than N hours
     # and verify they exist at SM. If not, cancel them.
-    ago = (DateTime.now - Task::MAX_WORKTIME.fdiv(86400)).utc
+    ago = Task.work_window
     sm_tasks = Task.speechmatics_transcribe.incomplete.where('created_at < ?', ago)
     sm_tasks_count = sm_tasks.count
     puts "Found #{sm_tasks_count} unfinished Speechmatics tasks older than #{ago}"

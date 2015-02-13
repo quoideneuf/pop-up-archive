@@ -116,7 +116,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     return false if status == COMPLETE
 
     # older than max worktime and incomplete
-    if (DateTime.now.to_time - MAX_WORKTIME).to_datetime.utc > created_at
+    if outside_work_window?
       return true
 
     # we failed to register a SM job_id
