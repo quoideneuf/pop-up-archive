@@ -29,9 +29,13 @@ angular.module('Directory.account.controllers', ['stripe', 'Directory.account.mo
 
   $scope.toggleDetails = function($event) {
     var btn = $($event.target);
+    // make sure we actually have the button and not the icon
+    if (btn.prop('tagName') != 'button') {
+      btn = btn.parent();
+    }
     var tbody = btn.parents('.usage-month-group');
     var period = tbody.data('period');
-    console.log('toggle ', period);
+    //console.log('toggle ', period);
     if (!$scope.usageDetails[period]) {
       $scope.usageDetails[period] = true;
       btn.html('<i class="icon-large icon-collapse-alt"></i> Details');
