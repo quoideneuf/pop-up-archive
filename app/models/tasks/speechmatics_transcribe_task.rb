@@ -183,6 +183,10 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     return unless audio_file
 
     sm = Speechmatics::Client.new
+    # verify job status == done
+    sm_job = sm.user.jobs(extras['job_id']).get
+    return if sm_job.job['job_status'] == 'transcribing' # not finished yet
+
     transcript = sm.user.jobs(self.extras['job_id']).transcript
     new_trans  = process_transcript(transcript)
 
