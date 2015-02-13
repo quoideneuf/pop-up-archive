@@ -30,7 +30,9 @@ angular.module('Directory.account.controllers', ['stripe', 'Directory.account.mo
   $scope.toggleDetails = function($event) {
     var btn = $($event.target);
     // make sure we actually have the button and not the icon
-    if (btn.prop('tagName') != 'button') {
+    var btnTag = btn.prop('tagName').toLowerCase();
+    //console.log('btnTag:', btnTag);
+    if (btnTag != 'button') {
       btn = btn.parent();
     }
     var tbody = btn.parents('.usage-month-group');
