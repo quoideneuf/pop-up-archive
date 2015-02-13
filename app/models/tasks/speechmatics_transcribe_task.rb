@@ -187,7 +187,20 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     sm_job = sm.user.jobs(extras['job_id']).get
     return if sm_job.job['job_status'] == 'transcribing' # not finished yet
 
-    transcript = sm.user.jobs(self.extras['job_id']).transcript
+    transcript = nil
+    begin
+      transcript = sm.user.jobs(self.extras['job_id']).transcript
+    rescue => err
+      # if SM throws an error (e.g. 404) we just warn and return
+      # since we can't proceed.
+      # TODO is this too soft? should we examine and/or re-throw?
+      logger.warn(err)
+      return
+    end
+    if !transcript
+      raise "No Speechmatics transcript found"
+    end
+
     new_trans  = process_transcript(transcript)
 
     # if new transcript resulted, then call analyze
