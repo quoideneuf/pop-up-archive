@@ -31,20 +31,20 @@ ActiveAdmin.register User do
       attributes_table_for user do
         row("ID") { user.id }
         row("Name") { user.name }
-        row("Email") { link_to( user.email, "/su?scope_identifier=user_#{user.id}" ) + raw(' &#171; become this User') }
+        row("Email") { link_to( user.email, "/su?scope_identifier=user_#{user.id}" ) + raw(' &#171; switch') }
         row("Organization") {
           user.organization_id \
           ? (link_to user.organization.name, superadmin_organization_path(user.organization)) \
           : span(('none'), class: "empty")
         }
-        row("Metered Storage") { Api::BaseHelper::time_definition(user.used_metered_storage_cache||0) }
-        row("Unmetered Storage") { Api::BaseHelper::time_definition(user.used_unmetered_storage_cache||0) }
+        #row("Metered Storage") { Api::BaseHelper::time_definition(user.used_metered_storage_cache||0) }
+        #row("Unmetered Storage") { Api::BaseHelper::time_definition(user.used_unmetered_storage_cache||0) }
         row("Plan") { user.plan.name + ' ' + user.plan.hours.to_s + 'h (billed per ' + user.plan.interval + ')' }
         row("Premium Plan") { user.plan.has_premium_transcripts? }
-        row("Total Premium Transcripts (Billable)") { Api::BaseHelper::time_definition(user.transcript_usage_report[:premium_billable_seconds].to_i||0) }
-        row("Total Premium Cost (Billable)") { number_to_currency(user.transcript_usage_report[:premium_billable_cost].to_f||'0.00') }
-        row("Total Basic Transcripts (Billable)") { Api::BaseHelper::time_definition(user.transcript_usage_report[:basic_billable_seconds].to_i||0) }
-        row("Total Basic Cost (Billable)") { number_to_currency(user.transcript_usage_report[:basic_billable_cost].to_f||'0.00') }
+        #row("Total Premium Transcripts (Billable)") { Api::BaseHelper::time_definition(user.transcript_usage_report[:premium_billable_seconds].to_i||0) }
+        #row("Total Premium Cost (Billable)") { number_to_currency(user.transcript_usage_report[:premium_billable_cost].to_f||'0.00') }
+        #row("Total Basic Transcripts (Billable)") { Api::BaseHelper::time_definition(user.transcript_usage_report[:basic_billable_seconds].to_i||0) }
+        #row("Total Basic Cost (Billable)") { number_to_currency(user.transcript_usage_report[:basic_billable_cost].to_f||'0.00') }
         row("Last Sign In") { user.last_sign_in_at }
         row("Sign In Count") { user.sign_in_count }
         row("Created") { user.created_at }
@@ -54,10 +54,10 @@ ActiveAdmin.register User do
 
     panel "Monthly Usage" do
       table_for user.monthly_usages.order('yearmonth desc') do|tbl|
-        tbl.column :yearmonth
+        tbl.column('Month') {|mu| link_to mu.yearmonth, superadmin_monthly_usage_path(mu) }
         tbl.column :use
-        tbl.column('Wholesale Cost') {|mu| div :class => "cost" do number_to_currency(mu.cost); end }
-        tbl.column('Retail Cost') {|mu| div :class => "cost" do number_to_currency(mu.retail_cost); end }
+        tbl.column('Wholesale') {|mu| div :class => "cost" do number_to_currency(mu.cost); end }
+        tbl.column('Retail') {|mu| div :class => "cost" do number_to_currency(mu.retail_cost); end }
         tbl.column('Time') {|mu| Api::BaseHelper::time_definition(mu.value||0) }
       end
     end

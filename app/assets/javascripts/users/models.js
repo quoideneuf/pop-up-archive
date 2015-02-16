@@ -16,7 +16,9 @@ angular.module('Directory.users.models', ['RailsModel'])
       if (callback) {
         callback(self);
       }
-
+      if (!self.usageSummaryByMonth) {
+        self.usageSummaryByMonth = self.buildUsageSummary();
+      }
       return true;
     }
 
@@ -71,6 +73,76 @@ angular.module('Directory.users.models', ['RailsModel'])
 
   User.prototype.defaultTranscriptType = function() {
     return this.hasPremiumTranscripts() ? "premium" : "basic";
+  };
+
+  User.prototype.buildUsageSummary = function() {
+    var self = this;
+    var groups = [];
+    var curMonth = '';
+    var group = [];
+    // group by month, interleaving org with user if this user is in an Org
+    var userInOrg = self.organization ? true : false;
+    var mnthMap   = {};
+    $.each(self.usage.summary.history, function(idx, msum) {
+      if (self.plan.isPremium && msum.type.match(/basic/)) {
+        return; // filter out some noise
+      }
+      if (msum.type.match(/usage only/)) {
+        // clarify label
+        msum.type = msum.type.replace(/usage only/, 'me');
+      }
+      else if (userInOrg) {
+        return; // skip, use org version below
+      }
+
+      // initial cap
+      msum.type = msum.type.charAt(0).toUpperCase() + msum.type.slice(1);
+
+      if (msum.period != curMonth) {
+        // new group
+        if (group.length > 0) {
+          groups.push({period: curMonth, rows: group});
+          mnthMap[group[0].period] = groups.length - 1;
+        }
+        group = [msum];
+        curMonth = msum.period;
+      }
+      else {
+        group.push(msum);
+      }
+    });
+    if (group.length > 0) {
+      groups.push({period: curMonth, rows: group});
+    }
+
+    if (userInOrg) {
+      // do the same with org usage, interleaving
+      $.each(self.organization.usage.summary.history, function(idx, msum) {
+        if (self.plan.isPremium && msum.type.match(/basic/)) {
+          return; // filter out some noise
+        }
+        msum.type = msum.type.charAt(0).toUpperCase() + msum.type.slice(1);
+        msum.type += ' ('+self.organization.name+')';
+        // find the correct groups index to push to
+        var gIdx = mnthMap[msum.period];
+        // if could not match (not likely) then ... ??
+        if (typeof gIdx == 'undefined') {
+          console.log('no idx for ', msum, mnthMap);
+          return;
+        }
+        groups[gIdx].rows.unshift(msum); // prepend
+      });
+    }
+    return groups;
+  };
+
+  User.prototype.usageDetailsByMonth = function(ym) {
+    if (this.organization) {
+      return this.organization.usage.transcripts[ym];
+    }
+    else {
+      return this.usage.transcripts[ym];
+    } 
   };
 
   User.prototype.subscribe = function (planId, offerCode) {

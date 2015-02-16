@@ -33,7 +33,7 @@
       | Need more room?&nbsp;
       a href="/account/plan" Upgrade to a paid plan!
 .row-fluid
-  .well.span6
+  .well.usage
     h4 My Account
     hr/
     dl.dl-horizontal
@@ -43,67 +43,83 @@
       dd {{ me.email }}
       dt Current Plan
       dd {{ me.plan.name }}
-  .well.span6
-    h4 Storage Summary
-    hr/  
-    dl.dl-horizontal
-      dt Internet Archive
-      dd.usage-meter
-        .bar
-        .meter-words {{me.usedUnmeteredStorage | timeCode: 'words'}}
-      dt Pop Up Archive 
-      dd.usage-meter 
-        .bar 
-        .meter-words {{me.usedMeteredStorage | timeCode: 'words'}}
 
 .row-fluid
   .well.usage
     h4 Usage
     .usage-organization ng-show="me.organization"
-      h5 {{me.organization.name}}, This Month ({{me.organization.usage.thisMonth.period}})
+      h5 {{me.organization.name}}, This Month ({{me.organization.usage.summary.thisMonth.period}})
       dl.dl-horizontal
         dt Usage
-        dd.usage-meter ng-class="{warning: me.organization.usage.thisMonth.secs >= me.totalMeteredStorage, full: me.organization.usage.thisMonth.secs >= me.totalMeteredStorage }"
-          .bar ng-style="{width: me.organization.usage.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
-          .meter-words {{me.organization.usage.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
+        dd.usage-meter ng-class="{warning: me.organization.usage.summary.thisMonth.secs >= me.totalMeteredStorage, full: me.organization.usage.summary.thisMonth.secs >= me.totalMeteredStorage }"
+          .bar ng-style="{width: me.organization.usage.summary.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
+          .meter-words {{me.organization.usage.summary.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Plan Hours
-        dd.usage {{me.organization.usage.thisMonth.hours}}
+        dd.usage {{me.organization.usage.summary.thisMonth.hours}}
         dt Total Cost
         dd.usage 
-          | {{me.organization.usage.thisMonth.cost | currency:"USD $"}}
-          .overage ng-show="me.organization.usage.thisMonth.overage.cost"
-            |  ({{me.organization.usage.thisMonth.overage.hours}} overage hours * $#{Billable::OVERAGE_HOURLY_RATE}/hour)
-        dt.subtotal ng-show="me.organization.usage.thisMonth.ondemand.hours" Premium Hours
-        dd.subtotal ng-show="me.organization.usage.thisMonth.ondemand.hours" {{me.organization.usage.thisMonth.ondemand.hours}}
-        dt.subtotal ng-show="me.organization.usage.thisMonth.ondemand.cost" Premium Cost
-        dd.subtotal ng-show="me.organization.usage.thisMonth.ondemand.cost" {{me.organization.usage.thisMonth.ondemand.cost | currency:"USD $"}}
+          | {{me.organization.usage.summary.thisMonth.cost | currency:"USD $"}}
+          .overage ng-show="me.organization.usage.summary.thisMonth.overage.cost"
+            |  ({{me.organization.usage.summary.thisMonth.overage.hours}} overage hours * $#{Billable::OVERAGE_HOURLY_RATE}/hour)
+        dt.subtotal ng-show="me.organization.usage.summary.thisMonth.ondemand.hours" Premium Hours
+        dd.subtotal ng-show="me.organization.usage.summary.thisMonth.ondemand.hours" {{me.organization.usage.summary.thisMonth.ondemand.hours}}
+        dt.subtotal ng-show="me.organization.usage.summary.thisMonth.ondemand.cost" Premium Cost
+        dd.subtotal ng-show="me.organization.usage.summary.thisMonth.ondemand.cost" {{me.organization.usage.summary.thisMonth.ondemand.cost | currency:"USD $"}}
     .usage-current
-      h5 ng-show="me.organization" Me, This Month ({{me.usage.thisMonth.period}})
-      h5 ng-hide="me.organization" This Month ({{me.usage.thisMonth.period}})
+      h5 ng-show="me.organization" Me, This Month ({{me.usage.summary.thisMonth.period}})
+      h5 ng-hide="me.organization" This Month ({{me.usage.summary.thisMonth.period}})
       dl.dl-horizontal
         dt Usage 
-        dd.usage-meter ng-class="{warning: me.usage.thisMonth.secs >= me.totalMeteredStorage, full: me.usage.thisMonth.secs >= me.totalMeteredStorage }"
-          .bar ng-style="{width: me.usage.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
-          .meter-words {{me.usage.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
+        dd.usage-meter ng-class="{warning: me.usage.summary.thisMonth.secs >= me.totalMeteredStorage, full: me.usage.summary.thisMonth.secs >= me.totalMeteredStorage }"
+          .bar ng-style="{width: me.usage.summary.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
+          .meter-words {{me.usage.summary.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Hours
-        dd.usage {{me.usage.thisMonth.hours}}
+        dd.usage {{me.usage.summary.thisMonth.hours}}
         dt Total Cost
         dd.usage 
-          | {{me.usage.thisMonth.cost | currency:"USD $"}}
-          .overage ng-show="me.usage.thisMonth.overage.cost"
-            |  ({{me.usage.thisMonth.overage.hours}} overage hours * $#{Billable::OVERAGE_HOURLY_RATE}/hour)
-        dt.subtotal ng-show="me.usage.thisMonth.ondemand.hours" Premium Hours
-        dd.subtotal ng-show="me.usage.thisMonth.ondemand.hours" {{me.usage.thisMonth.ondemand.hours}}
-        dt.subtotal ng-show="me.usage.thisMonth.ondemand.cost" Premium Cost
-        dd.subtotal ng-show="me.usage.thisMonth.ondemand.cost" {{me.usage.thisMonth.ondemand.cost | currency:"USD $"}}
+          | {{me.usage.summary.thisMonth.cost | currency:"USD $"}}
+          .overage ng-show="me.usage.summary.thisMonth.overage.cost"
+            |  ({{me.usage.summary.thisMonth.overage.hours}} overage hours * $#{Billable::OVERAGE_HOURLY_RATE}/hour)
+        dt.subtotal ng-show="me.usage.summary.thisMonth.ondemand.hours" Premium Hours
+        dd.subtotal ng-show="me.usage.summary.thisMonth.ondemand.hours" {{me.usage.summary.thisMonth.ondemand.hours}}
+        dt.subtotal ng-show="me.usage.summary.thisMonth.ondemand.cost" Premium Cost
+        dd.subtotal ng-show="me.usage.summary.thisMonth.ondemand.cost" {{me.usage.summary.thisMonth.ondemand.cost | currency:"USD $"}}
     hr
     .usage-history
       h5 History
-      .usage-month ng-repeat="msum in me.usage.history"
-        h6 {{msum.period}} - {{msum.type}}
-        dl.dl-horizontal
-          dt Hours 
-          dd {{msum.hours}}
-          dt Cost
-          dd {{msum.cost | currency:"USD $"}}
-        hr
+      table.table.usage
+        tbody.usage-month-group data-period="{{mnthGrp.period}}" ng-repeat="mnthGrp in me.usageSummaryByMonth"
+          tr.usage-month data-period="{{mnthGrp.period}}"
+            th.first Month
+            th.second Type
+            th.time Hours
+            th.cost Cost
+            th
+            th.last
+              button.btn ng-show="me.usageDetailsByMonth(mnthGrp.period).length > 0" ng-click="toggleDetails($event)"
+                i.icon-expand-alt.icon-large
+                |  Details
+          tr.usage-month ng-repeat="msum in mnthGrp.rows"
+            td.first {{msum.period}}
+            td.second {{msum.type}}
+            td.time {{msum.hours}}
+            td.cost {{msum.cost | currency:"USD $"}}
+            td
+            td
+          tr.usage-month-details data-period="{{mnthGrp.period}}" ng-show="usageDetailsVisible(mnthGrp.period)"
+            th.first Date
+            th.second Item
+            th.time Duration
+            th.cost Cost
+            th.type Type
+            th User
+          tr.usage-month-details.info ng-repeat="t in me.usageDetailsByMonth(mnthGrp.period)" ng-show="usageDetailsVisible(mnthGrp.period)"
+            td.first {{t.date | date:'yyyy-MM-dd HH:mm:ss'}}
+            td.second
+              a title="{{t.id}}" ng-show="!t.deleted" href="/collections/{{t.collId}}/items/{{t.itemId}}" {{t.title}}
+              span ng-show="t.deleted" title="this item was deleted {{t.id}}" {{t.title}}
+            td.time {{t.time}}
+            td.cost {{t.cost | currency:"USD $"}}
+            td.type {{t.flavor}}
+            td {{t.user.name}}
+

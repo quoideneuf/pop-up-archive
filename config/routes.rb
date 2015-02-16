@@ -68,6 +68,11 @@ PopUpArchive::Application.routes.draw do
       put '/users/me/credit_card' => 'credit_cards#update'
       put '/users/me/subscription' => 'subscriptions#update'
 
+      get '/usage'        => 'users#usage'
+      get '/usage/:limit' => 'users#usage'
+      get '/users/usage'  => 'users#usage'
+      get '/users/usage/:limit' => 'users#usage'
+
       post '/credit_card' => 'credit_cards#save_token'
 
       get '/test/croak' => 'test#croak'

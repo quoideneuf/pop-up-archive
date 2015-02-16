@@ -1692,6 +1692,64 @@ ul.pricing {
   color: #F25A4C;
 }
 
+.facebookShare {
+  button {
+    vertical-align: inherit;
+  }
+  .facebookCount {
+    display: none;
+  }
+}
+.tweetButton {
+  vertical-align: 2px; 
+  margin-left: 4px; 
+}
+
+input[readonly].copy-widget {
+  cursor:pointer;
+}
+
+table.usage {
+  background-color: #fff;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.usage-month-group {
+  border: 1px solid #ddd;
+  padding: 1em;
+}
+
+.usage-month-group .last {
+  text-align: right;
+  float: right;
+}
+
+.usage-month-details .first {
+  padding-left: 2em;
+}
+
+.usage .cost,
+.usage .time {
+  text-align: right;
+}
+
+.usage .first {
+  min-width: 100px;
+  max-width: 170px;
+}
+.usage .second {
+  width: 300px;
+}
+
+.usage tr {
+  border-bottom: 1px solid #eee;
+}
+
+.usage td, .usage th {
+  border: none;
+}
+
 /* responsive overrides
    NOTE this section *MUST* come last in the file, so don't add anything here
    unless you want it to affect mobile devices.
@@ -1763,21 +1821,5 @@ ul.pricing {
   .featurebtn2 {
     margin-left: 0;
   }
-}
-.facebookShare {
-  button {
-    vertical-align: inherit;
-  }
-  .facebookCount {
-    display: none;
-  }
-}
-.tweetButton {
-  vertical-align: 2px;
-  margin-left: 4px;
-}
-
-input[readonly].copy-widget {
-  cursor:pointer;
 }
 

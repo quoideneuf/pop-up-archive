@@ -25,7 +25,7 @@ ActiveAdmin.register Transcript do
         row :updated_at
         row :start_time
         row :end_time
-        row("User") { user = transcript.audio_file.user; user ? link_to(user.name, superadmin_user_path(user)) : '(nil)' }
+        row("User") { user = transcript.audio_file_lazarus.user; user ? link_to(user.name, superadmin_user_path(user)) : nil }
         row :billed_as
         row :billable_to
         row :billable_seconds

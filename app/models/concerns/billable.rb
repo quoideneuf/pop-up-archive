@@ -89,7 +89,10 @@ module Billable
     end_dtim   = month_end.strftime('%Y-%m-%d %H:%M:%S')
 
     billable_collection_ids = billable_collections.map { |c| c.id.to_s }
-    return nil unless billable_collection_ids.size > 0
+
+    # return a non-matching query if we have 0 collections.
+    # this satisfies chained callers.
+    return "select * from transcripts where id < 0" unless billable_collection_ids.size > 0
 
     items_sql = "select i.id from items as i where i.collection_id in (#{billable_collection_ids.join(',')})"
     audio_files_sql = "select af.id from audio_files as af where af.duration is not null and af.item_id in (#{items_sql})"
@@ -98,6 +101,63 @@ module Billable
     transcripts_sql += " order by t.created_at asc"
 
     return transcripts_sql
+  end
+
+  # this references self.id so currently only applicable/accurate for User objects.
+  def sql_for_transcripts_usage_for_month_of(dtim=DateTime.now, transcriber_id)
+
+    # hand-roll sql to optimize query.
+    # there might be a way to do this all with activerecord but my activerecord-fu is weak.
+
+    month_start = dtim.utc.beginning_of_month
+    month_end = dtim.utc.end_of_month
+    start_dtim = month_start.strftime('%Y-%m-%d %H:%M:%S')
+    end_dtim   = month_end.strftime('%Y-%m-%d %H:%M:%S')
+
+    # NOTE we use collections, not billable_collections.
+    collection_ids = collections.map { |c| c.id.to_s }
+
+    # abort early if we have no collections
+    return "select * from transcript where id < 0" if collection_ids.size == 0
+
+    items_sql = "select i.id from items as i where i.collection_id in (#{collection_ids.join(',')})"
+    audio_files_sql = "select af.id from audio_files as af "
+    audio_files_sql += "where af.duration is not null and af.user_id=#{self.id} and af.item_id in (#{items_sql})"
+    transcripts_sql = "select * from transcripts as t where t.transcriber_id=#{transcriber_id} and t.audio_file_id in (#{audio_files_sql})"
+    transcripts_sql += " and t.created_at between '#{start_dtim}' and '#{end_dtim}'"
+
+    return transcripts_sql
+  end
+
+  def transcript_usage(limit=nil)
+    # keyed by yyyy-mm in chron order
+    usage = {}
+
+    # no limit == all usage
+    if !limit
+      # use monthly_usages as a shortcut for "all the months"
+      monthly_usages.each do |mu|
+        usage[mu.yearmonth] = [] unless usage.has_key?(mu.yearmonth)
+        mu.transcripts.each do |tr|
+          af = tr.audio_file_lazarus
+          usage[mu.yearmonth].push tr.as_usage_summary(af)
+        end
+      end
+    else
+    # apply limit for one month only
+      trs = []
+      transcriber_ids = Transcriber.select(['id']).map(&:id)
+      transcriber_ids.each do |tr_id|
+        sql = self.sql_for_billable_transcripts_for_month_of(limit, tr_id)
+        Transcript.find_by_sql(sql).each do |tr|
+          af = tr.audio_file_lazarus
+          trs.push tr.as_usage_summary(af)
+        end
+      end
+      usage[limit.strftime('%Y-%m')] = trs
+    end
+
+    usage
   end
 
   # unlike total_transcripts_report, transcripts_billable_for_month_of returns hash of numbers not strings.
@@ -125,32 +185,21 @@ module Billable
 
   # unlike transcripts_billable_for_month_of, this method looks at usage only, ignoring billable_to.
   # we do, however, pay attention to whether the audio_file is linked directly, so this method is really
-  # only useful (at the moment) for User objects.
+  # only useful (at the moment) for User objects, esp Users belonging to an Organization.
   def transcripts_usage_for_month_of(dtim=DateTime.now, transcriber_id)
     if self.is_a?(Organization)
       raise "Currently transcripts_usage_for_month_of() only available to User class. You called on #{self.inspect}"
     end
-    month_start = dtim.utc.beginning_of_month
-    month_end = dtim.utc.end_of_month
-    start_dtim = month_start.strftime('%Y-%m-%d %H:%M:%S')
-    end_dtim   = month_end.strftime('%Y-%m-%d %H:%M:%S')
     total_secs = 0 
     total_cost = 0 
     total_retail_cost = 0 
 
-    # hand-roll sql to optimize query.
-    # there might be a way to do this all with activerecord but my activerecord-fu is weak.
-    collection_ids = collections.map { |c| c.id.to_s }
+    sql = sql_for_transcripts_usage_for_month_of(dtim, transcriber_id)
 
-    # abort early if we have no collections
-    return { :seconds => 0, :cost => 0, :retail_cost => 0 } if collection_ids.size == 0
+    # abort early if we have no valid SQL
+    return { :seconds => 0, :cost => 0, :retail_cost => 0 } if !sql
 
-    items_sql = "select i.id from items as i where i.collection_id in (#{collection_ids.join(',')})"
-    audio_files_sql = "select af.id from audio_files as af "
-    audio_files_sql += "where af.duration is not null and af.user_id=#{self.id} and af.item_id in (#{items_sql})"
-    transcripts_sql = "select * from transcripts as t where t.transcriber_id=#{transcriber_id} and t.audio_file_id in (#{audio_files_sql})"
-    transcripts_sql += " and t.created_at between '#{start_dtim}' and '#{end_dtim}'"
-    Transcript.find_by_sql(transcripts_sql).each do |tr|
+    Transcript.find_by_sql(sql).each do |tr|
       af = tr.audio_file_lazarus
       total_secs += tr.billable_seconds(af)
       total_cost += tr.cost(af)

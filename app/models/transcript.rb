@@ -1,8 +1,9 @@
 class Transcript < ActiveRecord::Base
-  attr_accessible :language, :audio_file_id, :identifier, :start_time, :end_time, :confidence, :transcriber_id, :cost_per_min, :cost_type, :retail_cost_per_min, :is_billable
+  attr_accessible :language, :audio_file_id, :identifier, :start_time, :end_time, :confidence, :transcriber_id, :cost_per_min, :cost_type, :retail_cost_per_min, :is_billable, :subscription_plan_id
 
   belongs_to :audio_file
   belongs_to :transcriber
+  belongs_to :subscription_plan
   has_one :item, through: :audio_file
   has_many :timed_texts, order: 'start_time ASC'
   has_many :speakers
@@ -14,6 +15,14 @@ class Transcript < ActiveRecord::Base
   RETAIL    = 2 
   WHOLESALE = 1 
   COST_TYPES = {RETAIL => "Retail", WHOLESALE => "Wholesale"}
+
+  def plan
+    if subscription_plan
+      subscription_plan.as_cached
+    else
+      audio_file_lazarus.user.plan
+    end
+  end
 
   def billed_as
     COST_TYPES[self.cost_type]
@@ -183,6 +192,13 @@ class Transcript < ActiveRecord::Base
     self.transcriber_id == Transcriber.basic.id && !self.is_preview?
   end
 
+  def flavor
+    return 'Premium' if is_premium?
+    return 'Basic'   if is_basic?
+    return 'Preview' if is_preview?
+    return 'Unknown'
+  end
+
   def billable?
     self.is_billable
   end
@@ -215,7 +231,11 @@ class Transcript < ActiveRecord::Base
       return end_time - start_time
 
     end
-  end 
+  end
+
+  def billable_hms(af=audio_file_lazarus)
+    format_time(billable_seconds(af))
+  end
 
   # returns a float representing 1000ths of a dollar
   # if billable? is false, always returns 0.0
@@ -242,7 +262,23 @@ class Transcript < ActiveRecord::Base
   def retail_cost_dollars(af=audio_file_lazarus)
     return retail_cost(af) / 1000
   end
-    
+
+  def as_usage_summary(af=audio_file_lazarus)
+    { 
+      :time => billable_hms(af),
+      :cost => billable? ? retail_cost_dollars(af) : 0.0,
+      :date => created_at,
+      :name => af.filename,
+      :title => af.item.title,
+      :user => { :id => af.user.id, :name => af.user.name },
+      :id   => id,
+      :coll_id => af.item.collection_id,
+      :item_id => af.item_id,
+      :deleted => (af.deleted? || af.item.deleted?),
+      :flavor  => flavor,
+    }
+  end
+
   private
 
   def format_time(seconds)
