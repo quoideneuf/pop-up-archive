@@ -22,7 +22,7 @@ if current_user
       id: current_user.organization.id,
       name: current_user.organization.name,
       amara_team: current_user.organization.amara_team,
-      usage: { summary: current_user.organization.usage_summary, transcripts: current_user.organization.transcript_usage },
+      usage: { summary: current_user.organization.usage_summary, transcripts: current_user.organization.transcript_usage(DateTime.now) },
       owner_id: current_user.organization.owner_id,
     } if current_user.organization.present?
   }
