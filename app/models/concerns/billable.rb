@@ -118,7 +118,7 @@ module Billable
     collection_ids = collections.map { |c| c.id.to_s }
 
     # abort early if we have no collections
-    return "select * from transcript where id < 0" if collection_ids.size == 0
+    return "select * from transcripts where id < 0" if collection_ids.size == 0
 
     items_sql = "select i.id from items as i where i.collection_id in (#{collection_ids.join(',')})"
     audio_files_sql = "select af.id from audio_files as af "
