@@ -280,10 +280,6 @@ class AudioFile < ActiveRecord::Base
     return if (user && user.plan.has_premium_transcripts?)
     # or if parent Item was created with premium-on-demand
     return if item.is_premium?
-    # only start if we have a file
-    if has_file?
-      return unless is_uploaded? and is_copied?
-    end
 
     # always do the first 2 minutes
     start_transcribe_job(user, 'ts_start', {start_only: true})
