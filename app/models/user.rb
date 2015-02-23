@@ -190,6 +190,14 @@ class User < ActiveRecord::Base
     @_entity ||= organization || self
   end
 
+  def owner
+    if organization
+      organization.owner
+    else
+      self
+    end
+  end
+
   def plan_json
     {
       name: plan.name,

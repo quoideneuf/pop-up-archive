@@ -52,6 +52,15 @@ class AudioFile < ActiveRecord::Base
     collection.billable_to  # delegate, for now
   end
 
+  # if user_id not defined, prefer billable_to
+  def user
+    if user_id
+      super
+    else
+      billable_to.owner  # always a User
+    end
+  end
+
   def collection
     instance.try(:item).try(:collection) || item.try(:collection)
   end
