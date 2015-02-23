@@ -596,7 +596,13 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
           } else {
             el.css({display: 'none'});
           }
-        })
+        });
+        scope.$on('HideMask', function() {
+          el.css({display: 'none'});
+        });
+        scope.$on('UnhideMask', function() {
+          el.css({display: 'block'});
+        });
       }
     }
   }]);
