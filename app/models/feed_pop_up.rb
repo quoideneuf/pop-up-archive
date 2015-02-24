@@ -78,11 +78,11 @@ class FeedPopUp
     #puts head_resp.headers.inspect
     if etag
       etag.gsub!(/\A"|"\Z/, '')  # strip enclosing quotes
-      # if this is NPR-style : delimited, we just want the checksum, not the timestamp
-      if m = etag.match(/^(\w+):(\d+)$/)
+      # if this is NPR-style : delimited, we just want the md5 checksum (32 chars), not the timestamp
+      if m = etag.match(/^(\w{32}):(\d+)$/)
         return m[1]
       else
-        return etag
+        return nil  # be conservative. only accept known Etag formats.
       end
     end
     nil
