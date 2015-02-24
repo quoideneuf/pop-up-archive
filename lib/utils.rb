@@ -10,6 +10,11 @@ class Utils
 
 	class<<self
 
+    def generate_rand_str(length=10)
+      cs = ('A'..'Z').to_a + ('a'..'z').to_a + ('0'..'9').to_a
+      SecureRandom.random_bytes(length).each_char.map{|c| cs[(c.ord % cs.length)]}.join
+    end
+
     def logger
       @logger ||= defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
     end
