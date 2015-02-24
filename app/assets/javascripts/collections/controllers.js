@@ -84,7 +84,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     };
 
     $scope.newCollection = function () {
-      $modal({template: "/assets/collections/form.html", persist: false, show: true, scope: $scope});
+      $modal({template: "/assets/collections/form.html", persist: false, show: true, scope: $scope, modalClass: 'collection-modal'});
     };
     
     $scope.batchUpload = {
@@ -124,7 +124,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
   }
 
   $scope.newCollection = function () {
-    $modal({template: "/assets/collections/form.html", persist: false, show: true, scope: $scope});
+    $modal({template: "/assets/collections/form.html", persist: false, show: true, scope: $scope, modalClass: 'collection-modal'});
   }
 
   $scope.close = function () {
@@ -151,6 +151,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
 
   if (!$scope.collection) {
     $scope.collection = new Collection();
+    $scope.collection.copyMedia = true;
   }
 
   $scope.collection.itemsVisibleByDefault = true;
@@ -159,6 +160,10 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     if (!$scope.collection.itemsVisibleByDefault) {
       $scope.collection.storage = 'AWS';
     }
+  }
+
+  $scope.copyMediaChange = function() {
+    // currently a no-op placeholder.
   }
 
   $scope.edit = function (collection) {

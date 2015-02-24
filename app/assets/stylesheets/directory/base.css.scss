@@ -894,9 +894,28 @@ form.with-tags {
   display: none;
 }
 
+// horizontal radio button groups
+.radio-group {
+  margin-top: 4px; 
+}
+.radio-label {
+  width: auto;
+  display: inline;
+  margin-left: 8px; 
+  margin-right: 16px;
+}
+.radio_button {
+  vertical-align: middle;
+  margin-top: -1px;
+}
+
+.collection-modal .modal-body {
+  height: 500px;
+}
+
 //item
 
-.item-modal, .embed-codes-modal {
+.item-modal, .embed-codes-modal, .collection-modal {
   width: 690px;
   margin-left: -330px;
   max-height: 80%;
@@ -910,19 +929,6 @@ form.with-tags {
   }
   .controls {
     margin-left: 160px;
-  }
-  .radio-group {
-    margin-top: 4px;
-  }
-  .radio-label {
-    width: auto;
-    display: inline;
-    margin-left: 8px;
-    margin-right: 16px;
-  }
-  .radio_button {
-    vertical-align: middle;
-    margin-top: -1px;
   }
 
   select {

@@ -4,7 +4,7 @@ class Collection < ActiveRecord::Base
   acts_as_paranoid
 
   # include ActiveModel::ForbiddenAttributesProtection
-  attr_accessible :title, :description, :items_visible_by_default, :creator, :creator_id, :storage, :default_storage_id
+  attr_accessible :title, :description, :items_visible_by_default, :copy_media, :creator, :creator_id, :storage, :default_storage_id
 
   belongs_to :default_storage, class_name: "StorageConfiguration"
   belongs_to :upload_storage, class_name: "StorageConfiguration"
