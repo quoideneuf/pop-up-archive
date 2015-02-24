@@ -410,6 +410,8 @@
         };
 
         scope.$on('CallEditor', function() {
+          // Disable the loading mask for transcript editing
+          scope.$emit('HideMask');
           //enable transcript editor when user clicks "Edit"
           scope.editRow = true;
           //focus cursor in first row of transcript input
@@ -419,10 +421,14 @@
         });
 
         scope.$on('CallSave', function() {
+          // Unhide the loading mask once edits are saved
+          scope.$emit('UnhideMask');
           scope.editRow = false;
         });
 
         scope.editOrPlay = function() {
+          // Prevent the loading mask from showing on play
+          scope.$emit('HideMask');
           if (scope.editRow == true) {
             this.enableEditor();
           } else {
