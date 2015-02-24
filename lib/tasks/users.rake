@@ -15,6 +15,12 @@ namespace :users do
   # Jill, jill@bar.edu
   # % rake users:create_from_file[users] ORG_ID=456
   #
+  # add existing Users to an org 789
+  # % cat users
+  # joe@foo.com
+  # jill@bar.com
+  # % rake users:add_to_org[users] ORG_ID=789
+  #
   # use the DRY_RUN=1 env var to validate data without actually writing to the db.
   # use the VERBOSE=1 env var to print out values as they are processed.
   #
@@ -60,6 +66,21 @@ namespace :users do
       em = fields[1]
       create_user un, em
     end
+  end
+
+  desc "Add existing Users to an Organization"
+  task :add_to_org, [:filename] => [:environment] do |t,args|
+    org_id = ENV['ORG_ID'] or raise "ORG_ID must be defined"
+    org = Organization.find org_id.to_i
+    File.readlines(args.filename).grep(/^\w/).each do |line|
+      email = line.chomp
+      user = User.find_by_email email
+      if !user
+        raise "Failed to find user #{email}"
+      end
+      org.add_to_team user
+    end
+
   end
 
 end
