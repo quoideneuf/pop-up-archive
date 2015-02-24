@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150224211008) do
+ActiveRecord::Schema.define(:version => 20150224211933) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(:version => 20150224211008) do
     t.datetime "deleted_at"
   end
 
+  add_index "audio_files", ["item_id", "deleted_at"], :name => "index_audio_files_on_item_id_and_deleted_at"
   add_index "audio_files", ["item_id"], :name => "index_audio_files_on_item_id"
 
   create_table "collection_grants", :force => true do |t|
