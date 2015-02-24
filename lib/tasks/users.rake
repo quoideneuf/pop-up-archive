@@ -6,7 +6,7 @@ namespace :users do
   # single User
   # % rake users:create['Jill','jill@someplace.com']
   # 
-  # simple User in an Org with id 123
+  # single User in an Org with id 123
   # % rake users:create['Jill','jill@someplace.com'] ORG_ID=123
   #
   # list of Users in Org 456
