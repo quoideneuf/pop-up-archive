@@ -159,7 +159,10 @@ class User < ActiveRecord::Base
     if (offer == 'prx')
       cus.update_subscription(plan: plan.id, trial_end: 90.days.from_now.to_i)
     else
-      cus.update_subscription(plan: plan.id, coupon: offer)
+      # we bill on the first day of the month, and treat the first partial month as a "trial"
+      # (though we do bill for it, eventually, prorated)
+      trial_end = DateTime.now.utc.end_of_month.to_i
+      cus.update_subscription(plan: plan.id, coupon: offer, trial_end: trial_end)
     end
 
     # must do this manually after update_subscription has successfully completed
@@ -242,10 +245,7 @@ class User < ActiveRecord::Base
         cus
       end
     else
-      # we bill on the first day of the month, and treat the first partial month as a "trial"
-      # (though we do bill for it, prorated)
-      trial_end = DateTime.now.utc.end_of_month.to_i
-      Customer.new(Stripe::Customer.create(email: email, description: name, trial_end: trial_end)).tap do |cus|
+      Customer.new(Stripe::Customer.create(email: email, description: name)).tap do |cus|
         self.customer_id = cus.id
         update_attribute :customer_id, cus.id if persisted?
         Rails.cache.write([:customer, :individual, cus.id], cus, expires_in: cache_ttl)
