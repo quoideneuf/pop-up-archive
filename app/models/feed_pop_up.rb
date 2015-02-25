@@ -30,6 +30,11 @@ class FeedPopUp
     newItems = 0
     entries.each do |entry|
       next if entry.published < @oldest_entry
+      # always brute force avoid same title, same publish date, same URL, to keep dupes out.
+      # TODO this is less than ideal but the id() method isn't strict enough.
+      if Item.where(title: entry.title, date_created: entry.published, digital_location: entry.url).exists?
+        next
+      end
       unless Item.where(identifier: id(entry), collection_id: collection.id).exists?
         item = add_item_from_entry(entry, collection)
         newItems += 1
