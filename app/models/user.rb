@@ -161,8 +161,10 @@ class User < ActiveRecord::Base
     else
       # we bill on the first day of the month, and treat the first partial month as a "trial"
       # (though we do bill for it, eventually, prorated)
+      # important that "prorate" is false so that we handle the billing for the partial month.
+      # see https://github.com/popuparchive/pop-up-archive/issues/1011
       trial_end = DateTime.now.utc.end_of_month.to_i
-      cus.update_subscription(plan: plan.id, coupon: offer, trial_end: trial_end)
+      cus.update_subscription(plan: plan.id, coupon: offer, trial_end: trial_end, prorate: false)
     end
 
     # must do this manually after update_subscription has successfully completed
