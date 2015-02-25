@@ -73,6 +73,7 @@ class Item < ActiveRecord::Base
   before_validation :set_defaults, if: :new_record?
 
   before_update :handle_collection_change, if: :collection_id_changed?
+  after_update  :do_after_update
 
   attr_accessible :date_broadcast, :date_created, :date_peg,
     :description, :digital_format, :digital_location, :duration,
@@ -127,6 +128,19 @@ class Item < ActiveRecord::Base
 
   def url
     "#{Rails.application.routes.url_helpers.root_url}collections/#{collection_id}/items/#{id}"
+  end
+
+  def do_after_update
+    # a little hack since Item is updated immediately after upload but before there is anything to render
+    if updated_at - created_at > 10
+      prerender_cache
+    end
+  end
+
+  def prerender_cache
+    if is_public and Rails.env.production?
+      PrerenderCacheWorker.perform_async(self.id)
+    end
   end
 
   @@instance_lock = Mutex.new
