@@ -30,7 +30,7 @@ if current_user
   node(:used_metered_storage) { current_user.used_metered_storage_cache }
   node(:used_unmetered_storage) { current_user.used_unmetered_storage_cache }
   node(:total_metered_storage) { current_user.pop_up_hours * 3600 }
-  node(:usage) { { summary: current_user.usage_summary, transcripts: current_user.transcript_usage } }
+  node(:usage) { { summary: current_user.usage_summary, transcripts: current_user.transcript_usage(DateTime.now) } }
   node(:over_monthly_limit) { current_user.is_over_monthly_limit? }
   node(:plan) { current_user.plan_json }
   node(:credit_card) { current_user.active_credit_card_json } if current_user.active_credit_card.present?
