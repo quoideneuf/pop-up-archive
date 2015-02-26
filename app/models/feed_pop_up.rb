@@ -27,17 +27,23 @@ class FeedPopUp
   end
  
   def add_entries(entries, collection)
+    # cache all items idk values in memory for easy lookup to help prevent dupes
+    item_cache = {}
+    collection.items.each do |item|
+      idk = "#{item.title}:#{item.date_created}:#{item.digital_location}"
+      item_cache[idk] = item.id
+    end
     newItems = 0
     entries.each do |entry|
       next if entry.published < @oldest_entry
       # always brute force avoid same title, same publish date, same URL, to keep dupes out.
       # TODO this is less than ideal but the id() method isn't strict enough.
-      if Item.where(title: entry.title, date_created: entry.published, digital_location: entry.url).exists?
-        next
-      end
+      idk = "#{entry.title}:#{entry.published}:#{entry.url}"
+      next if item_cache.has_key? idk
       unless Item.where(identifier: id(entry), collection_id: collection.id).exists?
         item = add_item_from_entry(entry, collection)
         newItems += 1
+        item_cache[idk] = item.id
       end
     end
     newItems
