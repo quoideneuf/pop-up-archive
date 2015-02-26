@@ -38,7 +38,7 @@ class FeedPopUp
       next if entry.published < @oldest_entry
       # always brute force avoid same title, same publish date, same URL, to keep dupes out.
       # TODO this is less than ideal but the id() method isn't strict enough.
-      idk = "#{entry.title}:#{entry.published}"
+      idk = "#{entry.title}:#{entry.published}".gsub(/\ \d\d:\d\d:\d\d UTC$/, '')
       next if item_cache.has_key? idk
       unless Item.where(identifier: id(entry), collection_id: collection.id).exists?
         item = add_item_from_entry(entry, collection)
