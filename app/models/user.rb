@@ -142,6 +142,14 @@ class User < ActiveRecord::Base
     end
   end
 
+  def billable_subscription_plan_id
+    if organization
+      organization.owner.subscription_plan_id
+    else
+      subscription_plan_id
+    end
+  end
+
   def super_admin?
     has_role?(:super_admin)
   end

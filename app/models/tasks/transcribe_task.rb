@@ -177,7 +177,7 @@ class Tasks::TranscribeTask < Task
       retail_cost_per_min: transcriber.retail_cost_per_min,
       cost_type: Transcript::WHOLESALE,
       is_billable: self.start_only? ? false : true,
-      subscription_plan_id: audio_file.user.subscription_plan_id,
+      subscription_plan_id: audio_file.user.billable_subscription_plan_id,
     )
     sum = 0.0
     count = 0.0
