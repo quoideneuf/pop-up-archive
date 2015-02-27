@@ -156,18 +156,53 @@ class User < ActiveRecord::Base
 
   def subscribe!(plan, offer = nil)
     cus = customer.stripe_customer
+    subscr = customer.stripe_subscription(cus)
     if (offer == 'prx')
-      cus.update_subscription(plan: plan.id, trial_end: 90.days.from_now.to_i)
+      subscr.plan = plan.id
+      subscr.trial_end = 90.days.from_now.to_i
     else
-      # we bill on the first day of the month, and treat the first partial month as a "trial"
-      # (though we do bill for it, eventually, prorated)
-      # important that "prorate" is false so that we handle the billing for the partial month.
       # see https://github.com/popuparchive/pop-up-archive/issues/1011
-      trial_end = DateTime.now.utc.end_of_month.to_i
-      cus.update_subscription(plan: plan.id, coupon: offer, trial_end: trial_end, prorate: false)
+      # initial sign-up has "trial" until the first day of the next month.
+      #
+      # set up params based on some scenarios:
+      #
+      # these are API defaults; we just make them explicit
+      trial_end = nil
+      prorate   = true
+      ####################################################################
+      # new customer setting non-community subscription for the first time
+      if !customer.in_first_month? && customer.plan.is_community?
+        trial_end = customer.class.end_of_this_month
+        prorate   = false
+      end
+
+      ###########################################################################
+      # existing customer still inside initial "trial" month before first billing
+      if customer.in_first_month? && !customer.plan.is_community?
+        trial_end = customer.class.end_of_this_month
+        prorate   = false
+      end
+
+      #######################################################
+      # existing customer after first billing (regular cycle)
+      if !customer.in_first_month? && !customer.plan.is_community?
+        # currently no-op
+      end 
+
+      subscr.plan = plan.id
+      subscr.coupon = offer
+      subscr.trial_end = trial_end if trial_end
+      subscr.prorate = prorate
     end
 
-    # must do this manually after update_subscription has successfully completed
+    # custom metadata, including start time (so we can test effectively)
+    subscr.metadata[:start] ||= Time.now.utc.to_i
+    subscr.metadata[:updated] = Time.now.utc.to_i
+
+    # write change
+    subscr.save
+
+    # must do this manually after subscription.save has successfully completed
     # so that our local caches are in sync.
     sp = SubscriptionPlan.find_by_stripe_plan_id(plan.id)
     update_attribute :subscription_plan_id, sp.id if persisted?
@@ -248,6 +283,8 @@ class User < ActiveRecord::Base
       end
     else
       Customer.new(Stripe::Customer.create(email: email, description: name)).tap do |cus|
+        #STDERR.puts cus.inspect
+        #STDERR.puts cus.stripe_customer.inspect
         self.customer_id = cus.id
         update_attribute :customer_id, cus.id if persisted?
         Rails.cache.write([:customer, :individual, cus.id], cus, expires_in: cache_ttl)
