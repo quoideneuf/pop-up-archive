@@ -370,6 +370,12 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
       default: string = "chris"; break;
     }
 
+    // quite possible to have garbage in,
+    // so prevent garbage out.
+    if (string == "chris") {
+      return 'Uknown date';
+    }
+
     return string + ", " + year;
   }
 
