@@ -25,13 +25,13 @@ class Api::V1::SearchesController < Api::V1::BaseController
       end
 
       # determine sort order
-      if !query_str.present? or query_str.length == 0
-        sort do
-          by 'created_at', 'desc'
-        end
-      elsif sort_by 
+      if sort_by
         sort do
           by query_builder.sort_column, query_builder.sort_order 
+        end
+      elsif !query_str.present? or query_str.length == 0
+        sort do
+          by 'created_at', 'desc'
         end
       else
         sort do
