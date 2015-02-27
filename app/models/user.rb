@@ -382,6 +382,15 @@ class User < ActiveRecord::Base
     org.add_to_team(self)
   end
 
+  def self.created_in_month(dtim=DateTime.now)
+    month_start = dtim.utc.beginning_of_month
+    month_end = dtim.utc.end_of_month
+    start_dtim = month_start.strftime('%Y-%m-%d %H:%M:%S')
+    end_dtim   = month_end.strftime('%Y-%m-%d %H:%M:%S')
+    sql = "select * from users where created_at between '#{start_dtim}' and '#{end_dtim}' order by created_at desc"
+    User.find_by_sql(sql)
+  end
+
   private
 
   def delete_customer
