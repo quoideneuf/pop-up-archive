@@ -96,7 +96,7 @@
             th.cost Cost
             th
             th.last
-              button.btn ng-show="me.usageDetailsByMonth(mnthGrp.period).length > 0" ng-click="toggleDetails($event)"
+              button.btn ng-click="toggleDetails($event)"
                 i.icon-expand-alt.icon-large
                 |  Details
           tr.usage-month ng-repeat="msum in mnthGrp.rows"
