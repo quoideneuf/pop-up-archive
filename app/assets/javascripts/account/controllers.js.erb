@@ -2,7 +2,7 @@ angular.module('Directory.account.controllers', ['stripe', 'Directory.account.mo
 .config(function () {
   Stripe.setPublishableKey('<%= ENV["STRIPE_PUBLISHABLE_KEY"] %>');
 })
-.controller('AccountCtrl', ['$scope', 'Me', '$modal', '$q', function ($scope, Me, $modal, $q) {
+.controller('AccountCtrl', ['$scope', 'Me', '$modal', '$q', 'Usage', 'Loader', function ($scope, Me, $modal, $q, Usage, Loader) {
   Me.authenticated(function (me) {
     $scope.me = me;
   });
@@ -40,7 +40,15 @@ angular.module('Directory.account.controllers', ['stripe', 'Directory.account.mo
 
     // if not already loaded for period, load w/promise
     if (!$scope.me.usageDetailsByMonth(period)) {
-      var usage = new Usage({period:period});
+      Loader(Usage.get(period)).then( function(usage) {
+        var transcriptDetails = usage[period];
+        //console.log(transcriptDetails);
+        $scope.me.usage.transcripts[period] = transcriptDetails;
+        if (usage.organization && $scope.me.organization) {
+          $scope.me.organization.usage.transcripts[period] = usage.organization[period];
+        }
+        $scope.me.buildUsageSummary();
+      });
     }
 
     //console.log('toggle ', period);
