@@ -28,7 +28,7 @@ namespace :users do
   VALID_EMAIL_REGEX = /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
 
   desc "Create an account"
-  task :create, [:email, :username] => [:environment] do |t,args|
+  task :create, [:username, :email] => [:environment] do |t,args|
     username = args.username
     email    = args.email
     create_user username, email
