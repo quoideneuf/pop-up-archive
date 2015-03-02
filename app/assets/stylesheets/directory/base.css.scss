@@ -1348,29 +1348,28 @@ form.with-tags {
 .expimg {
   border-radius: 2px;
 }
-
-h4.lightblueh4 {
-  color: lightblue;
-  font-family: helvetica;
+.expimg-main {
+  width: 200px;
 }
 
-
-
-.featuredcol {
-  background-color: #2ca5da;
-  border-radius: 3px;
-  color: white;
-  padding: 2px 15px;
-
+.explore-main {
+  padding-top: 20px;
+  margin-right: 75px;
+  font-size: 17px;
 }
 
-a#number {
-  color: #222;
+.main-featured {
+  background-color: #FFFFF2;
+  border-radius: 20px;
+  h2 {
+    margin-bottom: 0px;
+  }
+  margin-top: 2em;
 }
 
-p.explorep {
+.explorep {
   text-align: left;
-}
+  }
 
 .top-terms {
   height: 370px;
