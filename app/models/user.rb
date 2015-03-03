@@ -198,7 +198,7 @@ class User < ActiveRecord::Base
       end 
 
       subscr.plan = plan.id
-      subscr.coupon = offer
+      subscr.coupon = offer if (offer && offer.length)
       subscr.trial_end = trial_end if trial_end
       subscr.prorate = prorate
     end
