@@ -174,4 +174,37 @@ namespace :reports do
     puts "Total: #{num}" 
   end
 
+  desc "prints subscriber sign-up summary for the current month"
+  task customer_sign_ups: [:environment] do
+
+    # optional to send report via email
+    send_mail = ENV['SEND_MAIL'] || false
+
+    # find all the Users created this month
+    now = ENV['FOR_MONTH'] ? DateTime.parse(ENV['FOR_MONTH']) : DateTime.now
+    the_month = now.utc.strftime('%Y-%m')
+    users = User.created_in_month(now)
+
+    # set up report
+    buf = []
+    buf.push "PUA New Customer Report for #{now.strftime('%Y-%m')}\n"
+    buf.push '-'*70, "\n"
+    buf.push "Date       ID                    Name  Plan  #{the_month} Hours\n"
+    buf.push '-'*70, "\n" 
+    users.each do |user|
+      dt = user.created_at.strftime('%Y-%m-%d')
+      usage = 0
+      user.monthly_usages.select {|mu| mu.yearmonth == the_month}.each do |mu|
+        usage += mu.value
+      end
+      line = sprintf("%s %s %21s %5s  %s\n", dt, user.id, user.name.slice(0,20), user.pop_up_hours, Api::BaseHelper::time_definition(usage))
+      buf.push line
+    end
+    if send_mail
+      MyMailer.mailto('PUA New Customer Report', buf.join('')).deliver
+    else
+      puts buf.join('')
+    end
+  end
+
 end

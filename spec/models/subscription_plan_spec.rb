@@ -31,7 +31,8 @@ describe SubscriptionPlanCached do
   end
 
   it 'defaults to 2 hours as a minimum' do
-    plan = SubscriptionPlanCached.new(Stripe::Plan.create(name: 'Test Again Plan', amount: 0, id: 'malformed'))
+    stripe_plan = Stripe::Plan.create(name: 'Test Again Plan', amount: 0, id: 'malformed', currency: 'usd', interval: 'month')
+    plan = SubscriptionPlanCached.new(stripe_plan)
     plan.hours.should eq 1
   end
 

@@ -173,7 +173,9 @@ describe User do
   end
 
   context 'payment' do
-    let (:plan) { free_plan }
+    let (:plan)          { free_plan }
+    let (:stripe_helper) { StripeMock.create_test_helper }
+    let (:card_token)    { stripe_helper.generate_card_token }
 
     before do
       @other = SubscriptionPlanCached.create hours: 80, amount: 2000, name: 'big'
@@ -203,17 +205,17 @@ describe User do
     end
 
     it 'can have a card added' do
-      user.update_card!('void_card_token')
+      user.update_card!(card_token)
     end
 
     it 'can get current card if there is one' do
       user.active_credit_card.should be_nil
-      user.update_card!('void_card_token')
+      user.update_card!(card_token)
       user.active_credit_card.should_not be_nil
     end
 
     it 'can get current card json ' do
-      user.update_card!('void_card_token')
+      user.update_card!(card_token)
       cc = {"last4"=>"4242", "type"=>"Visa", "exp_month"=>4, "exp_year"=>2016}
       user.active_credit_card_json['type'].should eq 'Visa'
       user.active_credit_card_json.keys.sort.should eq ["exp_month", "exp_year", "last4", "type"]
@@ -222,6 +224,7 @@ describe User do
     it 'can be subscribed to a plan' do
       user.subscribe! plan
       user.plan.should eq plan
+      user.customer.in_first_month?.should eq true
     end
 
     it 'has a json representation of the current plan' do
@@ -235,7 +238,7 @@ describe User do
     end
 
     it 'subscribes to paid plans successfully when there is a card present' do
-      user.update_card!('void_card_token')
+      user.update_card!(card_token)
       user.subscribe!(paid_plan)
 
       user.plan.should eq paid_plan
@@ -249,6 +252,27 @@ describe User do
 
     it 'has community plan number of hours when there is no subscription' do
       user.pop_up_hours.should eq 1
+    end
+
+    it "knows when the monthly billing cycle has started" do
+      user.subscribe!(plan)
+      user.customer.in_first_month?.should eq true
+
+      # sufficiently paranoid: we might be running at midnight on the first of the month
+      if user.customer.class.start_of_this_month == Time.now.utc.to_i
+        STDERR.puts "It's midnight on the first of the month!"
+        sleep 2
+      end
+
+      # fast forward the clock artificially
+      Timecop.travel( Time.now.utc.end_of_month )
+      sleep 2
+
+      # now its the 2nd month
+      user.customer.in_first_month?.should eq false
+
+      # rewind the clock
+      Timecop.return
     end
   end
 

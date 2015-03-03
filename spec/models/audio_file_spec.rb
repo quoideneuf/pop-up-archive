@@ -170,6 +170,9 @@ describe AudioFile do
       @audio_file.original_file_url="test.mp3"
     }
 
+    let (:stripe_helper) { StripeMock.create_test_helper }
+    let (:card_token)    { stripe_helper.generate_card_token }
+
     it 'should order only start of transcript for free private audio' do
       @audio_file.user.plan.should eq SubscriptionPlanCached.community
       @audio_file.transcribe_audio
@@ -221,7 +224,7 @@ describe AudioFile do
 
     it "should check for premium transcribe dupes" do
       new_user = FactoryGirl.create :user
-      new_user.update_card!('void_card_token')
+      new_user.update_card!(card_token)
       plan = SubscriptionPlanCached.create name: 'Test Plan', amount: 10000, hours: 200, plan_id: '10_small_business_yr'
       new_user.subscribe!(plan)
       @audio_file.user = new_user
@@ -234,7 +237,7 @@ describe AudioFile do
 
     it "should order premium transcript ondemand" do
       new_user = FactoryGirl.create :user
-      new_user.update_card!('void_card_token')
+      new_user.update_card!(card_token)
       plan = SubscriptionPlanCached.create name: 'Test Plan', amount: 10000, hours: 200, plan_id: '10_small_business_yr'
       new_user.subscribe!(plan)
       @audio_file.user = new_user

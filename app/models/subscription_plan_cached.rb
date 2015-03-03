@@ -101,6 +101,10 @@ class SubscriptionPlanCached
     SubscriptionPlan.sync_with_stripe(self)
   end
 
+  def is_community?
+    self.id == :community
+  end
+
   # if the plan id has _business_ or _enterprise_ or _premium_ in it, we'll do premium transcripts
   def has_premium_transcripts?
     self.id.match(/_(business|enterprise|premium)_/)
