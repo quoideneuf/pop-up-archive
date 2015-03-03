@@ -1,4 +1,4 @@
-attributes :id, :title, :description, :items_visible_by_default, :token
+attributes :id, :title, :description, :items_visible_by_default, :token, :copy_media
 
 node :number_of_items do |coll|
   coll.items.count

@@ -32,6 +32,8 @@ class Tasks::AnalyzeTask < Task
         self.cancel!
         return
       end
+      # manually fire prerender cache since we've reached the end of the task workflow.
+      owner.item.prerender_cache
     else
       raise "No destination so cannot finish task #{id}"
     end

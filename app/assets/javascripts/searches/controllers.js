@@ -24,7 +24,18 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
       $scope.selectedSort = $scope.sortOptions[0];
     }
     else {
-      $scope.selectedSort = $scope.sortOptions[1]; // should match actual search controller logic on server
+      // pick the correct initial sortOption
+      if ($location.search().sortBy) {
+        $.each($scope.sortOptions, function(idx, opt) {
+          if (opt.sort_by == $location.search().sortBy && opt.sort_order == $location.search().sortOrder) {
+            $scope.selectedSort = opt;
+            return false; // break loop
+          }
+        });
+      }
+      else {
+        $scope.selectedSort = $scope.sortOptions[1];
+      }
     }
   });
 

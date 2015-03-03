@@ -14,7 +14,18 @@ div ng-controller='CollectionFormCtrl'
         label.control-label
           | Description
         .controls
-          textarea rows="10" ng-model="collection.description"
+          textarea rows="6" ng-model="collection.description"
+      .control-group
+        label.control-label
+          | Store Media
+          i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['copyMedia']" data-placement="top"
+        .controls.radio-group
+          input.radio_button type="radio" name="copyMedia" ng-value="true" ng-model="collection.copyMedia" ng-change="copyMediaChange()"
+          label.radio-label
+            | Yes
+          input.radio_button type="radio" name="copyMedia" ng-value="false" ng-model="collection.copyMedia" ng-change="copyMediaChange()"
+          label.radio-label
+            | No
       .control-group ng-hide="collection.id"
         label.control-label
           | Privacy
@@ -38,7 +49,7 @@ div ng-controller='CollectionFormCtrl'
       .control-group
         label.control-label
           | Upload Images
-          i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['image']" data-placement="bottom"
+          i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['image']" data-placement="top"
         .controls ng-show="collection.images.length > 0"
           table.table.file-table
             tr.file ng-repeat="image in collection.images"

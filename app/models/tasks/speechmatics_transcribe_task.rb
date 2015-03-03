@@ -257,7 +257,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
         cost_per_min: transcriber.cost_per_min,
         retail_cost_per_min: transcriber.retail_cost_per_min,
         cost_type: cost_type,
-        subscription_plan_id: audio_file.user.subscription_plan_id,
+        subscription_plan_id: audio_file.user.billable_subscription_plan_id,
       )
       speakers = response.speakers
       words    = response.words
