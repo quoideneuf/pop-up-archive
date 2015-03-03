@@ -1,8 +1,8 @@
-angular.module('Directory.account.controllers', ['stripe', 'Directory.account.models', 'ngPlayer'])
+angular.module('Directory.account.controllers', ['stripe', 'Directory.account.models', 'Directory.usage.models', 'ngPlayer'])
 .config(function () {
   Stripe.setPublishableKey('<%= ENV["STRIPE_PUBLISHABLE_KEY"] %>');
 })
-.controller('AccountCtrl', ['$scope', 'Me', '$modal', function ($scope, Me, $modal) {
+.controller('AccountCtrl', ['$scope', 'Me', '$modal', '$q', 'Usage', 'Loader', function ($scope, Me, $modal, $q, Usage, Loader) {
   Me.authenticated(function (me) {
     $scope.me = me;
   });
@@ -37,6 +37,20 @@ angular.module('Directory.account.controllers', ['stripe', 'Directory.account.mo
     }
     var tbody = btn.parents('.usage-month-group');
     var period = tbody.data('period');
+
+    // if not already loaded for period, load w/promise
+    if (!$scope.me.usageDetailsByMonth(period)) {
+      Loader(Usage.get(period)).then( function(usage) {
+        var transcriptDetails = usage[period];
+        //console.log(transcriptDetails);
+        $scope.me.usage.transcripts[period] = transcriptDetails;
+        if (usage.organization && $scope.me.organization) {
+          $scope.me.organization.usage.transcripts[period] = usage.organization[period];
+        }
+        $scope.me.buildUsageSummary();
+      });
+    }
+
     //console.log('toggle ', period);
     if (!$scope.usageDetails[period]) {
       $scope.usageDetails[period] = true;
