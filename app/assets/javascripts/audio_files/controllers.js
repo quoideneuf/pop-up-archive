@@ -38,7 +38,7 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
     $scope.audioFile = new AudioFile($scope.audioFile);
     $scope.audioFile.itemId = $scope.item.id;
     $scope.audioFile.createListen();
-    Player.play($scope.fileUrl);
+    Player.play($scope.fileUrl, $scope.item.getTitle());
     mixpanel.track("Audio play", 
       {"Item": $scope.item.title,
        "Collection": $scope.collection.title});
