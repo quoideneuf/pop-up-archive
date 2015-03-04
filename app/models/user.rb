@@ -253,6 +253,7 @@ class User < ActiveRecord::Base
       amount: plan.amount,
       pop_up_hours: plan.hours,
       trial: customer.trial,  # TODO cache this better to avoid needing to call customer() at all.
+      interim: customer.is_interim_trial?,
       interval: plan.interval,
       is_premium: plan.has_premium_transcripts? ? true : false,
     }
@@ -267,24 +268,15 @@ class User < ActiveRecord::Base
     end
     if customer_id.present?
       Rails.cache.fetch([:customer, :individual, customer_id], expires_in: cache_ttl) do
+        stripe_cust = Customer.get_stripe_customer(customer_id)
         cus = nil
-        begin
-          cus = Customer.new(Stripe::Customer.retrieve(customer_id))
+        if stripe_cust
+          cus = Customer.new(stripe_cust)
           # update our local cache to point at the current plan
           sp = SubscriptionPlan.find_by_stripe_plan_id(cus.plan.id)
           update_attribute :subscription_plan_id, sp.id if persisted?
-        rescue Stripe::InvalidRequestError => err
-          #puts "Error: #{err.message} #{err.http_status}"
-          if err.http_status == 404 and err.message.match(/object exists in live mode, but a test mode key/)
-            Rails.logger.warn("Stripe returned 404 for #{customer_id} [user #{self.id}] running in Stripe test mode")
-            #Rails.logger.warn(Thread.current.backtrace.join("\n"))
-            # use generic Customer object here so dev/stage still work with prod snapshots
-            cus = Customer.generic_community
-          else
-            raise err
-          end
-        rescue => err
-          raise "Caught Stripe error #{err}"
+        else
+          cus = Customer.generic_community
         end
         @_customer = cus
         cus

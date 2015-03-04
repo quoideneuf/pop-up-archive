@@ -1,5 +1,5 @@
 class Customer
-  attr_reader :id, :plan_id, :card, :trial, :interval
+  attr_reader :id, :plan_id, :card, :trial, :interval, :subscr_meta
 
   def initialize(stripe_customer=nil, *attrs)
     if !stripe_customer.nil?
@@ -12,6 +12,7 @@ class Customer
         else
           @trial = 0
         end
+        @subscr_meta = subscr.metadata
       end
       @card = stripe_customer.respond_to?(:cards) ? stripe_customer.cards.data[0].as_json.try(:slice, *%w(last4 type exp_month exp_year)) : {}
     else
@@ -21,6 +22,7 @@ class Customer
       @plan_id = hashref[:plan_id]
       @trial = hashref[:trial] || 0
       @interval = hashref[:interval]
+      @subscr_meta = hashref[:meta]
     end
   end
 
@@ -39,6 +41,17 @@ class Customer
     start.to_i >= self.class.start_of_this_month
   end
 
+  def is_interim_trial?
+    cust = stripe_customer
+    return nil unless cust
+    subscr = stripe_subscription(cust)
+    if subscr.status == "trialing" && subscr.trial_end && subscr.trial_end == self.class.end_of_this_month
+      return true
+    else
+      return false
+    end
+  end 
+
   def self.start_of_this_month
     Time.now.utc.beginning_of_month.to_i
   end
@@ -55,8 +68,31 @@ class Customer
     customer.id == id
   end
 
+  def self.get_stripe_customer(cust_id)
+    cust = nil
+    begin
+      cust = Stripe::Customer.retrieve(cust_id)
+    rescue Stripe::InvalidRequestError => err 
+      Rails.logger.warn "Stripe Error: #{err.message} #{err.http_status}"
+      if err.http_status == 404 
+        if err.message.match(/object exists in live mode, but a test mode key/)
+          return nil 
+        elsif err.message.match(/No such customer/)
+          return nil 
+        else
+          raise "Cannot match 404 error: '#{err.message}'"
+        end 
+      else
+        raise "Caught Stripe InvalidRequestError #{err}"
+      end 
+    rescue => err 
+      raise "Caught Stripe error #{err}"
+    end 
+    cust
+  end
+
   def stripe_customer
-    Stripe::Customer.retrieve(id)
+    self.class.get_stripe_customer(id)
   end
 
   def stripe_subscription(stripe_cus=stripe_customer)
