@@ -547,7 +547,7 @@ class AudioFile < ActiveRecord::Base
     if !transcoded_at and !self.is_mp3?
       raise "Cannot order premium transcript for audio that has not been transcoded"
     end
-    if !cur_user.active_credit_card
+    if !cur_user.super_admin? && !cur_user.active_credit_card
       raise "Cannot order premium transcript without an active credit card"
     end
     start_premium_transcribe_job(cur_user, 'ts_paid', { ondemand: true })
