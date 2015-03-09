@@ -119,7 +119,36 @@ namespace :search do
         # end callback
       end
     end
-    Process.waitall
+    results = Process.waitall
+
+    # check exit status of each child so we know if we should throw exception
+    results.each do |pair|
+      pid = pair[0]
+      pstat = pair[1]
+      exit_ok = true
+      if pstat.exited?
+        puts "PID #{pid} exited with #{pstat.exitstatus}"
+      end
+      if pstat.signaled?
+        puts " >> #{pid} exited with uncaught signal #{pstat.termsig}"
+        exit_ok = false
+      end
+
+      if !pstat.success?
+        puts " >> #{pid} was not successful"
+        exit_ok = false
+      end
+
+      if pair[1].exitstatus != 0
+        puts " >> #{pid} exited with non-zero status"
+        exit_ok = false
+      end
+
+      if !exit_ok
+        raise "PID #{pair[0]} exited abnormally, so the whole reindex fails"
+      end
+    end
+
   end
 
   desc 'stage a reindex of all items'
