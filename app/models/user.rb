@@ -143,7 +143,7 @@ class User < ActiveRecord::Base
   end
 
   def billable_subscription_plan_id
-    if organization
+    if organization && organization.owner
       organization.owner.subscription_plan_id
     else
       subscription_plan_id
