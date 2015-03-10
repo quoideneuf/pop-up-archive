@@ -106,8 +106,7 @@ class Tasks::TranscribeTask < Task
         job.priority    = 2
         job.retry_delay = Task::RETRY_DELAY
         job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
-        job.sequences   = []
-        seq = {
+        job.sequences   = [{
           tasks: [
             {
               task_type: 'cut', 
@@ -124,10 +123,8 @@ class Tasks::TranscribeTask < Task
               options:   transcribe_options
             }
           ]
-        }
-        job.sequences << seq
+        }]
         job
-        end
       end
     else
       j = create_job do |job|
