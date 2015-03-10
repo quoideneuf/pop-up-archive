@@ -50,12 +50,13 @@ class Tasks::AnalyzeAudioTask < Task
       job.retry_delay = Task::RETRY_DELAY
       job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
       job.priority    = 3
-
-      job.add_task({
+      job.tasks       = []
+      job.tasks << {
         task_type: 'analyze',
         label:     self.id,
         call_back: call_back_url
-      })
+      }
+      job
     end
   end
 

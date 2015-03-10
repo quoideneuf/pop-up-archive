@@ -1,4 +1,17 @@
 GIT
+  remote: git://github.com/PRX/fixer_client.git
+  revision: 5ca7a58e043956ec26ca2b43677fc2b4ec461d85
+  specs:
+    fixer_client (0.0.1)
+      activesupport
+      excon
+      faraday
+      faraday_middleware
+      hashie
+      multi_json
+      oauth2
+
+GIT
   remote: git://github.com/PRX/omniauth-prx.git
   revision: f95b2a9be0920458919d80d9d8be3a4e410f9bbb
   specs:
@@ -341,11 +354,6 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    media_monster_client (2.0.5)
-      activesupport
-      i18n
-      json
-      oauth
     method_source (0.8.2)
     mime-types (1.25.1)
     mimemagic (0.2.1)
@@ -651,6 +659,7 @@ DEPENDENCIES
   excon (~> 0.21.0)
   factory_girl_rails
   feedzirra!
+  fixer_client!
   fog (~> 1.11.1)
   font-awesome-sass-rails!
   foreman
@@ -666,7 +675,6 @@ DEPENDENCIES
   jplayer-rails
   language_list
   listen
-  media_monster_client
   mini_magick!
   mixpanel-ruby
   multi_json (~> 1.5.0)

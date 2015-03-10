@@ -1,7 +1,7 @@
-require 'media_monster_client'
+require 'fixer_client'
 
-MediaMonsterClient.host    = ENV['FIXER_HOST']
-MediaMonsterClient.port    = 80
-MediaMonsterClient.version = 'v1'
-MediaMonsterClient.key     = ENV['FIXER_KEY']
-MediaMonsterClient.secret  = ENV['FIXER_SECRET']
+Fixer.configure do |c|
+  c.client_id     = ENV['FIXER_KEY']
+  c.client_secret = ENV['FIXER_SECRET']
+  c.endpoint      = ENV['FIXER_ENDPOINT']
+end

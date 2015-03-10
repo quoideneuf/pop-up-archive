@@ -11,7 +11,7 @@ gem 'etagger', github: 'rails/etagger'
 gem 'cache_digests'
 gem 'dalli'
 
-gem 'media_monster_client'
+gem 'fixer_client', :git => 'git://github.com/PRX/fixer_client.git'
 gem 'pg'
 # gem 'activerecord-postgres-hstore', github: 'engageis/activerecord-postgres-hstore'
 gem 'activerecord-postgres-hstore', '~> 0.6.0'
