@@ -109,6 +109,8 @@ gem 'rack-cors'
 
 gem 'dbpedia'
 
+gem 'obscenity'
+
 gem 'text-table'
 
 gem 'mixpanel-ruby'

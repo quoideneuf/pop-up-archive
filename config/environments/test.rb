@@ -37,4 +37,9 @@ PopUpArchive::Application.configure do
 
   config.action_mailer.default_url_options = { :host => 'test.popuparchive.com' }
   Rails.application.routes.default_url_options = { host: 'test.popuparchive.com' } 
+
+  #Obscenity- for filtering terms
+  Obscenity.configure do |config|
+    config.blacklist   = "config/blacklist.yml"
+  end
 end
