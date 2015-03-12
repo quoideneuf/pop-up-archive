@@ -192,6 +192,7 @@ namespace :reports do
     buf.push "Date       ID                    Name  Plan  #{the_month} Hours\n"
     buf.push '-'*70, "\n" 
     users.each do |user|
+      next if user.plan.is_community?
       dt = user.created_at.strftime('%Y-%m-%d')
       usage = 0
       user.monthly_usages.select {|mu| mu.yearmonth == the_month}.each do |mu|

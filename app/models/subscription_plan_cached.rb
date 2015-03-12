@@ -102,7 +102,7 @@ class SubscriptionPlanCached
   end
 
   def is_community?
-    self.id == :community
+    self.id == :community || self.name == "Community"
   end
 
   # if the plan id has _business_ or _enterprise_ or _premium_ in it, we'll do premium transcripts
