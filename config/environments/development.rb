@@ -45,4 +45,9 @@ PopUpArchive::Application.configure do
 
   # And fixer (for testing)
   Rails.application.routes.default_url_options = { host: (ENV['SERVER_HOSTNAME'] || 'pop-up-archive.dev') } 
+
+  #Obscenity- for filtering terms
+  Obscenity.configure do |config|
+    config.blacklist   = "config/blacklist.yml"
+  end 
 end

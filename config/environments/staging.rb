@@ -88,4 +88,9 @@ PopUpArchive::Application.configure do
       chain.add(Autoscaler::Sidekiq::Server, Autoscaler::HerokuScaler.new, 300)
     end
   end
+
+  #Obscenity- for filtering terms
+  Obscenity.configure do |config|
+    config.blacklist   = "config/blacklist.yml"
+  end
 end

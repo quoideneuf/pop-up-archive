@@ -77,18 +77,60 @@ class Tasks::AnalyzeTask < Task
     ["entities", "locations", "relations", "tags", "topics"].each do |category|
       analysis[category].each{|analysis_entity|
         name = analysis_entity.delete('name')
-        if category == "topics"
-          next if (name.blank? || existing_names.include?(name))
-          create_entity(name, item, category, analysis_entity)
+        score = analysis_entity.delete('score')
+        if category == "locations"
+          next if (name.blank? || existing_names.include?(name) || check_frequency(name) < 2)
+          score = calculate_score(name,score)
+          create_entity(name, score, item, category, analysis_entity)
+        elsif category == "topics"
+          next if (name.blank? || existing_names.include?(name) || Obscenity.profane?(name))
+          create_entity(name, score, item, category, analysis_entity)
         elsif category == "tags"
-          next if (name.blank? || existing_names.include?(name) || control_the_vocab(name.try(:singularize)))
-          create_entity(name.try(:singularize), item, category, analysis_entity)
+          name = name.try(:singularize)
+          next if (name.blank? || existing_names.include?(name) || Obscenity.profane?(name) || control_the_vocab(name))
+          score = calculate_score(name,score)
+          create_entity(name, score, item, category, analysis_entity)
         else
-          next if (name.blank? || existing_names.include?(name) || control_the_vocab(name))
-          create_entity(name, item, category, analysis_entity)
+          next if (name.blank? || existing_names.include?(name) || Obscenity.profane?(name) || control_the_vocab(name))
+          score = calculate_score(name,score)
+          create_entity(name, score, item, category, analysis_entity)
         end
       }
     end
+  end
+
+  def check_frequency(term)
+    #Count the number of times the term occurs in the text
+    text = audio_file.transcript_text
+    result = text.scan(/#{term}/i)
+    return result.count
+  end
+
+  def calculate_score(term, oscore)
+    length = audio_file.transcript_text.split.size.to_f
+    freq = check_frequency(term).to_f
+    base = (length * 0.0025).ceil
+    log = Math::log(freq, base)
+    if freq >= base
+      score = 1.0
+      # puts "length: " + length.to_s + " orig score: " + oscore.to_s + " freq: " + freq.to_s + " base: " + base.to_s + " new score: " + score.to_s
+      return score
+    elsif freq == 0
+      score = (1.0/base) * oscore
+      return score
+    elsif log == 0
+      score = (freq/base) * oscore
+      # puts "length: " + length.to_s + " orig score: " + oscore.to_s + " freq: " + freq.to_s + " base: " + base.to_s + " new score: " + score.to_s
+      return score
+    else
+      score = log * oscore
+      # puts "length: " + length.to_s + " orig score: " + oscore.to_s + " freq: " + freq.to_s + " base: " + base.to_s + " new score: " + score.to_s
+      return score
+    end    
+  end
+
+  def audio_file
+    self.owner
   end
   
   def control_the_vocab(term)
@@ -97,7 +139,7 @@ class Tasks::AnalyzeTask < Task
     !results.include?(term.downcase)
   end
   
-  def create_entity(name, item, category, analysis_entity)
+  def create_entity(name, score, item, category, analysis_entity)
     entity = item.entities.build
 
     entity.category     = category.try(:singularize)
@@ -105,7 +147,7 @@ class Tasks::AnalyzeTask < Task
     entity.is_confirmed = false
     entity.name         = name
     entity.identifier   = analysis_entity.delete('guid')
-    entity.score        = analysis_entity.delete('score')
+    entity.score        = score 
 
     # anything left over, put it in the extra
     entity.extra        = analysis_entity

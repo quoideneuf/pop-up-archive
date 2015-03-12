@@ -91,5 +91,10 @@ PopUpArchive::Application.configure do
   
   #Prerender.io
   config.middleware.use Rack::Prerender, prerender_token: ENV['PRERENDER_TOKEN']
+
+  #Obscenity- for filtering terms
+  Obscenity.configure do |config|
+    config.blacklist   = "config/blacklist.yml"
+  end
   
 end
