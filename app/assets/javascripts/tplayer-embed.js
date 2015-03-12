@@ -26,8 +26,9 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
     var link = document.createElement("link");
     link.type = "text/css";
     link.rel = "stylesheet";
-    link.href = url;
+    link.href = rootUrl + url;
     // prepend so that consumer can override our styles
+    //console.log('prepend css link: ', link);
     $("head").prepend(link);
   }
   var cssIsLoaded = function(cssName) {
@@ -45,7 +46,7 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
     return false;
   };
   // because css is prepended, check in reverse load order
-  $.each(['assets/tplayer.css', 'assets/jPlayer.css'], function(idx,cssName) {
+  $.each(['/assets/tplayer.css', '/assets/jPlayer.css'], function(idx,cssName) {
     if (!cssIsLoaded(cssName)) {
       loadCss(cssName);
     } 
