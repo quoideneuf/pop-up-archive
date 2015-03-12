@@ -112,7 +112,7 @@ class Tasks::AnalyzeTask < Task
     base = (length * 0.0025).ceil
     log = Math::log(freq, base)
     if freq >= base
-      score = 1.0 * oscore
+      score = 1.0
       # puts "length: " + length.to_s + " orig score: " + oscore.to_s + " freq: " + freq.to_s + " base: " + base.to_s + " new score: " + score.to_s
       return score
     elsif freq == 0
