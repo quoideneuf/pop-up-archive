@@ -112,9 +112,9 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
           }
           else {
             // use the oembed service to get the HTML to inject.
-            // pass the nojs=1 flag because *we* are the JS.
+            // pass the embed=1 flag because *we* are the JS.
             $('<div id="pua-tplayer-embed-wrapper-'+fileId+'"></div>').insertAfter(el);
-            $.ajax( rootUrl+'/oembed?nojs=1&format=json&url='+rootUrl+'/tplayer/'+fileId, {
+            $.ajax( rootUrl+'/oembed?embed=1&format=json&url='+rootUrl+'/tplayer/'+fileId, {
               dataType: 'jsonp'
             }) 
             .fail(function(data2, stat2, jqXHR2) {

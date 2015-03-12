@@ -1,3 +1,5 @@
 <%= render "embed_player/tplayer_player" %>
 <%= render "embed_player/tplayer_transcript" %>
-<script src="<%= root_url %>/assets/require.js" async data-pua="<%= @file_id %>" data-main="assets/tplayer-embed" type="text/javascript"></script>
+<% unless @embed %>
+<script src="<%= uri_for('/assets/require.js') %>" async data-pua="<%= @file_id %>" data-main="<%= uri_for('/assets/tplayer-embed') %>" type="text/javascript"></script>
+<% end %>

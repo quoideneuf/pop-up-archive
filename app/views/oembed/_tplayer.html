@@ -1,7 +1,7 @@
 <div class="pua-tplayer-oembed">
 <%= render "embed_player/tplayer_player.html" %>
 <%= render "embed_player/tplayer_transcript.html" %>
-<% unless @nojs %>
+<% unless @embed %>
 <script src="<%= url_for('/assets/require.js') %>" async data-pua="<%= @file_id %>" data-main="assets/tplayer-embed" type="text/javascript"></script>
 <% end %>
 </div>
