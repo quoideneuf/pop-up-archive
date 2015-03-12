@@ -26,7 +26,7 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
     var link = document.createElement("link");
     link.type = "text/css";
     link.rel = "stylesheet";
-    link.href = rootUrl + url;
+    link.href = url;
     // prepend so that consumer can override our styles
     //console.log('prepend css link: ', link);
     $("head").prepend(link);
@@ -38,7 +38,7 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
         continue;
       }
       //console.log("css:", css.href);
-      if (css.href == rootUrl+'/'+cssName) {
+      if (css.href == rootUrl+cssName) {
         //console.log('css already loaded:', cssName);
         return true;
       }
@@ -48,9 +48,13 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
   // because css is prepended, check in reverse load order
   $.each(['/assets/tplayer.css', '/assets/jPlayer.css'], function(idx,cssName) {
     if (!cssIsLoaded(cssName)) {
-      loadCss(cssName);
+      loadCss(rootUrl + cssName);
     } 
-  }); 
+  });
+
+  // always load font-awesome from cdn
+  loadCss('//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
+
   //console.log("everything loaded");
 
   var initPlayer = function(conf) {
@@ -67,7 +71,7 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
         jplayer.puaTplayer = new PUATPlayer({
           fileId: conf.file_id, 
           jplayer: jplayer,
-          play: { start: parseInt(conf.start||0), end: conf.end }
+          play: { start: parseInt(conf.start||0), end: conf.end, now: conf.now }
         });
       },
       cssSelectorAncestor: '#jp_container-'+conf.file_id,
