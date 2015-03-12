@@ -18,7 +18,7 @@ class Api::V1::UsersController < Api::V1::BaseController
 
     @usage = current_user.transcript_usage(limit)  # keyed by yyyymm in chron order
     if current_user.organization
-      @usage[:organization] = current_user.transcript_usage(limit)
+      @usage[:organization] = current_user.organization.transcript_usage(limit)
     end
   end
 

@@ -143,7 +143,7 @@ class User < ActiveRecord::Base
   end
 
   def billable_subscription_plan_id
-    if organization
+    if organization && organization.owner
       organization.owner.subscription_plan_id
     else
       subscription_plan_id
@@ -164,13 +164,53 @@ class User < ActiveRecord::Base
 
   def subscribe!(plan, offer = nil)
     cus = customer.stripe_customer
+    subscr = customer.stripe_subscription(cus)
     if (offer == 'prx')
-      cus.update_subscription(plan: plan.id, trial_end: 90.days.from_now.to_i)
+      subscr.plan = plan.id
+      subscr.trial_end = 90.days.from_now.to_i
     else
-      cus.update_subscription(plan: plan.id, coupon: offer)
+      # see https://github.com/popuparchive/pop-up-archive/issues/1011
+      # initial sign-up has "trial" until the first day of the next month.
+      #
+      # set up params based on some scenarios:
+      #
+      # these are API defaults; we just make them explicit
+      trial_end = nil
+      prorate   = true
+      ####################################################################
+      # new customer setting non-community subscription for the first time
+      if !customer.in_first_month? && customer.plan.is_community?
+        trial_end = customer.class.end_of_this_month
+        prorate   = false
+      end
+
+      ###########################################################################
+      # existing customer still inside initial "trial" month before first billing
+      if customer.in_first_month? && !customer.plan.is_community?
+        trial_end = customer.class.end_of_this_month
+        prorate   = false
+      end
+
+      #######################################################
+      # existing customer after first billing (regular cycle)
+      if !customer.in_first_month? && !customer.plan.is_community?
+        # currently no-op
+      end 
+
+      subscr.plan = plan.id
+      subscr.coupon = offer if (offer && offer.length)
+      subscr.trial_end = trial_end if trial_end
+      subscr.prorate = prorate
     end
 
-    # must do this manually after update_subscription has successfully completed
+    # custom metadata, including start time (so we can test effectively)
+    subscr.metadata[:start] ||= Time.now.utc.to_i
+    subscr.metadata[:updated] = Time.now.utc.to_i
+
+    # write change
+    subscr.save
+
+    # must do this manually after subscription.save has successfully completed
     # so that our local caches are in sync.
     sp = SubscriptionPlan.find_by_stripe_plan_id(plan.id)
     update_attribute :subscription_plan_id, sp.id if persisted?
@@ -213,6 +253,7 @@ class User < ActiveRecord::Base
       amount: plan.amount,
       pop_up_hours: plan.hours,
       trial: customer.trial,  # TODO cache this better to avoid needing to call customer() at all.
+      interim: customer.is_interim_trial?,
       interval: plan.interval,
       is_premium: plan.has_premium_transcripts? ? true : false,
     }
@@ -227,30 +268,23 @@ class User < ActiveRecord::Base
     end
     if customer_id.present?
       Rails.cache.fetch([:customer, :individual, customer_id], expires_in: cache_ttl) do
+        stripe_cust = Customer.get_stripe_customer(customer_id)
         cus = nil
-        begin
-          cus = Customer.new(Stripe::Customer.retrieve(customer_id))
+        if stripe_cust
+          cus = Customer.new(stripe_cust)
           # update our local cache to point at the current plan
           sp = SubscriptionPlan.find_by_stripe_plan_id(cus.plan.id)
           update_attribute :subscription_plan_id, sp.id if persisted?
-        rescue Stripe::InvalidRequestError => err
-          #puts "Error: #{err.message} #{err.http_status}"
-          if err.http_status == 404 and err.message.match(/object exists in live mode, but a test mode key/)
-            Rails.logger.warn("Stripe returned 404 for #{customer_id} [user #{self.id}] running in Stripe test mode")
-            #Rails.logger.warn(Thread.current.backtrace.join("\n"))
-            # use generic Customer object here so dev/stage still work with prod snapshots
-            cus = Customer.generic_community
-          else
-            raise err
-          end
-        rescue => err
-          raise "Caught Stripe error #{err}"
+        else
+          cus = Customer.generic_community
         end
         @_customer = cus
         cus
       end
     else
       Customer.new(Stripe::Customer.create(email: email, description: name)).tap do |cus|
+        #STDERR.puts cus.inspect
+        #STDERR.puts cus.stripe_customer.inspect
         self.customer_id = cus.id
         update_attribute :customer_id, cus.id if persisted?
         Rails.cache.write([:customer, :individual, cus.id], cus, expires_in: cache_ttl)
@@ -346,6 +380,15 @@ class User < ActiveRecord::Base
 
   def add_to_team(org)
     org.add_to_team(self)
+  end
+
+  def self.created_in_month(dtim=DateTime.now)
+    month_start = dtim.utc.beginning_of_month
+    month_end = dtim.utc.end_of_month
+    start_dtim = month_start.strftime('%Y-%m-%d %H:%M:%S')
+    end_dtim   = month_end.strftime('%Y-%m-%d %H:%M:%S')
+    sql = "select * from users where created_at between '#{start_dtim}' and '#{end_dtim}' order by created_at desc"
+    User.find_by_sql(sql)
   end
 
   private

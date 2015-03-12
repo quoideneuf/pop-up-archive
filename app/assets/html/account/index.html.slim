@@ -12,7 +12,7 @@
       img ng-src="/assets/{{me.creditCard.type.toLowerCase()}}.png" ng-show="me.creditCard.type"
       |  xxx-{{me.creditCard.last4}}
       small
-        span ng-show="me.plan.trial" trial, {{me.plan.trial}} days left
+        span ng-show="!me.plan.interim && me.plan.trial && me.plan.trial >= 0" trial, {{me.plan.trial}} days left
         | {{me.creditCard.expMonth}}/{{me.creditCard.expYear}}&nbsp;
         a ng-click="changeCreditCard()" (update)
     .credit-card.pull-right ng-hide="me.creditCard"
@@ -96,7 +96,7 @@
             th.cost Cost
             th
             th.last
-              button.btn ng-show="me.usageDetailsByMonth(mnthGrp.period).length > 0" ng-click="toggleDetails($event)"
+              button.btn ng-click="toggleDetails($event)"
                 i.icon-expand-alt.icon-large
                 |  Details
           tr.usage-month ng-repeat="msum in mnthGrp.rows"

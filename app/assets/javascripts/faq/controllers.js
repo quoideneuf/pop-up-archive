@@ -60,7 +60,7 @@ angular.module('Directory.faq.controllers', ['Directory.loader', 'Directory.user
 				},
 				{
 					question: "When and how am I charged?",
-					answer: "For monthly plans, you’ll be charged once each month, from the day you signed up. For annual plans, you’ll be charged once a year from the day of sign up. We use Stripe to process payments.",
+					answer: "For monthly plans, you’ll be charged once each month, on the first day of the month. If you sign up mid-month, you'll also be charged a one-time pro-rated fee for your actual usage during that initial period. For annual plans, you’ll be charged once a year on the first day of the month after you signed up. We use Stripe to process payments.",
 				},
 				{
 					question: "What does “hours of processing” mean exactly?",

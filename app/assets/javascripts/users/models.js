@@ -85,14 +85,14 @@ angular.module('Directory.users.models', ['RailsModel'])
     var mnthMap   = {};
     $.each(self.usage.summary.history, function(idx, msum) {
       if (self.plan.isPremium && msum.type.match(/basic/)) {
-        return; // filter out some noise
+        return true; // filter out some noise
       }
       if (msum.type.match(/usage only/)) {
         // clarify label
         msum.type = msum.type.replace(/usage only/, 'me');
       }
       else if (userInOrg) {
-        return; // skip, use org version below
+        return true; // skip, use org version below
       }
 
       // initial cap
@@ -102,7 +102,7 @@ angular.module('Directory.users.models', ['RailsModel'])
         // new group
         if (group.length > 0) {
           groups.push({period: curMonth, rows: group});
-          mnthMap[group[0].period] = groups.length - 1;
+          mnthMap[curMonth] = groups.length - 1;
         }
         group = [msum];
         curMonth = msum.period;
@@ -113,13 +113,16 @@ angular.module('Directory.users.models', ['RailsModel'])
     });
     if (group.length > 0) {
       groups.push({period: curMonth, rows: group});
+      mnthMap[curMonth] = groups.length - 1;
     }
+
+    //console.log(mnthMap);
 
     if (userInOrg) {
       // do the same with org usage, interleaving
       $.each(self.organization.usage.summary.history, function(idx, msum) {
         if (self.plan.isPremium && msum.type.match(/basic/)) {
-          return; // filter out some noise
+          return true; // filter out some noise
         }
         msum.type = msum.type.charAt(0).toUpperCase() + msum.type.slice(1);
         msum.type += ' ('+self.organization.name+')';
@@ -128,7 +131,7 @@ angular.module('Directory.users.models', ['RailsModel'])
         // if could not match (not likely) then ... ??
         if (typeof gIdx == 'undefined') {
           console.log('no idx for ', msum, mnthMap);
-          return;
+          return true;
         }
         groups[gIdx].rows.unshift(msum); // prepend
       });

@@ -4,7 +4,7 @@ ActiveAdmin.register Organization do
     column :name, sortable: :name do |org| 
       link_to( org.name, superadmin_organization_path(org)) + raw('<br/>') + org.owner_contact
     end
-    column :plan do |org| org.owner_id ? org.owner.plan.name : span('(none)', class: "empty") end
+    column :plan do |org| (org.owner_id && org.owner.plan) ? org.owner.plan.name : span('(none)', class: "empty") end
     column 'Usage', :premium_seconds, sortable: "transcript_usage_cache->'premium_seconds'" do |org|
       raw 'Premium: ' + \
       Api::BaseHelper::time_definition(org.transcript_usage_report[:premium_billable_seconds].to_i||0) + \
