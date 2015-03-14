@@ -290,7 +290,7 @@ meta view-head="view-head" property="og:type" content="article"
 
                 a.btn ng-href='/search?query=%28entity:%22{{entity.name}}%22%20OR%20tag:%22{{entity.name}}%22%29' ng-click="searchEntity(entity.name)" ng-style="{opacity:entity.score}" ng-class="{tag: !currentUser.canEdit(item)}" {{entity.name}}
 
-                button.btn.confirm ng-style="{opacity:entity.score}" ng-click="confirmEntity(entity)" ng-show="currentUser.canEdit(item)"
+                button.btn.confirm ng-style="{opacity:entity.score < 0.5 ? 0.5 : entity.score}" ng-click="confirmEntity(entity)" ng-show="currentUser.canEdit(item)"
                   i.icon-ok
 
     .row-fluid
