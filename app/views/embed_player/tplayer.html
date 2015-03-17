@@ -2,7 +2,9 @@
 <html>
 <head>
   <% if !@embed %>
-  <%= stylesheet_link_tag "jPlayer.css" %>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
   <%= stylesheet_link_tag "tplayer" %>
   <title><%= @title %></title>
   <meta property="og:title" content="<%= @title %>" />
@@ -12,13 +14,13 @@
   <meta property="og:audio" content="<%= @mp3 %>" />
   <% end %>
 </head>
-<body>
- <%= render "embed_player/tplayer_player" %>
- <%= render "embed_player/tplayer_transcript" %>
+<body class="tplayer">
+  <%= render "embed_player/tplayer_player_full" %>
+  <%= render "embed_player/tplayer_transcript" %>u
  <% if !@embed %>
   <%= javascript_include_tag "jquery" %>
   <%= javascript_include_tag "jquery.jplayer" %>
-  <%= javascript_include_tag "tplayer" %>
+
   <script type="text/javascript">
     $(document).ready(function(){
       $("#pua-tplayer-<%= @file_id %>").jPlayer({
@@ -54,7 +56,12 @@
       });
     });
   </script>
+  <script src="//cdn.optimizely.com/js/2431640306.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <%= render "embed_player/tplayer_player_js" %>
  <% end %>
+ <% if Rails.env.production? %>
+ <meta name="google-site-verification" content="vcS1I8KOI_VYlLCi38wy-iuKSjhH-HItP6XhESVyi2s">
  <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -64,6 +71,8 @@
   ga('create', 'UA-40277363-1', 'auto');
   ga('send', 'pageview');
 
+  window.twttr=(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return;js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);t._e=[];t.ready=function(f){t._e.push(f);};return t;}(document,"script","twitter-wjs"));
  </script>
+ <% end %>
 </body>
 </html>
