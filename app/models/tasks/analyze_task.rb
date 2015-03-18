@@ -135,8 +135,14 @@ class Tasks::AnalyzeTask < Task
   
   def control_the_vocab(term)
     #Check to see if term exists in DBPedia
-    results=Dbpedia.search(term).collect(&:label).map(&:downcase)
-    !results.include?(term.downcase)
+    begin
+      results=Dbpedia.search(term).collect(&:label).map(&:downcase)
+    rescue OpenURI::HTTPError => error
+      response = error.io
+      Rails.logger.error(response.status)
+      return false
+    end
+    !results.include?(term.downcase)    
   end
   
   def create_entity(name, score, item, category, analysis_entity)

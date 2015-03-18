@@ -52,7 +52,7 @@ describe Tasks::AnalyzeTask do
     #recalculate score based on frequency
     @audio_file.item.entities.select{ |e| e.name == 'Hospitality and recreation' }[0].score.should eq 0.937
     @audio_file.item.entities.select{ |e| e.name == 'tractor' }[0].score.should eq 1.0
-    @audio_file.item.entities.select{ |e| e.name == 'San Francisco' }[0].score.should eq 0.5
+    @audio_file.item.entities.select{ |e| e.name == 'San Francisco' }[0].score.should eq 1.0
   end
 
 end
