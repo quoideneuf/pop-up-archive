@@ -285,10 +285,10 @@ meta view-head="view-head" property="og:type" content="article"
           ul
             li.entity ng-repeat="entity in item.entities| filter:{category:'!relation'} | filter:{isConfirmed:false}| orderBy:'score':true"
               .btn-group
-                button.btn.delete ng-style="{opacity:entity.score}" ng-click="deleteEntity(entity)" ng-show="currentUser.canEdit(item)"
+                button.btn.delete ng-style="{opacity:entity.score < 0.5 ? 0.5 : entity.score}" ng-click="deleteEntity(entity)" ng-show="currentUser.canEdit(item)"
                   i.icon-remove
 
-                a.btn ng-href='/search?query=%28entity:%22{{entity.name}}%22%20OR%20tag:%22{{entity.name}}%22%29' ng-click="searchEntity(entity.name)" ng-style="{opacity:entity.score}" ng-class="{tag: !currentUser.canEdit(item)}" {{entity.name}}
+                a.btn ng-href='/search?query=%28entity:%22{{entity.name}}%22%20OR%20tag:%22{{entity.name}}%22%29' ng-click="searchEntity(entity.name)" ng-style="{opacity:entity.score < 0.5 ? 0.5 : entity.score}" ng-class="{tag: !currentUser.canEdit(item)}" {{entity.name}}
 
                 button.btn.confirm ng-style="{opacity:entity.score < 0.5 ? 0.5 : entity.score}" ng-click="confirmEntity(entity)" ng-show="currentUser.canEdit(item)"
                   i.icon-ok
