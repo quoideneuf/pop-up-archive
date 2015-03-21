@@ -4,10 +4,23 @@
 - chunk_size ||= @chunk_size || 5
 - short_url = ENV['SHORT_URL'] || root_url.gsub(/\/$/, '')
 - perm_url  = root_url.gsub(/\/$/, '')
+javascript:
+  window.shortURL = '#{ENV['SHORT_URL'] || root_url.gsub(/\/$/, '')}';
 
 .row-fluid
   .col-xs-12
     - if transcript
+      form.ts-search
+        .result-numbers
+        input type="text" placeholder="Find in transcript"
+        span.clear-find x
+        button.search-submit type="submit" disabled="true"
+          | find 
+          i.fa.fa-search
+        .last-result.inactive
+          i.fa.fa-arrow-circle-left
+        .next-result.inactive
+          i.fa.fa-arrow-circle-right
       .tplayer.scrolling id="pua-tplayer-#{file_id}-transcript" data-file="#{file_id}" data-perm="#{audio_file.item_id.to_i.to_s(16)}"
           .hidden.loading-indicator
             i.fa.fa-cog.fa-spin
@@ -26,7 +39,7 @@
                       .tools
                         span.ts
                           = tpart[:offsets][idx].to_i.to_s
-                        i.share.fa.fa-twitter.fa-large data-offset="#{tpart[:offsets][idx].to_i.to_s}"
+                        i.share.fa.fa-twitter.fa-large data-toggle="modal" data-target="#share-modal" data-data-offset="#{tpart[:offsets][idx].to_i.to_s}"
                       .text
                         = ttext
     - else
