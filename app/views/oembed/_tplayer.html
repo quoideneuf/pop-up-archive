@@ -1,6 +1,7 @@
 <div class="pua-tplayer-oembed">
-<%= render "embed_player/tplayer_player.html" %>
-<%= render "embed_player/tplayer_transcript.html" %>
+<%= render "embed_player/tplayer_player", :formats => [:html], :locals => { :file_id => @file_id } %>
+<%= render "embed_player/tplayer_transcript", :formats => [:html], :locals => { :file_id => @file_id } %>
+<%= render "layouts/share_modal" %>
 <% unless @embed %>
 <script src="<%= url_for('/assets/require.js') %>" async data-pua="<%= @file_id %>" data-main="assets/tplayer-embed" type="text/javascript"></script>
 <% end %>
