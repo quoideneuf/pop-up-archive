@@ -17,48 +17,14 @@
   <% end %>
 </head>
 <body class="tplayer">
+
   <%= render "embed_player/tplayer_player_full" %>
-  <%= render "embed_player/tplayer_transcript" %>u
+  <%= render "embed_player/tplayer_transcript" %>
+  <%= render "layouts/share_modal" %>
  <% if !@embed %>
   <%= javascript_include_tag "jquery" %>
   <%= javascript_include_tag "jquery.jplayer" %>
-
-  <script type="text/javascript">
-    $(document).ready(function(){
-      $("#pua-tplayer-<%= @file_id %>").jPlayer({
-        ready: function (ev) {
-          var playerUsed = ev.jPlayer.html.used ? 'html' : 'flash';
-          //console.log('player used:', playerUsed);
-          $(this).jPlayer("setMedia", {
-            title: "<%= @title %>",
-            oga: "<%= @ogg %>",
-            mp3: "<%= @mp3 %>",
-          });
-        },
-        loadedmetadata: function() {
-          var jplayer = this;
-          jplayer.puaTplayer = new PUATPlayer({
-            fileId: '<%= @file_id %>', 
-            jplayer: jplayer,
-            play: { start: parseInt(<%= @start %>), end: <%= @end %> }
-          });
-        },
-        ended: function() {
-          var player = this;
-          //console.log('player ended', player);
-        },
-        cssSelectorAncestor: '#jp_container-<%= @file_id %>',
-        smoothPlayBar: true,
-        keyEnabled: true,
-        remainingDuration: true,
-        toggleDuration: true,
-        swfPath: "<%= asset_path 'Jplayer.swf' %>",
-        solution: "html, flash",
-        supplied: "oga, mp3"
-      });
-    });
-  </script>
-  <script src="//cdn.optimizely.com/js/2431640306.js"></script>
+  <%= javascript_include_tag "tplayer" %>
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
   <%= render "embed_player/tplayer_player_js" %>
  <% end %>
