@@ -88,6 +88,9 @@ $body-stack: Verdana, Arial, san-serif;
       position: absolute;
       top: 52px;
       left: 33px;
+      @include mobile {
+        left: 4px;
+      }
     }  
   }
 }
@@ -205,6 +208,12 @@ body.tplayer {
     margin-right: 5px;
     width: 170px;
   }
+  @include mobile {
+    margin: 0 -25px 5px;
+    input {
+      width: 140px;
+    }
+  }
   span.clear-find {
     position: relative;
     margin-right: -8px;
@@ -256,7 +265,7 @@ body.tplayer {
   padding: 0;
 }
 
-.tags {
+.tplayer .tags {
   width: 100%;
   height: 100% !important;
   overflow: auto;
