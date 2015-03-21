@@ -28,6 +28,9 @@
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
   <%= render "embed_player/tplayer_player_js" %>
  <% end %>
+ <script>
+  window.twttr=(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return;js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);t._e=[];t.ready=function(f){t._e.push(f);};return t;}(document,"script","twitter-wjs"));
+ </script>
  <% if Rails.env.production? %>
  <meta name="google-site-verification" content="vcS1I8KOI_VYlLCi38wy-iuKSjhH-HItP6XhESVyi2s">
  <script>
@@ -38,8 +41,6 @@
 
   ga('create', 'UA-40277363-1', 'auto');
   ga('send', 'pageview');
-
-  window.twttr=(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return;js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);t._e=[];t.ready=function(f){t._e.push(f);};return t;}(document,"script","twitter-wjs"));
  </script>
  <% end %>
 </body>

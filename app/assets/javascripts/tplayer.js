@@ -229,7 +229,7 @@ PUATPlayer.prototype = {
       modal.find("label[for='timestamp']").html("&nbspStart at:&nbsp"+hms);
       modal.find(".share-text").on("keyup", function() {
         escTxt = modal.find(".share-text").val();
-        var tweetLink = "https://twitter.com/share/?url="+lnk+"&via=audiosearchfm"+"&text="+escTxt;
+        var tweetLink = "https://twitter.com/share/?url="+lnk+"&via=popuparchive"+"&text="+escTxt;
         modal.find(".share-button").attr("href", tweetLink);
         var chars = escTxt.length;
         modal.find(".chars").html(chars);
