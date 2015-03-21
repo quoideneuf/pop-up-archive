@@ -10,9 +10,10 @@
       .jp-jplayer.pua-tplayer id="pua-tplayer-#{file_id}"
       .jp-audio.player id="jp_container-#{file_id}" 
         .jp-type-single
-          .img
-            a href="#{audio_file.item.digital_location}" target="_blank" 
-              img src="#{audio_file.item.image_url || '/assets/minimark.png'}"
+          -if audio_file.item.image_url
+            .img
+              a href="#{audio_file.item.digital_location}" target="_blank" 
+                img src="#{audio_file.item.image_url}"
           .body.jp-gui.jp-interface
             .jp-title
               h2 #{item.title}
@@ -24,7 +25,7 @@
                       | #{category}
                 a href="#{root_url}collections/#{item.collection_id}"
                   |  from #{item.collection_title}
-                / a.twitter-share-button href="https://twitter.com/share" data-via="audiosearchfm" data-text="Listen to #{@title} from #{item.collection_title}" Tweet
+                a.twitter-share-button href="https://twitter.com/share" data-count="none" data-via="popuparchive" data-text="Listen to #{@title} from #{item.collection_title}" Tweet
             .description
               p 
                 span.date 
