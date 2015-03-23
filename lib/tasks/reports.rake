@@ -189,16 +189,16 @@ namespace :reports do
     buf = []
     buf.push "PUA New Customer Report for #{now.strftime('%Y-%m')}\n"
     buf.push '-'*70, "\n"
-    buf.push "Date       ID                    Name  Plan  #{the_month} Hours\n"
+    buf.push "Date       ID                    Name     Plan           #{the_month} Hours\n"
     buf.push '-'*70, "\n" 
     users.each do |user|
-      next if user.plan.is_community?
+      #next if user.plan.is_community?
       dt = user.created_at.strftime('%Y-%m-%d')
       usage = 0
       user.monthly_usages.select {|mu| mu.yearmonth == the_month}.each do |mu|
         usage += mu.value
       end
-      line = sprintf("%s %s %21s %5s  %s\n", dt, user.id, user.name.slice(0,20), user.pop_up_hours, Api::BaseHelper::time_definition(usage))
+      line = sprintf("%s %s %21s %10s %4s - %s\n", dt, user.id, user.name.slice(0,20), user.plan.name, user.pop_up_hours, Api::BaseHelper::time_definition(usage))
       buf.push line
     end
     if send_mail
