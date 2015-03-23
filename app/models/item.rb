@@ -309,6 +309,16 @@ class Item < ActiveRecord::Base
     end
   end
 
+  def image_thumb
+    if image_files and image_files.size > 0
+      image_files.first.urls[:thumb][0]
+    elsif collection and collection.image_files and collection.image_files.size > 0
+      collection.image_files.first.urls[:thumb][0]
+    else
+      nil
+    end
+  end
+
   private
 
   def tags_for_index

@@ -2,18 +2,17 @@
 - file_id    ||= @file_id
 - audio_file ||= @audio_file || AudioFile.find(file_id.to_i)
 - title      ||= @title
-- item       ||= @item || Item.find(@audio_file.item.id)
-
+- item       ||= @item || @audio_file.item
 
 .pua-tplayer id="pua-tplayer-#{file_id}-player"
     .img-player.tplayer
       .jp-jplayer.pua-tplayer id="pua-tplayer-#{file_id}"
       .jp-audio.player id="jp_container-#{file_id}" 
         .jp-type-single
-          -if audio_file.item.image_url
+          -if audio_file.item.image_thumb
             .img
               a href="#{audio_file.item.digital_location}" target="_blank" 
-                img src="#{audio_file.item.image_url}"
+                img src="#{audio_file.item.image_thumb}"
           .body.jp-gui.jp-interface
             .jp-title
               h2 #{item.title}
