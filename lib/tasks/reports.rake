@@ -188,9 +188,9 @@ namespace :reports do
     # set up report
     buf = []
     buf.push "PUA New Customer Report for #{now.strftime('%Y-%m')}\n"
-    buf.push '-'*70, "\n"
-    buf.push "Date       ID                    Name     Plan           #{the_month} Hours\n"
-    buf.push '-'*70, "\n" 
+    buf.push '-'*80, "\n"
+    buf.push "Date       ID                    Name             Plan  #{the_month} Hours\n"
+    buf.push '-'*80, "\n" 
     users.each do |user|
       #next if user.plan.is_community?
       dt = user.created_at.strftime('%Y-%m-%d')
