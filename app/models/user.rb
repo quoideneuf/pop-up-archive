@@ -179,21 +179,21 @@ class User < ActiveRecord::Base
       prorate   = true
       ####################################################################
       # new customer setting non-community subscription for the first time
-      if !customer.in_first_month? && customer.plan.is_community?
+      if !customer.in_first_month? && plan.is_community?
         trial_end = customer.class.end_of_this_month
         prorate   = false
       end
 
       ###########################################################################
       # existing customer still inside initial "trial" month before first billing
-      if customer.in_first_month? && !customer.plan.is_community?
+      if customer.in_first_month? && !plan.is_community?
         trial_end = customer.class.end_of_this_month
         prorate   = false
       end
 
       #######################################################
       # existing customer after first billing (regular cycle)
-      if !customer.in_first_month? && !customer.plan.is_community?
+      if !customer.in_first_month? && !plan.is_community?
         # currently no-op
       end 
 
@@ -205,7 +205,7 @@ class User < ActiveRecord::Base
       subscr.metadata[:trial_end] = trial_end
       subscr.metadata[:coupon]    = offer
       subscr.metadata[:in_first_month] = customer.in_first_month?
-      subscr.metadata[:is_community]   = customer.plan.is_community?
+      subscr.metadata[:is_community]   = plan.is_community?
     end
 
     # custom metadata, including start time (so we can test effectively)
