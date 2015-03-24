@@ -201,6 +201,9 @@ class User < ActiveRecord::Base
       subscr.coupon = offer if (offer && offer.length)
       subscr.trial_end = trial_end if trial_end
       subscr.prorate = prorate
+      subscr.metadata[:prorate]   = prorate
+      subscr.metadata[:trial_end] = trial_end
+      subscr.metadata[:coupon]    = coupon
     end
 
     # custom metadata, including start time (so we can test effectively)
