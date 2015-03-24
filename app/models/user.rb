@@ -203,7 +203,7 @@ class User < ActiveRecord::Base
       subscr.prorate = prorate
       subscr.metadata[:prorate]   = prorate
       subscr.metadata[:trial_end] = trial_end
-      subscr.metadata[:coupon]    = coupon
+      subscr.metadata[:coupon]    = offer
       subscr.metadata[:in_first_month] = customer.in_first_month?
       subscr.metadata[:is_community]   = customer.plan.is_community?
     end
