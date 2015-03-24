@@ -204,6 +204,8 @@ class User < ActiveRecord::Base
       subscr.metadata[:prorate]   = prorate
       subscr.metadata[:trial_end] = trial_end
       subscr.metadata[:coupon]    = coupon
+      subscr.metadata[:in_first_month] = customer.in_first_month?
+      subscr.metadata[:is_community]   = customer.plan.is_community?
     end
 
     # custom metadata, including start time (so we can test effectively)
