@@ -54,7 +54,7 @@ section ng-controller="ItemFormCtrl"
         .control-group
           label.control-label
             | Upload File
-            i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['audioFiles']" data-placement="bottom"
+            i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles']" data-placement="bottom"
           .controls ng-hide="item.files.length > 0"
             label.pull-left style='padding-top: 5px;'
               i No files to upload.
@@ -80,7 +80,7 @@ section ng-controller="ItemFormCtrl"
         .control-group
           label.control-label
             | Add File
-            i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['audioFiles[][remoteFileUrl]']" data-placement="bottom"
+            i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles[][remoteFileUrl]']" data-placement="bottom"
           .controls ng-show="remoteFileUrls && remoteFileUrls.length > 0"
             table.table.file-table
               tr.file ng-repeat="remoteFileUrl in remoteFileUrls"
@@ -99,7 +99,7 @@ section ng-controller="ItemFormCtrl"
         .control-group ng-show='item.id > 0'
           label.control-label
             | Current Files
-            i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['audioFiles']" data-placement="bottom"
+            i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles']" data-placement="bottom"
           .controls ng-hide="item.audioFiles.length > 0"
             label.pull-left style='padding-top: 5px;'
               i No current files.
@@ -116,7 +116,7 @@ section ng-controller="ItemFormCtrl"
         .control-group
           label.control-label
             | Collection
-            i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['collection']" data-placement="bottom"
+            i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['collection']" data-placement="bottom"
 
           .controls
 
@@ -140,13 +140,13 @@ section ng-controller="ItemFormCtrl"
         .control-group
           label.control-label
             | Title
-            i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['title']" data-placement="bottom"
+            i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['title']" data-placement="bottom"
           .controls
             input.text.input-xlarge#title type='text' name="title" ng-model='item.title' ng-required="true" ng-class="{ 'empty-title' : newItemForm.title.$invalid }"
         .control-group ng-show="!currentUser.overMonthlyLimit && !item.id && currentUser.defaultTranscriptType() == 'basic' && currentUser.hasCreditCard()"
           label.control-label
             | Type
-            i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom"
+            i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom"
           .controls.radio-group
             input.radio_button type='radio' name="transcriptType" value="basic" ng-model='item.transcriptType' ng-click="premiumSelected=false"
             label.radio-label
@@ -158,7 +158,7 @@ section ng-controller="ItemFormCtrl"
         .control-group ng-show="currentUser.overMonthlyLimit"
           label.control-label
             | Type
-            i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom"
+            i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom"
           .controls
             label
               | Premium  
@@ -166,7 +166,7 @@ section ng-controller="ItemFormCtrl"
         .control-group
           label.control-label
             | Upload Images
-            i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['image']" data-placement="bottom"
+            i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['image']" data-placement="bottom"
           .controls ng-show="item.images.length > 0"
             table.table.file-table
               tr.file ng-repeat="image in item.images"
@@ -185,7 +185,7 @@ section ng-controller="ItemFormCtrl"
               .control-label
                 label
                   | Contributors
-                  i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['contributors']" data-placement="bottom"
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['contributors']" data-placement="bottom"
               .controls ng-hide="item.contributions.length > 0"
                 label.pull-left style='padding-top: 5px;'
                   i No contributors.
@@ -206,7 +206,7 @@ section ng-controller="ItemFormCtrl"
           .control-group
             label.control-label
               | Tags (hit enter to separate tags)
-              i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['tags']" data-placement="bottom"
+              i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['tags']" data-placement="bottom"
             .controls
               input.input-xlarge type='hidden' ng-model="item.tagList" ui-select2="tagSelect()"
 
@@ -222,34 +222,34 @@ section ng-controller="ItemFormCtrl"
             .control-group
               label.control-label
                 | Language
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['language']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['language']" data-placement="bottom"
               .controls
                 input type='hidden' ui-select2="languageSelect()" ng-model="item.language"
             .control-group
               label.control-label
                 | Description
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['description']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['description']" data-placement="bottom"
               .controls
                 textarea.span5 ng-model='item.description' rows="3"
 
             .control-group
               .control-label
                 | Series Title
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['seriesTitle']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['seriesTitle']" data-placement="bottom"
               .controls
                 input.text.input-xlarge#seriesTitle type='text' ng-model='item.seriesTitle'
 
             .control-group
               .control-label
                 | Episode Title
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['episodeTitle']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['episodeTitle']" data-placement="bottom"
               .controls
                 input.text.input-xlarge#episodeTitle type='text' ng-model='item.episodeTitle'
 
             .control-group
               label.control-label
                 | Date Created
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['dateCreated']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['dateCreated']" data-placement="bottom"
               .controls
                 input.input-small type='text' ng-model='item.dateCreated' data-date-format="mm-dd-yyyy" bs-datepicker="" data-toggle="datepicker" placeholder="mm-dd-yyyy"
                   button.btn type="button" data-toggle="datepicker"
@@ -258,7 +258,7 @@ section ng-controller="ItemFormCtrl"
             .control-group
               label.control-label
                 | Date Broadcast
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['dateBroadcast']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['dateBroadcast']" data-placement="bottom"
               .controls
                 input.input-small type='text' ng-model='item.dateBroadcast' data-date-format="mm-dd-yyyy" bs-datepicker="" data-toggle="datepicker" placeholder="mm-dd-yyyy"
                   button.btn type="button" data-toggle="datepicker"
@@ -267,70 +267,70 @@ section ng-controller="ItemFormCtrl"
             .control-group
               label.control-label
                 | Item ID
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['identifier']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['identifier']" data-placement="bottom"
               .controls
                 input.text.input-xlarge#identifier type='text' ng-model='item.identifier'
 
             .control-group
               label.control-label
                 | Rights
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['rights']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['rights']" data-placement="bottom"
               .controls
                 textarea.span5 ng-model='item.rights' rows="3"
 
             .control-group
               label.control-label
                 | Digital Format
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['digitalFormat']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['digitalFormat']" data-placement="bottom"
               .controls
                 input.text.input-xlarge#digitalFormat type='text' ng-model='item.digitalFormat'
 
             .control-group
               label.control-label
                 | Physical Format
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['physicalFormat']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['physicalFormat']" data-placement="bottom"
               .controls
                 input.text.input-xlarge#physicalFormat type='text' ng-model='item.physicalFormat'
 
             .control-group
               label.control-label
                 | Physical Location
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['physicalLocation']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['physicalLocation']" data-placement="bottom"
               .controls
                 input.text.input-xlarge#physicalLocation type='text' ng-model='item.physicalLocation'
 
             .control-group
               label.control-label
                 | Music
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['musicSoundUsed']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['musicSoundUsed']" data-placement="bottom"
               .controls
                 input.text.input-xlarge#musicSoundUsed type='text' ng-model='item.musicSoundUsed'
 
             .control-group
               label.control-label
                 | Date Peg
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['datePeg']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['datePeg']" data-placement="bottom"
               .controls
                 input.text.input-xlarge#datePeg type='text' ng-model='item.datePeg'
 
             .control-group
               label.control-label
                 | Geolocation
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['geographicLocation']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['geographicLocation']" data-placement="bottom"
               .controls
                 input.text.input-xlarge#geographicLocation type='text' ng-model='item.geographicLocation'
 
             .control-group
               label.control-label
                 | Transcription
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['transcription']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['transcription']" data-placement="bottom"
               .controls
                 textarea.span5 ng-model='item.transcription' rows="3"
 
             .control-group
               label.control-label
                 | Notes
-                i.fa.fa-question-sign style="margin-left:8px" bs-popover="itemHelp['notes']" data-placement="bottom"
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['notes']" data-placement="bottom"
               .controls
                 textarea.span5 ng-model='item.notes' rows="3"
 
