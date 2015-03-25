@@ -2,17 +2,17 @@
   h1 style="display:inline;" My Collections
   .page-nav.pull-right
     button.btn type="button" bs-popover="batchUpload" data-placement="bottom" 
-      i.icon-th-list
+      i.fa.fa-th-list
       |  Batch Upload
 
 .row-fluid
   .alert.alert-info
     | Use collections to group and organize your audio files. Upload a file below to create an 
     span.colhighlight Item
-    i.icon-question-sign style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['item']" data-placement="bottom"
+    i.fa.fa-question-circle style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['item']" data-placement="bottom"
     | page in any Pop Up Archive collection.
   button.collection-button.add-collection ng-href="#" ng-click="newCollection()"
-    i.icon-plus-sign &nbsp
+    i.fa.fa-plus &nbsp
     | Create a Collection
   ul.collections-list
     li.collection-box ng-repeat="collection in collections | notUploads"
@@ -29,19 +29,19 @@
             ng-pluralize count="collection.numberOfItems" when="{'0': '(No Items yet)', '1': '(1 Item)', 'other': '({} Items)' }"
         p {{collection.description | characters:220}}
       button.collection-button.upload-item-to-collection ng-click="uploadItemToCollection(collection.id)"
-        i.icon-upload &nbsp
+        i.fa.fa-upload &nbsp
         | Upload an Audio File to {{collection.title}}
       .recent-items
         .labels ng-hide="collection.numberOfAudioFiles == 0"
           .col-xs-4 
             | File
-            i.icon-question-sign style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['audfile']" data-placement="right"
+            i.fa.fa-question-circle style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['audfile']" data-placement="right"
           .col-xs-4 
             | Item
-            i.icon-question-sign style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['colitem']" data-placement="right"
+            i.fa.fa-question-circle style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['colitem']" data-placement="right"
           .col-xs-4 
             | Status
-            i.icon-question-sign style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['status']" data-placement="right"
+            i.fa.fa-question-circle style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['status']" data-placement="right"
         ul.items-list
           li ng-repeat="file in collection.recentFiles"
             .col-xs-4 ng-class-odd=" 'odd-file' " {{file.fileName  | limitTo : 32}}

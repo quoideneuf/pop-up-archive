@@ -1,67 +1,350 @@
+/*variables*/
+$primary-color: #000000; /*black*/
+$accent-color: #FF5078;  /*pink*/
+$accent-hover: #E04A6A;
+$accent-selected: #AD3A51;
+$light-gray: #F6F6F6;
+$nondescript-gray: #DDDDDD;
+$dark-gray: #545454;
+$medium-gray: #939393;
+$highlighter: #ECFCE5;
+$bright: #FF421F;
+$bright-hover: #FF7C66;
+
+$heading-stack: "futura-pt", Helvetica, san-serif;
+$body-stack: Verdana, Arial, san-serif;
+
+// import stylesheets
+@import "font-awesome-sprockets";
+@import "font-awesome";
+@import "mixins";
+
 /* Pop Up Archive embedable transcripted player */
-@import '_player';
+.tplayer {
+  .related {
+    margin-top: 1em;
+  }
+  .tplayer-bar {
+    height: 50px;
+    position: relative;
+    .jp-controls, .tplayer-stats {
+      @include vertical-align;
+      float: left;
+    }
+    .jp-progress {
+      @include vertical-align;
+      width: auto;
+      display: block;
+      float: none;
+    }
+  }
+  .twitter-share-button {
+    margin-left: .5em;
+  }
+  .links {
+    margin: inherit;
+  }
+
+}
+
+@include tablet-plus {
+  .jp-title {
+    h2 {
+      font-size: 1.3em !important;
+    }
+  } 
+  // .description {
+  //   max-height: 2.8em;
+  // }
+  .img-player .show-img {
+    width: 25%;
+  }
+  .timings {
+    width: 100%;
+    text-align: center;
+  }
+  .share {
+    margin: 0;
+  }
+  .tplayer {
+    .related {
+      h2 {
+        font-size: 1em;
+        font-weight: 700;
+      }
+    }
+    .player .player-button i {
+      font-size: 1.5em;
+    }
+    .tags {
+      font-size: .7em;
+    }
+  }
+  .player-tags {
+    font-size: .8em;
+  }
+  .tplayer.scrolling {
+    .orb-circle {
+      position: absolute;
+      top: 52px;
+      left: 33px;
+      @include mobile {
+        left: 4px;
+      }
+    }  
+  }
+}
+
+@include desktop {
+  // .description {
+  //   max-height: 7em;
+  // }
+  .img-player .img {
+    max-width: 100px;
+    width: 15%;
+    overflow: auto;
+    float: left;
+    margin: 0 1em 1em 0;
+  }
+  .img-player .body {
+    width: 100%;
+  }
+  .timings {
+    text-align: right;
+  }
+  .share {
+    padding-right: 1em;
+  }
+  .tplayer.scrolling {
+    .orb-circle {
+      position: absolute;
+      top: 30px;
+      left: 20%;
+    }  
+  }
+
+}
+
+// .description {
+//   overflow: hidden;
+// }
+.img-player {
+  .show-img {
+    float: left;
+    vertical-align: top;
+    padding-right: 1em;
+  }
+}
+
+.modal-header, .modal-footer {
+  border: none;
+}
+
+.tplayer .jp-progress {
+  width: 65%;
+  display: block;
+  vertical-align: middle;
+  height: 47px;
+}
+
+.highlight .table {
+  height: 50px;
+  overflow: hidden;
+}
+
+.snippet {
+  cursor: pointer;
+}
+
+.snippet:hover {
+  background: $nondescript-gray;
+
+}
+
+$transcriptViewHeight: 200px;
+
+body.tplayer {
+  padding: 0;
+}
+
+.player h2 {
+  font-size: 2em;
+}
+
+.tplayer.scrolling {
+  width: 100%;
+  display: block;
+  height: $transcriptViewHeight;
+  overflow-y: scroll;
+  padding: 0;
+  .highlight {
+    color: #FFF;
+    background-color: $accent-color;
+    font: inherit;
+    padding: 0 1px;
+  }
+  @include mobile {
+    margin: 5px -30px;
+    width: calc(100% + 60px);
+  }
+}
+
+.player-tags {
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  margin-top: 1em;
+}
+
+.ts-search {
+  margin: 0 0 5px;
+  display: inline;
+  float: right;
+  input {
+    padding: 5px 14px 4px 5px;
+    border-radius: 5px;
+    border: 1px solid gray;
+    margin-right: 5px;
+    width: 170px;
+  }
+  @include mobile {
+    margin: 0 -25px 5px;
+    input {
+      width: 140px;
+    }
+  }
+  span.clear-find {
+    position: relative;
+    margin-right: -8px;
+    right: 19px;
+    top: -2px;
+    cursor: pointer;
+    display: none;
+  }
+  .search-submit {
+    border-radius: 5px;
+    background-image: none;
+    background-color: #eee;
+    border: 0;
+    vertical-align: bottom;
+    padding: 3px;
+  }
+  .last-result, .next-result {
+    display: inline-block;
+    padding: 5px;
+    width: 24px;
+    height: 28px;
+    vertical-align: bottom;
+    text-align: center;
+    cursor: pointer;
+    &.inactive {
+      color: $nondescript-gray;
+    }
+  }
+  .result-numbers {
+    display: inline-block;
+  }
+  .orb-circle {
+    position: absolute;
+    top: 0;
+    right: 73px;
+  }
+}
+
+.pua-tplayer {
+  width: 100%;
+  table-layout: fixed;
+}
+
+// .pua-tplayer, .tplayer {
+//   float: left;
+// }
 
 .player {
   padding: 0;
 }
 
+.tplayer .tags {
+  width: 100%;
+  height: 100% !important;
+  overflow: auto;
+}
+
+.title-sub p, .title-sub  a {
+  font-size: .9em;
+  color: $medium-gray;
+  margin: 0;
+  vertical-align: top;
+  line-height: 2em;
+}
+
+.title-sub p:after {
+  float: clear;
+}
+.date {
+  color: $medium-gray;
+  width: 100%;
+  font-size: .9em;
+}
+
 .pua-tplayer {
   //border: 1px solid #ddd;
   width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
 }
 
-.pua-tplayer td {
-  //border: 1px solid #ccc;
+.timings-transcript {
+  width: 100%;
+}
+
+.tplayer .timings-transcript .timings {
   vertical-align: top;
-}
-
-.pua-tplayer td.img {
-  border: 1px solid #eee;
-}
-
-.pua-tplayer td.img img {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 100px;
-}
-
-.pua-tplayer td.img,
-.pua-tplayer td.timings {
-  width: 100px;
-  vertical-align: middle;
-}
-
-.pua-tplayer .timings-transcript td {
-  padding-bottom: 1em;
-}
-
-.pua-tplayer .timings-transcript .timings {
-  vertical-align: top;
-  text-align: right;
   color: #aaa;
+}
+
+.tplayer .timings-transcript .transcript {
+  cursor:pointer;
 }
 
 .pua-tplayer .tplayer {
   width: 100%;
-  padding-left: 8px;
 }
 
 .pua-tplayer-text {
-  cursor: pointer;
   padding-left: 1em;
   font-size: 95%;
-  line-height: 1.2;
+  line-height: 1.6;
+  .popover {
+    visibility: visible; // always
+  }
 }
 
 .pua-tplayer-text.hover {
-  background-color: #eee;
+  color: #aaa;
+  .tools {
+    visibility: visible;
+  }
+  .popover {
+    color: #000;
+  }
+}
+
+.tplayer .timings-transcript .transcript {
+  .text {
+    line-height: 1.7em;
+  }
+  .tools {
+    width: 20px;  // fixed width placeholder for show-on-hover
+  }
 }
 
 .pua-tplayer-text.selected {
-  background-color: #FFFBCC;
+  .text {
+    background-color: #FFFBCC;
+  }
+  .tools {
+    visibility: visible;
+  }
 }
 
 .pua-tplayer-text .ts {
@@ -74,32 +357,64 @@
   text-align: right;
 }
 
-$transcriptViewHeight: 200px;
-
-.pua-tplayer.scrolling tbody {
-  display: block;
-  overflow: auto;
-  height: $transcriptViewHeight;
-  width: 100%;
+.pua-tplayer-text .text {
+  //float: left;
+  display: table-cell;
 }
 
-.pua-tplayer.scrolling thead {
-  height: $transcriptViewHeight;
+.pua-tplayer-text .tools {
+  visibility: hidden;
+  display: table-cell;
+  //float:right;
+}
+
+.copy-widget {
+  //width: 100px;
 }
 
 .tplayer-bar {
   width: 100%;
   line-height: 1;
+  .jp-progress .jp-seek-bar .ts-find-hit {
+    top: 0;
+    background-color: $accent-color;
+    opacity: .3;
+    width: 1%;
+    height: 100%;
+    position: absolute;
+  }
 }
 
-.jp-controls {
-  //width: 20%;
+.source a {
+  color: $dark-gray;
+  text-decoration: none;
 }
 
-.player div {
-  display: inline-block;
-  width: 100%;
+.source a:hover {
+  color: $medium-gray;
 }
+
+.attribution a {
+  text-decoration: none;
+  color: #ccc;  
+  padding-left: .2em;
+}
+
+a.category:hover {
+  color: $dark-gray;
+}
+
+a.tag{
+  font-family: "futura-pt", Helvetica, san-serif;
+  font-weight: 900;
+  font-size: 1.1em;
+  margin-right: 1em;
+  text-decoration: none;
+  color: $medium-gray;
+  white-space: nowrap;
+  float: left;
+}
+
 
 /* The seeking class is added/removed inside jPlayer */
 div.jp-seeking-bg {
@@ -108,40 +423,44 @@ div.jp-seeking-bg {
 
 .jp-progress {
   background: #fff 0px -240px no-repeat;
-  width: 60%;
+  width: 100%; 
   height: 60px;
   padding: 0 2px 2px 2px;
   margin-bottom: 4px;
   overflow:hidden;
   margin-right: 8px;
   position: relative;
+  display: block;
 }
 
-.jp-progress .calculating {
-  color: #ddd;
-  position: absolute;
-  top: 20px;
-  left: 20px;
-}
+// .jp-progress .calculating {
+//   color: #ddd;
+//   position: absolute;
+//   top: 20px;
+//   left: 20px;
+// }
 
-div.jp-video .jp-progress {
-  border-top:1px solid #180a1f;
-  border-bottom: 1px solid #554560;
-  width:100%;
-  background-image: none;
-  padding: 0;
-}
+// div.jp-video .jp-progress {
+//   border-top:1px solid #180a1f;
+//   border-bottom: 1px solid #554560;
+//   width:100%;
+//   background-image: none;
+//   padding: 0;
+// }
 
 .jp-seek-bar {
   background: #eee 0px -260px repeat-x;
   width: 100%;
-  height: 100%;
+  height: 20px;
   overflow:hidden;
   cursor:pointer;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .jp-play-bar {
-  background: pink 0px -280px repeat-x;
+  background: $dark-gray;
   width:0px;
   height: 100%;
   overflow:hidden;
@@ -156,29 +475,20 @@ div.jp-video .jp-progress {
   height: 100%;
 }
 
-.player {
-  width: 100%;
-}
 .player h2 {
   font-size: 24px;
   color: #444;
   margin: 0;
 }
 
-.player .player-button {
-  cursor: pointer;
-  font-size: 14px;
-  line-height: 20px;
-}
-
 .pua-tplayer .tplayer-stats {
-  vertical-align: middle;
   padding-left: 8px;
   white-space: nowrap;
 }
 
 .pua-tplayer .tplayer-stats div {
   width: auto;
+  float: left;
 }
 
 .pua-tplayer .tplayer-stats .jp-time-holder {
@@ -200,8 +510,8 @@ div.jp-video .jp-progress {
 .loading-overlay {
   z-index: 10000;
   position: fixed;
-  width: 100%;
-  height: 100%;
+  width: calc(100% - 62px);
+  height: 200px;
   background: rgba(0, 0, 0, 0.7);
   opacity: 1;
   transition: opacity 0.2s ease;
@@ -219,7 +529,7 @@ div.jp-video .jp-progress {
   .loading-indicator {
     position: absolute;
     top: 50%;
-    left: 35%;
+    left: 45%;
     margin-top: -15px;
     width: 100%;
     text-align:center;
@@ -229,31 +539,33 @@ div.jp-video .jp-progress {
   }
 }
 
-/* responsive overrides
-   NOTE this section *MUST* come last in the file, so don't add anything here
-   unless you want it to affect mobile devices.
-   These particular break points are not tied to any specific device.
-   Instead they are tied directly to our specific layout.
-*/
-@media only screen and (max-width: 850px) {
-/*
-  .player .player-button i {
-    font-size: 18px;
-    line-height: 18px;
-    width: 18px;
-    height: 18px;
+#share-modal {
+  .too-many-chars {
+    color: red;
   }
-*/
+  .modal-body {
+    padding-top: 0;
+  }
+  .share-button {
+    background-color: #55acee;
+    color: #FFF;
+  }
 }
 
-@media only screen and (max-width: 690px) {
-  .player .player-button.jp-rewind { 
-    display: none;
-  }
-  .player .jp-controls {
-    width: 10%;
-  }
-  .pua-tplayer-text {
-    font-size: 85%;
+.player-button {
+  color: #fff;
+  border: none;
+  background: transparent;
+  padding: .3em;
+  cursor: pointer;
+  i {
+    font-size: 3em;
+    opacity: .8;
+    color: #939393;
+    &:hover {
+      color: black;
+      opacity: 1;
+      cursor: pointer;
+    }
   }
 }

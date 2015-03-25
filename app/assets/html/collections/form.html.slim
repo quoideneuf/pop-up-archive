@@ -18,7 +18,7 @@ div ng-controller='CollectionFormCtrl'
       .control-group
         label.control-label
           | Store Media
-          i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['copyMedia']" data-placement="top"
+          i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['copyMedia']" data-placement="top"
         .controls.radio-group
           input.radio_button type="radio" name="copyMedia" ng-value="true" ng-model="collection.copyMedia" ng-change="copyMediaChange()"
           label.radio-label
@@ -49,7 +49,7 @@ div ng-controller='CollectionFormCtrl'
       .control-group
         label.control-label
           | Upload Images
-          i.icon-question-sign style="margin-left:8px" bs-popover="itemHelp['image']" data-placement="top"
+          i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['image']" data-placement="top"
         .controls ng-show="collection.images.length > 0"
           table.table.file-table
             tr.file ng-repeat="image in collection.images"
@@ -57,7 +57,7 @@ div ng-controller='CollectionFormCtrl'
               td.file-size {{readableFileSize(image.size)}}
               td.file-remove
                 a href="#" ng-click="removeImageFile(image)" style='text-decoration: none; color: #da4f49;'
-                  i.icon-remove-sign
+                  i.fa.fa-remove-sign
         .clearfix.controls.control-group
           button.btn file-button="setImageFiles" Choose Images
           span &nbsp OR &nbsp

@@ -12,21 +12,21 @@ ul.nav.authn.pull-right
   / li
   /   a.activity 
   /     span#loading-gear.animated ng-show="loading()"
-  /       i.icon-large.icon-refresh.icon-spin style="color: #aaa"
+  /       i.fa.fa-large.fa.fa-refresh.fa.fa-spin style="color: #aaa"
   li =render('alerts')
   li
     a.first.border.main.split href="/collections"
       #my_collections
-        i.icon-folder-close-alt
+        i.fa.fa-folder-o
         span.nav-label
           |  my collections&nbsp;
     a.split.menu bs-dropdown="myCollectionsMenu"
       #my_collections_menu
-        i.icon-caret-down
+        i.fa.fa-caret-down
   li
     a.border bs-dropdown="userMenu"
       #user_name
-        i.icon-user
+        i.fa.fa-user
         span.nav-label
           |  #{current_user.name.downcase.truncate(19)}&nbsp;
-        i.icon-caret-down
+        i.fa.fa-caret-down

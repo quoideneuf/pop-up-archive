@@ -77,9 +77,9 @@ html lang='en' ng-app='Directory' ng-controller='DirectoryCtrl'
       .now-playing {{player.nowPlaying()}}
       .player-controls
         button ng-show="player.paused()" ng-click="$event.stopPropagation();player.play()"
-          i.icon-play
+          i.fa.fa-play
         button ng-hide="player.paused()" ng-click="$event.stopPropagation();player.pause()"
-          i.icon-pause
+          i.fa.fa-pause
 
     =render('contact')
 

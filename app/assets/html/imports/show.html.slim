@@ -9,7 +9,7 @@ form.form-inline ng-controller="ImportMappingCtrl"
 
     p Don't see a field you want? Select "Extra" in the dropdown. But for the best possible filtering and search results, map your data to the pre-existing Pop Up Archive fields.
 
-    i.icon-info-sign 
+    i.fa.fa-info-sign 
      a bs-modal="'#{asset_path 'imports/field_descriptions.html'}'"  Destination Field Descriptions
 
   .well
@@ -25,7 +25,7 @@ form.form-inline ng-controller="ImportMappingCtrl"
         th Pop Up Field
         th ng-click="getNewPreviewRows()"
           | Sample Data &nbsp;
-          i.icon-refresh
+          i.fa.fa-refresh
           small &nbsp; Fetch new preview 
     tbody
       tr ng-repeat="header in csvImport.headers track by $index"

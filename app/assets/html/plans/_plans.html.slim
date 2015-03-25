@@ -72,12 +72,12 @@
   .row-fluid.player
     .span1
       button.player-button ng-disabled="player.time == 0" ng-click="rewind()"
-        i.icon-fast-backward
+        i.fa.fa-fast-backward
     .span1    
       button.player-button ng-hide="isPlaying()" ng-click="play(exampleAudioFile.url)"
-        i.icon-play   
+        i.fa.fa-play   
       button.player-button ng-show="isPlaying()" ng-click="pause()"
-        i.icon-pause
+        i.fa.fa-pause
     .span8     
       .scrubber
         .bar ng-show="isLoaded()" ng-style="{width:player.time*100/player.duration+'%'}"
@@ -124,7 +124,7 @@
     .span12
       h2 Plan FAQs
       p.alert.alert-info.pull-center
-        i.icon-star-empty
+        i.fa.fa-star-empty
           strong
             |  For more questions, read our  
             a href="https://www.popuparchive.com/faq" general FAQs

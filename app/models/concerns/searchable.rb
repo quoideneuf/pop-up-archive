@@ -37,5 +37,9 @@ module Searchable
       end 
     end
 
+  def self.urlify(str)
+    str.downcase.gsub(/\W/, '-').gsub(/--/, '-').gsub(/^\-|\-$/, '') 
+   end 
+
   end
 end
