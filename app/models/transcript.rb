@@ -238,14 +238,16 @@ class Transcript < ActiveRecord::Base
   end
 
   # returns a float representing 1000ths of a dollar
-  # if billable? is false, always returns 0.0
+  # is_billable flag is ignored, since this is the wholesale cost.
   def cost(af=audio_file_lazarus)
-    return 0.0 if !billable?
+    #return 0.0 if !billable?
     secs = billable_seconds(af)
     mins = secs.fdiv(60)
     return cost_per_min.to_f * mins.to_f
   end
 
+  # returns a float representing 1000ths of a dollar
+  # if billable? is false, always returns 0.0
   def retail_cost(af=audio_file_lazarus)
     return 0.0 if !billable?
     return 0.0 if cost_type == WHOLESALE
