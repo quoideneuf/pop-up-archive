@@ -1,21 +1,21 @@
 .page-nav.pull-right ng-class="{selection: selectedItems.length}"
   button.btn ng-click="sortType = 1" ng-hide="sortType"
-    i.icon-folder-open  Sort by Collection
+    i.fa.fa-folder-open  Sort by Collection
   button.btn ng-click="sortType = 0" ng-show="sortType"
-    i.icon-calendar  Sort by Date
+    i.fa.fa-calendar  Sort by Date
   a.btn href="/collections"
-    i.icon-inbox  Manage Collections
+    i.fa.fa-inbox  Manage Collections
   a.btn href="/imports/new"
-    i.icon-th-list  Batch Upload
+    i.fa.fa-th-list  Batch Upload
   .selection-actions
     small ng-pluralize="" count="selectedItems.length" when="{'0':'', 'one':'{{selectedItems[0].getTitle()}}', 'other': 'selecting {} items'}"
     .buttons
       button.btn bs-modal="'#{asset_path 'collections/tags_form.html'}'"
-        i.icon-tags  Edit Tags
+        i.fa.fa-tags  Edit Tags
       button.btn ng-click="clearSelection()"
-        i.icon-remove-sign  Clear Selection
+        i.fa.fa-remove-sign  Clear Selection
       button.btn.btn-danger ng-click="deleteSelection()"
-        i.icon-trash  Delete
+        i.fa.fa-trash  Delete
 
 h3
   a href="/collections" My Collections

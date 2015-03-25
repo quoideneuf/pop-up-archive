@@ -1,7 +1,7 @@
 .row-fluid
   .page-nav.pull-right
     a.btn href="/account/plan" 
-      i.icon-wrench
+      i.fa.fa-wrench
       |  Change Plan
   h3
     | Account
@@ -97,7 +97,7 @@
             th
             th.last
               button.btn ng-click="toggleDetails($event)"
-                i.icon-expand-alt.icon-large
+                i.fa.fa-expand-alt.fa.fa-large
                 |  Details
           tr.usage-month ng-repeat="msum in mnthGrp.rows"
             td.first {{msum.period}}

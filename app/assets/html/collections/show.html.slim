@@ -2,13 +2,13 @@
   .span12    
     .page-nav.pull-right
       button.btn ng-show="canEdit" ng-click="uploadFile()"
-        i.icon-upload-alt
+        i.fa.fa-upload-alt
         |  Upload
       button.btn ng-show="canEdit" ng-click="newCollection()"
-        i.icon-edit
+        i.fa.fa-edit
         |  Edit Collection
       button.btn.btn-danger ng-click="delete()" ng-disabled="!currentUser.isAdmin()" ng-show="canEdit"
-        i.icon-trash
+        i.fa.fa-trash
         |  Delete Collection
 
     .thumb-and-title    
