@@ -194,21 +194,15 @@ class User < ActiveRecord::Base
 
       #######################################################
       # existing customer after first billing (regular cycle)
-      if !customer.in_first_month? && !plan.is_community?
+      if !customer.in_first_month?
         subscr.metadata[:existing] = true
-        subscr.metadata[:is_community] = false
+        subscr.metadata[:is_community] = plan.is_community?
         # keep trial alive if currently trialing
-        trial_end = customer.class.end_of_this_month if subscr.status == 'trialing'
+        if subscr.status == 'trialing'
+          trial_end = customer.class.end_of_this_month
+          prorate   = false
+        end
       end 
-
-      #######################################################
-      # existing customer downgrading to community
-      if !customer.in_first_month? && plan.is_community?
-        subscr.metadata[:existing] = true
-        subscr.metadata[:is_community] = true
-        # keep trial alive if currently trialing
-        trial_end = customer.class.end_of_this_month if subscr.status == 'trialing'
-      end
 
       subscr.plan = plan.id
       subscr.coupon = offer if (offer && offer.length)
