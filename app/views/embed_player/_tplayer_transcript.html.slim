@@ -5,7 +5,7 @@
 - short_url = ENV['SHORT_URL'] || root_url.gsub(/\/$/, '')
 - perm_url  = root_url.gsub(/\/$/, '')
 javascript:
-  window.shortURL = '#{ENV['SHORT_URL'] || root_url.gsub(/\/$/, '')}';
+  window.shortURL = '#{ENV['SHORT_URL'] || perm_url}';
 
 .row-fluid
   .col-xs-12
@@ -21,7 +21,7 @@ javascript:
           i.fa.fa-arrow-circle-left
         .next-result.inactive
           i.fa.fa-arrow-circle-right
-      .tplayer.scrolling id="pua-tplayer-#{file_id}-transcript" data-file="#{file_id}" data-perm="#{audio_file.item_id.to_i.to_s(16)}"
+      .tplayer.scrolling id="pua-tplayer-#{file_id}-transcript" data-file="#{file_id}" data-coll="#{audio_file.item.collection_id}" data-perm="#{audio_file.item_id}"
           .hidden.loading-indicator
             i.fa.fa-cog.fa-spin
             |  Seeking

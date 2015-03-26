@@ -207,16 +207,17 @@ PUATPlayer.prototype = {
       }
     });
     $('#share-modal').on('show.bs.modal', function (event) {
-      var button        = $(event.relatedTarget);
-      var row             = button.parents('.pua-tplayer-text');
-      var ttbl              = button.parents('.tplayer.scrolling');
-      var offset          = row.data('offset');
-      var itemIdHex = ttbl.data('perm');
-      var idx              = parseInt(row.data("idx"), 10);
-      var modal        = $(this);
-      var hms            = self.secsToHMS(offset);
-      var lnk              = window.shortURL + '/t/' + itemIdHex + '/' + offset;
-      var lnkMinusOffset = window.shortURL + '/t/' + itemIdHex;
+      var button = $(event.relatedTarget);
+      var row    = button.parents('.pua-tplayer-text');
+      var ttbl   = button.parents('.tplayer.scrolling');
+      var offset = row.data('offset');
+      var itemId = ttbl.data('perm');
+      var collId = ttbl.data('coll');
+      var idx    = parseInt(row.data("idx"), 10);
+      var modal  = $(this);
+      var hms    = self.secsToHMS(offset);
+      var lnk    = window.shortURL + '/collections/' + collId + '/items/' + itemId;
+      var lnkWithOffset = lnk + '/' + offset;
       var tweetStr = row.find(".text").html().trim();
       if ($(".pua-tplayer-text[data-idx='"+(idx+1)+"']").length !== 0) {
         tweetStr += " " + $(".pua-tplayer-text[data-idx='"+(idx+1)+"']").find(".text").html().trim();
@@ -242,8 +243,9 @@ PUATPlayer.prototype = {
       modal.find("input[name='timestamp']").on("change", function() {
         if ($(this).is(":checked")) {
           modal.find(".share-link").html(lnk);
+          //modal.find(".share-link").html(lnkWithOffset);
         } else {
-          modal.find(".share-link").html(lnkMinusOffset);
+          modal.find(".share-link").html(lnk);
         }
       });
       modal.find(".share-text").trigger("keyup");
