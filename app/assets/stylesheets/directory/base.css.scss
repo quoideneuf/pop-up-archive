@@ -1080,8 +1080,6 @@ form.with-tags {
   position: absolute;
   width: 75px;
   height: 75px;
-  line-height: 75px;
-  font-size: 50px;
   margin-left: 23px;
   opacity: 0.75;
   -webkit-transition: 0.2s;
@@ -1090,7 +1088,12 @@ form.with-tags {
   transition: 0.2s;
   text-decoration: none;
 
-  &.icon-pause {
+  &.fa {
+    line-height: 75px;
+    font-size: 50px;
+  }
+
+  &.fa-pause {
     margin-left: 16px;
   }
 }
