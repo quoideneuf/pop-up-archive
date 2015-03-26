@@ -226,6 +226,7 @@ PUATPlayer.prototype = {
         tweetStr += " " + $(".pua-tplayer-text[data-idx='"+(idx+2)+"']").find(".text").html().trim();
       }
       var escTxt         = tweetStr.replace(/<.+?>/g, '');
+      modal.find(".share-link").html(lnk);
       modal.find(".share-text").html(escTxt);
       modal.find("label[for='timestamp']").html("&nbspStart at:&nbsp"+hms);
       modal.find(".share-text").on("keyup", function() {
