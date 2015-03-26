@@ -34,9 +34,14 @@ class Customer
     if cust.nil?
       return nil
     end
-    created = cust.metadata[:start] || cust.created
-    STDERR.puts "created==#{cust.created}  start_of_this_month==#{self.class.start_of_this_month}"
-    created.to_i >= self.class.start_of_this_month
+    start = cust.created
+    # test env uses hardcoded customer.created date that ruins our logic.
+    if Rails.env.test?
+      subscr = stripe_subscription(cust)
+      start = subscr.metadata[:start] || subscr.start
+    end
+    #STDERR.puts "start==#{start}  start_of_this_month==#{self.class.start_of_this_month}"
+    start.to_i >= self.class.start_of_this_month
   end
 
   def is_interim_trial?
