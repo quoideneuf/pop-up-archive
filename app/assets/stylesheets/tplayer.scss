@@ -47,6 +47,28 @@ $body-stack: Verdana, Arial, san-serif;
 
 }
 
+.img-player {
+  .img {
+    max-width: 100px;
+    width: 15%;
+    overflow: auto;
+    float: left;
+    margin: 0 1em 1em 0;
+  }
+  .body {
+    width: 100%;
+  }
+  .show-img {
+    float: left;
+    vertical-align: top;
+    padding-right: 1em;
+  }
+  img {
+    max-width:100%;
+    max-height:100%;
+  }
+}
+
 @include tablet-plus {
   .jp-title {
     h2 {
@@ -99,16 +121,6 @@ $body-stack: Verdana, Arial, san-serif;
   // .description {
   //   max-height: 7em;
   // }
-  .img-player .img {
-    max-width: 100px;
-    width: 15%;
-    overflow: auto;
-    float: left;
-    margin: 0 1em 1em 0;
-  }
-  .img-player .body {
-    width: 100%;
-  }
   .timings {
     text-align: right;
   }
@@ -122,19 +134,11 @@ $body-stack: Verdana, Arial, san-serif;
       left: 20%;
     }  
   }
-
 }
 
 // .description {
 //   overflow: hidden;
 // }
-.img-player {
-  .show-img {
-    float: left;
-    vertical-align: top;
-    padding-right: 1em;
-  }
-}
 
 .modal-header, .modal-footer {
   border: none;
