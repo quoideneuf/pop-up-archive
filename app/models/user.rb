@@ -165,6 +165,7 @@ class User < ActiveRecord::Base
   def subscribe!(plan, offer = nil)
     cus = customer.stripe_customer
     subscr = customer.stripe_subscription(cus)
+    subscr.metadata[:orig_start] = subscr.metadata[:start]
     if (offer == 'prx')
       subscr.plan = plan.id
       subscr.trial_end = 90.days.from_now.to_i
@@ -179,14 +180,14 @@ class User < ActiveRecord::Base
       prorate   = true
       ####################################################################
       # new customer setting non-community subscription for the first time
-      if !customer.in_first_month? && plan.is_community?
+      if (!customer.stripe_customer || customer.in_first_month?) && plan.is_community?
         trial_end = customer.class.end_of_this_month
         prorate   = false
       end
 
       ###########################################################################
       # existing customer still inside initial "trial" month before first billing
-      if customer.in_first_month? && !plan.is_community?
+      if customer.in_first_month? && customer.is_interim_trial? && !plan.is_community?
         trial_end = customer.class.end_of_this_month
         prorate   = false
       end
@@ -194,8 +195,20 @@ class User < ActiveRecord::Base
       #######################################################
       # existing customer after first billing (regular cycle)
       if !customer.in_first_month? && !plan.is_community?
-        # currently no-op
+        subscr.metadata[:existing] = true
+        subscr.metadata[:is_community] = false
+        # keep trial alive if currently trialing
+        trial_end = customer.class.end_of_this_month if subscr.status == 'trialing'
       end 
+
+      #######################################################
+      # existing customer downgrading to community
+      if !customer.in_first_month? && plan.is_community?
+        subscr.metadata[:existing] = true
+        subscr.metadata[:is_community] = true
+        # keep trial alive if currently trialing
+        trial_end = customer.class.end_of_this_month if subscr.status == 'trialing'
+      end
 
       subscr.plan = plan.id
       subscr.coupon = offer if (offer && offer.length)
