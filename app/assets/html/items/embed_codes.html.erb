@@ -10,28 +10,28 @@
 
     <table class="table table-striped">
       <tr>
-        <th>Simple player<i bs-popover="itemHelp['simpleplayer']" class="icon-question-sign ng-scope" data-placement="right" style="margin-left:1px; margin-right:3px;" data-original-title="" title=""></i></th>
+        <th>Simple player<i bs-popover="itemHelp['simpleplayer']" class="fa fa-question-circle ng-scope" data-placement="right" style="margin-left:1px; margin-right:3px;" data-original-title="" title=""></i></th>
         <td>
           <input class="copy-widget" readonly="readonly" type="text" value="" />
           <xmp><iframe frameborder="0" width="100%" height="95px" scrolling="no" seamless="yes" name="{{ item.formattedTitle }}" src="{{ my_path }}/embed_player/{{ item.titleURISafe() }}/{{ audioFile.id }}/{{ item.id }}/{{ collection.id }}"></iframe></xmp>
         </td>
       </tr>
       <tr>
-        <th>Player with transcript (iframe)<i bs-popover="itemHelp['iframetplayer']" class="icon-question-sign ng-scope"></i></th>
+        <th>Player with transcript (iframe)<i bs-popover="itemHelp['iframetplayer']" class="fa fa-question-circle ng-scope"></i></th>
         <td>
           <input class="copy-widget" readonly="readonly" type="text" value="" /> 
           <xmp><iframe frameborder="0" height="500px" width="100%" scrolling="no" seamless="yes" name="{{ item.formattedTitle }}" src="{{ my_path }}/tplayer/{{ audioFile.id }}/{{ item.titleURISafe() }}"></iframe></xmp>
         </td>
       </tr>
       <tr>
-        <th>Player with transcript (client-side JS)<i bs-popover="itemHelp['jstplayer']" class="icon-question-sign ng-scope"></i></th>
+        <th>Player with transcript (client-side JS)<i bs-popover="itemHelp['jstplayer']" class="fa fa-question-circle ng-scope"></i></th>
         <td>
           <input class="copy-widget" readonly="readonly" type="text" value="" />
           <xmp><script type="text/javascript" async="1" data-pua="{{ audioFile.id }}" data-main="{{ my_path }}/assets/tplayer-embed" src="{{ my_path }}/assets/require.js"></script></xmp>
         </td>
       </tr>
       <tr>
-        <th>Player with transcript (oEmbed)<i bs-popover="itemHelp['oembedtplayer']" class="icon-question-sign ng-scope"></i></th>
+        <th>Player with transcript (oEmbed)<i bs-popover="itemHelp['oembedtplayer']" class="fa fa-question-circle ng-scope"></i></th>
         <td>
           <input class="copy-widget" readonly="readonly" type="text" value="" />
           <xmp><a href="{{ my_path }}/oembed?url={{ my_path }}/tplayer/{{ audioFile.id }}">listen to {{ item.formattedTitle }}</a></xmp>
