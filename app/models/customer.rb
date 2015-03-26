@@ -34,7 +34,9 @@ class Customer
     if cust.nil?
       return nil
     end
-    cust.created.to_i >= self.class.start_of_this_month
+    created = cust.metadata[:start] || cust.created
+    STDERR.puts "created==#{cust.created}  start_of_this_month==#{self.class.start_of_this_month}"
+    created.to_i >= self.class.start_of_this_month
   end
 
   def is_interim_trial?

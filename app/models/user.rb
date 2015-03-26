@@ -164,6 +164,7 @@ class User < ActiveRecord::Base
 
   def subscribe!(plan, offer = nil)
     cus = customer.stripe_customer
+    cus.metadata[:start] ||= Time.now.utc.to_i
     subscr = customer.stripe_subscription(cus)
     subscr.metadata[:orig_start] = subscr.metadata[:start]
     if (offer == 'prx')
