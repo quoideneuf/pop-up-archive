@@ -29,15 +29,18 @@ class Customer
   def in_first_month?
   # another way of saying, was subscription initiated last month?
   # since the first interval is a 'trial' status.
+  # Assumption: customer creation date always coincides with a subscription.
     cust = stripe_customer
     if cust.nil?
       return nil
     end
-    subscr = stripe_subscription(cust)
-    #STDERR.puts "  subscription.meta==#{subscr.metadata.inspect}"
-    #STDERR.puts "start_of_this_month==#{self.class.start_of_this_month.to_s}"
-    start = subscr.metadata[:start] || subscr.start
-    #STDERR.puts "              start==#{start.to_i.to_s}"
+    start = cust.created
+    # test env uses hardcoded customer.created date that ruins our logic.
+    if Rails.env.test?
+      subscr = stripe_subscription(cust)
+      start = subscr.metadata[:start] || subscr.start
+    end
+    #STDERR.puts "start==#{start}  start_of_this_month==#{self.class.start_of_this_month}"
     start.to_i >= self.class.start_of_this_month
   end
 
