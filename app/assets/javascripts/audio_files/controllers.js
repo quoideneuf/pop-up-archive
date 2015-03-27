@@ -40,8 +40,7 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
     $scope.audioFile.createListen();
     Player.play($scope.fileUrl, $scope.item.getTitle());
     mixpanel.track("Audio play", 
-      {"Item": $scope.item.title,
-       "Collection": $scope.collection.title});
+      {"Item": $scope.item.title});
   }
 
   $scope.player = Player;
@@ -57,6 +56,7 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
   $scope.$on('transcriptSeek', function(event, time) {
     event.stopPropagation();
     $scope.play();
+    console.log(time);
     $scope.player.seekTo(time);
   });
 
