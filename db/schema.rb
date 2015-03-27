@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150224211933) do
+ActiveRecord::Schema.define(:version => 20150327184213) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
@@ -442,6 +442,7 @@ ActiveRecord::Schema.define(:version => 20150224211933) do
     t.integer  "subscription_plan_id"
     t.hstore   "transcript_usage_cache"
     t.integer  "used_unmetered_storage_cache"
+    t.integer  "subscription_start_day"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
