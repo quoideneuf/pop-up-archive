@@ -165,6 +165,12 @@ class User < ActiveRecord::Base
   def subscribe!(plan, offer = nil)
     cus = customer.stripe_customer
     subscr = customer.stripe_subscription(cus)
+    # we should always have a baseline subscription at stripe, no matter what.
+    if !subscr
+      customer.subscribe_to_community
+      cus = customer.stripe_customer
+      subscr = customer.stripe_subscription(cus)
+    end
     subscr.metadata[:orig_start] = subscr.metadata[:start]
     if (offer == 'prx')
       subscr.plan = plan.id
@@ -300,7 +306,7 @@ class User < ActiveRecord::Base
         self.customer_id = cus.id
         update_attribute :customer_id, cus.id if persisted?
         Rails.cache.write([:customer, :individual, cus.id], cus, expires_in: cache_ttl)
-        sp = SubscriptionPlan.find_by_stripe_plan_id(cus.plan.id)
+        sp = SubscriptionPlan.find_by_stripe_plan_id(cus.plan_id||SubscriptionPlanCached.community.id)
         update_attribute :subscription_plan_id, sp.id if persisted?
         @_customer = cus
       end

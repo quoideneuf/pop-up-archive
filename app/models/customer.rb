@@ -1,5 +1,5 @@
 class Customer
-  attr_reader :id, :plan_id, :card, :trial, :interval, :subscr_meta
+  attr_reader :id, :card, :trial, :interval, :subscr_meta
 
   def initialize(stripe_customer=nil, *attrs)
     if !stripe_customer.nil?
@@ -48,6 +48,7 @@ class Customer
     cust = stripe_customer
     return nil unless cust
     subscr = stripe_subscription(cust)
+    return nil unless subscr
     if subscr.status == "trialing" && subscr.trial_end && subscr.trial_end == self.class.end_of_this_month
       return true
     else
@@ -63,8 +64,12 @@ class Customer
     Time.now.utc.end_of_month.to_i
   end
 
+  def plan_id
+    @plan_id || SubscriptionPlanCached.community.id
+  end
+
   def plan
-    SubscriptionPlanCached.find(plan_id) || subscribe_to_community
+    SubscriptionPlanCached.find(plan_id) or raise "No plan defined for plan_id #{plan_id}"
   end
 
   def eql?(customer)
