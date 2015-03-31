@@ -29,6 +29,9 @@ namespace :reports do
     progress.send(:show)
     User.find_each do |user|
       user.update_usage_report!
+      if ENV['SEND_ALERTS'] && user.is_within_sight_of_monthly_limit?
+        user.send_usage_alert
+      end
       progress.inc
     end
     progress.finish
@@ -44,6 +47,9 @@ namespace :reports do
     progress.send(:show)
     Organization.find_each do |org|
       org.update_usage_report!
+      if ENV['SEND_ALERTS'] && org.is_within_sight_of_monthly_limit?
+        org.send_usage_alert
+      end
       progress.inc
     end
     progress.finish
@@ -208,21 +214,4 @@ namespace :reports do
     end
   end
 
-  desc "prints subscription billing date for all Users"
-  task subscription_start_date: [:environment] do
-    days_of_month = {}
-    User.all.each do |user|
-      #puts user.customer.stripe_customer
-      start = nil
-      begin
-        start = Time.at user.customer.stripe_subscription.start
-      rescue => e
-        puts e
-      end
-      next unless start
-      days_of_month[start.day] = 0 unless days_of_month[start.day]
-      days_of_month[start.day] += 1
-    end
-    pp days_of_month
-  end
 end
