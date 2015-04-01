@@ -184,6 +184,7 @@ class User < ActiveRecord::Base
       # these are API defaults; we just make them explicit
       trial_end = nil
       prorate   = true
+      orig_plan = subscr.plan
       ####################################################################
       # new customer setting non-community subscription for the first time
       if (!customer.stripe_customer || customer.in_first_month?) && plan.is_community?
@@ -227,6 +228,9 @@ class User < ActiveRecord::Base
 
     # write change
     subscr.save
+
+    # log it
+    MixpanelWorker.perform_async('subscription change', { customer: customer_id, orig_plan: orig_plan, new_plan: subscr.plan })
 
     # must do this manually after subscription.save has successfully completed
     # so that our local caches are in sync.
