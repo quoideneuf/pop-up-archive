@@ -193,7 +193,7 @@ class User < ActiveRecord::Base
 
       ###########################################################################
       # existing customer still inside initial "trial" month before first billing
-      if customer.in_first_month? && customer.is_interim_trial? && !plan.is_community?
+      if customer.in_first_month? && !plan.is_community?
         trial_end = customer.class.end_of_this_month
         prorate   = false
       end
