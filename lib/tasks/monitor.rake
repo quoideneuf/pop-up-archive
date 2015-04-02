@@ -33,7 +33,11 @@ namespace :monitor do
         end
       end
     end
-
   end
 
+  desc "check for transcripts edited in the past X hours"
+  task new_transcript_edits: [:environment] do
+    edited = Transcript.joins(:timed_texts).where("timed_texts.updated_at > ?", 24.hours.ago).where("timed_texts.updated_at > timed_texts.created_at")
+    puts edited.length.to_s + " were edited in the last 24 hours."
+  end
 end
