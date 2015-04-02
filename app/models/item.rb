@@ -33,6 +33,27 @@ class Item < ActiveRecord::Base
         indexes :transcript, type: 'string', store: true, boost: 0.1
       end
 
+      indexes :audio_files do
+        indexes :id,       type: 'long',   index: :not_analyzed
+        indexes :url,      type: 'string', index: :not_analyzed
+        indexes :filename, type: 'string', index: :not_analyzed
+        indexes :duration, type: 'string', index: :not_analyzed
+        indexes :mp3,      type: 'string', index: :not_analyzed
+        indexes :ogg,      type: 'string', index: :not_analyzed
+        indexes :url_title, type: 'string', index: :not_analyzed
+        indexes :listenlen, type: 'string', index: :not_analyzed
+      end 
+
+      indexes :image_files do
+        indexes :filename, type: 'string', index: :not_analyzed
+        indexes :upload_id, type: 'string', index: :not_analyzed
+        indexes :original_file_url, type: 'string', index: :not_analyzed
+        indexes :url do
+          indexes :full, type: 'string', index: :not_analyzed
+          indexes :thumb, type: 'string', index: :not_analyzed
+        end 
+      end
+
       indexes :duration,          type: 'long',    include_in_all: false
       indexes :location do
         indexes :name
@@ -220,6 +241,8 @@ class Item < ActiveRecord::Base
       ([:contributors] + STANDARD_ROLES.collect{|r| r.pluralize.to_sym}).each do |assoc|
         json[assoc]      = send(assoc).map{|c| c.as_json }
       end
+      json[:audio_files] = audio_for_index
+      json[:image_files] = images_for_index
       json[:tags]        = tags_for_index
       json[:location]    = geolocation.as_indexed_json if geolocation.present?
       json[:transcripts] = transcripts_for_index
@@ -233,6 +256,38 @@ class Item < ActiveRecord::Base
       json[:date_broadcast] = self.date_broadcast.nil? ? nil : self.date_broadcast.as_json
       json[:date_added]     = self.created_at.as_json
     end
+  end
+
+  def audio_for_index
+    hashed = []
+    audio_files.each do |af|
+      hashed.push({
+        :id       => af.id,
+        :url      => af.player_url,
+        :filename => af.filename,
+        :duration => af.duration_hms,
+      })
+    end
+    hashed
+  end
+
+  def images_for_index
+    hashed = []
+    imgfs =  []
+    if image_files and image_files.size > 0 
+      imgfs = image_files
+    elsif collection and collection.image_files and collection.image_files.size > 0 
+      imgfs = collection.image_files
+    end
+    imgfs.each do |imgf|
+      hashed.push({
+        :filename => imgf.filename, 
+        :url => imgf.urls, 
+        :upload_id => imgf.upload_id, 
+        :original_file_url => imgf.original_file_url,
+      })
+    end
+    hashed
   end
 
   def tags
