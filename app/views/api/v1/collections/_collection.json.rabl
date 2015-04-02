@@ -24,6 +24,8 @@ child :image_files do |af|
   extends 'api/v1/image_files/image_file'
 end
 
-node :recent_files do |coll|
-  coll.recent_files
+if locals[:show_recent]
+  node :recent_files do |coll|
+    coll.recent_files
+  end
 end
