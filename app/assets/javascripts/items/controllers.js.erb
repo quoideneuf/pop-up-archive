@@ -247,6 +247,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.callEditor = function() {
     $scope.$broadcast('CallEditor');
+    mixpanel.track("Edit Transcript",{"Item": $scope.item.title});
     $scope.editTable = true;
   };
 
