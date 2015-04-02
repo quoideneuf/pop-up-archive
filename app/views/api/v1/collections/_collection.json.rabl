@@ -1,7 +1,7 @@
 attributes :id, :title, :description, :items_visible_by_default, :token, :copy_media
 
 node :number_of_items do |coll|
-  coll.items.count
+  coll.item_ids.length
 end
 
 node :item_ids do |coll|
