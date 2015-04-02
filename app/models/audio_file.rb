@@ -484,8 +484,8 @@ class AudioFile < ActiveRecord::Base
     # and there are no transcripts yet created, 
     # and no tasks in process.
     unfinished_tasks = self.unfinished_tasks
-    basic_transcript_tasks = unfinished_tasks.select{|t| t.type = "Task::TranscribeTask"}
-    premium_transcript_tasks = unfinished_tasks.select{|t| t.type = "Task::SpeechmaticsTranscribeTask"}
+    basic_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::TranscribeTask"}
+    premium_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::SpeechmaticsTranscribeTask"}
     if tscripts.size == 0 and !has_basic_transcribe_task_in_progress?(basic_transcript_tasks) and !has_premium_transcribe_task_in_progress?(premium_transcript_tasks)
       return true
     end
@@ -567,9 +567,9 @@ class AudioFile < ActiveRecord::Base
 
   def is_uploaded?(tsks=self.tasks)
     return true if original_file_url
-    if !tsks.any?{|t| t.type == 'Task::UploadTask'} && tsks.size > 0
+    if !tsks.any?{|t| t.type == 'Tasks::UploadTask'} && tsks.size > 0
       return true
-    elsif tsks.any?{|t| t.type == 'Task::UploadTask' && t.status == Task::COMPLETE }
+    elsif tsks.any?{|t| t.type == 'Tasks::UploadTask' && t.status == Task::COMPLETE }
       return true
     else
       return false
@@ -597,8 +597,8 @@ class AudioFile < ActiveRecord::Base
   # if audio should not be copied, always returns true.
   def is_copied?(tsks=self.tasks)
     return true unless copy_media?
-    if tsks.any?{|t| t.type == 'Task::CopyTask'}
-      return tsks.any?{|t| t.type == 'Task::CopyTask' && t.status == Task::COMPLETE }
+    if tsks.any?{|t| t.type == 'Tasks::CopyTask'}
+      return tsks.any?{|t| t.type == 'Tasks::CopyTask' && t.status == Task::COMPLETE }
     else
       return false
     end
@@ -631,10 +631,10 @@ class AudioFile < ActiveRecord::Base
     # if the current condition is true.
     st_time = Time.now
     status = UNKNOWN_STATE
-    all_tasks = self.tasks
+    all_tasks = self.tasks(true)  # ignore cached
     has_been_copied = self.is_copied?(all_tasks)
     has_been_uploaded = self.is_uploaded?(all_tasks)
-    if all_tasks.any?{|t| t.type == 'Task::UploadTask'} && !has_been_uploaded && !has_been_copied
+    if all_tasks.any?{|t| t.type == 'Tasks::UploadTask'} && !has_been_uploaded && !has_been_copied
       # abort status determination early if upload has not finished.
       if self.has_failed_upload?
         return UPLOAD_FAILED
@@ -651,7 +651,7 @@ class AudioFile < ActiveRecord::Base
     end
     #Rails.logger.warn("1a elapsed: #{Time.now - st_time}")
 
-    if all_tasks.any?{|t| t.type == 'Task::CopyTask'} && !has_been_copied
+    if all_tasks.any?{|t| t.type == 'Tasks::CopyTask'} && !has_been_copied
       status = COPYING_INPROCESS
     end
     #Rails.logger.warn("1b elapsed: #{Time.now - st_time}")
@@ -660,8 +660,8 @@ class AudioFile < ActiveRecord::Base
     end
 
     unfinished_tasks = all_tasks.select{|t| t.status != Task::COMPLETE && t.status != Task::CANCELLED}
-    basic_transcript_tasks = unfinished_tasks.select{|t| t.type = "Task::TranscribeTask"}
-    premium_transcript_tasks = unfinished_tasks.select{|t| t.type = "Task::SpeechmaticsTranscribeTask"}
+    basic_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::TranscribeTask"}
+    premium_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::SpeechmaticsTranscribeTask"}
     #Rails.logger.warn("1c elapsed: #{Time.now - st_time}")
     if (self.transcoded? or self.is_mp3?) and (self.has_basic_transcribe_task_in_progress?(basic_transcript_tasks) or self.has_premium_transcribe_task_in_progress?(premium_transcript_tasks))
       status = TRANSCRIBE_INPROCESS
