@@ -53,6 +53,8 @@ PopUpArchive::Application.routes.draw do
   post 'stripe_webhook', controller: 'callbacks', action: 'stripe_webhook', as: 'stripe_webhook'
   
   get 'sitemap.xml', :to => 'sitemap#sitemap', as: 'sitemap', defaults: { format: 'xml' }
+
+  post 'headcheck', :to => 'api/v1/audio_files#head_check'
     
 
   namespace :api, defaults: { format: 'json' }, path: 'api' do
