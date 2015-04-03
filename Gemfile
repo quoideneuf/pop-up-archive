@@ -120,16 +120,6 @@ gem 'active_admin_sidebar'
 gem 'coffee-script'
 gem 'ansi'
 
-group :assets do
-  gem 'sprockets'
-  gem 'sass-rails', '~> 5.0.3'
-  gem 'uglifier', '>= 1.0.3'
-  gem 'bootstrap-sass'
-  gem 'angularjs-rails-resource', '~> 0.2.5'
-  gem 'font-awesome-sass', '~> 4.3.0'
-  gem 'ng_player_hater-rails', '~> 0.0.4'
-end
-
 group :development do
   gem 'quiet_assets'
   gem 'better_errors'
