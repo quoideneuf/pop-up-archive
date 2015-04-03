@@ -55,7 +55,11 @@ PopUpArchive::Application.routes.draw do
   get 'sitemap.xml', :to => 'sitemap#sitemap', as: 'sitemap', defaults: { format: 'xml' }
 
   post 'headcheck', :to => 'api/v1/audio_files#head_check'
-    
+
+  # sharing shortcut
+  get 't/:item_id',               to: 'item', action: 'short'
+  get 't/:item_id/:start',        to: 'item', action: 'short'
+  get 't/:item_id/:start/:end',   to: 'item', action: 'short'
 
   namespace :api, defaults: { format: 'json' }, path: 'api' do
     scope module: :v1, constraints: ApiVersionConstraint.new(version: 1, default: true) do
