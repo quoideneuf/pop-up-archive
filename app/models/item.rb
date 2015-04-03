@@ -112,8 +112,6 @@ class Item < ActiveRecord::Base
 
   scope :publicly_visible, where(is_public: true)
 
-  serialize :extra, HstoreCoder
-
   delegate :title, to: :collection, prefix: true
 
   accepts_nested_attributes_for :contributions

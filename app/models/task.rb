@@ -1,7 +1,6 @@
 require 'utils'
 
 class Task < ActiveRecord::Base
-  serialize :extras, HstoreCoder
 
   attr_accessible :name, :extras, :owner_id, :owner_type, :status, :identifier, :type, :storage_id, :owner, :storage
   belongs_to :owner, polymorphic: true

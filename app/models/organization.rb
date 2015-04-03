@@ -12,8 +12,6 @@ class Organization < ActiveRecord::Base
 
   attr_accessible :name
 
-  serialize :transcript_usage_cache, HstoreCoder
-
   belongs_to :owner, class_name: 'User', foreign_key: 'owner_id'
 
   has_many :users

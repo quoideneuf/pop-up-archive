@@ -13,8 +13,6 @@ gem 'dalli'
 
 gem 'media_monster_client'
 gem 'pg'
-# gem 'activerecord-postgres-hstore', github: 'engageis/activerecord-postgres-hstore'
-gem 'activerecord-postgres-hstore'
 gem 'postgres_ext'
 gem 'acts_as_list'
 gem 'multi_json'
