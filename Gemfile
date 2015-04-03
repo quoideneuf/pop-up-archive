@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.0.0'
 
-gem 'rails', '~> 3.2.17'
+gem 'rails', '~> 4.1' 
 
 # Rails 4 pre-prep
 gem 'strong_parameters'
@@ -43,7 +43,7 @@ gem 'elasticsearch-model', '~> 0.1.6'
 gem 'elasticsearch-rails', '~> 0.1.6'
 
 # server-side templates
-gem 'slim-rails', '~> 1.0'
+gem 'slim-rails'
 gem 'rabl'
 
 # background processing
@@ -72,11 +72,11 @@ gem 'state_machine'
 
 gem 'doorkeeper', "~> 1.4.1"
 
-gem "acts_as_paranoid", "~> 0.4.2"
+gem "acts_as_paranoid"
 
 gem 'newrelic_rpm'
 
-gem 'feedzirra', github: 'pauldix/feedzirra'
+#gem 'feedzirra', github: 'pauldix/feedzirra'
 
 gem 'rolify', "~> 3.4.1"
 
@@ -122,7 +122,7 @@ gem 'ansi'
 
 group :assets do
   gem 'sprockets'
-  gem 'sass-rails', '~> 3.2'
+  gem 'sass-rails', '~> 5.0.3'
   gem 'uglifier', '>= 1.0.3'
   gem 'bootstrap-sass'
   gem 'angularjs-rails-resource', '~> 0.2.5'
