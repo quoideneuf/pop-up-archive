@@ -95,8 +95,9 @@ GEM
       activemodel (= 4.2.1)
       activesupport (= 4.2.1)
       arel (~> 6.0)
-    activerecord-postgres-hstore (0.6.0)
-      rails
+    activerecord-postgres-hstore (0.7.7)
+      activerecord (>= 3.1)
+      pg-hstore (>= 1.1.5)
       rake
     activesupport (4.2.1)
       i18n (~> 0.7)
@@ -478,6 +479,7 @@ GEM
     pb_core (0.1.6)
       sax-machine
     pg (0.18.1)
+    pg-hstore (1.2.0)
     pg_array_parser (0.0.9)
     phantomjs (1.9.8.0)
     poltergeist (1.6.0)
@@ -716,7 +718,7 @@ PLATFORMS
 DEPENDENCIES
   active_admin_sidebar
   activeadmin!
-  activerecord-postgres-hstore (~> 0.6.0)
+  activerecord-postgres-hstore
   acts_as_list
   acts_as_paranoid
   amara (~> 0.1.1)
