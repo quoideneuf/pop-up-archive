@@ -20,6 +20,9 @@ gem 'multi_json'
 gem 'decent_exposure', '~> 2.1.0'
 # gem 'decent_exposure', github: 'voxdolo/decent_exposure'
 
+# back compat with Rails 3
+gem 'protected_attributes'
+
 # login to prx.org using omniauth
 gem 'omniauth'
 gem 'omniauth-oauth2', '~> 1.1.0'
