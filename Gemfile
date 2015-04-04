@@ -74,7 +74,7 @@ gem "acts_as_paranoid"
 
 gem 'newrelic_rpm'
 
-#gem 'feedzirra', github: 'pauldix/feedzirra'
+gem 'feedjira'
 
 gem 'rolify', "~> 3.4.1"
 
