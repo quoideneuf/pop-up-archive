@@ -16,15 +16,11 @@ angular.module('Directory.faq.controllers', ['Directory.loader', 'Directory.user
 
 				{
 					question: "What is Pop Up Archive? Who is it for?",
-					answer: "Pop Up Archive is a platform of tools for organizing and searching digital spoken word. We process sound for a wide range of customers, from large archives and universities to media companies, radio stations, and podcast networks: if you’ve got recorded voices, we’ve got you. Drag and drop any audio file (or let us ingest your RSS, SoundCloud, or iTunes feed), and within minutes you’ll receive automatically generated transcripts and tags. By automatically extracting the information from audio, we help radio producers log raw tape, get audio stories online faster, optimize stations’ websites, and ensure that audio and video get indexed by Google for the most innovative digital media properties.",
+					answer: "Pop Up Archive is a platform of tools for organizing and searching digital spoken word. We process sound for a wide range of customers, from large archives and universities to media companies, radio stations, and podcast networks. Drag and drop any audio file (or let us ingest your RSS, SoundCloud, or iTunes feed), and within minutes receive automatically generated transcripts and tags. Pop Up Archive transcripts help producers log and search their raw tape, repurpose audio stories into text posts faster, add text content to stations’ websites, and ensure that audio and video get indexed by Google for the most innovative digital media properties.",
 				},
 				{
 					question: "How does Pop Up Archive compare to human transcription?",
 					answer: "The short answer is that automatic transcription is usually less accurate than human transcription. But getting verbatim human transcripts is expensive, slow and labor-intensive — and search engines don’t need perfect transcripts. There are ways to be smart about interpreting messy output, and to use that data to extract relevant keywords and metadata. It’s like magic: When you pair text content with timestamps, audio becomes browsable. Harnessed the right way, speech-to-text software means effortless access to crucial keywords and moments hidden deep within hours of content.",
-				},
-				{	
-					question: "What does it mean to 'search my sound?'",
-					answer: "In addition to our standard search bar, and the search bar for each collection, there is also a search bar for each individual audio item, so you can search for every time a word or phrase is mentioned within a single item."
 				},
 			]
 		},
@@ -33,8 +29,8 @@ angular.module('Directory.faq.controllers', ['Directory.loader', 'Directory.user
 			link: "transcripts",
 			questions: [
 				{
-					question: "What’s the difference between basic and premium transcripts?", 
-					answer: "First, here's all the good stuff you get with both: both basic and premium transcripts use automatic speech recognition software to create time-stamped text and keyword tags based on your audio. Generated in real time (e.g. a hour audio file will be processed in approximately one hour), both types of transcripts allow you to search broadly within your audio collections immediately after automatic processing. Although accuracy varies according to factors like audio quality, with our efficient transcript editing tools, even the most basic transcripts can save hours. Now for the differences: Unlike our basic transcripts, our premium transcripts require only minimal editing to get to publishable quality. These transcripts include significantly improved accuracy, speaker differentiation, punctuation and capitalization. In addition to this, premium transcripts generate more accurate automatic tags. You can use these tags to search for common themes in your collections, or even integrate them as automatic blog tags."
+					question: "What are premium transcripts?", 
+					answer: "Premium transcripts use automatic speech recognition software to create time-stamped text and keyword tags from audio. Other features include speaker differentiation (in beta), punctuation, and capitalization. The software is trained on a large corpus of broadcast and oral history voices, and is updated regularly for current names and vocabulary. Transcripts are generated in real time (e.g. a hour audio file will be processed in approximately one hour). Accuracy varies depending on factors like audio quality and speaker dialect, so often the best way to guage accuracy for your audio is to try it out for yourself."
 				},
 				{
 					question: "What languages and accents does Pop Up Archive support?",
