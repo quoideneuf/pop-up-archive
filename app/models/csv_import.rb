@@ -19,7 +19,7 @@ class CsvImport < ActiveRecord::Base
   has_many :rows, class_name: 'CsvRow', dependent: :destroy
   has_many :items, dependent: :destroy
 
-  has_many :mappings, order: "position", class_name:'ImportMapping', dependent: :destroy do
+  has_many :mappings, -> { order "position" }, { class_name:'ImportMapping', dependent: :destroy } do
     def [](index)
       conditions(['import_mappings.position = ?', index - 1]).limit(1).first
     end

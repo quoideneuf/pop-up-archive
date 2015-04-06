@@ -35,12 +35,12 @@ PopUpArchive::Application.routes.draw do
   get 'media/:token/:expires/:use/:class/:id/:name.:extension', controller: 'media', action: 'show', constraints: {name: /[^\/]+/}
   get 'media/:class/:idhex/:name.:extension', controller: 'media', action: 'permanent', constraints: {name: /[^\/]+/}
   
-  get 'embed_player/:name/:file_id/:item_id/:collection_id', to: 'embed_player', action: 'show'
+  get 'embed_player/:name/:file_id/:item_id/:collection_id', controller: 'embed_player', action: 'show'
 
-  get 'tplayer/:file_id',        to: 'embed_player', action: 'tplayer'
-  get 'tplayer/:file_id/:title', to: 'embed_player', action: 'tplayer'
+  get 'tplayer/:file_id',        controller: 'embed_player', action: 'tplayer'
+  get 'tplayer/:file_id/:title', controller: 'embed_player', action: 'tplayer'
 
-  get 'oembed', to: 'oembed', action: 'show'
+  get 'oembed', controller: 'oembed', action: 'show'
 
   post 'fixer_callback/:id', controller: 'callbacks', action: 'fixer', as: 'audio_file_fixer_callback', model_name: 'audio_file'
 
@@ -162,8 +162,8 @@ PopUpArchive::Application.routes.draw do
     mount Sidekiq::Web => '/admin/sidekiq'
   end
 
-  match '/api/*path', to: 'api/base#not_found'
-  match '*path', to: 'directory/dashboard#user'
-  root to: 'directory/dashboard#guest', constraints: GuestConstraint.new(true)
-  root to: 'directory/dashboard#user', constraints: GuestConstraint.new(false)
+  match '/api/*path', to: 'api/base#not_found', via: [:get, :post]
+  match '*path', to: 'directory/dashboard#user', via: [:get, :post]
+  match '*path', to: 'directory/dashboard#guest', constraints: GuestConstraint.new(true), via: [:get, :post]
+  match '*path', to: 'directory/dashboard#user', constraints: GuestConstraint.new(false), via: [:get, :post]
 end
