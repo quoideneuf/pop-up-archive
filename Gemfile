@@ -6,7 +6,6 @@ gem 'rails', '~> 4.1'
 
 # Rails 4 pre-prep
 gem 'strong_parameters'
-gem 'routing_concerns'
 gem 'etagger', github: 'rails/etagger'
 gem 'cache_digests'
 gem 'dalli'

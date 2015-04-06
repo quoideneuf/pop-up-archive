@@ -21,7 +21,7 @@ class Collection < ActiveRecord::Base
 
   validate :validate_storage
 
-  scope :is_public, where(items_visible_by_default: true)
+  scope :is_public, -> { where(items_visible_by_default: true) }
 
   before_validation :set_defaults
 

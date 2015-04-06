@@ -598,10 +598,6 @@ GEM
       netrc (~> 0.7)
     rmagick (2.14.0)
     rolify (3.4.1)
-    routing_concerns (0.1.0)
-      actionpack (>= 3.2.0)
-      activemodel (>= 3.2.0)
-      railties (>= 3.2.0)
     rspec (2.99.0)
       rspec-core (~> 2.99.0)
       rspec-expectations (~> 2.99.0)
@@ -806,7 +802,6 @@ DEPENDENCIES
   rest-client (~> 1.7.2)
   rmagick
   rolify (~> 3.4.1)
-  routing_concerns
   rspec-mocks
   rspec-rails (~> 2.4)
   ruby_gntp

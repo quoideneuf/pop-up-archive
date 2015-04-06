@@ -99,22 +99,23 @@ class Item < ActiveRecord::Base
   has_many   :contributors, through: :contributions, source: :person
 
   has_many   :entities, dependent: :destroy
-  has_many   :confirmed_entities, class_name: 'Entity', conditions: {is_confirmed: true}
-  has_many   :unconfirmed_entities, class_name: 'Entity', conditions: Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false))
-  has_many   :high_scoring_entities, class_name: 'Entity', conditions: Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].gteq(0.95))
-  has_many   :middle_scoring_entities, class_name: 'Entity', conditions: Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].gt(0.75).and(Entity.arel_table[:score].lt(0.95)))
-  has_many   :low_scoring_entities, class_name: 'Entity', conditions: Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].lteq(0.75).or(Entity.arel_table[:score].eq(nil)))
+  has_many   :confirmed_entities, -> { where is_confirmed: true }, class_name: 'Entity'
+  has_many   :unconfirmed_entities, -> { where Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)) }, class_name: 'Entity'
+  has_many   :high_scoring_entities, -> { where ntity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].gteq(0.95)) }, class_name: 'Entity'
+  has_many   :middle_scoring_entities, -> { where Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].gt(0.75).and(Entity.arel_table[:score].lt(0.95))) }, class_name: 'Entity'
+  has_many   :low_scoring_entities, -> { where Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].lteq(0.75).or(Entity.arel_table[:score].eq(nil))) }, class_name: 'Entity'
 
   STANDARD_ROLES.each do |role|
-    has_many "#{role}_contributions".to_sym, class_name: "Contribution", conditions: {role: role}
+    has_many "#{role}_contributions".to_sym, -> { where role: role }, class_name: "Contribution"
     has_many role.pluralize.to_sym, through: "#{role}_contributions".to_sym, source: :person
   end
 
-  scope :publicly_visible, where(is_public: true)
+  scope :publicly_visible, -> { where(is_public: true) }
 
   delegate :title, to: :collection, prefix: true
 
-  accepts_nested_attributes_for :contributions
+  # TODO fix this for Rails 4
+  #accepts_nested_attributes_for :contributions
 
   def duration
     read_attribute(:duration) || audio_files.inject(0){|s,a| s + a.duration.to_i}

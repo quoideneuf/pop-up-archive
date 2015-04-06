@@ -27,7 +27,7 @@ class AudioFile < ActiveRecord::Base
 
   attr_accessor :should_trigger_fixer_copy
 
-  default_scope order('"audio_files".created_at ASC')
+  default_scope -> { order('"audio_files".created_at ASC') }
 
   delegate :collection_title, to: :item
 
