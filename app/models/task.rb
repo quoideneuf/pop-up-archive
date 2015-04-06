@@ -15,13 +15,13 @@ class Task < ActiveRecord::Base
   MAX_WORKTIME = 60 * 60 * 4  # 4 hours, expressed in seconds
   RETRY_DELAY  = 900          # 15 minutes, expressed in seconds
 
-  scope :incomplete, where('status not in (?)', [COMPLETE, CANCELLED])
-  scope :unfinished, where('status not in (?)', [COMPLETE, CANCELLED])
-  scope :valid, where('status not in (?)', [CANCELLED])
+  scope :incomplete, -> { where('status not in (?)', [COMPLETE, CANCELLED]) }
+  scope :unfinished, -> { where('status not in (?)', [COMPLETE, CANCELLED]) }
+  scope :valid,      -> { where('status not in (?)', [CANCELLED]) }
 
   # convenient scopes for subclass types
   [:add_to_amara, :analyze_audio, :analyze, :copy, :detect_derivatives, :order_transcript, :transcode, :transcribe, :upload, :speechmatics_transcribe].each do |task_subclass|
-    scope task_subclass, where('type = ?', "Tasks::#{task_subclass.to_s.camelize}Task")
+    scope task_subclass, -> { where('type = ?', "Tasks::#{task_subclass.to_s.camelize}Task") }
   end
 
   # we need to retain the storage used to kick off the process

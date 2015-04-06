@@ -14,7 +14,7 @@ class AudioFile < ActiveRecord::Base
   belongs_to :user
   belongs_to :instance
   has_many :tasks, as: :owner
-  has_many :transcripts, order: 'created_at desc'
+  has_many :transcripts, -> { order 'created_at desc' }
 
   belongs_to :storage_configuration, class_name: "StorageConfiguration", foreign_key: :storage_id
 
