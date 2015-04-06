@@ -101,7 +101,7 @@ class Item < ActiveRecord::Base
   has_many   :entities, dependent: :destroy
   has_many   :confirmed_entities, -> { where is_confirmed: true }, class_name: 'Entity'
   has_many   :unconfirmed_entities, -> { where Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)) }, class_name: 'Entity'
-  has_many   :high_scoring_entities, -> { where ntity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].gteq(0.95)) }, class_name: 'Entity'
+  has_many   :high_scoring_entities, -> { where Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].gteq(0.95)) }, class_name: 'Entity'
   has_many   :middle_scoring_entities, -> { where Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].gt(0.75).and(Entity.arel_table[:score].lt(0.95))) }, class_name: 'Entity'
   has_many   :low_scoring_entities, -> { where Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].lteq(0.75).or(Entity.arel_table[:score].eq(nil))) }, class_name: 'Entity'
 
