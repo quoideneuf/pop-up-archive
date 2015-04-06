@@ -5,7 +5,6 @@ ruby '2.0.0'
 gem 'rails', '~> 4.1' 
 
 # Rails 4 pre-prep
-gem 'strong_parameters'
 gem 'etagger', github: 'rails/etagger'
 gem 'cache_digests'
 gem 'dalli'
@@ -138,6 +137,7 @@ group :development do
 group :development, :test do
   gem 'rspec-rails', '~> 2.4'
   gem 'rspec-mocks'
+  gem 'rspec-its'
   gem 'database_cleaner'
   gem 'listen'
   gem 'terminal-notifier-guard'

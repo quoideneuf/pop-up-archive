@@ -17,6 +17,7 @@ require "rails/application"
 require 'factory_girl'
 require 'rspec/rails'
 require 'rspec/mocks'
+require 'rspec/its'
 require 'capybara/rspec'
 require 'capybara/rails'
 require 'capybara/poltergeist'
