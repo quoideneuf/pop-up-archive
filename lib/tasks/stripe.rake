@@ -1,5 +1,23 @@
 namespace :stripe do
 
+  desc "prints subscription billing date for all Users"
+  task subscription_start_date: [:environment] do
+    days_of_month = {}
+    User.all.each do |user|
+      #puts user.customer.stripe_customer
+      start = nil 
+      begin
+        start = Time.at user.customer.stripe_subscription.start
+      rescue => e
+        puts e
+      end 
+      next unless start
+      days_of_month[start.day] = 0 unless days_of_month[start.day]
+      days_of_month[start.day] += 1
+    end 
+    pp days_of_month
+  end
+
   desc "set subscription_start_day"
   task set_subscription_start_day: [:environment] do
     User.all.each do |user|

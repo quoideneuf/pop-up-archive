@@ -247,6 +247,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.callEditor = function() {
     $scope.$broadcast('CallEditor');
+    mixpanel.track("Edit Transcript",{"Item": $scope.item.title});
     $scope.editTable = true;
   };
 
@@ -501,14 +502,35 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         inputField.after('<span class="help-inline">Fix the URL</span>');
         return;
       }
-
-      // looks ok. go ahead and add it.
-      inputField.val(''); // clear field for re-use
-      if (!$scope.remoteFileUrls) {
-        $scope.remoteFileUrls = [];
+      var contentType;
+      var extPattern = /\.(aac|aif|aiff|alac|flac|m4a|m4p|mp2|mp3|mp4|ogg|raw|spx|wav|wma)$/
+      if (!remoteFileUrl.match(extPattern)) {
+        $http.post(
+          '/headcheck',
+          {url: remoteFileUrl}
+        ).success(function(data) {
+          contentType = data["content-type"];
+          if (!contentType.match(/audio/)) {
+            inputField.closest('.control-group').addClass('error');
+            inputField.after('<span class="help-inline">Not a valid audio link</span>');
+            return;
+          } else {
+            inputField.val(''); // clear field for re-use
+            if (!$scope.remoteFileUrls) {
+              $scope.remoteFileUrls = [];
+            }
+            $scope.remoteFileUrls.push( remoteFileUrl );
+          }
+        });
+      } else {
+        // looks ok. go ahead and add it.
+        inputField.val(''); // clear field for re-use
+        if (!$scope.remoteFileUrls) {
+          $scope.remoteFileUrls = [];
+        }
+        $scope.remoteFileUrls.push( remoteFileUrl );
+        //console.log('remoteFileUrls now:', $scope.remoteFileUrls);
       }
-      $scope.remoteFileUrls.push( remoteFileUrl );
-      //console.log('remoteFileUrls now:', $scope.remoteFileUrls);
     }
 
   };

@@ -72,6 +72,9 @@ class CallbacksController < ApplicationController
       # nullify the cached subscription_plan_id for the user so it gets re-cached on next access
       user.subscription_plan_id = nil
       user.save!
+      
+      # log it
+      MixpanelWorker.perform_async(stripe_event[:type], { customer_id: user.customer_id, event_id: stripe_event[:id] })
 
     else
       Rails.logger.warn("Got stripe callback for non-existent user.customer_id #{cust_id}")

@@ -188,6 +188,13 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
     render json: result
   end
 
+  def head_check
+    url = params[:url]
+    head = HTTParty.head(url, :method => "JSONP")
+    type = head["content-type"] || head.headers["content-type"] || "unknown"
+    render json: {"content-type" => type}
+  end
+
   protected
 
   def upload_identifier(options=nil)

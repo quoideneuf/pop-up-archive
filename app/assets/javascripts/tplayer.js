@@ -216,7 +216,7 @@ PUATPlayer.prototype = {
       var idx    = parseInt(row.data("idx"), 10);
       var modal  = $(this);
       var hms    = self.secsToHMS(offset);
-      var lnk    = window.shortURL + '/collections/' + collId + '/items/' + itemId;
+      var lnk    = window.shortURL + '/t/' + itemId;
       var lnkWithOffset = lnk + '/' + offset;
       var tweetStr = row.find(".text").html().trim();
       if ($(".pua-tplayer-text[data-idx='"+(idx+1)+"']").length !== 0) {

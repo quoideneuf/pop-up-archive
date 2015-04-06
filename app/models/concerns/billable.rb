@@ -394,4 +394,23 @@ module Billable
     end
   end
 
+  def is_within_sight_of_monthly_limit?
+    summ      = self.entity.usage_summary
+    threshold = (plan.hours * 0.85).to_f
+    if summ[:this_month][:hours] > threshold
+      return true
+    else
+      return false
+    end
+  end
+
+  def send_usage_alert
+    subject = 'ALERT: Your Pop Up Archive usage is nearing its limit'
+    summ = self.entity.usage_summary
+    plan_hours = plan.hours
+    body    = sprintf("You have used %d (%d%%) of your monthly limit of %d hours.", \
+                summ[:this_month][:hours], ((summ[:this_month][:hours] / plan_hours) * 100), plan_hours)
+    MyMailer.usage_alert(subject, body, self.entity.owner.email).deliver
+  end
+
 end
