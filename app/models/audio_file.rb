@@ -226,7 +226,7 @@ class AudioFile < ActiveRecord::Base
     return if !self.transcoded? and storage.at_internet_archive?
     result = nil
     if !force
-      if task = (tasks.analyze_audio.valid.pop || tasks.select { |t| t.type == "Tasks::AnalyzeAudioTask" && !t.cancelled? }.pop)
+      if task = (tasks.analyze_audio.valid.last || tasks.select { |t| t.type == "Tasks::AnalyzeAudioTask" && !t.cancelled? }.pop)
         logger.warn "AudioFile #{self.id} already has analyze_audio task #{task.id}"
         return nil
       end
@@ -254,7 +254,7 @@ class AudioFile < ActiveRecord::Base
       options[:extras]['amara_team'] = user.organization.amara_team
     end
 
-    if task = (tasks.add_to_amara.valid.pop || tasks.select { |t| t.type == "Tasks::AddToAmaraTask" && !t.cancelled? }.pop)
+    if task = (tasks.add_to_amara.valid.last || tasks.select { |t| t.type == "Tasks::AddToAmaraTask" && !t.cancelled? }.pop)
       logger.warn "AddToAmaraTask already exists #{task.id} for audio_file #{self.id}"
     else
       task = Tasks::AddToAmaraTask.new(options)
@@ -301,7 +301,7 @@ class AudioFile < ActiveRecord::Base
   def start_premium_transcribe_job(user, identifier, options={})
     return if (duration.to_i <= 0)
 
-    if task = (tasks.speechmatics_transcribe.valid.pop || tasks.select { |t| t.type == "Tasks::SpeechmaticsTranscribeTask" && !t.cancelled? }.pop)
+    if task = (tasks.speechmatics_transcribe.valid.last || tasks.select { |t| t.type == "Tasks::SpeechmaticsTranscribeTask" && !t.cancelled? }.pop)
       logger.warn "speechmatics transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
       task
     else
@@ -315,7 +315,7 @@ class AudioFile < ActiveRecord::Base
   def start_transcribe_job(user, identifier, options={})
     extras = { 'original' => process_file_url, 'user_id' => user.try(:id) }.merge(options)
 
-    if task = (tasks.transcribe.valid.where(identifier: identifier).pop || tasks.select { |t| t.type == "Tasks::TranscribeTask" && t.identifier == identifier && !t.cancelled? }.pop)
+    if task = (tasks.transcribe.valid.where(identifier: identifier).last || tasks.select { |t| t.type == "Tasks::TranscribeTask" && t.identifier == identifier && !t.cancelled? }.pop)
       logger.warn "transcribe task #{identifier} #{task.id} already exists for audio file #{self.id}"
     else
       self.tasks << Tasks::TranscribeTask.new( identifier: identifier, extras: extras )
@@ -324,7 +324,7 @@ class AudioFile < ActiveRecord::Base
   
   def order_transcript(user=self.user)
     raise 'cannot create transcript when duration is 0' if (duration.to_i <= 0)
-    if task = (tasks.order_transcript.valid.where(identifier: 'order_transcript').pop || tasks.select { |t| t.type == "Tasks::OrderTranscriptTask" && t.identifier == 'order_transcript' && !t.cancelled? }.pop)
+    if task = (tasks.order_transcript.valid.where(identifier: 'order_transcript').last || tasks.select { |t| t.type == "Tasks::OrderTranscriptTask" && t.identifier == 'order_transcript' && !t.cancelled? }.pop)
       logger.warn "order_transcript task #{task.id} already exists for audio file #{self.id}"
     else
       task = Tasks::OrderTranscriptTask.new(
@@ -346,7 +346,7 @@ class AudioFile < ActiveRecord::Base
       AudioFileUploader.version_formats.each do |label, info|
         next if (label == filename_extension) # skip this version if that is already the file's format
         #log and skip if transcode task already exists
-        if task = (tasks.transcode.valid.where(identifier: "#{label}_transcode").pop || tasks.select { |t| t.type == "Tasks::TranscodeTask" && t.identifier == "#{label}_transcode" && !t.cancelled? }.pop)
+        if task = (tasks.transcode.valid.where(identifier: "#{label}_transcode").last || tasks.select { |t| t.type == "Tasks::TranscodeTask" && t.identifier == "#{label}_transcode" && !t.cancelled? }.pop)
           logger.warn "transcode task #{identifier} #{task.id} already exists for audio file #{self.id}"
           task
         else
