@@ -118,6 +118,7 @@ class Task < ActiveRecord::Base
     self.extras        = HashWithIndifferentAccess.new unless extras
     self.storage_id    = owner.storage.id if (!storage_id && owner && owner.storage)
     self.extras['cbt'] = self.extras['cbt'] || SecureRandom.hex(8)
+    self.status        = CREATED
   end
 
   def call_back_token
