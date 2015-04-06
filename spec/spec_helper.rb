@@ -83,6 +83,9 @@ RSpec.configure do |config|
   config.include Capybara::DSL
   config.mock_with :rspec
   config.use_transactional_fixtures = true
+  config.infer_spec_type_from_file_location!
+
+  config.raise_errors_for_deprecations!  # catastrophe is a Good Thing
 
   config.include Devise::TestHelpers, type: :controller
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f }
