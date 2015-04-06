@@ -71,7 +71,7 @@ gem 'state_machine'
 
 gem 'doorkeeper', "~> 1.4.1"
 
-gem "acts_as_paranoid", github: 'ActsAsParanoid/acts_as_paranoid'
+gem "acts_as_paranoid", github: 'pkarman/acts_as_paranoid'
 
 gem 'newrelic_rpm'
 

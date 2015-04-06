@@ -1,12 +1,4 @@
 GIT
-  remote: git://github.com/ActsAsParanoid/acts_as_paranoid.git
-  revision: ddcd1915179c73f74985af6bc8935321ca2fe08d
-  specs:
-    acts_as_paranoid (0.5.0.beta1)
-      activerecord (~> 4.0)
-      activesupport (~> 4.0)
-
-GIT
   remote: git://github.com/PRX/omniauth-prx.git
   revision: 3a1cb3038a036a52a2974b7de167305dc62452c0
   specs:
@@ -38,6 +30,14 @@ GIT
   specs:
     mini_magick (3.3)
       subexec (~> 0.1.0)
+
+GIT
+  remote: git://github.com/pkarman/acts_as_paranoid.git
+  revision: 0acc91c0a39ddcd6d56f686e0c0b1c845673ef06
+  specs:
+    acts_as_paranoid (0.5.0.beta1)
+      activerecord (~> 4.0)
+      activesupport (~> 4.0)
 
 GIT
   remote: git://github.com/popuparchive/speechmatics.git
