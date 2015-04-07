@@ -61,7 +61,7 @@ describe Api::V1::AudioFilesController do
     end
     
     it 'listens' do
-      put 'listens', :id => @audio_file.id, :item_id => @audio_file.item.id
+      put 'listens', :audio_file_id => @audio_file.id, :item_id => @audio_file.item_id
       response.should be_success
     end      
 
