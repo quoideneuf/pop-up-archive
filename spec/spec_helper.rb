@@ -88,18 +88,18 @@ RSpec.configure do |config|
   config.raise_errors_for_deprecations!  # catastrophe is a Good Thing
 
   # back-compat for our version-2-era tests
-  config.expect_with(:rspec) { |c| c.syntax = :should }
+  config.expect_with(:rspec) { |c| c.syntax = [:should, :expect] }
 
   config.include Devise::TestHelpers, type: :controller
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f }
   FactoryGirl.reload
 
-  config.before :suite, elasticsearch: true do
+  config.before :suite do
     seed_test_db
     start_es_server unless ENV['ES_SKIP']
   end
 
-  config.after :suite, elasticsearch: true do
+  config.after :suite do
     stop_es_server unless ENV['ES_SKIP']
   end
 
