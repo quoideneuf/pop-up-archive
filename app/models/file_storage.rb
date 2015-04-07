@@ -101,7 +101,7 @@ module FileStorage
 
   def create_copy_task(orig, dest, stor)
     # see if there is already a copy task
-    if task = (tasks.copy.valid.where(identifier: dest).pop || tasks.select { |t| t.type = "Tasks::CopyTask" && !t.cancelled? && t.identifier == dest }.pop)
+    if task = (tasks.copy.valid.where(identifier: dest).last || tasks.select { |t| t.type = "Tasks::CopyTask" && !t.cancelled? && t.identifier == dest }.pop)
       logger.debug "copy task #{task.id} already exists for file #{self.class.name}:#{self.id}"
     else
 
