@@ -60,6 +60,12 @@ module PopUpArchive
     # rails 5 behavior
     config.active_record.raise_in_transactional_callbacks = true
 
+    # rails 3 behavior.
+    # NOTE this is less secure but would require lots of new controller-level code,
+    # and we already use protected_attributes gem at the model level.
+    # TODO this will need to change in Rails 5.
+    config.action_controller.permit_all_parameters = true
+
     # Enable the asset pipeline
     config.assets.enabled = true
 
