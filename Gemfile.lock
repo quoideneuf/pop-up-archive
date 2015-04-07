@@ -40,6 +40,18 @@ GIT
       activesupport (~> 4.0)
 
 GIT
+  remote: git://github.com/pkarman/amara.git
+  revision: e29469306dd93294c0115d6c8cf74ebb26e094d7
+  specs:
+    amara (0.1.1)
+      activesupport
+      excon
+      faraday
+      faraday_middleware
+      hashie
+      multi_json
+
+GIT
   remote: git://github.com/popuparchive/speechmatics.git
   revision: 135378c0d3f0be17666649ad7ca2c84b2428fb1f
   specs:
@@ -111,13 +123,6 @@ GEM
       tzinfo (~> 1.1)
     acts_as_list (0.6.0)
       activerecord (>= 3.0)
-    amara (0.1.1)
-      activesupport
-      excon
-      faraday
-      faraday_middleware
-      hashie
-      multi_json
     ansi (1.5.0)
     arbre (1.0.3)
       activesupport (>= 3.0.0)
@@ -726,7 +731,7 @@ DEPENDENCIES
   activeadmin!
   acts_as_list
   acts_as_paranoid!
-  amara (~> 0.1.1)
+  amara!
   ansi
   autoscaler (~> 0.2.0)
   better_errors

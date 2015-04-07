@@ -88,14 +88,11 @@ gem 'sanitize'
 
 gem 'soundcloud'
 
-gem 'amara', "~> 0.1.1"
+gem 'amara', github: 'pkarman/amara'
 
 gem 'speechmatics', github: 'popuparchive/speechmatics'
 
 gem 'prerender_rails'
-
-# gem 'amara', :path => '../amara'
-# gem 'amara', github: 'PRX/amara'
 
 gem 'countries'
 gem 'language_list'
