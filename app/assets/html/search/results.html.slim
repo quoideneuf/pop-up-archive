@@ -9,7 +9,7 @@ ul.pager
       ul.inline.tags
         li.label ng-repeat="part in query.queryParts"
           | {{part | queryPartHumanReadable }}
-          i.fa.fa-remove-sign ng-click="query.remove(part)"
+          i.fa.fa-times-circle ng-click="query.remove(part)"
   li.next ng-class="{disabled:!search.hasMoreResults()}"
     a ng-click="!search.hasMoreResults() || nextPage()" href="#" Next &rarr;
 .row

@@ -67,7 +67,7 @@ section ng-controller="ItemFormCtrl"
                 td.file-size {{readableFileSize(audioFile.size)}}
                 td.file-remove
                   a href="#" ng-click="removeAudioFile(audioFile)" style='text-decoration: none; color: #da4f49;'
-                    i.fa.fa-remove-sign
+                    i.fa.fa-times-circle
             
           / p.alert.alert-info.pull-right 
           /   i.fa.fa-star-empty
@@ -89,7 +89,7 @@ section ng-controller="ItemFormCtrl"
                 td.file-name {{remoteFileUrl}}
                 td.file-remove
                   a href="#" ng-click="removeRemoteUrl(remoteFileUrl)" style='text-decoration: none; color: #da4f49;'
-                    i.fa.fa-remove-sign
+                    i.fa.fa-times-circle
           .clearfix.controls.remote-item
             input.text.input.remote-item-url type='text' placeholder="Insert Url"
             span.pull-right 
@@ -174,7 +174,7 @@ section ng-controller="ItemFormCtrl"
                 td.file-size {{readableFileSize(image.size)}}
                 td.file-remove
                   a href="#" ng-click="removeImageFile(image)" style='text-decoration: none; color: #da4f49;'
-                    i.fa.fa-remove-sign
+                    i.fa.fa-times-circle
           .clearfix.controls.control-group
             button.btn file-button="setImageFiles" Choose Images
             span &nbsp OR &nbsp
