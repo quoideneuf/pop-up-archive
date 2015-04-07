@@ -365,7 +365,7 @@ class AudioFile < ActiveRecord::Base
       return
     end
 
-    if task = (tasks.detect_derivatives.valid.where(identifier: 'detect_derivatives').pop || tasks.select { |t| t.type == "Tasks::DetectDerivativesTask" && t.identifier != 'detect_derivatives' && !t.cancelled? }.pop)
+    if task = (tasks.detect_derivatives.valid.where(identifier: 'detect_derivatives').last || tasks.select { |t| t.type == "Tasks::DetectDerivativesTask" && t.identifier != 'detect_derivatives' && !t.cancelled? }.pop)
       logger.warn "detect_derivatives task #{task.id} already exists for audio_file #{self.id}"
       return
     end
