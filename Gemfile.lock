@@ -752,7 +752,7 @@ DEPENDENCIES
   decent_exposure
   devise (~> 3.4.1)
   devise_invitable!
-  doorkeeper (~> 1.4.1)
+  doorkeeper (~> 1.4.2)
   elasticsearch-extensions
   elasticsearch-model (~> 0.1.6)
   elasticsearch-rails (~> 0.1.6)

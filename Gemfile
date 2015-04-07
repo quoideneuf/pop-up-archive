@@ -74,7 +74,7 @@ gem 'chronic'
 
 gem 'state_machine'
 
-gem 'doorkeeper', "~> 1.4.1"
+gem 'doorkeeper', "~> 1.4.2"
 
 gem "acts_as_paranoid", github: 'pkarman/acts_as_paranoid'
 
