@@ -89,6 +89,9 @@ RSpec.configure do |config|
 
   # back-compat for our version-2-era tests
   config.expect_with(:rspec) { |c| c.syntax = [:should, :expect] }
+  config.mock_with :rspec do |mocks|
+    mocks.syntax = [:should, :expect]
+  end
 
   config.include Devise::TestHelpers, type: :controller
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f }
