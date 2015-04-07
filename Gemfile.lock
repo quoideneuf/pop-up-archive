@@ -684,7 +684,7 @@ GEM
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
     state_machine (1.2.0)
-    stripe (1.20.4)
+    stripe (1.20.1)
       json (~> 1.8.1)
       mime-types (>= 1.25, < 3.0)
       rest-client (~> 1.4)
@@ -822,8 +822,8 @@ DEPENDENCIES
   speechmatics!
   spring
   state_machine
-  stripe (>= 1.15.0)
-  stripe-ruby-mock (~> 2.0.5)
+  stripe (= 1.20.1)
+  stripe-ruby-mock
   switch_user
   terminal-notifier-guard
   test_after_commit

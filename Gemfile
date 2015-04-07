@@ -97,7 +97,7 @@ gem 'prerender_rails'
 gem 'countries'
 gem 'language_list'
 
-gem 'stripe', '>= 1.15.0'
+gem 'stripe', '= 1.20.1'
 
 gem 'redis-namespace', '>= 1.3.1'
 gem 'redis-rails'
@@ -159,7 +159,7 @@ group :test do
   gem 'capybara'
   gem 'poltergeist'
   gem 'shoulda-matchers'
-  gem 'stripe-ruby-mock', '~> 2.0.5', require: 'stripe_mock'
+  gem 'stripe-ruby-mock', require: 'stripe_mock'
   gem 'simplecov'
   gem 'coveralls'
   gem 'elasticsearch-extensions'
