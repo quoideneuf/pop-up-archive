@@ -76,7 +76,7 @@ class Tasks::AddToAmaraTask < Task
         notify_user
       end
     rescue Exception => err
-      self.extras[:error] = "#{err}"
+      self.extras['error'] = "#{err}"
       self.cancel!
     end
   end
@@ -204,7 +204,7 @@ class Tasks::AddToAmaraTask < Task
 
   def recover!
     if !self.owner
-      self.extras[:error] = 'No owner/audio_file'
+      self.extras['error'] = 'No owner/audio_file'
       self.cancel!
     else
       self.finish!

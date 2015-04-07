@@ -49,7 +49,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       # save the speechmatics job reference
       self.extras['job_id'] = info.id
       # if we previously had an error, zap it
-      if self.extras[:error] == "No Speechmatics job_id found"
+      if self.extras['error'] == "No Speechmatics job_id found"
         self.extras.delete(:error)
       end
       self.status = :working
@@ -137,7 +137,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
     # easy cases first.
     if !owner
-      self.extras[:error] = "No owner/audio_file found"
+      self.extras['error'] = "No owner/audio_file found"
       cancel!
       return
 
@@ -149,7 +149,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     elsif !self.extras['job_id']
       # try to look it up, one last time
       if !self.lookup_sm_job_by_name
-        self.extras[:error] = "No Speechmatics job_id found"
+        self.extras['error'] = "No Speechmatics job_id found"
         cancel!
         return
       end
@@ -162,7 +162,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
     # cancel any rejected jobs.
     if self.extras['sm_job_status'] == 'rejected'
-      self.extras[:error] = 'Speechmatics job rejected'
+      self.extras['error'] = 'Speechmatics job rejected'
       cancel!
       return
     end
@@ -214,7 +214,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       self.extras[:transcript_id] = new_trans.id
 
       # if we previously had an error, zap it
-      if self.extras[:error]
+      if self.extras['error']
         self.extras.delete(:error)
       end
 
