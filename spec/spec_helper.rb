@@ -87,6 +87,9 @@ RSpec.configure do |config|
 
   config.raise_errors_for_deprecations!  # catastrophe is a Good Thing
 
+  # back-compat for our version-2-era tests
+  config.expect_with(:rspec) { |c| c.syntax = :should }
+
   config.include Devise::TestHelpers, type: :controller
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f }
   FactoryGirl.reload
