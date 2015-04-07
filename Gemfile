@@ -4,6 +4,12 @@ ruby '2.0.0'
 
 gem 'rails', '~> 4.1' 
 
+#gem 'sass-rails'
+#gem 'uglifier'
+#gem 'coffee-rails'
+#gem 'bootstrap-sass'
+gem 'bootstrap_form'
+
 # Rails 4 pre-prep
 gem 'etagger', github: 'rails/etagger'
 gem 'cache_digests'
@@ -15,7 +21,7 @@ gem 'postgres_ext'
 gem 'acts_as_list'
 gem 'multi_json'
 
-gem 'decent_exposure', '~> 2.1.0'
+gem 'decent_exposure'
 # gem 'decent_exposure', github: 'voxdolo/decent_exposure'
 
 # back compat with Rails 3
@@ -30,7 +36,6 @@ gem 'omniauth-facebook'
 gem 'devise', '~> 3.4.1'
 gem 'devise_invitable', github: 'scambra/devise_invitable'
 gem 'switch_user'
-gem 'bootstrap_form'
 gem 'cancan'
 
 # require a new enough rest-client on behalf of other gems that use it
@@ -135,7 +140,7 @@ group :development do
  end
 
 group :development, :test do
-  gem 'rspec-rails', '~> 2.4'
+  gem 'rspec-rails', '~> 3.1'
   gem 'rspec-mocks'
   gem 'rspec-its'
   gem 'database_cleaner'
