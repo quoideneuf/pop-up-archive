@@ -86,7 +86,7 @@ gem 'soundcloud'
 
 gem 'amara', "~> 0.1.1"
 
-gem 'speechmatics', github: 'popuparchive/speechmatics'
+gem 'speechmatics', github: 'popuparchive/speechmatics', :branch => 'rails3'
 
 gem 'prerender_rails'
 

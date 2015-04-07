@@ -43,6 +43,7 @@ GIT
 GIT
   remote: git://github.com/popuparchive/speechmatics.git
   revision: 135378c0d3f0be17666649ad7ca2c84b2428fb1f
+  branch: rails3
   specs:
     speechmatics (0.1.1)
       activesupport
@@ -342,7 +343,7 @@ GEM
       oauth
     method_source (0.8.2)
     mime-types (1.25.1)
-    mimemagic (0.2.1)
+    mimemagic (0.3.0)
     mixpanel-ruby (1.4.0)
     multi_json (1.5.1)
     multi_xml (0.5.4)
