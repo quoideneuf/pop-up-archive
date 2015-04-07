@@ -68,7 +68,7 @@ describe Tasks::AddToAmaraTask do
   end
 
   it 'should add subtitles' do
-    Amara::API.any_instance.stub(:request).and_return({})
+    allow_any_instance_of(Amara::API).to receive(:request).and_return({})
     @task.add_subtitles
   end
 
