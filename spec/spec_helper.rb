@@ -91,6 +91,7 @@ RSpec.configure do |config|
   config.expect_with(:rspec) { |c| c.syntax = [:should, :expect] }
   config.mock_with :rspec do |mocks|
     mocks.syntax = [:should, :expect]
+    mocks.verify_partial_doubles = true
   end
 
   config.include Devise::TestHelpers, type: :controller
