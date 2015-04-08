@@ -9,7 +9,7 @@ if ENV['BONSAI_URL'] || ENV['ELASTICSEARCH_URL']
 end
 
 if Rails.env.test?
-  es_url = "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9250)}"
+  es_url = "http://localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9250)}"
 end
 
 # make sure we set all ENV the same, for backcompat with
