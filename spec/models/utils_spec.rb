@@ -17,7 +17,7 @@ describe Utils do
   end
 
   it "checks http resource and retries" do
-    Utils.http_resource_exists?('http://www.prx.org/noway.txt', 2).should be_false
+    Utils.http_resource_exists?('http://www.prx.org/noway.txt', 2).should be_falsey
   end
 
   it "downloads a public file to tmp file" do

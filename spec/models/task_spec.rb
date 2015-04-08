@@ -60,7 +60,7 @@ describe Task do
 
     # it "should not update from fixer without call_back_token" do
     #   params = {"call_back"=>"https://www.popuparchive.com/api/items/6841/audio_files/9503", "id"=>171851, "label"=>@task.id.to_s, "options"=>nil, "result"=>nil, "task_type"=>"analyze", "result_details"=>{"status"=>"complete", "message"=>"analysis complete", "info"=>{"size"=>517115014, "content_type"=>"audio/vnd.wave", "channel_mode"=>"Mono", "bit_rate"=>705, "length"=>5862, "sample_rate"=>44100}, "logged_at"=>"2013-11-11T15:34:21Z"}, "job"=>{"id"=>151217, "job_type"=>"audio", "original"=>"s3://production.popuparchive.prx.org/jack110413-lees4interview-wav.rzFZWG.popuparchive.org/JACK110413_Lees4interview.WAV", "status"=>"created"}}
-    #   @task.update_from_fixer(params).should be_false
+    #   @task.update_from_fixer(params).should be_falsey
     #   @task.results.should_not eq params["result_details"]
     # end
 
