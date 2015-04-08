@@ -85,8 +85,6 @@ describe CsvImport do
     attr_reader :analyzed_import
 
     before :all do
-      allow_any_instance_of(Tasks::TranscodeTask).to receive(:create_job).and_return(12345)
-
       @analyzed_import = FactoryGirl.create :csv_import
       analyzed_import.analyze!
     end
