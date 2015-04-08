@@ -141,7 +141,7 @@ describe Tasks::SpeechmaticsTranscribeTask do
 
       data_file = task.download_audio_file
       data_file.should_not be_nil
-      data_file.is_a?(File).should be_true
+      data_file.is_a?(File).should be_truthy
     end
 
     it "makes callback url" do
