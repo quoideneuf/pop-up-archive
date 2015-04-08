@@ -82,7 +82,7 @@ class Tasks::AddToAmaraTask < Task
   end
 
   def notify_user
-    TranscriptCompleteMailer.new_amara_transcript(user, audio_file, audio_file.item).deliver
+    TranscriptCompleteMailer.new_amara_transcript(user, audio_file, audio_file.item).deliver_now
   end
 
   def get_latest_subtitles
