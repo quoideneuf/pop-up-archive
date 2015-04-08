@@ -245,7 +245,7 @@ describe AudioFile do
       @audio_file.duration = 100
       task = @audio_file.order_premium_transcript(new_user)
       @audio_file.tasks.size.should == 1
-      task.extras['ondemand'].should == true
+      task.extras['ondemand'].should == "true"
     end
 
   end
