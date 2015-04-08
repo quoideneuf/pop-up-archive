@@ -200,7 +200,7 @@ class Tasks::TranscribeTask < Task
 
   def save_transcript(trans)
     # don't save this one if it is less time
-    if audio_file.transcripts.where("language = ? AND end_time > ?", trans.language, trans.end_time).exists?
+    if audio_file.transcripts.where("transcripts.language = ? AND transcripts.end_time > ?", trans.language, trans.end_time).exists?
       logger.error "Not saving transcript for audio_file: #{audio_file.id} b/c end time is earlier: #{trans.end_time}"
       return nil
     end
