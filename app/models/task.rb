@@ -29,7 +29,7 @@ class Task < ActiveRecord::Base
 
   before_save :serialize_results
 
-  state_machine :status, initial: :created do
+  state_machine :status, :initial => lambda {|task| :created } do
 
     state :created,   value: CREATED
     state :working,   value: WORKING
