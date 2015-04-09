@@ -25,7 +25,7 @@ meta view-head="view-head" property="og:type" content="article"
     a href="http://www.radiotopia.fm/#donate" ng-click="clickDonate()" target="_blank"
       .donatediv ng-show="displayDonate()"
         .donatetext Donate now
-        #{image_tag('radiotopia.png')}
+        = image_tag('radiotopia.png')
     a.btn.btn-info.promotebtn ng-show="currentUser.canEdit(item) && collection.itemsVisibleByDefault" href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651284-SHARING-POP-UP-DATA" ng-click="clickPromote()"
       i.fa.fa-bolt
       |  Promote your story
@@ -97,13 +97,13 @@ meta view-head="view-head" property="og:type" content="article"
             .bar ng-show="isLoaded()" ng-style="{width:player.time*100/player.duration+'%'}"
         .span2
           .timecodes ng-show="player.time"
-            span {{player.time | timeCode}}
+            span() {{player.time | timeCode}}
             span ng-show="item.duration" &#47; {{item.getDurationString()}}
 
       .row-fluid.ts-info-row ng-show="audioFile.transcript.parts.length"
         //Basic or Premium label
         .span5.transcript-label
-          span.ts-type {{audioFile.transcriptType}} Transcript
+          span.ts-type() {{audioFile.transcriptType}} Transcript
 
           i.fa.fa-question-circle ng-show="audioFile.transcriptType == 'Basic'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['basicTranscript']" data-placement="bottom"    
           i.fa.fa-question-circle ng-show="audioFile.transcriptType == 'Premium'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['premiumTranscript']" data-placement="bottom"
@@ -238,14 +238,14 @@ meta view-head="view-head" property="og:type" content="article"
         dt ng-show="item.duration" Duration
         dd ng-show="item.duration" {{item.getDurationString()}}
         section ng-repeat="(field, value) in item.extra"
-          dt {{field|titleize}}
-          dd {{value}}
+          dt() {{field|titleize}}
+          dd() {{value}}
     .span6
       section.rights ng-show="item.rights"
         h5 Rights
-        p {{item.rights}}
+        p() {{item.rights}}
       section.tags ng-repeat="contributorGroup in item.standardRoles" ng-hide="(item.contributions|filter:{role:contributorGroup}).length==0"
-        h5 {{contributorGroup | titleize | pluralize}}
+        h5() {{contributorGroup | titleize | pluralize}}
         ul
           li ng-repeat="contribution in item.contributions|filter:{role:contributorGroup}"
             a.btn ng-href='/search?query=contributor:%22{{contribution.person.name}}%22' {{contribution.person.name}}
@@ -260,7 +260,7 @@ meta view-head="view-head" property="og:type" content="article"
     .span12
       section.notes ng-show="item.notes"
         h5 Notes
-        p {{item.notes}}
+        p() {{item.notes}}
 
   .item-detail
     .row-fluid
@@ -297,4 +297,4 @@ meta view-head="view-head" property="og:type" content="article"
       //User generated transcript
       .span12.transcription ng-show="item.transcription"
           h5 Transcription
-          p {{item.transcription}}
+          p() {{item.transcription}}
