@@ -75,7 +75,7 @@ html lang='en' ng-app='Directory' ng-controller='DirectoryCtrl'
       img ng-src="{{player.albumArt()}}"
       .scrubber
         .bar ng-style="{width:player.time*100/player.duration+'%'}"
-      .now-playing {{player.nowPlaying()}}
+      .now-playing() {{player.nowPlaying()}}
       .player-controls
         button ng-show="player.paused()" ng-click="$event.stopPropagation();player.play()"
           i.fa.fa-play
