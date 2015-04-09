@@ -1,22 +1,18 @@
 .navbar-shadow
 .navbar-shadow-hider
-.navbar.navbar-fixed-top
-  .navbar-inner
-    .container
+.navbar.navbar-fixed-top.navbar-default
+  .container.navbar-inner
+    .navbar-header
       h1.site-title
-        a ng-href='/' title="Pop Up Archive" rel="home"
+        a cng-href='/' title="Pop Up Archive" rel="home"
           .logo.pop Pop
           .logo.up Up
           .logo.archive &nbsp;Archive
-        a ng-href='/' title="Pop Up Archive" rel="home"
-          logo.prx
-            | in cahoots with 
-            img src='#{asset_path("prx_logo.png")}' alt="PRX"
 
-      a.btn.btn-navbar data-toggle="collapse" data-target=".nav-collapse"
+      a.btn.btn-navbar data-toggle="collapse" data-target=".navbar-collapse"
         span.fa.fa-bar
         span.fa.fa-bar
         span.fa.fa-bar
-      .nav-collapse.collapse
-        = render('account')
-        = render('nav')
+    .navbar-collapse
+      = render('account')
+      = render('nav')
