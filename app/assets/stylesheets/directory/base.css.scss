@@ -763,7 +763,7 @@ $authNavbarHeight: 75px;
     display: block;
     margin: $navbarHeight - 10px auto 0;
     height: 10px;
-    width: $gridRowWidth + 10px;
+    //width: $gridRowWidth + 10px;  // TODO var undefined??
     content: "";
     box-shadow: 0 0 15px black;
   }
