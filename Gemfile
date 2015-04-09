@@ -7,10 +7,11 @@ gem 'rails', '~> 4.1'
 #gem 'sass-rails'
 #gem 'uglifier'
 #gem 'coffee-rails'
-#gem 'bootstrap-sass'
+gem 'bootstrap-sass'
 gem 'bootstrap_form'
+gem 'angularjs-rails-resource'
+gem 'font-awesome-sass'
 
-# Rails 4 pre-prep
 gem 'etagger', github: 'rails/etagger'
 gem 'cache_digests'
 gem 'dalli'
