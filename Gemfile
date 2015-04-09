@@ -4,6 +4,10 @@ ruby '2.0.0'
 
 gem 'rails', '~> 4.1' 
 
+# these used to be in the "assets" group under Rails 3
+# but that group is removed in Rails 4 so we include here.
+# NOTE that sass-rails, uglifier and coffee-rails seem
+# to be included by Rails core now so we disabled them here.
 #gem 'sass-rails'
 #gem 'uglifier'
 #gem 'coffee-rails'
@@ -11,6 +15,7 @@ gem 'bootstrap-sass'
 gem 'bootstrap_form'
 gem 'angularjs-rails-resource'
 gem 'font-awesome-sass'
+gem 'ng_player_hater-rails'
 
 gem 'etagger', github: 'rails/etagger'
 gem 'cache_digests'

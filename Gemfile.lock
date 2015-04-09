@@ -466,6 +466,7 @@ GEM
     net-ssh (2.9.2)
     netrc (0.10.3)
     newrelic_rpm (3.11.1.284)
+    ng_player_hater-rails (0.0.5)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
     nokogumbo (1.2.0)
@@ -790,6 +791,7 @@ DEPENDENCIES
   mixpanel-ruby
   multi_json
   newrelic_rpm
+  ng_player_hater-rails
   obscenity
   omniauth
   omniauth-facebook
