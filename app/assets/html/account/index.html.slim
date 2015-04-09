@@ -1,4 +1,4 @@
-.row-fluid
+.row
   .page-nav.pull-right
     a.btn href="/account/plan" 
       i.fa.fa-wrench
@@ -6,7 +6,7 @@
   h3
     | Account
 
-.row-fluid ng-if="me.hasCard"
+.row ng-if="me.hasCard"
   .well
     .credit-card.pull-right ng-show="me.creditCard"
       img ng-src="/assets/{{me.creditCard.type.toLowerCase()}}.png" ng-show="me.creditCard.type"
@@ -25,14 +25,14 @@
       small
         a href="/account/plan" Change My Plan.
 
-.row-fluid ng-hide="me.plan.amount"
+.row ng-hide="me.plan.amount"
   .well
     h6.pull-right
       a href="/account/plan" Find out more &raquo;
     h4
       | Need more room?&nbsp;
       a href="/account/plan" Upgrade to a paid plan!
-.row-fluid
+.row
   .well.usage
     h4 My Account
     hr/
@@ -44,7 +44,7 @@
       dt Current Plan
       dd() {{ me.plan.name }}
 
-.row-fluid
+.row
   .well.usage
     h4 Usage
     .usage-organization ng-show="me.organization"

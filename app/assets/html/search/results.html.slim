@@ -13,14 +13,14 @@ ul.pager
   li.next ng-class="{disabled:!search.hasMoreResults()}"
     a ng-click="!search.hasMoreResults() || nextPage()" href="#" Next &rarr;
 .row
-  .span4.facets
+  .col-md-4.facets
     .facet ng-repeat="facet in search.facetsAsObjects()" ng-show="facet.visible()"
       h5() {{facet.name | lowercase}}
       ul.unstyled.terms
         li ng-repeat="entry in facet.entries()"
           small.pull-right() ({{entry.count}}) 
           .label.label-info ng-click="addSearchFilter(entry)" {{entry.nameForPresenting()}}
-  .span8
+  .col-md-8
     h5.result-count.pull-left() {{search.firstItemNumber()}} to {{search.lastItemNumber()}} of {{search.totalHits}} items 
     .sort-options
       select ng-model="selectedSort" ng-options="item.name for item in sortOptions" ng-change="sortResults(selectedSort)"
