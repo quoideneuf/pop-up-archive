@@ -4,7 +4,7 @@ ul.pager
   li.centered
     form.form-search.with-tags ng-controller="SearchCtrl" ng-submit="query.commit()"
       .input-append
-        input.search-query ng-model='query.string' type='search' placeholder="Search"
+        input.search-query.form-control ng-model='query.string' type='search' placeholder="Search"
         button.btn type='submit' go
       ul.inline.tags
         li.label ng-repeat="part in query.queryParts"

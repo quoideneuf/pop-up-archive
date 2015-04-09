@@ -134,7 +134,7 @@ meta view-head="view-head" property="og:type" content="article"
               i.fa.fa-double-angle-down
               |  Expand
           .search-group.pull-right
-            input.search-query ng-class="{extended:!!transcriptFilter}" ng-model="transcriptFilter" placeholder="Search"
+            input.search-query.form-control ng-class="{extended:!!transcriptFilter}" ng-model="transcriptFilter" placeholder="Search"
             a.clear-filter.fa.fa-remove-sign ng-show="transcriptFilter.length > 0" ng-click="transcriptFilter=''"
             .row.ts-info-row ng-show="audioFile.transcript.parts.length"
 

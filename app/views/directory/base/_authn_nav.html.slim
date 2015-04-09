@@ -1,14 +1,14 @@
-ul.nav
+ul.navbar.nav.navbar-nav
   li
     form.navbar-form ng-controller="GlobalSearchCtrl" ng-submit="go()"
-      input.search-query style="width:150px" ng-model="query.string" placeholder='Search' type='search'
+      input.search-query.form-control style="width:150px" ng-model="query.string" placeholder='Search' type='search'
   li
     a href="https://popuparchiveorg.zendesk.com/hc/en-us" target="_blank"
       | help
 /  li
 /    button.btn ng-click="testAlert()" test alerts
 
-ul.nav.authn.pull-right
+ul.nav.authn.pull-right.navbar-right.navbar-nav.navbar
   / li
   /   a.activity 
   /     span#loading-gear.animated ng-show="loading()"

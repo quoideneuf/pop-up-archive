@@ -10,5 +10,5 @@ ul.navbar-nav.nav.navbar-right
   li= link_to('faq', '/faq')
   li
     form.navbar-form ng-controller="GlobalSearchCtrl" ng-submit="go()"
-      input.search-query style="width:150px" ng-model="query.string" placeholder='Search' type='search'
+      input.search-query.form-control style="width:150px" ng-model="query.string" placeholder='Search' type='search'
 

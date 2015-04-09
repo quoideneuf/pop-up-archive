@@ -755,7 +755,7 @@ ul.search-pills {
 
 //Navbar
 
-$navbarHeight: 105px;
+$navbarHeight: 75px;
 $authNavbarHeight: 75px;
 
 .navbar-shadow {
@@ -1783,7 +1783,7 @@ table.usage {
 
 /* nav breaks-per-item */
 @media screen and (max-width: 900px) {
-  .nav-collapse .pull-right li a #my_dashboard .nav-label {
+  .navbar-collapse .pull-right li a #my_dashboard .nav-label {
     display: none;
   }
   body, body.authn, .navbar-fixed-top .navbar-inner, .navbar-fixed-bottom .navbar-inner {
@@ -1792,20 +1792,20 @@ table.usage {
   }
 }
 @media screen and (max-width: 860px) {
-  .nav-collapse .pull-right li a #my_collections .nav-label {
+  .navbar-collapse .pull-right li a #my_collections .nav-label {
     display: none;
   }
 }
 @media screen and (max-width: 750px) {
-  .nav-collapse .pull-right li a #user_name .nav-label {
+  .navbar-collapse .pull-right li a #user_name .nav-label {
     display: none;
   }
-  .nav-collapse .pull-right li a .nav-label {
+  .navbar-collapse .pull-right li a .nav-label {
     display:none;
   }
 }
 @media screen and (max-width: 600px) {
-  .nav-collapse .nav.pull-right {
+  .navbar-collapse .nav.pull-right {
     /* stop pulling right */
     float: left;
   }
