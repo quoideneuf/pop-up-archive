@@ -32,14 +32,6 @@ GIT
       subexec (~> 0.1.0)
 
 GIT
-  remote: git://github.com/pkarman/acts_as_paranoid.git
-  revision: 0acc91c0a39ddcd6d56f686e0c0b1c845673ef06
-  specs:
-    acts_as_paranoid (0.5.0.beta1)
-      activerecord (~> 4.0)
-      activesupport (~> 4.0)
-
-GIT
   remote: git://github.com/pkarman/amara.git
   revision: e29469306dd93294c0115d6c8cf74ebb26e094d7
   specs:
@@ -63,6 +55,14 @@ GIT
       hashie
       mimemagic
       multi_json
+
+GIT
+  remote: git://github.com/radar/paranoia.git
+  revision: ceb01415dd7610599a968f0198f43b54603a2595
+  branch: rails4
+  specs:
+    paranoia (2.1.1)
+      activerecord (~> 4.0)
 
 GIT
   remote: git://github.com/rails/etagger.git
@@ -730,7 +730,6 @@ DEPENDENCIES
   active_admin_sidebar
   activeadmin!
   acts_as_list
-  acts_as_paranoid!
   amara!
   ansi
   autoscaler (~> 0.2.0)
@@ -785,6 +784,7 @@ DEPENDENCIES
   omniauth-oauth2 (~> 1.1.0)
   omniauth-prx!
   omniauth-twitter
+  paranoia!
   pb_core (~> 0.1.6)
   pg
   poltergeist

@@ -10,7 +10,7 @@ class AudioFile < ActiveRecord::Base
   before_validation :set_metered
   before_save       :check_user_id
 
-  belongs_to :item, :with_deleted => true
+  belongs_to :item, -> { with_deleted }
   belongs_to :user
   belongs_to :instance
   has_many :tasks, as: :owner

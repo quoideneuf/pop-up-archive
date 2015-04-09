@@ -76,7 +76,8 @@ gem 'state_machine'
 
 gem 'doorkeeper', "~> 1.4.2"
 
-gem "acts_as_paranoid", github: 'pkarman/acts_as_paranoid'
+#gem "acts_as_paranoid", github: 'pkarman/acts_as_paranoid', branch: 'rails4.2'
+gem "paranoia", :github => "radar/paranoia", :branch => "rails4"
 
 gem 'newrelic_rpm'
 
