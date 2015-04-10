@@ -1,5 +1,3 @@
-.navbar-shadow
-.navbar-shadow-hider
 .navbar.navbar-fixed-top.navbar-default ng-class="{'over-monthly-limit': currentUser.overMonthlyLimit}"
   .container.navbar-inner
     .navbar-header
@@ -8,10 +6,6 @@
           .logo-square 
             .up Up
 
-      a.btn.btn-navbar data-toggle="collapse" data-target=".navbar-collapse"
-        span.fa.fa-bar
-        span.fa.fa-bar
-        span.fa.fa-bar
     .navbar-collapse
       = render('authn_nav')
       .over-limit-msg.alert.alert-error.ng-cloak ng-show="currentUser.overMonthlyLimit"

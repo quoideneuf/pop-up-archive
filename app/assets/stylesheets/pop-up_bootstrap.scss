@@ -38,7 +38,7 @@ body.authn.over-monthly-limit {
     padding-top: 10px;
   }
 
-  .nav {
+  .navbar-nav, .nav {
     li {
       a {
         font-family: 'soleil', helvetica, sans-serif !important;
@@ -56,7 +56,7 @@ body.authn.over-monthly-limit {
         li {
           a {
             &:hover {
-              color: white !important;
+              color: black !important;
             }          
           }
         }
@@ -115,7 +115,7 @@ footer, footer p {
 .site-title {
   display: block;
   float: left;
-  height: 82px;
+  //height: 82px;
   font-family: 'soleil', helvetica, sans-serif;
   font-weight: 900;
   font-size: 2em;
