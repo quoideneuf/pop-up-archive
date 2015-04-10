@@ -84,7 +84,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
     };
 
     $scope.newCollection = function () {
-      $modal({template: "/assets/collections/form.html", persist: false, show: true, scope: $scope, modalClass: 'collection-modal'});
+      $modal({template: "/assets/collections/form.html", show: true, scope: $scope});
     };
     
     $scope.batchUpload = {
@@ -124,7 +124,7 @@ angular.module('Directory.collections.controllers', ['Directory.loader', 'Direct
   }
 
   $scope.newCollection = function () {
-    $modal({template: "/assets/collections/form.html", persist: false, show: true, scope: $scope, modalClass: 'collection-modal'});
+    $modal({template: "/assets/collections/form.html", show: true, scope: $scope});
   }
 
   $scope.close = function () {

@@ -896,7 +896,29 @@ form.with-tags {
 
 /* contact modal */
 .modal {
-  display: none;
+//  display: none;
+}
+
+// modal background with angular-strap
+.modal-backdrop.am-fade {
+  opacity: .5;
+  transition: opacity .15s linear;
+  &.ng-enter {
+    opacity: 0;
+    &.ng-enter-active {
+      opacity: .5;
+    }
+  }
+  &.ng-leave {
+    opacity: .5;
+    &.ng-leave-active {
+      opacity: 0;
+    }
+  }
+}
+
+.modal-body .form-horizontal .form-group {
+  margin-left: 15px;
 }
 
 // horizontal radio button groups
