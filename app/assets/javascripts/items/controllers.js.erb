@@ -195,6 +195,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.itemStorage = function() {
     $q.when($scope.storageModal).then( function (modalEl) {
+      console.log('modalEl:', modalEl);
       modalEl.modal('show');
     });
   };
