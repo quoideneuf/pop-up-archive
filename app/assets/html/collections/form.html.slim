@@ -54,7 +54,7 @@ div ng-controller='CollectionFormCtrl'
           table.table.file-table
             tr.file ng-repeat="image in collection.images"
               td.file-name alt="{{image.name}}" {{image.name}}
-              td.file-size {{readableFileSize(image.size)}}
+              td.file-size() {{readableFileSize(image.size)}}
               td.file-remove
                 a href="#" ng-click="removeImageFile(image)" style='text-decoration: none; color: #da4f49;'
                   i.fa.fa-remove-sign
