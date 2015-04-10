@@ -588,6 +588,11 @@ angular.module('$strap.directives').directive('bsPopover', [
             html: true
           }));
           var popover = element.data('popover');
+          // TODO why is popover undef? related to help tooltips
+          if (!popover) {
+            console.log("Cannot find popover data in element: ", element);
+            return;
+          }
           popover.hasContent = function () {
             return this.getTitle() || template;
           };
