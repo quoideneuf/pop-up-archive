@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   force_ssl if: :ssl_configured?
 
-  protect_from_forgery
+  protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
 
   #decent_configuration do
   #  strategy DecentExposure::StrongParametersStrategy
