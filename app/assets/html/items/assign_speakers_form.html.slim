@@ -6,7 +6,7 @@
 	.modal-body
 		.alert.alert-info
             p You can assign speakers based on who has contributed to your piece.
-            button.btn ng-click="dismiss()" bs-modal="'#{asset_path 'items/add_speakers_form.html'}'"
+            button.btn.btn-default ng-click="dismiss()" bs-modal="'#{asset_path 'items/add_speakers_form.html'}'"
   				| Add Additional Speakers
 
 
@@ -16,9 +16,9 @@
 				
 				.controls
 					select ng-model="contributor.id" ng-options="contributor.person.name for contributor in item.contributions track by contributor.id" ng-change="assignSpeaker(contributor, speaker)"
-					// button.btn type="button" ng-click="deleteSpeaker(speaker, audioFile)" Delete
+					// button.btn.btn-default type="button" ng-click="deleteSpeaker(speaker, audioFile)" Delete
 
 
 	.modal-footer
-	  button.btn type="button" ng-click="dismiss()" Close 
+	  button.btn.btn-default type="button" ng-click="dismiss()" Close 
 

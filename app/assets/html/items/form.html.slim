@@ -75,7 +75,7 @@ section ng-controller="ItemFormCtrl"
 
           .clearfix.controls
             span.pull-right file-button=""
-              button.btn Add Files to Item
+              button.btn.btn-default Add Files to Item
 
         .control-group
           label.control-label
@@ -93,7 +93,7 @@ section ng-controller="ItemFormCtrl"
           .clearfix.controls.remote-item
             input.text.input.remote-item-url type='text' placeholder="Insert Url"
             span.pull-right 
-              button.btn ng-click="addItemFromURL($event)" Add Files by URL 
+              button.btn.btn-default ng-click="addItemFromURL($event)" Add Files by URL 
 
 
         .control-group ng-show='item.id > 0'
@@ -176,7 +176,7 @@ section ng-controller="ItemFormCtrl"
                   a href="#" ng-click="removeImageFile(image)" style='text-decoration: none; color: #da4f49;'
                     i.fa.fa-remove-sign
           .clearfix.controls.control-group
-            button.btn file-button="setImageFiles" Choose Images
+            button.btn.btn-default file-button="setImageFiles" Choose Images
             span &nbsp OR &nbsp
             input.text.input#image type='text' placeholder="Insert Url" ng-model='urlForImage'
             br
@@ -198,7 +198,7 @@ section ng-controller="ItemFormCtrl"
                 span.field
                   input ui-select2="peopleSelect" type="hidden" ng-model="contribution.person"
 
-                button.btn type="button" ng-click="deleteContribution(contribution)" Delete
+                button.btn.btn-default type="button" ng-click="deleteContribution(contribution)" Delete
 
               .clearfix.controls
                 button.btn.pull-right type="button" ng-click="addContribution()" Add Contributor
@@ -252,7 +252,7 @@ section ng-controller="ItemFormCtrl"
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['dateCreated']" data-placement="bottom"
               .controls
                 input.input-small type='text' ng-model='item.dateCreated' data-date-format="mm-dd-yyyy" bs-datepicker="" data-toggle="datepicker" placeholder="mm-dd-yyyy"
-                  button.btn type="button" data-toggle="datepicker"
+                  button.btn.btn-default type="button" data-toggle="datepicker"
                     i class="icon-calendar"
 
             .control-group
@@ -261,7 +261,7 @@ section ng-controller="ItemFormCtrl"
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['dateBroadcast']" data-placement="bottom"
               .controls
                 input.input-small type='text' ng-model='item.dateBroadcast' data-date-format="mm-dd-yyyy" bs-datepicker="" data-toggle="datepicker" placeholder="mm-dd-yyyy"
-                  button.btn type="button" data-toggle="datepicker"
+                  button.btn.btn-default type="button" data-toggle="datepicker"
                     i class="icon-calendar"
 
             .control-group
@@ -336,5 +336,5 @@ section ng-controller="ItemFormCtrl"
 
 
   .modal-footer
-    button.btn type="button" ng-click="clear()" Close
+    button.btn.btn-default type="button" ng-click="clear()" Close
     button.btn.btn-success ng-show='(item.id > 0) || (item.files.length > 0) || (remoteFileUrls)' ng-disabled='!item.id && !remoteFileUrls && (!item.collectionId || item.files.length <= 0) || newItemForm.$invalid' ng-click='submit()' Save

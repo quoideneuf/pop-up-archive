@@ -15,5 +15,5 @@ div ng-controller="UploadCategorizationCtrl"
         .controls
           select ng-options="collection.id as collection.title for collection in collections | notUploads" ng-model="selectedItems.collectionId"
   .modal-footer
-    button.btn ng-click="dismiss()" Close
+    button.btn.btn-default ng-click="dismiss()" Close
     button.btn.btn-primary ng-click="submit()" Save

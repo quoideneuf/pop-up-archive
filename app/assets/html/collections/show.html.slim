@@ -1,10 +1,10 @@
 .row
   .col-md-12    
     .page-nav.pull-right
-      button.btn ng-show="canEdit" ng-click="uploadFile()"
+      button.btn.btn-default ng-show="canEdit" ng-click="uploadFile()"
         i.fa.fa-upload-alt
         |  Upload
-      button.btn ng-show="canEdit" ng-click="newCollection()"
+      button.btn.btn-default ng-show="canEdit" ng-click="newCollection()"
         i.fa.fa-edit
         |  Edit Collection
       button.btn.btn-danger ng-click="delete()" ng-disabled="!currentUser.isAdmin()" ng-show="canEdit"

@@ -1,6 +1,6 @@
 .row
   .page-nav.pull-right
-    a.btn href="/account/plan" 
+    a.btn.btn-default href="/account/plan" 
       i.fa.fa-wrench
       |  Change Plan
   h3
@@ -96,7 +96,7 @@
             th.cost Cost
             th
             th.last
-              button.btn ng-click="toggleDetails($event)"
+              button.btn.btn-default ng-click="toggleDetails($event)"
                 i.fa.fa-expand-alt.fa.fa-large
                 |  Details
           tr.usage-month ng-repeat="msum in mnthGrp.rows"
