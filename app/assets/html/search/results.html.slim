@@ -3,7 +3,7 @@ ul.pager
     a ng-click="search.page <= 1 || backPage()" href='#' &larr; Previous
   li.centered
     form.form-search.with-tags ng-controller="SearchCtrl" ng-submit="query.commit()"
-      .input-append
+      .input-group
         input.search-query.form-control ng-model='query.string' type='search' placeholder="Search"
         button.btn.btn-default type='submit' go
       ul.inline.tags

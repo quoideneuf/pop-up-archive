@@ -266,11 +266,11 @@ form.form-big {
     line-height: 28px;
   }
 
-  .input-append .btn {
+  .input-group .btn {
     border-radius: 0 28px 28px 0;
   }
 
-  .input-append .search-query {
+  .input-group .search-query {
     border-radius: 28px 0 0 28px;
   }
 }
@@ -814,7 +814,7 @@ $authNavbarHeight: 75px;
     .form-search {
       line-height: 20px;
       height: 20px;
-      .input-append {
+      .input-group {
         width: 100%;
 
         button {
