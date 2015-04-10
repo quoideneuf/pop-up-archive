@@ -5,17 +5,17 @@ div ng-controller='CollectionFormCtrl'
     h3 ng-hide="collection.id" Create a Collection
   .modal-body
     form.form-horizontal name="collectionForm"
-      .control-group
+      .form-group
         label.control-label
           | Title
         .controls
           input name="title" type="text" ng-model="collection.title" ng-required="true" ng-class="{ 'empty-title' : collectionForm.title.$invalid }"
-      .control-group
+      .form-group
         label.control-label
           | Description
         .controls
           textarea rows="6" ng-model="collection.description"
-      .control-group
+      .form-group
         label.control-label
           | Store Media
           i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['copyMedia']" data-placement="top"
@@ -26,7 +26,7 @@ div ng-controller='CollectionFormCtrl'
           input.radio_button type="radio" name="copyMedia" ng-value="false" ng-model="collection.copyMedia" ng-change="copyMediaChange()"
           label.radio-label
             | No
-      .control-group ng-hide="collection.id"
+      .form-group ng-hide="collection.id"
         label.control-label
           | Privacy
         .controls
@@ -46,7 +46,7 @@ div ng-controller='CollectionFormCtrl'
             | All audio stored at the Internet Archive will be available to stream and download at 
             a href='http://archive.org' target='_blank' archive.org
             |  and will be visible to the world.
-      .control-group
+      .form-group
         label.control-label
           | Upload Images
           i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['image']" data-placement="top"
@@ -58,7 +58,7 @@ div ng-controller='CollectionFormCtrl'
               td.file-remove
                 a href="#" ng-click="removeImageFile(image)" style='text-decoration: none; color: #da4f49;'
                   i.fa.fa-remove-sign
-        .clearfix.controls.control-group
+        .clearfix.controls.form-group
           button.btn.btn-default file-button="setImageFiles" Choose Images
           span &nbsp OR &nbsp
           input.text.input#image type='text' placeholder="Insert Url" ng-model='urlForImage'

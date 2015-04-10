@@ -489,7 +489,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     }
     else {
       // clear any error first
-      inputField.closest('.control-group').removeClass('error');
+      inputField.closest('.form-group').removeClass('error');
       inputField.next('.help-inline').remove();
 
       // validate the URL string
@@ -497,7 +497,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       if (!remoteFileUrl.match(urlPattern)) {
         // add warning to input field
         //console.log("bad url:", remoteFileUrl);
-        inputField.closest('.control-group').addClass('error');
+        inputField.closest('.form-group').addClass('error');
         inputField.after('<span class="help-inline">Fix the URL</span>');
         return;
       }
