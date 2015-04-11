@@ -94,13 +94,12 @@ describe Api::V1::ImageFilesController do
       # end
   
       it 'chunk_loaded' do
-        get 'chunk_loaded', {:image_file_id => @image_file.id}
+        get 'chunk_loaded', :image_file_id => @image_file.id, :collection_id => @image_file.imageable.id
       end
 
-      # commenting out test below because it is failing due to calling Carrierwave method#body on factory @image_file 
       it 'upload_finished' do
-        ImageFile.any_instance.stub(:save_thumb_version).and_return(true)
-        get 'upload_finished', {:image_file_id => @image_file.id, :key => @image_file.file.path, :file => @image_file.file}
+        allow_any_instance_of(ImageFile).to receive(:save_thumb_version).and_return(true)
+        get 'upload_finished', :image_file_id => @image_file.id, :key => @image_file.file.path, :file => @image_file.file, :collection_id => @image_file.imageable.id
         response.should be_success
       end
     end 

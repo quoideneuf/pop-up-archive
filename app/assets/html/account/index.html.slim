@@ -38,24 +38,24 @@
     hr/
     dl.dl-horizontal
       dt Name
-      dd {{ me.name }}
+      dd() {{ me.name }}
       dt Email Address
-      dd {{ me.email }}
+      dd() {{ me.email }}
       dt Current Plan
-      dd {{ me.plan.name }}
+      dd() {{ me.plan.name }}
 
 .row-fluid
   .well.usage
     h4 Usage
     .usage-organization ng-show="me.organization"
-      h5 {{me.organization.name}}, This Month ({{me.organization.usage.summary.thisMonth.period}})
+      h5() {{me.organization.name}}, This Month ({{me.organization.usage.summary.thisMonth.period}})
       dl.dl-horizontal
         dt Usage
         dd.usage-meter ng-class="{warning: me.organization.usage.summary.thisMonth.secs >= me.totalMeteredStorage, full: me.organization.usage.summary.thisMonth.secs >= me.totalMeteredStorage }"
           .bar ng-style="{width: me.organization.usage.summary.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
-          .meter-words {{me.organization.usage.summary.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
+          .meter-words() {{me.organization.usage.summary.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Plan Hours
-        dd.usage {{me.organization.usage.summary.thisMonth.hours}}
+        dd.usage() {{me.organization.usage.summary.thisMonth.hours}}
         dt Total Cost
         dd.usage 
           | {{me.organization.usage.summary.thisMonth.cost | currency:"USD $"}}
@@ -72,9 +72,9 @@
         dt Usage 
         dd.usage-meter ng-class="{warning: me.usage.summary.thisMonth.secs >= me.totalMeteredStorage, full: me.usage.summary.thisMonth.secs >= me.totalMeteredStorage }"
           .bar ng-style="{width: me.usage.summary.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
-          .meter-words {{me.usage.summary.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
+          .meter-words() {{me.usage.summary.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Hours
-        dd.usage {{me.usage.summary.thisMonth.hours}}
+        dd.usage() {{me.usage.summary.thisMonth.hours}}
         dt Total Cost
         dd.usage 
           | {{me.usage.summary.thisMonth.cost | currency:"USD $"}}
@@ -100,10 +100,10 @@
                 i.fa.fa-expand-alt.fa.fa-large
                 |  Details
           tr.usage-month ng-repeat="msum in mnthGrp.rows"
-            td.first {{msum.period}}
-            td.second {{msum.type}}
-            td.time {{msum.hours}}
-            td.cost {{msum.cost | currency:"USD $"}}
+            td.first() {{msum.period}}
+            td.second() {{msum.type}}
+            td.time() {{msum.hours}}
+            td.cost() {{msum.cost | currency:"USD $"}}
             td
             td
           tr.usage-month-details data-period="{{mnthGrp.period}}" ng-show="usageDetailsVisible(mnthGrp.period)"
@@ -114,12 +114,12 @@
             th.type Type
             th User
           tr.usage-month-details.info ng-repeat="t in me.usageDetailsByMonth(mnthGrp.period)" ng-show="usageDetailsVisible(mnthGrp.period)"
-            td.first {{t.date | date:'yyyy-MM-dd HH:mm:ss'}}
+            td.first() {{t.date | date:'yyyy-MM-dd HH:mm:ss'}}
             td.second
               a title="{{t.id}}" ng-show="!t.deleted" href="/collections/{{t.collId}}/items/{{t.itemId}}" {{t.title}}
               span ng-show="t.deleted" title="this item was deleted {{t.id}}" {{t.title}}
-            td.time {{t.time}}
-            td.cost {{t.cost | currency:"USD $"}}
-            td.type {{t.flavor}}
-            td {{t.user.name}}
+            td.time() {{t.time}}
+            td.cost() {{t.cost | currency:"USD $"}}
+            td.type() {{t.flavor}}
+            td() {{t.user.name}}
 

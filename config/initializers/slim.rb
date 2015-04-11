@@ -1,1 +1,1 @@
-Slim::Engine.set_default_options :pretty => true unless Rails.env.production?
+Slim::Engine.set_options :pretty => true unless Rails.env.production?

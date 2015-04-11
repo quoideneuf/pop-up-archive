@@ -51,10 +51,10 @@ class Tasks::UploadTask < Task
 
   def recover!
     if !self.owner
-      self.extras[:error] = "No owner"
+      self.extras['error'] = "No owner"
       self.cancel!
     elsif self.num_chunks != self.chunks_uploaded.size
-      self.extras[:error] = "Incomplete chunks uploaded"
+      self.extras['error'] = "Incomplete chunks uploaded"
       self.cancel!
     elsif !destination_exists?
       self.extras['error'] = 'Destination URL does not exist'

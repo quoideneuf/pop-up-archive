@@ -1,15 +1,16 @@
-module Feedzirra
+module Feedjira
   
   module Parser
 
-    class MediaRSSThumbnail
+    class MediaRSSEmbed
       include SAXMachine
       include FeedEntryUtilities
 
       attribute :url
       attribute :width
       attribute :height
-      attribute :time
+
+      elements :"media:param", :as => :params, :class => MediaRSSEmbedParam
 
     end
 

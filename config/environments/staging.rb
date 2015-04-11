@@ -9,7 +9,7 @@ PopUpArchive::Application.configure do
   config.action_controller.perform_caching = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
-  config.serve_static_assets = false
+  config.serve_static_files = false
 
   # Compress JavaScripts and CSS
   config.assets.compress = true
@@ -49,7 +49,7 @@ PopUpArchive::Application.configure do
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
-  config.assets.precompile += ['directory/base.css', 'directory/application.js', 'login/base.css', 'login.js', 'jplayer.popup.css', 'jquery.js', 'jquery.jplayer.js', 'tplayer.js', 'tplayer-embed.js', 'require.js', 'pua_aa_stylesheet.css', 'jPlayer.css', 'tplayer.css', 'Jplayer.swf']
+  config.assets.precompile += ['directory/base.css', 'directory/application.js', 'login/base.css', 'login.js', 'jplayer.popup.css', 'jquery.js', 'jquery.jplayer.js', 'tplayer.js', 'tplayer-embed.js', 'require.js', 'pua_aa_stylesheet.css', 'jPlayer.css', 'tplayer.css', 'Jplayer.swf', 'bootstrap.min.css']
 
   # Enable threaded mode
   # config.threadsafe!
@@ -93,4 +93,6 @@ PopUpArchive::Application.configure do
   Obscenity.configure do |config|
     config.blacklist   = "config/blacklist.yml"
   end
+
+  config.eager_load = true
 end

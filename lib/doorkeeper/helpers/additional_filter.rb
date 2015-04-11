@@ -8,7 +8,7 @@ module Doorkeeper
 
           before_filter doorkeeper_for.filter_options do
             valid_token(doorkeeper_for.scopes)
-            return true
+            true
           end
         end
       end

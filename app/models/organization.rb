@@ -12,8 +12,6 @@ class Organization < ActiveRecord::Base
 
   attr_accessible :name
 
-  serialize :transcript_usage_cache, HstoreCoder
-
   belongs_to :owner, class_name: 'User', foreign_key: 'owner_id'
 
   has_many :users
@@ -22,8 +20,8 @@ class Organization < ActiveRecord::Base
 
   has_many :monthly_usages, as: :entity
 
-  scope :premium_usage_desc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) desc"
-  scope :premium_usage_asc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) asc"
+  scope :premium_usage_desc, -> { order "cast(transcript_usage_cache->'premium_seconds' as int) desc" }
+  scope :premium_usage_asc,  -> { order "cast(transcript_usage_cache->'premium_seconds' as int) asc"  }
 
   ROLES = [:admin, :member]
 

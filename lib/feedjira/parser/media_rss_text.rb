@@ -1,13 +1,12 @@
-module Feedzirra
+module Feedjira
   
   module Parser
 
-    class MediaRSSScheme
+    class MediaRSSText
       include SAXMachine
       include FeedEntryUtilities
 
-      attribute :scheme
-      attribute :role
+      attribute :type, :as => :content_type
       value :value
 
     end

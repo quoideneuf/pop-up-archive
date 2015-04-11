@@ -1,6 +1,6 @@
 class Speaker < ActiveRecord::Base
 
-  serialize :times
+  #serialize :times
 
   attr_accessible :name, :times, :transcript, :transcript_id
 

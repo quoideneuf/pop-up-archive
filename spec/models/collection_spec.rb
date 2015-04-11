@@ -11,7 +11,7 @@ describe Collection do
     }
 
     it "should be valid with default attributes" do
-      @collection.save.should be_true
+      @collection.save.should be_truthy
     end
 
     it "should default to aws storage" do

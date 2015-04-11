@@ -5,10 +5,10 @@ class Transcript < ActiveRecord::Base
   belongs_to :transcriber
   belongs_to :subscription_plan
   has_one :item, through: :audio_file
-  has_many :timed_texts, order: 'start_time ASC'
+  has_many :timed_texts, -> { order 'start_time ASC' }
   has_many :speakers
 
-  default_scope includes(:timed_texts)
+  default_scope -> { includes(:timed_texts) }
 
   after_save :update_item
 

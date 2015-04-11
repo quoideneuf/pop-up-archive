@@ -1,13 +1,15 @@
-module Feedzirra
+module Feedjira
   
   module Parser
 
-    class MediaRSSCopyright
+    class MediaRSSThumbnail
       include SAXMachine
       include FeedEntryUtilities
 
       attribute :url
-      value :value
+      attribute :width
+      attribute :height
+      attribute :time
 
     end
 

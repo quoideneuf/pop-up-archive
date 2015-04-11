@@ -119,10 +119,15 @@ describe User do
       user.usage_summary[:this_month][:hours].should eq 1.0
 
       # delete and try again
+      #Rails.logger.warn("------------ DESTROY collection ----------------")
       audio.item.collection.destroy
+      #STDERR.puts "audio.destroyed? == #{audio.destroyed?}"
+      #STDERR.puts "item.destroyed?  == #{audio.item.destroyed?}"
+      #Rails.logger.warn("------------ DESTROY complete ------------------")
 
       user.calculate_monthly_usages!
       user.update_usage_report!
+      #STDERR.puts user.usage_summary.inspect
       user.usage_summary[:this_month][:hours].should eq 1.0
     end
 

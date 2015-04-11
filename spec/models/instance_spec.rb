@@ -10,7 +10,7 @@ describe Instance do
     instance.format = 'audio/wav'
     instance.location = 'http://this.is.an.example.com'
     instance.identifier = 'http://this.is.an.example.com'
-    instance.save.should be_true
+    instance.save.should be_truthy
   end
 
 end
