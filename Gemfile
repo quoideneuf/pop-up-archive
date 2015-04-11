@@ -181,5 +181,5 @@ group :development, :production, :staging do
 end
 
 group :production, :staging do
-  gem 'rails_12factor'
+  #gem 'rails_12factor'
 end
