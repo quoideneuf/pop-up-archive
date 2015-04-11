@@ -39,7 +39,7 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
     }
   });
 
-  $scope.defaultMiniMarkImage = 'https://www.popuparchive.com/assets/minimark.png';
+  $scope.defaultMiniMarkImage = '<%= asset_path("minimark.png") %>';
 
   $scope.sortOptions = [{name: "Relevancy", sort_by: "_score", sort_order: "desc"},
                       {name: "Newest Added to Oldest Added", sort_by: "date_added", sort_order: "desc"}, 
