@@ -9,7 +9,7 @@ PopUpArchive::Application.configure do
   config.action_controller.perform_caching = true
 
   # heroku rails 4 requires this
-  config.serve_static_assets = true
+  config.serve_static_files = true
 
   # Compress JavaScripts and CSS
   config.assets.compress = true
