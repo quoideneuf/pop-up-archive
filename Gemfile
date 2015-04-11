@@ -14,7 +14,6 @@ gem 'rails', '~> 4.1'
 #gem 'bootstrap-sass'
 gem 'bootstrap_form'
 gem 'angularjs-rails-resource'
-gem 'font-awesome-sass'
 gem 'ng_player_hater-rails'
 
 gem 'etagger', github: 'rails/etagger'
