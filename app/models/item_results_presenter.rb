@@ -148,7 +148,7 @@ class ItemResultsPresenter < BasicObject
     private
 
     def generate_highlighted_audio_files
-      if search_attrs[:audio_files].size == 0
+      if !search_attrs[:audio_files] || search_attrs[:audio_files].size == 0
         return []
       end
       if @highlight.present? && @highlight.transcript.present?
