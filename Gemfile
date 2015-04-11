@@ -9,7 +9,7 @@ gem 'rails', '~> 4.1'
 # NOTE that sass-rails, uglifier and coffee-rails seem
 # to be included by Rails core now so we disabled them here.
 #gem 'sass-rails'
-#gem 'uglifier'
+gem 'uglifier'
 #gem 'coffee-rails'
 #gem 'bootstrap-sass'
 gem 'bootstrap_form'
