@@ -37,12 +37,12 @@ ul.pager
       .media-body
         a.pull-left ng-click="item.play()" ng-show="item.paused()"
           i.play-overlay.fa.fa-play
-          img.media-object ng-src=" {{item.imageFiles.length > 0 && item.getThumbImage() || defaultMiniMarkImage }}"
+          img.media-object ng-src="{{(item.imageFiles.length > 0 && item.getThumbImage()) || defaultMiniMarkImage}}"
         a.pull-left ng-click="item.pause()" ng-show="item.playing()"
           i.play-overlay.fa.fa-pause
-          img.media-object ng-src=" {{item.imageFiles.length > 0 && item.getThumbImage() || defaultMiniMarkImage }}"
+          img.media-object ng-src="{{(item.imageFiles.length > 0 && item.getThumbImage()) || defaultMiniMarkImage}}"
         a.pull-left ng-hide="item.playable()" ng-href="{{item.link()}}"
-          img.media-object ng-src=" {{item.imageFiles.length > 0 && item.getThumbImage() || defaultMiniMarkImage }}"
+          img.media-object ng-src="{{(item.imageFiles.length > 0 && item.getThumbImage()) || defaultMiniMarkImage}}"
 				.media
 					h4.media-heading ng-show="item.getTitle()"
 						a ng-href="{{item.link()}}" {{item.getTitle()}}
