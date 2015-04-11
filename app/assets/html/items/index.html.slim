@@ -9,9 +9,9 @@ table.table.fit-in-window.table-bordered.table-striped
       th Actions
   tbody
     tr ng-repeat="item in (items || search.results)"
-      td {{item.identifier}}
-      td {{item.title}}
-      td {{item.date_created}}
+      td() {{item.identifier}}
+      td() {{item.title}}
+      td() {{item.date_created}}
       td
         a ng-repeat="producer in item.producers" ng-href='/search/contributors:%22{{producer}}%22' {{producer}}
       td
