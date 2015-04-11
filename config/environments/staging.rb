@@ -77,8 +77,6 @@ PopUpArchive::Application.configure do
     end
   end
 
-  puts "Using DATABASE_URL #{ENV['DATABASE_URL']}"
-
   Sidekiq.configure_server do |config|
 
     database_url = ENV['DATABASE_URL']
