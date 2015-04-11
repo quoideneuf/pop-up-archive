@@ -75,6 +75,7 @@ module PopUpArchive
     # Needed for Heroku
     require Rails.root.join('config', 'initializers', 'elasticsearch')
     config.assets.initialize_on_precompile = true
+    config.assets.precompile += %w(*.png *.jpg *.jpeg *.gif)
 
     config.assets.paths << "#{Rails.root}/app/assets/html"
 

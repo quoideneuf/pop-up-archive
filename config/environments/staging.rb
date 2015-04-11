@@ -49,6 +49,7 @@ PopUpArchive::Application.configure do
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
+  config.assets.precompile += %w(*.png *.jpg *.jpeg *.gif)
   config.assets.precompile += ['directory/base.css', 'directory/application.js', 'login/base.css', 'login.js', 'jplayer.popup.css', 'jquery.js', 'jquery.jplayer.js', 'tplayer.js', 'tplayer-embed.js', 'require.js', 'pua_aa_stylesheet.css', 'jPlayer.css', 'tplayer.css', 'Jplayer.swf', 'bootstrap.min.css']
 
   # Enable threaded mode
