@@ -25,9 +25,9 @@ section ng-controller="OrderPremiumTranscriptFormCtrl"
            | Machine-generated punctuation and capitalization
       .alert
         | For this file of
-        b  {{ item.getDurationString(audioFile.duration) }}
+        b()  {{ item.getDurationString(audioFile.duration) }}
         |, a charge of
-        b  {{ audioFile.premiumRetailCost }}
+        b()  {{ audioFile.premiumRetailCost }}
         |  will be billed to you at the end of the month.
       .alert ng-show="!currentUser.hasCard"
         | Since you don't yet have a credit card on file with us, 
