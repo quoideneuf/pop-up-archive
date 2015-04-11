@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150327184213) do
+ActiveRecord::Schema.define(:version => 20150402153837) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
@@ -157,6 +157,9 @@ ActiveRecord::Schema.define(:version => 20150327184213) do
     t.string   "imageable_type"
   end
 
+  add_index "image_files", ["imageable_id"], :name => "index_image_files_on_imageable_id"
+  add_index "image_files", ["imageable_type"], :name => "index_image_files_on_imageable_type"
+
   create_table "import_mappings", :force => true do |t|
     t.string   "data_type"
     t.string   "column"
@@ -214,6 +217,7 @@ ActiveRecord::Schema.define(:version => 20150327184213) do
 
   add_index "items", ["collection_id"], :name => "index_items_on_collection_id"
   add_index "items", ["csv_import_id"], :name => "index_items_on_csv_import_id"
+  add_index "items", ["deleted_at"], :name => "index_items_on_deleted_at"
   add_index "items", ["geolocation_id"], :name => "index_items_on_geolocation_id"
 
   create_table "monthly_usages", :force => true do |t|
@@ -324,6 +328,8 @@ ActiveRecord::Schema.define(:version => 20150327184213) do
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
   end
+
+  add_index "speakers", ["transcript_id"], :name => "index_speakers_on_transcript_id"
 
   create_table "storage_configurations", :force => true do |t|
     t.string   "provider"
