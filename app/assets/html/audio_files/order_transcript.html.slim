@@ -15,9 +15,9 @@ section ng-controller="OrderTranscriptFormCtrl"
        |. Your transcript will be returned within 48 hours to your Pop Up Archive account, where it will be indexed and auto-tagged. We'll send you an email when it's ready. You can also download the transcript text file with timestamps every 30 seconds. Speaker changes are differentiated by ">>\" markers throughout the transcript.
       .alert
         | For this file of
-        b {{ length() }}
+        b() {{ length() }}
         |, a charge of
-        b {{ price() | currency:"$" }}
+        b() {{ price() | currency:"$" }}
         |  will be added to your monthly bill.
       / .control-group
       /   label.control-label
