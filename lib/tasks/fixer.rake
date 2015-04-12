@@ -60,8 +60,14 @@ namespace :fixer do
         if task.stuck?
           report[task.type+'-stuck'] += 1
           if ok_to_recover and recover_types.has_key?(task.type)
-            task.recover!
-            report[task.type+'-recovered'] += 1
+            begin
+              task.recover!
+              report[task.type+'-recovered'] += 1
+            rescue Exceptions::PrivateFileNotFound => err
+              STDERR.puts err  # warn and continue
+            rescue => err
+              raise err # re-throw
+            end
           end
         end
       end
