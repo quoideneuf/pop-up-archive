@@ -312,13 +312,20 @@ describe AudioFile do
       @audio_file.current_status.should eq AudioFile::STUCK
     end
 
-    it "should increment on upload or copy" do
+    it "should increment on upload" do
       task = Tasks::UploadTask.new(extras: {'num_chunks' => 2, 'chunks_uploaded' => "1\n", 'key' => 'this/is/a/key.mp3'}, owner: @audio_file)
       task.save!
+      #STDERR.puts "1: upload task status == #{task.status}"
       @audio_file.current_status.should eq AudioFile::UPLOADING_INPROCESS
       task.add_chunk!('2')
       task.finish!
-      @audio_file.current_status.should eq AudioFile::TRANSCODING_INPROCESS
+      # reload to get current status
+      @audio_file.reload
+      #STDERR.puts "2: upload task status == #{task.status}"
+      #STDERR.puts "af #{@audio_file.id} status_code == #{@audio_file.status_code}"
+      #STDERR.puts "af #{@audio_file.id} current_status == #{@audio_file.current_status}"
+      # because this is a 'mp3' file there is no transcode necessary so we skip directly to transcribe.
+      @audio_file.current_status.should eq AudioFile::TRANSCRIBE_INPROCESS
     end
 
   end

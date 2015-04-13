@@ -661,8 +661,11 @@ class AudioFile < ActiveRecord::Base
   end
 
   def set_current_status
+    #STDERR.puts "before status_code==#{status_code}"
     st = calc_current_status
-    status_code = self.class.lookup_status_code(st)
+    self.status_code = self.class.lookup_status_code(st)
+    #STDERR.puts "after  status_code==#{status_code}"
+    #Rails.logger.warn ">>>>>>>>>>>>>>>>   AudioFile #{self.id} status_code==#{status_code}"
   end
 
   def calc_current_status
@@ -685,11 +688,17 @@ class AudioFile < ActiveRecord::Base
     all_tasks = self.tasks(true)  # ignore cached
     has_been_copied = self.is_copied?(all_tasks)
     has_been_uploaded = self.is_uploaded?(all_tasks)
-    if all_tasks.any?{|t| t.type == 'Tasks::UploadTask'} && !has_been_uploaded && !has_been_copied
-      # abort status determination early if upload has not finished.
-      if self.has_failed_upload?
-        return UPLOAD_FAILED
-      else 
+    #STDERR.puts "start calc_current_status. all_tasks=#{all_tasks.inspect}\nhas_been_copied=#{has_been_copied} has_been_uploaded=#{has_been_uploaded}"
+    if all_tasks.any?{|t| t.type == 'Tasks::UploadTask'} && !has_been_uploaded
+      if !has_been_copied
+        #STDERR.puts "eval upload status has_failed_upload==#{self.has_failed_upload?}"
+        # abort status determination early if upload has not finished.
+        if self.has_failed_upload?
+          return UPLOAD_FAILED
+        else 
+          return UPLOADING_INPROCESS
+        end
+      else
         return UPLOADING_INPROCESS
       end
     end
@@ -698,6 +707,7 @@ class AudioFile < ActiveRecord::Base
 
     # if we have zero tasks and the file is older than generic work window, consider it DOA.
     if all_tasks.size == 0 && updated_at && updated_at < Task.work_window
+      #STDERR.puts "UPLOAD_FAILED"
       return UPLOAD_FAILED
     end
     #Rails.logger.warn("1a elapsed: #{Time.now - st_time}")
@@ -707,6 +717,7 @@ class AudioFile < ActiveRecord::Base
     end
     #Rails.logger.warn("1b elapsed: #{Time.now - st_time}")
     if has_been_copied and has_been_uploaded
+      #STDERR.puts "TRANSCODING_INPROCESS"
       status = TRANSCODING_INPROCESS
     end
 
@@ -715,6 +726,7 @@ class AudioFile < ActiveRecord::Base
     premium_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::SpeechmaticsTranscribeTask"}
     #Rails.logger.warn("1c elapsed: #{Time.now - st_time}")
     if (self.transcoded? or self.is_mp3?) and (self.has_basic_transcribe_task_in_progress?(basic_transcript_tasks) or self.has_premium_transcribe_task_in_progress?(premium_transcript_tasks))
+      #STDERR.puts "TRANSCRIBE_INPROCESS"
       status = TRANSCRIBE_INPROCESS
     end
 
