@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150408151438) do
+ActiveRecord::Schema.define(version: 20150413151925) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(version: 20150408151438) do
     t.integer  "user_id"
     t.integer  "listens",                       default: 0, null: false
     t.datetime "deleted_at"
+    t.string   "status_code",       limit: 1
   end
 
   add_index "audio_files", ["item_id", "deleted_at"], name: "index_audio_files_on_item_id_and_deleted_at", using: :btree

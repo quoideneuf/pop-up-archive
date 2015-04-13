@@ -8,7 +8,7 @@ class AudioFile < ActiveRecord::Base
   acts_as_paranoid
 
   before_validation :set_metered
-  before_save       :check_user_id
+  before_save       :before_save_callback
 
   belongs_to :item, -> { with_deleted }
   belongs_to :user
@@ -46,6 +46,21 @@ class AudioFile < ActiveRecord::Base
   TRANSCRIBE_INPROCESS        = 'Transcribing'
   STUCK                       = 'Processing'
 
+  # status enum
+  STATUS_CODES = {
+    A: 'UNKNOWN_STATE',
+    B: 'TRANSCRIPT_PREVIEW_COMPLETE',
+    C: 'TRANSCRIPT_SAMPLE_COMPLETE',
+    D: 'TRANSCRIPT_BASIC_COMPLETE',
+    E: 'TRANSCRIPT_PREMIUM_COMPLETE',
+    F: 'UPLOADING_INPROCESS',
+    G: 'UPLOAD_FAILED',
+    H: 'COPYING_INPROCESS',
+    I: 'TRANSCODING_INPROCESS',
+    J: 'TRANSCRIBE_INPROCESS',
+    K: 'STUCK'
+  }
+
   # returns object to which this audio_file should be accounted.
   # should be a User or Organization
   def billable_to
@@ -76,6 +91,11 @@ class AudioFile < ActiveRecord::Base
 
   def get_storage
     item.try(:storage)
+  end
+
+  def before_save_callback
+    check_user_id
+    set_current_status
   end
 
   # verify that user_id is set, calling set_user_id if it is not.
@@ -604,14 +624,50 @@ class AudioFile < ActiveRecord::Base
     end
   end
 
+  def self.lookup_status_code(str)
+    # requires 2 lookups: one to get the constant name,
+    # and another to get the code
+    const = nil
+    self.constants.each do |c|
+      if self.const_get(c) == str
+        const = c
+        break
+      end
+    end
+    if !const
+      raise "Failed to find constant for string '#{str}'"
+    end
+    const_as_str = const.to_s
+    Rails.logger.warn("constant #{const_as_str} from '#{str}'")
+    STATUS_CODES.key(const_as_str)
+  end
+
+  def self.lookup_status_string(code)
+    # get constant
+    code_const = STATUS_CODES[code.to_sym] || 'UNKNOWN_STATE'
+    "#{self}::#{code_const}".constantize
+  end
+
   def current_status
     #require 'benchmark'
     st = nil
-    #el = Benchmark.realtime {
-      st = calc_current_status
-    #}
-    #Rails.logger.warn("current_status elapsed: #{el}")
+    if !status_code
+      # no db cache, so compute status and write it to db
+      #el = Benchmark.realtime {
+        st = calc_current_status
+        st_code = self.class.lookup_status_code(st)
+        update_attribute :status_code, st_code
+      #}
+      #Rails.logger.warn("calculate current_status elapsed: #{el}")
+    else
+      st = self.class.lookup_status_string(status_code) 
+    end 
     st
+  end
+
+  def set_current_status
+    st = calc_current_status
+    status_code = self.class.lookup_status_code(st)
   end
 
   def calc_current_status
