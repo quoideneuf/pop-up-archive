@@ -7,7 +7,7 @@ class AudioFile < ActiveRecord::Base
   include FileStorage
   acts_as_paranoid
 
-  before_validation :set_metered
+  before_validation :before_validation_callback
   before_save       :before_save_callback
 
   belongs_to :item, -> { with_deleted }
@@ -91,11 +91,6 @@ class AudioFile < ActiveRecord::Base
 
   def get_storage
     item.try(:storage)
-  end
-
-  def before_save_callback
-    check_user_id
-    set_current_status
   end
 
   # verify that user_id is set, calling set_user_id if it is not.
@@ -702,7 +697,7 @@ class AudioFile < ActiveRecord::Base
     #Rails.logger.warn("1 elapsed: #{Time.now - st_time}")
 
     # if we have zero tasks and the file is older than generic work window, consider it DOA.
-    if all_tasks.size == 0 && updated_at < Task.work_window
+    if all_tasks.size == 0 && updated_at && updated_at < Task.work_window
       return UPLOAD_FAILED
     end
     #Rails.logger.warn("1a elapsed: #{Time.now - st_time}")
@@ -807,4 +802,14 @@ class AudioFile < ActiveRecord::Base
   def is_metered?
     storage == StorageConfiguration.popup_storage
   end
+
+  def before_save_callback
+    check_user_id
+  end 
+
+  def before_validation_callback
+    set_metered
+    set_current_status
+  end
+
 end

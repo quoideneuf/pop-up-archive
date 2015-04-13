@@ -62,6 +62,9 @@ class Task < ActiveRecord::Base
     end
   end
 
+  # touch the parent audio_file after every save
+  after_commit :touch_audio_file_owner, if: Proc.new{|task| task.owner.is_a? AudioFile}
+
   # sanity check when saving a task.
   # if the current status != complete but it has results which *are* complete,
   # then kick off the FinishTask so that status gets updated.
@@ -264,5 +267,12 @@ class Task < ActiveRecord::Base
   def cancel_task
     #Rails.logger.warn "#{self.class.name}.cancel_task called by task #{self.id}"
   end
-  
+
+  private
+
+  def touch_audio_file_owner
+    #STDERR.puts "Task #{id} #{type} touch owner #{owner.id}"
+    owner.save!
+  end
+
 end

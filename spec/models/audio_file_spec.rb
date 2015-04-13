@@ -301,4 +301,26 @@ describe AudioFile do
     end
   end
 
+  ###################################################
+  ## current_status
+  describe "current_status" do
+    before(:each) {
+      @audio_file = FactoryGirl.create :audio_file_no_copy_media
+    }
+
+    it "should default to STUCK with zero tasks" do
+      @audio_file.current_status.should eq AudioFile::STUCK
+    end
+
+    it "should increment on upload or copy" do
+      task = Tasks::UploadTask.new(extras: {'num_chunks' => 2, 'chunks_uploaded' => "1\n", 'key' => 'this/is/a/key.mp3'}, owner: @audio_file)
+      task.save!
+      @audio_file.current_status.should eq AudioFile::UPLOADING_INPROCESS
+      task.add_chunk!('2')
+      task.finish!
+      @audio_file.current_status.should eq AudioFile::TRANSCODING_INPROCESS
+    end
+
+  end
+
 end
