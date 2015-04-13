@@ -633,7 +633,7 @@ class AudioFile < ActiveRecord::Base
       raise "Failed to find constant for string '#{str}'"
     end
     const_as_str = const.to_s
-    Rails.logger.warn("constant #{const_as_str} from '#{str}'")
+    #Rails.logger.warn("constant #{const_as_str} from '#{str}'")
     STATUS_CODES.key(const_as_str)
   end
 
