@@ -11,7 +11,7 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
 
     if @application.save
       flash[:notice] = I18n.t(:notice, :scope => [:doorkeeper, :flash, :applications, :create])
-      respond_with [:oauth, @application]
+      respond_with :oauth, @application
     else
       render :new
     end
@@ -29,7 +29,7 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
     @application = current_user.oauth_applications.find(params[:id])
     if @application.update_attributes(application_params)
       flash[:notice] = I18n.t(:notice, :scope => [:doorkeeper, :flash, :applications, :update])
-      respond_with [:oauth, @application]
+      respond_with :oauth, @application
     else
       render :edit
     end
