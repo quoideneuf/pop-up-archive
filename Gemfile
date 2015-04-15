@@ -41,7 +41,7 @@ gem 'omniauth-facebook'
 gem 'devise', '~> 3.4.1'
 gem 'devise_invitable', github: 'scambra/devise_invitable'
 gem 'switch_user'
-gem 'cancan'
+gem 'cancancan', '~> 1.10.1'
 
 # require a new enough rest-client on behalf of other gems that use it
 # NOTE that v 1.7.2 has a security bug but it is the newest version as of 2015-01-27

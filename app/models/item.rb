@@ -101,7 +101,7 @@ class Item < ActiveRecord::Base
     :episode_title, :extra, :identifier, :music_sound_used, :notes,
     :physical_format, :physical_location, :rights, :series_title,
     :tags, :title, :transcription, :adopt_to_collection, :language, 
-    :image, :remote_image_url, :image_files, :transcript_type
+    :image, :remote_image_url, :image_files, :transcript_type, :id
 
   belongs_to :geolocation
   belongs_to :csv_import
