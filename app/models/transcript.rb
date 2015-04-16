@@ -180,6 +180,7 @@ class Transcript < ActiveRecord::Base
   end
 
   def duration
+    return 0 unless self.end_time && self.start_time
     self.end_time - self.start_time
   end
 
