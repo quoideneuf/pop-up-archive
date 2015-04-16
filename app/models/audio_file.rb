@@ -685,7 +685,7 @@ class AudioFile < ActiveRecord::Base
     # if the current condition is true.
 
     # abort early if we haven't yet been saved
-    return UNKNOWN_STATE if !id
+    return STUCK if !self.id
 
     st_time = Time.now
     status = UNKNOWN_STATE
