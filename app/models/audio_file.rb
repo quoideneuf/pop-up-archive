@@ -683,6 +683,10 @@ class AudioFile < ActiveRecord::Base
     # because all these tasks are async, we just evaluate the current state
     # in a fail-forward progression, assuming that all previous conditions are true
     # if the current condition is true.
+
+    # abort early if we haven't yet been saved
+    return UNKNOWN_STATE if !id
+
     st_time = Time.now
     status = UNKNOWN_STATE
     all_tasks = self.tasks(true)  # ignore cached
