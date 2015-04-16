@@ -52,11 +52,11 @@ angular.module('Directory.faq.controllers', ['Directory.loader', 'Directory.user
 			questions: [
 				{
 					question: "Can I start with a monthly plan, and switch over to an annual plan?",
-					answer: "If you start with a monthly plan and decide that you like Pop Up Archive enough to get our discounted annual rate, you can switch to an annual plan anytime. You will be charged the annual rate from the day you switch over. Any remaining time from your monthly plan will be prorated.",
+					answer: "If you start with a monthly plan and decide that you like Pop Up Archive enough to get our discounted annual rate, you can switch to an annual plan anytime. You will be charged the annual rate from the 1st day of the month after you changed plans.",
 				},
 				{
 					question: "When and how am I charged?",
-					answer: "For monthly plans, you’ll be charged once each month, on the first day of the month. If you sign up mid-month, you'll also be charged a one-time pro-rated fee for your actual usage during that initial period. For annual plans, you’ll be charged once a year on the first day of the month after you signed up. We use Stripe to process payments.",
+					answer: "For monthly plans, you’ll be charged once each month, on the first day of the month. If you sign up mid-month, you won't be charged until the 1st of the next month. For annual plans, you’ll be charged once a year on the first day of the month after you signed up. We use Stripe to process payments.",
 				},
 				{
 					question: "What does “hours of processing” mean exactly?",
