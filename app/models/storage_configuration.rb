@@ -19,9 +19,10 @@ class StorageConfiguration < ActiveRecord::Base
       options = {
         :provider => provider,
         "#{abbr}_access_key_id".to_sym => key,
-        "#{abbr}_secret_access_key".to_sym => secret
+        "#{abbr}_secret_access_key".to_sym => secret,
       }
       options[:path_style] = true if provider.downcase == 'aws'
+      options[:aws_signature_version] = 2 if provider.downcase == 'aws'
     end
     options
   end

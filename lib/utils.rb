@@ -238,7 +238,7 @@ class Utils
           response = new_connection(request_uri).get(:response_block => streamer)
           temp_file.fsync
 
-          logger.debug "#{uri} responded with #{response.status.to_s}"
+          logger.debug "#{request_uri} responded with #{response.status.to_s}"
           if response.status.to_s.start_with?('2')
             file_downloaded = true
           elsif response.status.to_s.start_with?('3')
