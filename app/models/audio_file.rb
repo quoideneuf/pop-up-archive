@@ -436,7 +436,7 @@ class AudioFile < ActiveRecord::Base
 
   def analyze_transcript
     return unless transcripts_alone.count > 0
-    if task = (tasks.analyze.valid.pop || tasks.select { |t| t.type == "Tasks::AnalyzeTask" && !t.cancelled? }.pop)
+    if task = (tasks.analyze.valid.last || tasks.select { |t| t.type == "Tasks::AnalyzeTask" && !t.cancelled? }.pop)
       logger.warn "AudioFile #{self.id} already has analyze task #{task.id}"
       return
     end
