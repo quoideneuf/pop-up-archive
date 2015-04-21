@@ -156,7 +156,16 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
   }
 
   Item.prototype.getCreatedAt = function() {
-    return new Date(Date.parse(this.dateCreated || this.dateAdded)).toUTCString();
+    if (!this.dateCreated) {
+      return null;
+    }
+    else {
+      return new Date(Date.parse(this.dateCreated)).toUTCString();
+    }
+  }
+
+  Item.prototype.getAddedAt = function() {
+    return new Date(Date.parse(this.dateAdded)).toUTCString();
   }
 
   Item.prototype.link = function () {
