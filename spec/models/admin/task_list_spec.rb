@@ -7,7 +7,7 @@ describe Admin::TaskList do
 
   before {
     @task = FactoryGirl.create :analyze_task
-    Admin::TaskList.any_instance.stub(:incomplete_tasks).and_return([@task])
+    allow_any_instance_of(Admin::TaskList).to receive(:incomplete_tasks).and_return([@task])
     @task_list = Admin::TaskList.new
   }
 

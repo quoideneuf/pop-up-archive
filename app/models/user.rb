@@ -15,8 +15,6 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :provider, :uid, :name
 
-  serialize :transcript_usage_cache, HstoreCoder
-
   belongs_to :organization
   belongs_to :subscription_plan
 
@@ -25,7 +23,7 @@ class User < ActiveRecord::Base
   after_commit :add_default_collection, on: :create
 
   has_many :collection_grants, as: :collector
-  has_many :collections, through: :collection_grants, include: :default_storage
+  has_many :collections, -> { includes :default_storage }, through: :collection_grants
   has_many :items, through: :collections
   has_many :audio_files, through: :items
   has_many :csv_imports
@@ -40,8 +38,8 @@ class User < ActiveRecord::Base
   OVERAGE_CALC = 'coalesce(used_metered_storage_cache - pop_up_hours_cache * 3600, 0)'
 
   scope :over_limits, -> { select("users.*, #{OVERAGE_CALC} as overage").where("#{OVERAGE_CALC} > 0").order('overage DESC') }
-  scope :premium_usage_desc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) desc"
-  scope :premium_usage_asc, :order => "cast(transcript_usage_cache->'premium_seconds' as int) asc"
+  scope :premium_usage_desc, -> { order "cast(transcript_usage_cache->'premium_seconds' as int) desc" }
+  scope :premium_usage_asc,  -> { order "cast(transcript_usage_cache->'premium_seconds' as int) asc"  }
 
   delegate :name, :id, :amount, to: :plan, prefix: true
 

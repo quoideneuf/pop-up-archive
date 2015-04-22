@@ -4,6 +4,8 @@ PopUpArchive::Application.routes.draw do
     controllers :applications => 'oauth/applications'
   end
 
+  root to: "directory/dashboard#guest"
+
   # get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'pop-up-archive.herokuapp.com' }
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'beta.popuparchive.org' }
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'www.popuparchive.org', protocol: "http://" }
@@ -11,13 +13,13 @@ PopUpArchive::Application.routes.draw do
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'www.popuparchive.com', protocol: "http://" }
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'popuparchive.com'}
   get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'popuparchive.org'}
-  root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'www.popuparchive.org', protocol: 'http://' }
-  root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'www.popuparchive.org', protocol: 'https://' }
-  root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'beta.popuparchive.org' }
+  #root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'www.popuparchive.org', protocol: 'http://' }
+  #root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'www.popuparchive.org', protocol: 'https://' }
+  #root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'beta.popuparchive.org' }
   # root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'pop-up-archive.herokuapp.com' }
-  root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'www.popuparchive.com', protocol: 'http://' }
-  root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'popuparchive.com' }
-  root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'popuparchive.org' }
+  #root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'www.popuparchive.com', protocol: 'http://' }
+  #root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'popuparchive.com' }
+  #root to: redirect('https://www.popuparchive.com/'), constraints: { host: 'popuparchive.org' }
 
   #devise_for ActiveAdmin::Devise.config
   devise_for :users, controllers: { registrations: 'users/registrations', invitations: 'users/invitations', omniauth_callbacks: 'users/omniauth_callbacks', sessions: 'users/sessions' }
@@ -35,12 +37,12 @@ PopUpArchive::Application.routes.draw do
   get 'media/:token/:expires/:use/:class/:id/:name.:extension', controller: 'media', action: 'show', constraints: {name: /[^\/]+/}
   get 'media/:class/:idhex/:name.:extension', controller: 'media', action: 'permanent', constraints: {name: /[^\/]+/}
   
-  get 'embed_player/:name/:file_id/:item_id/:collection_id', to: 'embed_player', action: 'show'
+  get 'embed_player/:name/:file_id/:item_id/:collection_id', controller: 'embed_player', action: 'show'
 
-  get 'tplayer/:file_id',        to: 'embed_player', action: 'tplayer'
-  get 'tplayer/:file_id/:title', to: 'embed_player', action: 'tplayer'
+  get 'tplayer/:file_id',        controller: 'embed_player', action: 'tplayer'
+  get 'tplayer/:file_id/:title', controller: 'embed_player', action: 'tplayer'
 
-  get 'oembed', to: 'oembed', action: 'show'
+  get 'oembed', controller: 'oembed', action: 'show'
 
   post 'fixer_callback/:id', controller: 'callbacks', action: 'fixer', as: 'audio_file_fixer_callback', model_name: 'audio_file'
 
@@ -57,9 +59,9 @@ PopUpArchive::Application.routes.draw do
   post 'headcheck', :to => 'api/v1/audio_files#head_check'
 
   # sharing shortcut
-  get 't/:item_id',               to: 'item', action: 'short'
-  get 't/:item_id/:start',        to: 'item', action: 'short'
-  get 't/:item_id/:start/:end',   to: 'item', action: 'short'
+  get 't/:item_id',               controller: 'item', action: 'short'
+  get 't/:item_id/:start',        controller: 'item', action: 'short'
+  get 't/:item_id/:start/:end',   controller: 'item', action: 'short'
 
   namespace :api, defaults: { format: 'json' }, path: 'api' do
     scope module: :v1, constraints: ApiVersionConstraint.new(version: 1, default: true) do
@@ -168,8 +170,8 @@ PopUpArchive::Application.routes.draw do
     mount Sidekiq::Web => '/admin/sidekiq'
   end
 
-  match '/api/*path', to: 'api/base#not_found'
-  match '*path', to: 'directory/dashboard#user'
-  root to: 'directory/dashboard#guest', constraints: GuestConstraint.new(true)
-  root to: 'directory/dashboard#user', constraints: GuestConstraint.new(false)
+  match '/api/*path', to: 'api/base#not_found', via: [:get, :post]
+  match '*path', to: 'directory/dashboard#user', via: [:get, :post]
+  match '*path', to: 'directory/dashboard#guest', constraints: GuestConstraint.new(true), via: [:get, :post]
+  match '*path', to: 'directory/dashboard#user', constraints: GuestConstraint.new(false), via: [:get, :post]
 end

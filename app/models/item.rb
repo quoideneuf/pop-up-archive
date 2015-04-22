@@ -33,6 +33,27 @@ class Item < ActiveRecord::Base
         indexes :transcript, type: 'string', store: true, boost: 0.1
       end
 
+      indexes :audio_files do
+        indexes :id,       type: 'long',   index: :not_analyzed
+        indexes :url,      type: 'string', index: :not_analyzed
+        indexes :filename, type: 'string', index: :not_analyzed
+        indexes :duration, type: 'string', index: :not_analyzed
+        indexes :mp3,      type: 'string', index: :not_analyzed
+        indexes :ogg,      type: 'string', index: :not_analyzed
+        indexes :url_title, type: 'string', index: :not_analyzed
+        indexes :listenlen, type: 'string', index: :not_analyzed
+      end 
+
+      indexes :image_files do
+        indexes :filename, type: 'string', index: :not_analyzed
+        indexes :upload_id, type: 'string', index: :not_analyzed
+        indexes :original_file_url, type: 'string', index: :not_analyzed
+        indexes :url do
+          indexes :full, type: 'string', index: :not_analyzed
+          indexes :thumb, type: 'string', index: :not_analyzed
+        end 
+      end
+
       indexes :duration,          type: 'long',    include_in_all: false
       indexes :location do
         indexes :name
@@ -80,12 +101,12 @@ class Item < ActiveRecord::Base
     :episode_title, :extra, :identifier, :music_sound_used, :notes,
     :physical_format, :physical_location, :rights, :series_title,
     :tags, :title, :transcription, :adopt_to_collection, :language, 
-    :image, :remote_image_url, :image_files, :transcript_type
+    :image, :remote_image_url, :image_files, :transcript_type, :id
 
   belongs_to :geolocation
   belongs_to :csv_import
   belongs_to :storage_configuration, class_name: "StorageConfiguration", foreign_key: :storage_id
-  belongs_to :collection, :with_deleted => true
+  belongs_to :collection, -> { with_deleted }
 
   has_many   :collection_grants, through: :collection
   has_many   :users, through: :collection_grants
@@ -99,24 +120,23 @@ class Item < ActiveRecord::Base
   has_many   :contributors, through: :contributions, source: :person
 
   has_many   :entities, dependent: :destroy
-  has_many   :confirmed_entities, class_name: 'Entity', conditions: {is_confirmed: true}
-  has_many   :unconfirmed_entities, class_name: 'Entity', conditions: Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false))
-  has_many   :high_scoring_entities, class_name: 'Entity', conditions: Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].gteq(0.95))
-  has_many   :middle_scoring_entities, class_name: 'Entity', conditions: Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].gt(0.75).and(Entity.arel_table[:score].lt(0.95)))
-  has_many   :low_scoring_entities, class_name: 'Entity', conditions: Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].lteq(0.75).or(Entity.arel_table[:score].eq(nil)))
+  has_many   :confirmed_entities, -> { where is_confirmed: true }, class_name: 'Entity'
+  has_many   :unconfirmed_entities, -> { where Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)) }, class_name: 'Entity'
+  has_many   :high_scoring_entities, -> { where Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].gteq(0.95)) }, class_name: 'Entity'
+  has_many   :middle_scoring_entities, -> { where Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].gt(0.75).and(Entity.arel_table[:score].lt(0.95))) }, class_name: 'Entity'
+  has_many   :low_scoring_entities, -> { where Entity.arel_table[:is_confirmed].eq(nil).or(Entity.arel_table[:is_confirmed].eq(false)).and(Entity.arel_table[:score].lteq(0.75).or(Entity.arel_table[:score].eq(nil))) }, class_name: 'Entity'
 
   STANDARD_ROLES.each do |role|
-    has_many "#{role}_contributions".to_sym, class_name: "Contribution", conditions: {role: role}
+    has_many "#{role}_contributions".to_sym, -> { where role: role }, class_name: "Contribution"
     has_many role.pluralize.to_sym, through: "#{role}_contributions".to_sym, source: :person
   end
 
-  scope :publicly_visible, where(is_public: true)
-
-  serialize :extra, HstoreCoder
+  scope :publicly_visible, -> { where(is_public: true) }
 
   delegate :title, to: :collection, prefix: true
 
-  accepts_nested_attributes_for :contributions
+  # TODO fix this for Rails 4
+  #accepts_nested_attributes_for :contributions
 
   def duration
     read_attribute(:duration) || audio_files.inject(0){|s,a| s + a.duration.to_i}
@@ -220,6 +240,8 @@ class Item < ActiveRecord::Base
       ([:contributors] + STANDARD_ROLES.collect{|r| r.pluralize.to_sym}).each do |assoc|
         json[assoc]      = send(assoc).map{|c| c.as_json }
       end
+      json[:audio_files] = audio_for_index
+      json[:image_files] = images_for_index
       json[:tags]        = tags_for_index
       json[:location]    = geolocation.as_indexed_json if geolocation.present?
       json[:transcripts] = transcripts_for_index
@@ -233,6 +255,38 @@ class Item < ActiveRecord::Base
       json[:date_broadcast] = self.date_broadcast.nil? ? nil : self.date_broadcast.as_json
       json[:date_added]     = self.created_at.as_json
     end
+  end
+
+  def audio_for_index
+    hashed = []
+    audio_files.each do |af|
+      hashed.push({
+        :id       => af.id,
+        :url      => af.player_url,
+        :filename => af.filename,
+        :duration => af.duration_hms,
+      })
+    end
+    hashed
+  end
+
+  def images_for_index
+    hashed = []
+    imgfs =  []
+    if image_files and image_files.size > 0 
+      imgfs = image_files
+    elsif collection and collection.image_files and collection.image_files.size > 0 
+      imgfs = collection.image_files
+    end
+    imgfs.each do |imgf|
+      hashed.push({
+        :filename => imgf.filename, 
+        :url => imgf.urls, 
+        :upload_id => imgf.upload_id, 
+        :original_file_url => imgf.original_file_url,
+      })
+    end
+    hashed
   end
 
   def tags

@@ -56,7 +56,7 @@ desc "Import PBCore 2.0 pbcoreCollection XML file from a URL"
     # load the feed
     able_to_parse = true
     collection = Collection.find(args.collection_id)
-    feed = Feedzirra::Feed.fetch_and_parse(args.url, :on_failure => lambda {|url, response_code, header, body| able_to_parse = false if response_code == 200 })
+    feed = Feedjira::Feed.fetch_and_parse(args.url, :on_failure => lambda {|url, response_code, header, body| able_to_parse = false if response_code == 200 })
  
     if !able_to_parse || !feed.entries || feed.entries.size == 0 
       puts "Bad feed or no entries found: #{url}"

@@ -17,9 +17,9 @@
 
   .row ng-repeat="item in faq" 
     .span12 id='{{item.link}}'
-      h3 {{item.title}}
+      h3() {{item.title}}
       .question ng-repeat="entry in item.questions"
-        h4 {{entry.question}}
-        p  {{entry.answer}}
+        h4() {{entry.question}}
+        p()  {{entry.answer}}
 
  

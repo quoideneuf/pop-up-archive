@@ -21,12 +21,12 @@ describe ImageFile do
     end       
 
     it "should save a thumbnail version" do
-      ImageFile.any_instance.stub(:save_thumb_version).and_return(true)
+      allow_any_instance_of(ImageFile).to receive(:save_thumb_version).and_return(true)
       @image_file.file.thumb.should_not be_nil
     end
 
     it "should know that it is uploaded" do
-      ImageFile.any_instance.stub(:file_uploaded).and_return(true)
+      allow_any_instance_of(ImageFile).to receive(:file_uploaded).and_return(true)
       @image_file.is_uploaded.should be true
     end
 

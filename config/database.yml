@@ -60,18 +60,9 @@ test:
   password: <%= @connect_uri.password %>
 
 staging:
-  adapter: postgresql
-  encoding: unicode
-  database: pop-up-archive_staging
-  pool: 5
-  username: pop-up-archive
-  password:
+  url: <%= ENV["DATABASE_URL"] %>
+  pool: <%= ENV["DB_POOL"] || ENV['MAX_THREADS'] || 5 %>
 
 production:
-  adapter: postgresql
-  encoding: unicode
-  database: pop-up-archive_production
-  pool: 5
-  username: pop-up-archive
-  password:
-
+  url: <%= ENV["DATABASE_URL"] %>
+  pool: <%= ENV["DB_POOL"] || ENV['MAX_THREADS'] || 5 %>

@@ -13,7 +13,7 @@ FactoryGirl.define do
 
 
     factory :item_with_audio do
-      ignore do
+      transient do
         audio_files_count 1
       end
 

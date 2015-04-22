@@ -245,7 +245,7 @@ describe AudioFile do
       @audio_file.duration = 100
       task = @audio_file.order_premium_transcript(new_user)
       @audio_file.tasks.size.should == 1
-      task.extras[:ondemand].should == true
+      task.extras['ondemand'].should == "true"
     end
 
   end
@@ -299,6 +299,35 @@ describe AudioFile do
       end
       unmetered.metered?.should be false
     end
+  end
+
+  ###################################################
+  ## current_status
+  describe "current_status" do
+    before(:each) {
+      @audio_file = FactoryGirl.create :audio_file_no_copy_media
+    }
+
+    it "should default to STUCK with zero tasks" do
+      @audio_file.current_status.should eq AudioFile::STUCK
+    end
+
+    it "should increment on upload" do
+      task = Tasks::UploadTask.new(extras: {'num_chunks' => 2, 'chunks_uploaded' => "1\n", 'key' => 'this/is/a/key.mp3'}, owner: @audio_file)
+      task.save!
+      #STDERR.puts "1: upload task status == #{task.status}"
+      @audio_file.current_status.should eq AudioFile::UPLOADING_INPROCESS
+      task.add_chunk!('2')
+      task.finish!
+      # reload to get current status
+      @audio_file.reload
+      #STDERR.puts "2: upload task status == #{task.status}"
+      #STDERR.puts "af #{@audio_file.id} status_code == #{@audio_file.status_code}"
+      #STDERR.puts "af #{@audio_file.id} current_status == #{@audio_file.current_status}"
+      # because this is a 'mp3' file there is no transcode necessary so we skip directly to transcribe.
+      @audio_file.current_status.should eq AudioFile::TRANSCRIBE_INPROCESS
+    end
+
   end
 
 end

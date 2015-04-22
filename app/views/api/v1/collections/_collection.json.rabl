@@ -1,7 +1,7 @@
 attributes :id, :title, :description, :items_visible_by_default, :token, :copy_media
 
 node :number_of_items do |coll|
-  coll.items.count
+  coll.item_ids.length
 end
 
 node :item_ids do |coll|
@@ -24,6 +24,8 @@ child :image_files do |af|
   extends 'api/v1/image_files/image_file'
 end
 
-node :recent_files do |coll|
-  coll.recent_files
+if locals[:show_recent]
+  node :recent_files do |coll|
+    coll.recent_files
+  end
 end

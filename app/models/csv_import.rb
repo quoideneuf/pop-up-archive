@@ -19,14 +19,14 @@ class CsvImport < ActiveRecord::Base
   has_many :rows, class_name: 'CsvRow', dependent: :destroy
   has_many :items, dependent: :destroy
 
-  has_many :mappings, order: "position", class_name:'ImportMapping', dependent: :destroy do
+  has_many :mappings, -> { order "position" }, { class_name:'ImportMapping', dependent: :destroy } do
     def [](index)
       conditions(['import_mappings.position = ?', index - 1]).limit(1).first
     end
   end
   accepts_nested_attributes_for :mappings
 
-  default_scope order('state_index ASC, created_at ASC')
+  default_scope -> { order('state_index ASC, created_at ASC') }
 
   belongs_to :collection
   belongs_to :user

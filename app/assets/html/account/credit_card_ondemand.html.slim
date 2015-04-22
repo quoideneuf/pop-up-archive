@@ -8,9 +8,9 @@ section ng-controller="CreditCardCtrl"
     .modal-body
       p ng-show="pendingPlanObj"
         | You are signing up for a&nbsp;
-        strong {{pendingPlanObj.hours}} hour&nbsp;
+        strong() {{pendingPlanObj.hours}} hour&nbsp;
         | plan at the rate of&nbsp;
-        strong {{pendingPlanObj.amount/100|currency}} per {{pendingPlanObj.interval}}.
+        strong() {{pendingPlanObj.amount/100|currency}} per {{pendingPlanObj.interval}}.
       hr ng-show="pendingPlanObj"
       .stripe-cc.form-horizontal
         .control-group ng-class="{error: errors.number}"

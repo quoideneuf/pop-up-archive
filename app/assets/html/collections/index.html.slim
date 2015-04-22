@@ -27,7 +27,7 @@
             h3 style="display: inline-block" {{collection.title}}
           span
             ng-pluralize count="collection.numberOfItems" when="{'0': '(No Items yet)', '1': '(1 Item)', 'other': '({} Items)' }"
-        p {{collection.description | characters:220}}
+        p() {{collection.description | characters:220}}
       button.collection-button.upload-item-to-collection ng-click="uploadItemToCollection(collection.id)"
         i.fa.fa-upload &nbsp
         | Upload an Audio File to {{collection.title}}

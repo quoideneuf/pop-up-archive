@@ -28,7 +28,7 @@ class ItemResultsPresenter < BasicObject
     attrs = [:title, :description, :date_created, :date_added, :identifier, :collection_id,
       :collection_title, :episode_title, :series_title, :date_broadcast, :tags, :notes, :digital_format,
       :physical_format, :digital_location, :physical_location, :music_sound_used, :date_peg, :rights, :duration, 
-      :tags, :transcript_type, :notes, :token, :language, :updated_at, :date_added ]
+      :tags, :transcript_type, :notes, :token, :language, :updated_at, :date_added, :audio_files, :image_files, :entities ]
 
     if results and results.size
       results.each do |result|
@@ -41,15 +41,10 @@ class ItemResultsPresenter < BasicObject
         end
 
         # child objects
-        fres[:audio_files] = result.audio_files.map do |af|
-          { :url => af.player_url, :id => af.id, :filename => af.filename }
-        end
-        fres[:image_files] = result.image_files.map do |imgf|
-          { :filename => imgf.filename, :url => imgf.urls, :upload_id => imgf.upload_id, :original_file_url => imgf.original_file_url }
-        end
-        if result.entities.present?
-          fres[:entities] = result.entities.map do |ent|
-            { :name => ent.name, :category => ent.category }
+        if result.search_attrs[:entities].present?
+          # change key name for backcompat
+          fres[:entities] = result.search_attrs[:entities].map do |ent|
+            { :name => ent.entity, :category => ent.category }
           end
         end
         if result.highlighted_audio_files.present?
@@ -153,7 +148,7 @@ class ItemResultsPresenter < BasicObject
     private
 
     def generate_highlighted_audio_files
-      if audio_files.size == 0
+      if !search_attrs[:audio_files] || search_attrs[:audio_files].size == 0
         return []
       end
       if @highlight.present? && @highlight.transcript.present?

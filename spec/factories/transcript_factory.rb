@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :transcript do
-    ignore do
+    transient do
       timed_texts_count 2
     end
 

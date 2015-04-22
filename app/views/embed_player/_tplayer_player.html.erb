@@ -2,7 +2,7 @@
  <tr class="img-player">
   <td class="img">
    <a href="/collections/<%= @audio_file.item.collection_id %>/items/<%= @audio_file.item_id %>/" target="_blank">
-     <img src="<%= @audio_file.item.image_url || '/assets/minimark.png' %>" />
+     <img src="<%= @audio_file.item.image_url || asset_path('minimark.png') %>" />
    </a>
   </td>
   <td class="tplayer"> 

@@ -17,6 +17,7 @@ require "rails/application"
 require 'factory_girl'
 require 'rspec/rails'
 require 'rspec/mocks'
+require 'rspec/its'
 require 'capybara/rspec'
 require 'capybara/rails'
 require 'capybara/poltergeist'
@@ -82,17 +83,27 @@ RSpec.configure do |config|
   config.include Capybara::DSL
   config.mock_with :rspec
   config.use_transactional_fixtures = true
+  config.infer_spec_type_from_file_location!
+
+  config.raise_errors_for_deprecations!  # catastrophe is a Good Thing
+
+  # back-compat for our version-2-era tests
+  config.expect_with(:rspec) { |c| c.syntax = [:should, :expect] }
+  config.mock_with :rspec do |mocks|
+    mocks.syntax = [:should, :expect]
+    mocks.verify_partial_doubles = true
+  end
 
   config.include Devise::TestHelpers, type: :controller
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f }
   FactoryGirl.reload
 
-  config.before :suite, elasticsearch: true do
+  config.before :suite do
     seed_test_db
     start_es_server unless ENV['ES_SKIP']
   end
 
-  config.after :suite, elasticsearch: true do
+  config.after :suite do
     stop_es_server unless ENV['ES_SKIP']
   end
 

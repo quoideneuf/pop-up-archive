@@ -7,14 +7,14 @@ class AudioFile < ActiveRecord::Base
   include FileStorage
   acts_as_paranoid
 
-  before_validation :set_metered
-  before_save       :check_user_id
+  before_validation :before_validation_callback
+  before_save       :before_save_callback
 
-  belongs_to :item, :with_deleted => true
+  belongs_to :item, -> { with_deleted }
   belongs_to :user
   belongs_to :instance
   has_many :tasks, as: :owner
-  has_many :transcripts, order: 'created_at desc'
+  has_many :transcripts, -> { order 'created_at desc' }
 
   belongs_to :storage_configuration, class_name: "StorageConfiguration", foreign_key: :storage_id
 
@@ -27,7 +27,7 @@ class AudioFile < ActiveRecord::Base
 
   attr_accessor :should_trigger_fixer_copy
 
-  default_scope order('"audio_files".created_at ASC')
+  default_scope -> { order('"audio_files".created_at ASC') }
 
   delegate :collection_title, to: :item
 
@@ -45,6 +45,21 @@ class AudioFile < ActiveRecord::Base
   TRANSCODING_INPROCESS       = 'Transcoding'
   TRANSCRIBE_INPROCESS        = 'Transcribing'
   STUCK                       = 'Processing'
+
+  # status enum
+  STATUS_CODES = {
+    A: 'UNKNOWN_STATE',
+    B: 'TRANSCRIPT_PREVIEW_COMPLETE',
+    C: 'TRANSCRIPT_SAMPLE_COMPLETE',
+    D: 'TRANSCRIPT_BASIC_COMPLETE',
+    E: 'TRANSCRIPT_PREMIUM_COMPLETE',
+    F: 'UPLOADING_INPROCESS',
+    G: 'UPLOAD_FAILED',
+    H: 'COPYING_INPROCESS',
+    I: 'TRANSCODING_INPROCESS',
+    J: 'TRANSCRIBE_INPROCESS',
+    K: 'STUCK'
+  }
 
   # returns object to which this audio_file should be accounted.
   # should be a User or Organization
@@ -226,7 +241,7 @@ class AudioFile < ActiveRecord::Base
     return if !self.transcoded? and storage.at_internet_archive?
     result = nil
     if !force
-      if task = (tasks.analyze_audio.valid.pop || tasks.select { |t| t.type == "Tasks::AnalyzeAudioTask" && !t.cancelled? }.pop)
+      if task = (tasks.analyze_audio.valid.last || tasks.select { |t| t.type == "Tasks::AnalyzeAudioTask" && !t.cancelled? }.pop)
         logger.warn "AudioFile #{self.id} already has analyze_audio task #{task.id}"
         return nil
       end
@@ -254,7 +269,7 @@ class AudioFile < ActiveRecord::Base
       options[:extras]['amara_team'] = user.organization.amara_team
     end
 
-    if task = (tasks.add_to_amara.valid.pop || tasks.select { |t| t.type == "Tasks::AddToAmaraTask" && !t.cancelled? }.pop)
+    if task = (tasks.add_to_amara.valid.last || tasks.select { |t| t.type == "Tasks::AddToAmaraTask" && !t.cancelled? }.pop)
       logger.warn "AddToAmaraTask already exists #{task.id} for audio_file #{self.id}"
     else
       task = Tasks::AddToAmaraTask.new(options)
@@ -301,7 +316,7 @@ class AudioFile < ActiveRecord::Base
   def start_premium_transcribe_job(user, identifier, options={})
     return if (duration.to_i <= 0)
 
-    if task = (tasks.speechmatics_transcribe.valid.pop || tasks.select { |t| t.type == "Tasks::SpeechmaticsTranscribeTask" && !t.cancelled? }.pop)
+    if task = (tasks.speechmatics_transcribe.valid.last || tasks.select { |t| t.type == "Tasks::SpeechmaticsTranscribeTask" && !t.cancelled? }.pop)
       logger.warn "speechmatics transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
       task
     else
@@ -315,7 +330,7 @@ class AudioFile < ActiveRecord::Base
   def start_transcribe_job(user, identifier, options={})
     extras = { 'original' => process_file_url, 'user_id' => user.try(:id) }.merge(options)
 
-    if task = (tasks.transcribe.valid.where(identifier: identifier).pop || tasks.select { |t| t.type == "Tasks::TranscribeTask" && t.identifier == identifier && !t.cancelled? }.pop)
+    if task = (tasks.transcribe.valid.where(identifier: identifier).last || tasks.select { |t| t.type == "Tasks::TranscribeTask" && t.identifier == identifier && !t.cancelled? }.pop)
       logger.warn "transcribe task #{identifier} #{task.id} already exists for audio file #{self.id}"
     else
       self.tasks << Tasks::TranscribeTask.new( identifier: identifier, extras: extras )
@@ -324,7 +339,7 @@ class AudioFile < ActiveRecord::Base
   
   def order_transcript(user=self.user)
     raise 'cannot create transcript when duration is 0' if (duration.to_i <= 0)
-    if task = (tasks.order_transcript.valid.where(identifier: 'order_transcript').pop || tasks.select { |t| t.type == "Tasks::OrderTranscriptTask" && t.identifier == 'order_transcript' && !t.cancelled? }.pop)
+    if task = (tasks.order_transcript.valid.where(identifier: 'order_transcript').last || tasks.select { |t| t.type == "Tasks::OrderTranscriptTask" && t.identifier == 'order_transcript' && !t.cancelled? }.pop)
       logger.warn "order_transcript task #{task.id} already exists for audio file #{self.id}"
     else
       task = Tasks::OrderTranscriptTask.new(
@@ -346,7 +361,7 @@ class AudioFile < ActiveRecord::Base
       AudioFileUploader.version_formats.each do |label, info|
         next if (label == filename_extension) # skip this version if that is already the file's format
         #log and skip if transcode task already exists
-        if task = (tasks.transcode.valid.where(identifier: "#{label}_transcode").pop || tasks.select { |t| t.type == "Tasks::TranscodeTask" && t.identifier == "#{label}_transcode" && !t.cancelled? }.pop)
+        if task = (tasks.transcode.valid.where(identifier: "#{label}_transcode").last || tasks.select { |t| t.type == "Tasks::TranscodeTask" && t.identifier == "#{label}_transcode" && !t.cancelled? }.pop)
           logger.warn "transcode task #{identifier} #{task.id} already exists for audio file #{self.id}"
           task
         else
@@ -365,7 +380,7 @@ class AudioFile < ActiveRecord::Base
       return
     end
 
-    if task = (tasks.detect_derivatives.valid.where(identifier: 'detect_derivatives').pop || tasks.select { |t| t.type == "Tasks::DetectDerivativesTask" && t.identifier != 'detect_derivatives' && !t.cancelled? }.pop)
+    if task = (tasks.detect_derivatives.valid.where(identifier: 'detect_derivatives').last || tasks.select { |t| t.type == "Tasks::DetectDerivativesTask" && t.identifier != 'detect_derivatives' && !t.cancelled? }.pop)
       logger.warn "detect_derivatives task #{task.id} already exists for audio_file #{self.id}"
       return
     end
@@ -421,7 +436,7 @@ class AudioFile < ActiveRecord::Base
 
   def analyze_transcript
     return unless transcripts_alone.count > 0
-    if task = (tasks.analyze.valid.pop || tasks.select { |t| t.type == "Tasks::AnalyzeTask" && !t.cancelled? }.pop)
+    if task = (tasks.analyze.valid.last || tasks.select { |t| t.type == "Tasks::AnalyzeTask" && !t.cancelled? }.pop)
       logger.warn "AudioFile #{self.id} already has analyze task #{task.id}"
       return
     end
@@ -437,8 +452,8 @@ class AudioFile < ActiveRecord::Base
     self.transcripts.unscoped.where(:audio_file_id => self.id)
   end
 
-  def stuck?
-    return true if self.tasks.any?{|t| t.stuck?}
+  def stuck?(tsks=self.tasks)
+    return true if tsks.any?{|t| t.stuck?}
     return true if self.needs_transcript?
     return false
   end
@@ -457,57 +472,61 @@ class AudioFile < ActiveRecord::Base
     end
   end
 
-  def has_preview?
+  def has_preview?(tscripts=self.transcripts_alone)
     # short audio, any transcript
-    if self.duration and self.duration < 120 and self.transcripts_alone.count > 0
+    if self.duration and self.duration < 120 and tscripts.size > 0
       return true
     end
-    self.transcripts_alone.where(:end_time => 120, :start_time => 0).count > 0
+    tscripts.any? { |t| t.end_time == 120 && t.start_time == 0 }
   end
 
-  def has_basic_transcript?
-    self.transcripts_alone.any?{|t| t.is_basic?}
+  def has_basic_transcript?(tscripts=self.transcripts_alone)
+    tscripts.any?{|t| t.is_basic?}
   end
 
   # symmetry only
-  def has_premium_transcript?
-    is_premium?
+  def has_premium_transcript?(tscripts=self.transcripts_alone)
+    is_premium?(tscripts)
   end
 
-  def is_premium?
-    self.transcripts_alone.any?{|t| t.is_premium?}
+  def is_premium?(tscripts=self.transcripts_alone)
+    tscripts.any?{|t| t.is_premium?}
   end
 
   # returns true if audio still requires a basic or premium transcript. preview is excluded.
-  def needs_transcript?
+  def needs_transcript?(tscripts=self.transcripts_alone)
     # if user has plan needing more than preview, 
     # and there are no transcripts yet created, 
     # and no tasks in process.
-    if transcripts_alone.count == 0 and !has_basic_transcribe_task_in_progress? and !has_premium_transcribe_task_in_progress?
+    unfinished_tasks = self.unfinished_tasks
+    basic_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::TranscribeTask"}
+    premium_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::SpeechmaticsTranscribeTask"}
+    if tscripts.size == 0 and !has_basic_transcribe_task_in_progress?(basic_transcript_tasks) and !has_premium_transcribe_task_in_progress?(premium_transcript_tasks)
       return true
     end
 
     # compare plan expectations with reality
     if user && user.plan
+      user_plan = user.plan
       # expect 2-minute preview only
-      if user.plan == SubscriptionPlanCached.community
+      if user_plan == SubscriptionPlanCached.community
         return false
       end
       # expect premium transcript
-      if user.plan.has_premium_transcripts?
-        if has_premium_transcript?
+      if user_plan.has_premium_transcripts?
+        if has_premium_transcript?(tscripts)
           return false
-        elsif has_premium_transcribe_task_in_progress?
+        elsif has_premium_transcribe_task_in_progress?(premium_transcript_tasks)
           return false
         else
           return true
         end
       end
       # expect basic transcript
-      if user.plan != SubscriptionPlanCached.community
-        if has_basic_transcript?
+      if user_plan != SubscriptionPlanCached.community
+        if has_basic_transcript?(tscripts)
           return false
-        elsif has_basic_transcribe_task_in_progress?
+        elsif has_basic_transcribe_task_in_progress?(basic_transcript_tasks)
           return false
         else
           return true
@@ -522,12 +541,12 @@ class AudioFile < ActiveRecord::Base
     self.tasks.unfinished
   end
 
-  def has_basic_transcribe_task_in_progress?
-    self.unfinished_tasks.transcribe.count > 0
+  def has_basic_transcribe_task_in_progress?(tsks=self.unfinished_tasks.transcribe)
+    tsks.size > 0
   end
 
-  def has_premium_transcribe_task_in_progress?
-    self.unfinished_tasks.speechmatics_transcribe.count > 0
+  def has_premium_transcribe_task_in_progress?(tsks=self.unfinished_tasks.speechmatics_transcribe)
+    tsks.size > 0
   end
 
   def transcript_type
@@ -561,11 +580,11 @@ class AudioFile < ActiveRecord::Base
     self.connection.execute("select sum(af.duration) as dursum from items as i, audio_files as af where i.is_public=false and af.item_id=i.id").first.first[1]
   end
 
-  def is_uploaded?
+  def is_uploaded?(tsks=self.tasks)
     return true if original_file_url
-    if self.tasks.upload.count == 0 && self.tasks.count > 0
+    if !tsks.any?{|t| t.type == 'Tasks::UploadTask'} && tsks.size > 0
       return true
-    elsif self.tasks.upload.with_status(Task::COMPLETE).count > 0
+    elsif tsks.any?{|t| t.type == 'Tasks::UploadTask' && t.status == Task::COMPLETE }
       return true
     else
       return false
@@ -591,16 +610,65 @@ class AudioFile < ActiveRecord::Base
 
   # if audio should be copied, returns whether it has.
   # if audio should not be copied, always returns true.
-  def is_copied?
+  def is_copied?(tsks=self.tasks)
     return true unless copy_media?
-    if self.tasks.copy.count > 0
-      return self.tasks.copy.with_status(Task::COMPLETE).count > 0
+    if tsks.any?{|t| t.type == 'Tasks::CopyTask'}
+      return tsks.any?{|t| t.type == 'Tasks::CopyTask' && t.status == Task::COMPLETE }
     else
       return false
     end
   end
 
+  def self.lookup_status_code(str)
+    # requires 2 lookups: one to get the constant name,
+    # and another to get the code
+    const = nil
+    self.constants.each do |c|
+      if self.const_get(c) == str
+        const = c
+        break
+      end
+    end
+    if !const
+      raise "Failed to find constant for string '#{str}'"
+    end
+    const_as_str = const.to_s
+    #Rails.logger.warn("constant #{const_as_str} from '#{str}'")
+    STATUS_CODES.key(const_as_str)
+  end
+
+  def self.lookup_status_string(code)
+    # get constant
+    code_const = STATUS_CODES[code.to_sym] || 'UNKNOWN_STATE'
+    "#{self}::#{code_const}".constantize
+  end
+
   def current_status
+    #require 'benchmark'
+    st = nil
+    if !status_code
+      # no db cache, so compute status and write it to db
+      #el = Benchmark.realtime {
+        st = calc_current_status
+        st_code = self.class.lookup_status_code(st)
+        update_attribute :status_code, st_code
+      #}
+      #Rails.logger.warn("calculate current_status elapsed: #{el}")
+    else
+      st = self.class.lookup_status_string(status_code) 
+    end 
+    st
+  end
+
+  def set_current_status
+    #STDERR.puts "before status_code==#{status_code}"
+    st = calc_current_status
+    self.status_code = self.class.lookup_status_code(st)
+    #STDERR.puts "after  status_code==#{status_code}"
+    #Rails.logger.warn ">>>>>>>>>>>>>>>>   AudioFile #{self.id} status_code==#{status_code}"
+  end
+
+  def calc_current_status
     # the order of progression, regardless of what order the tasks actually complete.
     # upload (or copy)
     # analyze audio
@@ -615,30 +683,58 @@ class AudioFile < ActiveRecord::Base
     # because all these tasks are async, we just evaluate the current state
     # in a fail-forward progression, assuming that all previous conditions are true
     # if the current condition is true.
+
+    # abort early if we haven't yet been saved
+    return STUCK if !self.id
+
+    st_time = Time.now
     status = UNKNOWN_STATE
-    if self.tasks.upload.count > 0 && !self.is_uploaded? && !self.is_copied?
-      # abort status determination early if upload has not finished.
-      if self.has_failed_upload?
-        return UPLOAD_FAILED
-      else 
+    all_tasks = self.tasks(true)  # ignore cached
+    has_been_copied = self.is_copied?(all_tasks)
+    has_been_uploaded = self.is_uploaded?(all_tasks)
+    #STDERR.puts "start calc_current_status. all_tasks=#{all_tasks.inspect}\nhas_been_copied=#{has_been_copied} has_been_uploaded=#{has_been_uploaded}"
+    if all_tasks.any?{|t| t.type == 'Tasks::UploadTask'} && !has_been_uploaded
+      if !has_been_copied
+        #STDERR.puts "eval upload status has_failed_upload==#{self.has_failed_upload?}"
+        # abort status determination early if upload has not finished.
+        if self.has_failed_upload?
+          return UPLOAD_FAILED
+        else 
+          return UPLOADING_INPROCESS
+        end
+      else
         return UPLOADING_INPROCESS
       end
     end
 
+    #Rails.logger.warn("1 elapsed: #{Time.now - st_time}")
+
     # if we have zero tasks and the file is older than generic work window, consider it DOA.
-    if self.tasks.count == 0 && updated_at < Task.work_window
+    if all_tasks.size == 0 && updated_at && updated_at < Task.work_window
+      #STDERR.puts "UPLOAD_FAILED"
       return UPLOAD_FAILED
     end
+    #Rails.logger.warn("1a elapsed: #{Time.now - st_time}")
 
-    if self.tasks.copy.count > 0 && !self.is_copied?
+    if all_tasks.any?{|t| t.type == 'Tasks::CopyTask'} && !has_been_copied
       status = COPYING_INPROCESS
     end
-    if self.is_copied? and self.is_uploaded?
+    #Rails.logger.warn("1b elapsed: #{Time.now - st_time}")
+    if has_been_copied and has_been_uploaded
+      #STDERR.puts "TRANSCODING_INPROCESS"
       status = TRANSCODING_INPROCESS
     end
-    if (self.transcoded? or self.is_mp3?) and (self.has_basic_transcribe_task_in_progress? or self.has_premium_transcribe_task_in_progress?)
+
+    unfinished_tasks = all_tasks.select{|t| t.status != Task::COMPLETE && t.status != Task::CANCELLED}
+    basic_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::TranscribeTask"}
+    premium_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::SpeechmaticsTranscribeTask"}
+    #Rails.logger.warn("1c elapsed: #{Time.now - st_time}")
+    if (self.transcoded? or self.is_mp3?) and (self.has_basic_transcribe_task_in_progress?(basic_transcript_tasks) or self.has_premium_transcribe_task_in_progress?(premium_transcript_tasks))
+      #STDERR.puts "TRANSCRIBE_INPROCESS"
       status = TRANSCRIBE_INPROCESS
     end
+
+    #Rails.logger.warn("2 elapsed: #{Time.now - st_time}")
 
     # check for "stuck" before any transcript checks,
     # so that subsequent transcript checks can override.
@@ -648,21 +744,27 @@ class AudioFile < ActiveRecord::Base
     if self.stuck?
       status = STUCK
     end
+    #Rails.logger.warn("2a elapsed: #{Time.now - st_time}")
 
     # now transcript checks
-    if self.has_preview?
+    tscripts = self.transcripts_alone
+    if self.has_preview?(tscripts)
       status = TRANSCRIPT_PREVIEW_COMPLETE
     end
+    #Rails.logger.warn("3 elapsed: #{Time.now - st_time}")
     # if the 2-min is done, and we do not expect any more, call it a "sample"
-    if self.has_preview? and !self.needs_transcript? and !has_basic_transcribe_task_in_progress?
+    if self.has_preview?(tscripts) and !self.needs_transcript?(tscripts) and !has_basic_transcribe_task_in_progress?(basic_transcript_tasks)
       status = TRANSCRIPT_SAMPLE_COMPLETE
     end
-    if self.has_basic_transcript?
+    #Rails.logger.warn("4 elapsed: #{Time.now - st_time}")
+    if self.has_basic_transcript?(tscripts)
       status = TRANSCRIPT_BASIC_COMPLETE
     end
-    if self.has_premium_transcript?
+    #Rails.logger.warn("5 elapsed: #{Time.now - st_time}")
+    if self.has_premium_transcript?(tscripts)
       status = TRANSCRIPT_PREMIUM_COMPLETE
     end
+    #Rails.logger.warn("6 elapsed: #{Time.now - st_time}")
 
     # TODO do we care about communicating the analyze status?
 
@@ -716,4 +818,14 @@ class AudioFile < ActiveRecord::Base
   def is_metered?
     storage == StorageConfiguration.popup_storage
   end
+
+  def before_save_callback
+    check_user_id
+  end 
+
+  def before_validation_callback
+    set_metered
+    set_current_status
+  end
+
 end

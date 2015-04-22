@@ -16,7 +16,7 @@ class Tasks::AnalyzeAudioTask < Task
     # and there's just a timing issue in the db save and the worker running.
     # other times, the owner has been deleted.
     if !audio_file
-      self.extras[:error] = "No owner/audio_file found"
+      self.extras['error'] = "No owner/audio_file found"
       cancel!
     else
 
@@ -25,11 +25,11 @@ class Tasks::AnalyzeAudioTask < Task
       analys = self.analysis
       if !analys or !analys[:length]
         if !self.original
-          self.extras[:error] = "No original URL and no analysis"
+          self.extras['error'] = "No original URL and no analysis"
           self.cancel!
           return
         else
-          self.extras[:error] = "Analysis does not include length: #{self.id}, results: #{analys.inspect}"
+          self.extras['error'] = "Analysis does not include length: #{self.id}, results: #{analys.inspect}"
           self.cancel!
           return
         end

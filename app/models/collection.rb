@@ -21,7 +21,7 @@ class Collection < ActiveRecord::Base
 
   validate :validate_storage
 
-  scope :is_public, where(items_visible_by_default: true)
+  scope :is_public, -> { where(items_visible_by_default: true) }
 
   before_validation :set_defaults
 
@@ -186,7 +186,11 @@ class Collection < ActiveRecord::Base
 
   def url
     "#{Rails.application.routes.url_helpers.root_url}collections/#{id}"
-  end 
+  end
+
+  def item_ids
+    @_item_ids ||= super
+  end
 
   @@instance_lock = Mutex.new
   def update_token
@@ -221,11 +225,17 @@ class Collection < ActiveRecord::Base
   end
 
   def recent_files
+    #require 'benchmark'
     audio_files = []
-    files = self.audio_files.last(5)
+    files = self.audio_files.includes(:item).last(3)
     files.each do |file|
-      audio_file = { file_name: file["file"], item_name: file.item.title, item_id: file.item.id, file_status: file.current_status }
-      audio_files << audio_file
+      #el = Benchmark.realtime {
+        #Rails.logger.warn('-'*80)
+        audio_file = { file_name: file["file"], item_name: file.item.title, item_id: file.item.id, file_status: file.current_status }
+        audio_files << audio_file
+        #Rails.logger.warn('='*80)
+      #} 
+      #Rails.logger.warn("Elapsed: #{el}")
     end
     audio_files
   end

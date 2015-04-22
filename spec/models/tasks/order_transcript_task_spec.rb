@@ -8,7 +8,7 @@ describe Tasks::OrderTranscriptTask do
   before(:each) do
     @audio_file = FactoryGirl.create :audio_file
     @user = FactoryGirl.create :user
-    @user.should_receive(:card).and_return(true)
+    @user.should_receive(:has_active_credit_card?).and_return(true)
 
     @task = Tasks::OrderTranscriptTask.new(owner: @audio_file, identifier: 'order_transcript', extras: {'user_id' => @user.id, 'omit_subtitles' => true } )
     @task.should_receive(:user).at_least(:once).and_return(@user)

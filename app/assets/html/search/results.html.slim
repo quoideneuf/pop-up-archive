@@ -15,13 +15,13 @@ ul.pager
 .row
   .span4.facets
     .facet ng-repeat="facet in search.facetsAsObjects()" ng-show="facet.visible()"
-      h5 {{facet.name | lowercase}}
+      h5() {{facet.name | lowercase}}
       ul.unstyled.terms
         li ng-repeat="entry in facet.entries()"
-          small.pull-right ({{entry.count}}) 
+          small.pull-right() ({{entry.count}}) 
           .label.label-info ng-click="addSearchFilter(entry)" {{entry.nameForPresenting()}}
   .span8
-    h5.result-count.pull-left {{search.firstItemNumber()}} to {{search.lastItemNumber()}} of {{search.totalHits}} items 
+    h5.result-count.pull-left() {{search.firstItemNumber()}} to {{search.lastItemNumber()}} of {{search.totalHits}} items 
     .sort-options
       select ng-model="selectedSort" ng-options="item.name for item in sortOptions" ng-change="sortResults(selectedSort)"
       
@@ -37,20 +37,25 @@ ul.pager
       .media-body
         a.pull-left ng-click="item.play()" ng-show="item.paused()"
           i.play-overlay.fa.fa-play
-          img.media-object ng-src=" {{item.imageFiles.length > 0 && item.getThumbImage() || '/assets/minimark.png' }}"
+          img.media-object ng-src="{{(item.imageFiles.length > 0 && item.getThumbImage()) || defaultMiniMarkImage}}"
         a.pull-left ng-click="item.pause()" ng-show="item.playing()"
           i.play-overlay.fa.fa-pause
-          img.media-object ng-src=" {{item.imageFiles.length > 0 && item.getThumbImage() || '/assets/minimark.png' }}"
+          img.media-object ng-src="{{(item.imageFiles.length > 0 && item.getThumbImage()) || defaultMiniMarkImage}}"
         a.pull-left ng-hide="item.playable()" ng-href="{{item.link()}}"
-          img.media-object ng-src=" {{item.imageFiles.length > 0 && item.getThumbImage() || '/assets/minimark.png' }}"
+          img.media-object ng-src="{{(item.imageFiles.length > 0 && item.getThumbImage()) || defaultMiniMarkImage}}"
 				.media
 					h4.media-heading ng-show="item.getTitle()"
 						a ng-href="{{item.link()}}" {{item.getTitle()}}
           h5 ng-bind-html="item.collectionTitle"
           p ng-show="item.getShortDescription()" ng-bind-html="item.getShortDescription()"
           p.item-details
-            | Created: {{item.getCreatedAt()}}  Duration: 
-            span ng-bind-html="item.getDurationString()"
+            .created-at ng-show="item.getCreatedAt()"
+              | Created: {{item.getCreatedAt()}}
+            .added-at
+              | Added: {{item.getAddedAt()}}
+            .duration 
+              | Duration: 
+              span ng-bind-html="item.getDurationString()"
           .transcripts ng-show="item.highlights.audioFiles.length"
             section ng-repeat="audioFile in item.highlights.audioFiles" ng-controller="AudioFileCtrl"
               .transcript transcript-text="audioFile.transcript" transcript-editable="false" transcript-timestamps="start"
@@ -60,7 +65,7 @@ ul.pager
       ul.pager ng-show="search.hasMoreResults() || search.page > 1"
         li.previous ng-class="{disabled: search.page <= 1}"
           a ng-click="search.page <= 1 || backPage()" href='#' &larr; Previous
-        li.center.text {{search.firstItemNumber()}} to {{search.lastItemNumber()}} of {{search.totalHits}} items
+        li.center.text() {{search.firstItemNumber()}} to {{search.lastItemNumber()}} of {{search.totalHits}} items
         li.next ng-class="{disabled:!search.hasMoreResults()}"
           a ng-click="!search.hasMoreResults() || nextPage()" href='#' Next &rarr;
 

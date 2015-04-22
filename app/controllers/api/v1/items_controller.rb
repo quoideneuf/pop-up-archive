@@ -14,7 +14,6 @@ class Api::V1::ItemsController < Api::V1::BaseController
 
   expose(:item)
   expose(:contributions, ancestor: :item)
-  expose(:users_item, ancestor: :current_users_items)
 
   expose(:searched_collection_items) do
     max_items = collection.items.count # TODO sane ceiling?
@@ -62,7 +61,8 @@ class Api::V1::ItemsController < Api::V1::BaseController
   def destroy
     cur_item = item
     cur_item_ok = false
-    users_item.each do |i|
+    cur_items = current_user.all_items
+    cur_items.each do |i|
       if cur_item.id == i.id
         #logger.warn "cur_item amongst user.all_items: #{i.id}"
         cur_item_ok = true
@@ -77,9 +77,4 @@ class Api::V1::ItemsController < Api::V1::BaseController
     end
   end
 
-  private
-
-  def current_users_items
-    current_user.all_items  # includes any items via org grants
-  end
 end

@@ -9,7 +9,7 @@ class Tasks::TranscribeTask < Task
     begin
       dest = destination
     rescue URI::InvalidComponentError => err
-      self.extras[:error] = "#{err}"
+      self.extras['error'] = "#{err}"
       self.cancel!
       return true
     end
@@ -30,7 +30,7 @@ class Tasks::TranscribeTask < Task
         # can't find the file.
         # if the task is older than a day, consider the file gone for good.
         if self.created_at < DateTime.now-1
-          self.extras[:error] = "#{err}"
+          self.extras['error'] = "#{err}"
           self.cancel!
           return true
         end
@@ -40,13 +40,13 @@ class Tasks::TranscribeTask < Task
 
       rescue Excon::Errors::Found => err
         # for whatever reason we got a fatal response (e.g. too many redirects)
-        self.extras[:error] = "#{err}"
+        self.extras['error'] = "#{err}"
         self.cancel!
         return true
 
       rescue Excon::Errors::InternalServerError => err
         # unknown internal error
-        self.extras[:error] = "#{err}"
+        self.extras['error'] = "#{err}"
         self.cancel!
         return true
 
@@ -61,10 +61,10 @@ class Tasks::TranscribeTask < Task
 
   def recover!
     if !owner
-      self.extras[:error] = "No owner/audio_file found"
+      self.extras['error'] = "No owner/audio_file found"
       cancel!
     elsif !storage
-      self.extras[:error] = 'No Storage defined'
+      self.extras['error'] = 'No Storage defined'
       cancel!
     else
       begin
@@ -200,7 +200,7 @@ class Tasks::TranscribeTask < Task
 
   def save_transcript(trans)
     # don't save this one if it is less time
-    if audio_file.transcripts.where("language = ? AND end_time > ?", trans.language, trans.end_time).exists?
+    if audio_file.transcripts.where("transcripts.language = ? AND transcripts.end_time > ?", trans.language, trans.end_time).exists?
       logger.error "Not saving transcript for audio_file: #{audio_file.id} b/c end time is earlier: #{trans.end_time}"
       return nil
     end

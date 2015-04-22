@@ -141,7 +141,7 @@ describe Tasks::SpeechmaticsTranscribeTask do
 
       data_file = task.download_audio_file
       data_file.should_not be_nil
-      data_file.is_a?(File).should be_true
+      data_file.is_a?(File).should be_truthy
     end
 
     it "makes callback url" do
@@ -175,10 +175,10 @@ describe Tasks::SpeechmaticsTranscribeTask do
       # audio_file must have the transcript, since transcripts are the billable items.
       audio_file.transcripts << t.process_transcript(response)
 
-      t.user_id.should == user.id.to_s
-      t.extras['entity_id'].should == user.entity.id.to_s
-      t.update_premium_transcript_usage(now).should == 60
-      user.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS).should == 60
+      t.user_id.should eq user.id.to_s
+      t.extras['entity_id'].should eq user.entity.id
+      t.update_premium_transcript_usage(now).should eq 60
+      user.usage_for(MonthlyUsage::PREMIUM_TRANSCRIPTS).should eq 60
 
     end
 
@@ -224,7 +224,7 @@ describe Tasks::SpeechmaticsTranscribeTask do
       #STDERR.puts "user        = #{user.inspect}"
       #STDERR.puts "user.entity = #{user.entity.inspect}"
       t.user_id.should == user.id.to_s
-      t.extras['entity_id'].should == user.entity.id.to_s
+      t.extras['entity_id'].should eq user.entity.id
       t.update_premium_transcript_usage(now).should == 60
 
       #STDERR.puts "user.monthly_usages == #{user.monthly_usages.inspect}"

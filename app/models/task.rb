@@ -1,7 +1,6 @@
 require 'utils'
 
 class Task < ActiveRecord::Base
-  serialize :extras, HstoreCoder
 
   attr_accessible :name, :extras, :owner_id, :owner_type, :status, :identifier, :type, :storage_id, :owner, :storage
   belongs_to :owner, polymorphic: true
@@ -16,13 +15,13 @@ class Task < ActiveRecord::Base
   MAX_WORKTIME = 60 * 60 * 4  # 4 hours, expressed in seconds
   RETRY_DELAY  = 900          # 15 minutes, expressed in seconds
 
-  scope :incomplete, where('status not in (?)', [COMPLETE, CANCELLED])
-  scope :unfinished, where('status not in (?)', [COMPLETE, CANCELLED])
-  scope :valid, where('status not in (?)', [CANCELLED])
+  scope :incomplete, -> { where('status not in (?)', [COMPLETE, CANCELLED]) }
+  scope :unfinished, -> { where('status not in (?)', [COMPLETE, CANCELLED]) }
+  scope :valid,      -> { where('status not in (?)', [CANCELLED]) }
 
   # convenient scopes for subclass types
   [:add_to_amara, :analyze_audio, :analyze, :copy, :detect_derivatives, :order_transcript, :transcode, :transcribe, :upload, :speechmatics_transcribe].each do |task_subclass|
-    scope task_subclass, where('type = ?', "Tasks::#{task_subclass.to_s.camelize}Task")
+    scope task_subclass, -> { where('type = ?', "Tasks::#{task_subclass.to_s.camelize}Task") }
   end
 
   # we need to retain the storage used to kick off the process
@@ -30,7 +29,7 @@ class Task < ActiveRecord::Base
 
   before_save :serialize_results
 
-  state_machine :status, initial: :created do
+  state_machine :status, :initial => lambda {|task| :created } do
 
     state :created,   value: CREATED
     state :working,   value: WORKING
@@ -62,6 +61,9 @@ class Task < ActiveRecord::Base
       task.finish_task
     end
   end
+
+  # touch the parent audio_file after every save
+  after_commit :touch_audio_file_owner, if: Proc.new{|task| task.owner.is_a? AudioFile}
 
   # sanity check when saving a task.
   # if the current status != complete but it has results which *are* complete,
@@ -119,6 +121,7 @@ class Task < ActiveRecord::Base
     self.extras        = HashWithIndifferentAccess.new unless extras
     self.storage_id    = owner.storage.id if (!storage_id && owner && owner.storage)
     self.extras['cbt'] = self.extras['cbt'] || SecureRandom.hex(8)
+    self.status        = CREATED
   end
 
   def call_back_token
@@ -264,5 +267,12 @@ class Task < ActiveRecord::Base
   def cancel_task
     #Rails.logger.warn "#{self.class.name}.cancel_task called by task #{self.id}"
   end
-  
+
+  private
+
+  def touch_audio_file_owner
+    #STDERR.puts "Task #{id} #{type} touch owner #{owner.id}"
+    owner.save!
+  end
+
 end

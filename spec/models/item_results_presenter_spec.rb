@@ -56,13 +56,13 @@ describe ItemResultsPresenter do
   describe "ItemResultPresenter" do
     it 'can be created from a single result row' do
       @irp = ItemResultsPresenter::ItemResultPresenter.new(get_es_result)
-      @irp.should_not be_loaded_from_database
+      @irp.loaded_from_database?().should be_falsey
     end
 
     it 'can be created from a single Item object' do
       @item = FactoryGirl.create :item_with_audio
       @irp = ItemResultsPresenter::ItemResultPresenter.new(get_es_result({_source: @item}))
-      @irp.should_not be_loaded_from_database
+      @irp.loaded_from_database?().should be_falsey
       @irp.id.should eq @item.id
       @irp.database_object.should eq @item
       @irp.audio_files.count.should eq 1
