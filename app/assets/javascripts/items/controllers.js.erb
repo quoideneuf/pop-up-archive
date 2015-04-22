@@ -128,6 +128,11 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     }
     return found;
   }
+
+  $scope.isUploadable = function() {
+    var curUser = $scope.currentUser;
+    return (curUser.overMonthlyLimit) || (curUser.overMonthlyLimit && curUser.hasCreditCard() && !curUser.isOrgMember());
+  }
   
   $scope.transcriptExpanded = false;
 
