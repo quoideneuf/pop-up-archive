@@ -29,6 +29,8 @@ class User < ActiveRecord::Base
   has_many :csv_imports
   has_many :oauth_applications, class_name: 'Doorkeeper::Application', as: :owner
 
+  has_many :active_admin_comments, as: :resource
+
   has_many :monthly_usages, as: :entity
 
   has_many :owned_organizations, class_name: 'Organization', foreign_key: 'owner_id'

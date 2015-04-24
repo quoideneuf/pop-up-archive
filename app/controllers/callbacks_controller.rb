@@ -58,16 +58,30 @@ class CallbacksController < ApplicationController
 
     # pull out the customer id
     cust_id = stripe_event[:data][:object][:customer]
-    Rails.logger.warn("stripe callback for customer #{cust_id}")
+    #Rails.logger.warn("stripe callback for customer #{cust_id}")
+    STDERR.puts("stripe callback #{params}")
+    STDERR.puts("stripe callback for customer #{cust_id}")
 
     # find the relevant user
     user = User.find_by_customer_id cust_id
+    STDERR.puts("user==#{user.inspect}")
 
     # stripe sends callback to live env for test events
     # so make sure we actually have this user in this env.
     if user
 
       # TODO could parse stripe_event[:type] here if we wanted more fine-grained control of actions we take.
+
+      # add event as comment so it is visible in superadmin
+      comment = ActiveAdminComment.new(
+        namespace: 'superadmin',
+        author_id: 1,  # yes, hard-coded to the initial admin user
+        author_type: 'User',
+        body: stripe_event.to_json,
+      )
+      comment.resource = user
+      comment.save!
+      STDERR.puts("comment==#{comment.inspect}")
 
       # nullify the cached subscription_plan_id for the user so it gets re-cached on next access
       user.subscription_plan_id = nil
