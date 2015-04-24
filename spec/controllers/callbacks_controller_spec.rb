@@ -46,9 +46,9 @@ describe CallbacksController do
       user.customer_id = 'test_stripe_customer_123'
       user.save!
       stripe_event = {
-        data: {
-          object: {
-            customer: user.customer_id,
+        'data' => {
+          'object' => {
+            'customer' => user.customer_id,
           }
         }
       }
@@ -58,7 +58,10 @@ describe CallbacksController do
       post 'stripe_webhook', stripe_event
       response.code.should eq "200"
       comment = user.active_admin_comments.first
-      JSON.parse(comment.body).should eq stripe_event
+      comment_body = JSON.parse(comment.body)
+      #STDERR.puts "comment==#{comment.inspect}"
+      #STDERR.puts "comment_body==#{comment_body}"
+      comment_body.should eq stripe_event
     end
 
   end

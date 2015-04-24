@@ -54,17 +54,14 @@ class CallbacksController < ApplicationController
 
   def stripe_webhook
     # the body is the JSON payload, decoded for us as params
-    stripe_event = params
+    stripe_event = params.except(:action, :controller)
 
     # pull out the customer id
     cust_id = stripe_event[:data][:object][:customer]
     #Rails.logger.warn("stripe callback for customer #{cust_id}")
-    STDERR.puts("stripe callback #{params}")
-    STDERR.puts("stripe callback for customer #{cust_id}")
 
     # find the relevant user
     user = User.find_by_customer_id cust_id
-    STDERR.puts("user==#{user.inspect}")
 
     # stripe sends callback to live env for test events
     # so make sure we actually have this user in this env.
@@ -81,7 +78,6 @@ class CallbacksController < ApplicationController
       )
       comment.resource = user
       comment.save!
-      STDERR.puts("comment==#{comment.inspect}")
 
       # nullify the cached subscription_plan_id for the user so it gets re-cached on next access
       user.subscription_plan_id = nil
