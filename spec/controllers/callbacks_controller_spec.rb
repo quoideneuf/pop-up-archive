@@ -35,4 +35,32 @@ describe CallbacksController do
 
   end
 
+  describe "Stripe callbacks" do
+
+    self.use_transactional_fixtures = false  # so controller actions are not isolated
+
+    it "logs event as ActiveAdminComent on User" do
+      # prep fixtures
+      user = FactoryGirl.create :user
+      # use explicit customer id to avoid confusion
+      user.customer_id = 'test_stripe_customer_123'
+      user.save!
+      stripe_event = {
+        data: {
+          object: {
+            customer: user.customer_id,
+          }
+        }
+      }
+      user.save!
+ 
+      # test response and that user is changed in db
+      post 'stripe_webhook', stripe_event
+      response.code.should eq "200"
+      comment = user.active_admin_comments.first
+      JSON.parse(comment.body).should eq stripe_event
+    end
+
+  end
+
 end
