@@ -6,19 +6,23 @@ PopUpArchive::Application.routes.draw do
 
   root to: "directory/dashboard#guest"
 
-  # get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'pop-up-archive.herokuapp.com' }
-  get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'beta.popuparchive.org' }
-  get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'www.popuparchive.org', protocol: "http://" }
-  get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'www.popuparchive.org', protocol: "https://" }
-  get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'www.popuparchive.com', protocol: "http://" }
-  get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'popuparchive.com'}
-  get '/*path' => redirect {|params, request| "https://www.popuparchive.com/#{params[:path]}" }, constraints: { host: 'popuparchive.org'}
-  get '/' => redirect('https://www.popuparchive.com/'), constraints: { host: 'www.popuparchive.org', protocol: 'https://' }
-  get '/' => redirect('https://www.popuparchive.com/'), constraints: { host: 'beta.popuparchive.org' }
-  get '/' => redirect('https://www.popuparchive.com/'), constraints: { host: 'pop-up-archive.herokuapp.com' }
-  get '/' => redirect('https://www.popuparchive.com/'), constraints: { host: 'www.popuparchive.com', protocol: 'http://' }
-  get '/' => redirect('https://www.popuparchive.com/'), constraints: { host: 'popuparchive.com',     protocol: 'http://' }
-  get '/' => redirect('https://www.popuparchive.com/'), constraints: { host: 'popuparchive.org' }
+  # canonical hostname+protocol in production
+  if Rails.env.production?
+    # check hostname
+    constraints(:host => /^(?!www\.popuparchive\.com)/i) do
+      match "/(*path)" => redirect { |params, req|
+        query_params = req.params.except(:path, :format, :protocol)
+        "https://www.popuparchive.com/#{params[:path]}#{query_params.keys.any? ? "?" + query_params.to_query : ""}"
+      },  via: [:get, :post, :head]
+    end
+    # check protocol
+    constraints(:protocol => 'http://') do
+      match "/(*path)" => redirect { |params, req|
+        query_params = req.params.except(:path, :format, :protocol)
+        "https://www.popuparchive.com/#{params[:path]}#{query_params.keys.any? ? "?" + query_params.to_query : ""}"
+      },  via: [:get, :post, :head]
+    end
+  end
 
   #devise_for ActiveAdmin::Devise.config
   devise_for :users, controllers: { registrations: 'users/registrations', invitations: 'users/invitations', omniauth_callbacks: 'users/omniauth_callbacks', sessions: 'users/sessions' }
