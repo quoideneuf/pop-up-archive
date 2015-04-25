@@ -197,6 +197,8 @@ class AudioFile < ActiveRecord::Base
   end
 
   def process_update_file
+    return true if is_finished?
+
     # logger.debug "af #{id} call copy_to_item_storage"
     copy_to_item_storage
 
