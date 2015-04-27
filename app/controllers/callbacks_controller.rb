@@ -71,7 +71,7 @@ class CallbacksController < ApplicationController
 
       # add event as comment so it is visible in superadmin
       comment = ActiveAdminComment.new(
-        namespace: 'superadmin',
+        namespace: 'stripe',
         author_id: 1,  # yes, hard-coded to the initial admin user
         author_type: 'User',
         body: stripe_event.to_json,
