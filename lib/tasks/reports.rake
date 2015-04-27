@@ -214,4 +214,35 @@ namespace :reports do
     end
   end
 
+  desc "prints customer subscription changes for a given month"
+  task customer_subscription_events: [:environment] do
+
+    # optional to send report via email
+    send_mail = ENV['SEND_MAIL'] || false
+
+    # find all the Comments created this month
+    now = ENV['FOR_MONTH'] ? DateTime.parse(ENV['FOR_MONTH']) : DateTime.now
+    the_month = now.utc.strftime('%Y-%m')
+    comments = ActiveAdminComment.created_in_month(now, 'stripe')
+
+    # set up report
+    buf = []
+    buf.push "PUA Customer Subscription Event Report for #{now.strftime('%Y-%m')}\n"
+    buf.push '-'*80, "\n"
+    buf.push "Date       ID                    Name             Plan\n"
+    buf.push '-'*80, "\n" 
+    comments.each do |comment|
+      dt = comment.created_at.strftime('%Y-%m-%d')
+      user = comment.resource
+      line = sprintf("%s %s %21s %10s %4s\n", dt, user.id, user.name.slice(0,20), user.plan.name, user.pop_up_hours)
+      buf.push line
+    end 
+    if send_mail && buf.size > 0
+      MyMailer.mailto('PUA Customer Subscription Event Report', buf.join('')).deliver
+    else
+      puts buf.join('')
+    end
+
+  end
+
 end
