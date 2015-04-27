@@ -653,7 +653,7 @@ class AudioFile < ActiveRecord::Base
       #el = Benchmark.realtime {
         st = calc_current_status
         st_code = self.class.lookup_status_code(st)
-        update_attribute :status_code, st_code
+        update_columns( status_code: st_code )
       #}
       #Rails.logger.warn("calculate current_status elapsed: #{el}")
     else
