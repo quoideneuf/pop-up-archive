@@ -2,6 +2,9 @@ require 'spec_helper'
 require Rails.root.join 'app/uploaders/image_uploader.rb'
 describe ImageFile do
 
+  before { StripeMock.start }
+  after { StripeMock.stop }
+
   context "basics" do
 
     before(:each) {
