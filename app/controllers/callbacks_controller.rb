@@ -67,17 +67,21 @@ class CallbacksController < ApplicationController
     # so make sure we actually have this user in this env.
     if user
 
-      # TODO could parse stripe_event[:type] here if we wanted more fine-grained control of actions we take.
+      # parse stripe_event[:type] for more fine-grained control of actions we take.
 
-      # add event as comment so it is visible in superadmin
-      comment = ActiveAdminComment.new(
-        namespace: 'stripe',
-        author_id: 1,  # yes, hard-coded to the initial admin user
-        author_type: 'User',
-        body: stripe_event.to_json,
-      )
-      comment.resource = user
-      comment.save!
+      if stripe_event[:type] == 'customer.subscription.updated'
+
+        # add event as comment so it is visible in superadmin
+        comment = ActiveAdminComment.new(
+          namespace: 'stripe',
+          author_id: 1,  # yes, hard-coded to the initial admin user
+          author_type: 'User',
+          body: stripe_event.to_json,
+        )
+        comment.resource = user
+        comment.save!
+
+      end
 
       # nullify the cached subscription_plan_id for the user so it gets re-cached on next access
       user.subscription_plan_id = nil
