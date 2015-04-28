@@ -156,6 +156,9 @@ angular.module('Directory.users.models', ['RailsModel'])
     }
     return sub.update().then(function (plan) {
       return User.get('me');
+    }, function(error) {
+      console.log("subscription update failed: ", error);
+      alert("Subscription update failed. Please contact support.");
     });
   };
 
