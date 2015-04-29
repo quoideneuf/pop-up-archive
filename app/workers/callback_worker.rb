@@ -19,6 +19,7 @@ class CallbackWorker
         audio_file_id: audio_file_id,
         duration: audio.duration,
         transcript_url: audio.transcript_url,
+        status: audio.current_status,
       }.to_json,
       :headers => { "Content-Type" => "application/json" }
     )
