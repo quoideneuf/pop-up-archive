@@ -23,7 +23,7 @@ describe StorageConfiguration do
 
   it 'returns credentials suitable for fog/conn use' do
     @storage.credentials.should be_instance_of Hash
-    @storage.credentials.keys.sort.should eq [:aws_access_key_id, :aws_secret_access_key, :path_style, :provider]
+    @storage.credentials.keys.sort.should eq [:aws_access_key_id, :aws_secret_access_key, :aws_signature_version, :path_style, :provider]
     @storage.credentials[:provider].should eq 'AWS'
   end
 
