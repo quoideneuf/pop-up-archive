@@ -3,7 +3,7 @@ require 'utils'
 class CallbackWorker
   include Sidekiq::Worker
 
-  sidekiq_options :retry => 25
+  sidekiq_options :retry => 25, backtrace: true
 
   def perform(item_id, audio_file_id, callback_url)
     # POST to the callback_url with our data struct.
