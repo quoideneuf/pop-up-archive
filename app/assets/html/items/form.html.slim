@@ -35,7 +35,7 @@ section ng-controller="ItemFormCtrl"
            strong not 
            | episode.1.wav.) 
 
-      section ng-show='(currentUser.mayUpload()) || (item.id > 0) || (item.files.length > 0) || (remoteFileUrls)'
+      section ng-show='(currentUser.mayUpload()) && ( (item.id > 0) || (item.files.length > 0) || (remoteFileUrls) )'
         .alert.alert-danger ng-show="currentUser.overMonthlyLimit"
           h4  
            | You are over your monthly limit.
