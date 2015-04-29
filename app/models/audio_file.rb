@@ -784,16 +784,16 @@ class AudioFile < ActiveRecord::Base
     end
   end
 
-  def best_transcript
+  def best_transcript(language='en-US')
     if self.has_premium_transcript?
       self.transcripts.each do |t|
-        if t.is_premium?
+        if t.is_premium? && t.language == language
           return t
         end
       end
     elsif self.has_basic_transcript?
       self.transcripts.each do |t|
-        if t.is_basic?
+        if t.is_basic? && t.language == language
           return t
         end
       end
@@ -803,6 +803,10 @@ class AudioFile < ActiveRecord::Base
       self.transcripts.first # TODO will this ever yield anything?
     end
   end
+
+  def transcript_url
+    Rails.application.routes.url_helpers.api_item_audio_file_transcript_url(item_id, id)
+  end 
 
   def duration_hms
     Api::BaseHelper::format_time(duration||0)
