@@ -50,7 +50,8 @@ describe CallbacksController do
           'object' => {
             'customer' => user.customer_id,
           }
-        }
+        },
+        'type' => 'customer.subscription.updated',
       }
       user.save!
  
