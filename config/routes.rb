@@ -44,6 +44,8 @@ PopUpArchive::Application.routes.draw do
 
   get 'oembed', controller: 'oembed', action: 'show'
 
+  post 'callback/test',      controller: 'callbacks', action: 'tester'
+
   post 'fixer_callback/:id', controller: 'callbacks', action: 'fixer', as: 'audio_file_fixer_callback', model_name: 'audio_file'
 
   post 'fixer_callback/files/:model_name/:id', controller: 'callbacks', action: 'fixer', as: 'fixer_callback'
