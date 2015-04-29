@@ -12,17 +12,15 @@ class CallbackWorker
     item = Item.find item_id
     audio = AudioFile.find audio_file_id
     agent = Utils::new_connection(callback_url)
-    response = agent.post(callback_url,
-      :body => {
-        item_id: item_id,
-        item_extra: item.extra,
-        audio_file_id: audio_file_id,
-        duration: audio.duration,
-        transcript_url: audio.transcript_url,
-        status: audio.current_status,
-      }.to_json,
-      :headers => { "Content-Type" => "application/json" }
-    )
+    payload = {
+      item_id: item_id,
+      item_extra: item.extra,
+      audio_file_id: audio_file_id,
+      duration: audio.duration,
+      transcript_url: audio.transcript_url,
+      status: audio.current_status,
+    }.to_json
+    response = agent.post(:body => payload, :headers => { "Content-Type" => "application/json" })
     if response.status.to_s.start_with?('2')
       response.status
     else
