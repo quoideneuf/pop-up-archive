@@ -63,6 +63,16 @@ angular.module('Directory.users.models', ['RailsModel'])
     return this.role == "member";
   };
 
+  User.prototype.mayUpload = function() {
+    if (!this.overMonthlyLimit) {
+      return true;
+    }
+    if (self.overMonthlyLimit && self.hasCreditCard() && !self.isOrgMember()) {
+      return false;
+    }
+    return true;
+  };
+
   User.prototype.hasCommunityPlan = function () {
     return !!(!this.plan || !this.plan.id || this.plan.name.match(/Community/));
   };

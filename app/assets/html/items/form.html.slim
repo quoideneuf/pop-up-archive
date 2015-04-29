@@ -13,7 +13,7 @@ section ng-controller="ItemFormCtrl"
      | You are over your organization's monthly limit.
     form.item-form.form-horizontal name='newItemForm'
 
-      div.control-group.remote-item ng-hide='(!isUploadable()) || (item.id > 0) || (item.files.length > 0) || (remoteFileUrls)' style="text-align:center;"
+      div.control-group.remote-item ng-hide='(!currentUser.mayUpload()) || (item.id > 0) || (item.files.length > 0) || (remoteFileUrls)' style="text-align:center;"
         h3 Drag and drop a file anywhere on the site
         div style="margin:-10px 0 10px 0;" or
         span file-button="" style='margin-right: 4px;'
@@ -35,7 +35,7 @@ section ng-controller="ItemFormCtrl"
            strong not 
            | episode.1.wav.) 
 
-      section ng-show='(isUploadable()) || (item.id > 0) || (item.files.length > 0) || (remoteFileUrls)'
+      section ng-show='(currentUser.mayUpload()) || (item.id > 0) || (item.files.length > 0) || (remoteFileUrls)'
         .alert.alert-danger ng-show="currentUser.overMonthlyLimit"
           h4  
            | You are over your monthly limit.
@@ -51,7 +51,7 @@ section ng-controller="ItemFormCtrl"
           p
             strong
               | For separate playback of each file, delete extra files and upload one at a time.         
-        .control-group ng-show="isUploadable()"
+        .control-group ng-show="currentUser.mayUpload()"
           label.control-label
             | Upload File
             i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles']" data-placement="bottom"
@@ -77,7 +77,7 @@ section ng-controller="ItemFormCtrl"
             span.pull-right file-button=""
               button.btn Add Files to Item
 
-        .control-group ng-show="isUploadable()"
+        .control-group ng-show="currentUser.mayUpload()"
           label.control-label
             | Add File
             i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles[][remoteFileUrl]']" data-placement="bottom"
@@ -155,7 +155,7 @@ section ng-controller="ItemFormCtrl"
             label.radio-label
               | Premium
               span.charge ng-show="premiumSelected"  $#{Billable::OVERAGE_HOURLY_RATE}/hour will be charged to your credit card
-        .control-group ng-show="currentUser.overMonthlyLimit && isUploadable()"
+        .control-group ng-show="currentUser.overMonthlyLimit && currentUser.mayUpload()"
           label.control-label
             | Type
             i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom"
