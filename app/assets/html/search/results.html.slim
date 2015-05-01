@@ -15,7 +15,7 @@ ul.pager
 .row
   .span4.facets
     .facet ng-repeat="facet in search.facetsAsObjects(true)"
-      h5 ng-click="termsOpen = !termsOpen; facetClicks(facet)" ng-init="termsOpen=$first"
+      h5 ng-click="termsOpen = !termsOpen; facetClicks(facet, termsOpen)" ng-init="termsOpen=$first"
         | {{facet.name | lowercase}}
         i.fa.fa-chevron-down ng-show="!termsOpen"
         i.fa.fa-chevron-up ng-show="termsOpen"
@@ -25,7 +25,8 @@ ul.pager
           li ng-repeat="entry in facet.entries()"
             small.pull-right() ({{entry.count}}) 
             .label.label-info ng-click="addSearchFilter(entry)" {{entry.nameForPresenting()}}
-        a href="#" Show 10 More
+          li 
+            a href="#" ng-click="moreClicks(facet)" Show 10 More 
   .span8
     h5.result-count.pull-left() {{search.firstItemNumber()}} to {{search.lastItemNumber()}} of {{search.totalHits}} items 
     .sort-options
