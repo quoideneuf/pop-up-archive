@@ -190,4 +190,12 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
     $scope.newView=!$scope.newView;
   };
 
+  $scope.facetClicks = function(facet) {
+    mixpanel.track("Facet expand", {
+      "Facet": facet.name,
+      "User": $scope.currentUser.name,
+      "Email": $scope.currentUser.email
+     });    
+  }
+
 }]);
