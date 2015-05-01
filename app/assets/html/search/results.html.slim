@@ -14,12 +14,18 @@ ul.pager
     a ng-click="!search.hasMoreResults() || nextPage()" href="#" Next &rarr;
 .row
   .span4.facets
-    .facet ng-repeat="facet in search.facetsAsObjects()" ng-show="facet.visible()"
-      h5() {{facet.name | lowercase}}
-      ul.unstyled.terms
-        li ng-repeat="entry in facet.entries()"
-          small.pull-right() ({{entry.count}}) 
-          .label.label-info ng-click="addSearchFilter(entry)" {{entry.nameForPresenting()}}
+    .facet ng-repeat="facet in search.facetsAsObjects(true)"
+      h5 ng-click="termsOpen = !termsOpen" ng-init="termsOpen=$first"
+        | {{facet.name | lowercase}}
+        i.fa.fa-chevron-down ng-show="!termsOpen"
+        i.fa.fa-chevron-up ng-show="termsOpen"
+
+      .terms ng-show="termsOpen"
+        ul.unstyled
+          li ng-repeat="entry in facet.entries()"
+            small.pull-right() ({{entry.count}}) 
+            .label.label-info ng-click="addSearchFilter(entry)" {{entry.nameForPresenting()}}
+        a href="#" More
   .span8
     h5.result-count.pull-left() {{search.firstItemNumber()}} to {{search.lastItemNumber()}} of {{search.totalHits}} items 
     .sort-options
