@@ -48,8 +48,12 @@ gem 'cancancan', '~> 1.10.1'
 gem 'rest-client', '~> 1.7.2'
 
 # search with elasticsearch
+gem 'kaminari'
 gem 'elasticsearch-model', '~> 0.1.6'
 gem 'elasticsearch-rails', '~> 0.1.6'
+gem 'fuzzy_match', '~> 2.1.0'
+gem 'stopwords-filter'
+gem 'lucene_query_parser', :git => 'git://github.com/pkarman/lucene_query_parser.git', :branch => 'term-regex'
 
 # server-side templates
 gem 'slim-rails'

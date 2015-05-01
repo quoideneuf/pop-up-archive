@@ -10,7 +10,18 @@ class Item < ActiveRecord::Base
 
   STANDARD_ROLES = ['producer', 'interviewer', 'interviewee', 'creator', 'host', 'guest']
 
-  settings index: { number_of_shards: 2, number_of_replicas: 1 } do
+  settings index: { 
+    number_of_shards: 2, 
+    number_of_replicas: 1,
+    analysis: {
+      analyzer: {
+        caseinsensitive: {
+          tokenizer: 'keyword',
+          filter: ['lowercase']
+        }   
+      }   
+    },
+  } do
     mappings dynamic: 'false' do
       indexes :id, index: :not_analyzed
       indexes :is_public, index: :not_analyzed
@@ -19,10 +30,10 @@ class Item < ActiveRecord::Base
       indexes :date_created,          type: 'date',   include_in_all: false
       indexes :date_broadcast,        type: 'date',   include_in_all: false
       indexes :created_at,            type: 'date',   include_in_all: false, index_name: 'date_added'
-      indexes :description,           type: 'string',  boost: 1.5
-      indexes :identifier,            type: 'string',  boost: 1.0
-      indexes :title,                 type: 'string',  boost: 2.0
-      indexes :tags,                  type: 'string',  index_name: 'tag',    index: 'not_analyzed', boost: 1.2
+      indexes :description,           type: 'string'
+      indexes :identifier,            type: 'string'
+      indexes :title,                 type: 'string'
+      indexes :tags, type: 'string',  index_name: 'tag', analyzer: 'caseinsensitive', store: 'yes', term_vector: 'yes'
       indexes :contributors,          type: 'string',  index_name: 'contributor'
       indexes :physical_location,     type: 'string'
 
@@ -30,7 +41,7 @@ class Item < ActiveRecord::Base
         indexes :audio_file_id, type: 'long', index: 'not_analyzed'
         indexes :start_time, type: 'double', index: 'not_analyzed'
         indexes :confidence, type: 'float', index: 'not_analyzed'
-        indexes :transcript, type: 'string', store: true, boost: 0.1
+        indexes :transcript, type: 'string', store: true
       end
 
       indexes :audio_files do
@@ -61,29 +72,9 @@ class Item < ActiveRecord::Base
       end
 
       indexes :entities, index_name: 'entity' do
-        indexes :entity, type: 'string', index: 'not_analyzed', boost: 0.1
+        indexes :entity, type: 'string', store: 'yes', term_vector: 'yes', analyzer: 'caseinsensitive'
         indexes :category, type: 'string', include_in_all: false
       end
-
-      # indexes :confirmed_entities do
-      #   indexes :entity, type: 'string', boost: 2.0
-      #   indexes :category, type: 'string', include_in_all: false
-      # end
-
-      # indexes :low_unconfirmed_entities do
-      #   indexes :entity, type: 'string', boost: 0.2
-      #   indexes :category, type: 'string', include_in_all: false
-      # end
-
-      # indexes :mid_unconfirmed_entities do
-      #   indexes :entity, type: 'string', boost: 0.5
-      #   indexes :category, type: 'string', include_in_all: false
-      # end
-
-      # indexes :high_unconfirmed_entities do
-      #   indexes :entity, type: 'string', boost: 1.0
-      #   indexes :category, type: 'string', include_in_all: false
-      # end
 
       STANDARD_ROLES.each do |role|
         indexes role.pluralize.to_sym, type: 'string', include_in_all: false, index_name: role, index: 'not_analyzed'
@@ -371,6 +362,33 @@ class Item < ActiveRecord::Base
     else
       nil
     end
+  end
+
+  # return n Items that are "similar" to this one.
+  # see https://github.com/popuparchive/audiosear.ch/issues/55 for algorithm discussion
+  # returns a Elasticsearch::Model::Response::Response object. Iterate over
+  # results like: 
+  #  item.find_similar.results.each { |hit| ... }  # fast
+  # or as ActiveRecord objects:
+  #  item.find_similar.records.each { |item| ... } # slow
+  #
+  def find_similar(full_result=false, n=5, from=0)
+    # get list of strings for entity+tags
+    tags = tags_for_index
+    ents = entities.map {|e| e.name}
+    # since ES already has data normalized for fast lookup, use ES to fetch Items 
+    clauses = []
+    if tags.size > 0 && tags.select {|t| t.length > 0 }.size > 0 
+      clauses.push 'tag:(' + tags.select {|t| t.length > 0 }.map {|t| %{"#{t}"}}.join(' OR ') + ')' 
+    end 
+    if ents.size > 0 && ents.select {|e| e.length > 0 }.size > 0 
+      clauses.push 'entity:(' + ents.select {|e| e.length > 0 }.map {|e| %{"#{e}"}}.join(' OR ') + ')' 
+    end 
+    str = clauses.join(' OR ')
+    #logger.debug(str)
+    #STDERR.puts "similar str: '#{str}'"
+    searcher = ItemSearcher.new({query: str, from: from, size: n})  # only retrieves one page of size 'n'
+    searcher.similar_to_item(self.id.to_s, full_result)
   end
 
   private

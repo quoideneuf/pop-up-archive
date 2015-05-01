@@ -7,7 +7,7 @@ class ItemSearcher
 
   attr_accessor :params, :query_str, :sort_by, :filters, :page, :def_op, :results, :similar_results, :stopped_words, :alt_query
 
-  MIN_FIELDS = ['id', 'title', 'collection_title', 'coll_categories', 'network', 'tags', 'image_url', 'audio_files']
+  MIN_FIELDS = ['id', 'title', 'collection_title', 'tags', 'image_url', 'audio_files']
 
   def initialize(params)
     @params    = params
@@ -137,7 +137,7 @@ class ItemSearcher
   private
 
   def prep_suggest_query
-    fields = ['collection_title', 'title', 'description', 'coll_category_ci', 'network', 'tag']
+    fields = ['collection_title', 'title', 'description', 'tag']
     query = {
       bool: {
         must:   { multi_match: { query: @query_str, operator: 'OR', fields: fields, } },
@@ -170,7 +170,7 @@ class ItemSearcher
     searchq[:suggest] = suggest
     searchq[:highlight] = { fields: Hash[ fields.map {|f| [f, { number_of_fragments: 0 }] } ] }
     # reduce payload size since we do not need entire doc
-    searchq[:_source] = { include: ['id', 'title', 'collection_title', 'collection_id', 'coll_categories', 'network', 'tags'] }
+    searchq[:_source] = { include: ['id', 'title', 'collection_title', 'collection_id', 'tags'] }
     searchq
   end
 
@@ -192,7 +192,7 @@ class ItemSearcher
     searchq = prep_search_query
     searchq[:query] = { 
       :mlt => {
-        :fields => ['tag', 'entity', 'coll_categories', 'network'],
+        :fields => ['tag', 'entity' ],
         :ids    => item_ids,
         # TODO play with these settings to hit a sweet spot.
         # in general, the more data we have in the index, the higher the numbers can be.
@@ -270,7 +270,7 @@ class ItemSearcher
     # TODO would be nice if query_builder could do this for us.
     sq_hash = search_query.to_hash
     if @query_str && !@query_str.match(/["=:\*]/)
-      fields = ['title^2', 'description', 'tag', 'entity', 'transcript', 'collection_title', 'coll_category_ci']
+      fields = ['title^2', 'description', 'tag', 'entity', 'transcript', 'collection_title']
       multiquery = { bool: {
         must:   { multi_match: { query: @query_str, operator: @def_op, fields: fields, tie_breaker: 20.0 } },
         should: { multi_match: { query: @query_str, fields: fields, type: 'phrase', boost: 10.0, tie_breaker: 0.5 } },
@@ -522,7 +522,7 @@ class ItemSearcher
   def build_hit_suggestions(hits)
     # determine which field matched based on 'highlight' keys,
     # and construct each rec based on that.
-    recs = { tags: [], shows: [], networks: [], items: [], categories: [] }
+    recs = { tags: [], collections: [], items: [], }
     hits.hits.each do |hit|
       if hit.highlight
         hit.highlight.keys.each do |fn|
@@ -530,12 +530,8 @@ class ItemSearcher
             item = hit._source
             item.idHex = item.id.to_s(16)
             recs[:items].push item
-          elsif fn == 'coll_category_ci' || fn == 'coll_category'
-            recs[:categories].push hit.highlight[fn]
-          elsif fn == 'network'
-            recs[:networks].push [ hit._source.network ] # force as array to match others
           elsif fn == 'collection_title'
-            recs[:shows].push( { :title => hit.highlight[fn].first, :id => hit._source.collection_id } )
+            recs[:collections].push( { :title => hit.highlight[fn].first, :id => hit._source.collection_id } )
           elsif fn == 'tag'
             recs[:tags].push hit.highlight[fn]
           end
@@ -555,8 +551,8 @@ class ItemSearcher
     [:categories, :networks, :tags].each do |t|
       recs[t] = recs[t].map {|v| v.first.gsub(/<\/?em>/, '')}.select {|v| v.first.length > 0 && v.first.match(/\S/) }.uniq { |v| v.downcase }
     end
-    recs[:shows] = recs[:shows].uniq { |s| s[:id] }
-    recs[:shows].each do |s|
+    recs[:collections] = recs[:collections].uniq { |s| s[:id] }
+    recs[:collections].each do |s|
       s[:title].gsub!(/<\/?em>/, '')
     end
 

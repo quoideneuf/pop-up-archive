@@ -56,7 +56,8 @@ describe ItemSearcher do
 
     # sanity check: we have N public items matching query
     Item.search('title:hooray').results.total.should eq 2
-
+    
+    #STDERR.puts '='*80
     params = {
       q: %{title:"red white and blue"},
     }
@@ -66,15 +67,17 @@ describe ItemSearcher do
     results.results.total.should eq 1
     results.results.first.title.should eq %{hooray for the red white and blue}
 
+    #STDERR.puts '='*80
     # test single item similar match
     sim_item = results.records.first.find_similar
     sim_item.results.total.should eq 1 # only one, via tags only
     sim_item.results.first.title.should eq %{hooray for the green black and orange}
 
+    #STDERR.puts '='*80
     # test query similar match
     sim_results = searcher.simple_similar
     #STDERR.puts sim_results.response.inspect
-    sim_results.results.total.should eq 3  # all of them, because they are in the same collection (network)
+    sim_results.results.total.should eq 1
   end
 
 end

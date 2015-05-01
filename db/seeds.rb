@@ -25,7 +25,7 @@ transcribers = Transcriber.create([
 user = User.new({name: 'seed user', email: 'seeduser@nosuchemail.org', password: 'sekrit'})
 user.save!
 
-collections = Collection.create([{"creator_id"=> user.id, "title" => "Test Collection", "description" => "This collection will show you how collections work."}, {"creator_id"=> user.id, "title" => "A Second Collection", "default_storage_id" => 1}])
+collections = Collection.create([{"creator_id"=> user.id, "title" => "Test Collection", "description" => "This collection will show you how collections work."}, {"creator_id"=> user.id, "title" => "A Second Collection", "default_storage_id" => 1, "items_visible_by_default" => true, }])
 item = Item.new("title" => "Lost Weekend Video finds new ways to entertain in the digital age")
 item.description = "A couple on an evening stroll down Valencia Street comes to a stop outside Lost Weekend Video. They’re peering in through the big front window."
 item.collection_id = collections.first.id
@@ -578,3 +578,12 @@ file.save!
 item2 = Item.new("title" => "Happy holidays!", "description" => "Today, on a very special Cory Doctorow podcast, the podcasting debut of Ms Poesy Emmeline Fibonacci Nautilus Taylor Doctorow!. This item belongs to: audio/podcast_corydoctorow. This item has files of the following types: Metadata, VBR MP3")
 item2.collection_id = collections.first.id
 item2.save!
+
+public_item1 = Item.new(:title => "hooray for the red white and blue", :description => "I am a yankee doodle dandy", :tags => ['blue', 'green', 'red'])
+public_item1.collection_id = collections[1].id
+public_item1.is_public = true
+public_item2 = Item.new(:title => "hooray for the green black and orange", :description => "a real life nephew of my uncle sam", :tags => ['blue', 'green', 'red'])
+public_item2.collection_id = collections[1].id
+public_item2.is_public = true
+public_item1.save!
+public_item2.save!
