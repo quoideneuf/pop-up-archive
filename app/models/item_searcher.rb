@@ -33,6 +33,13 @@ class ItemSearcher
       @def_op = 'AND'
     end
 
+    # this calculation is different than in Audiosearch, where RESULTS_PER_PAGE
+    # is ignored.
+    if !@size && !@from && @page
+      @from = (@page - 1) * RESULTS_PER_PAGE
+      @size = RESULTS_PER_PAGE
+    end 
+
     filter_query_string  # prefilter
 
   end
@@ -221,17 +228,16 @@ class ItemSearcher
     }, @current_user)
 
     has_sort = @sort_by && @sort_order
+    has_query = @query_str.present?
 
     search_query = Search.new(Item.index_name) do
 
       query_builder.query do |q|
-        #Rails.logger.warn "q=#{q.inspect}"
         query &q
       end
 
       query_builder.facets do |my_facet|
-        # TODO re-enable when we have plans to use facets
-        #facet my_facet.name, &my_facet
+        facet my_facet.name, &my_facet
       end
 
       query_builder.filters do |my_filter|
@@ -239,11 +245,6 @@ class ItemSearcher
       end
 
       # determine sort order
-      has_query = nil
-      if query_builder.params[:query]
-        #STDERR.puts "query_build.params.query == #{query_builder.params[:query]}"
-        has_query = query_builder.params[:query]
-      end
       if has_sort
         sort do
           by query_builder.sort_column, query_builder.sort_order
