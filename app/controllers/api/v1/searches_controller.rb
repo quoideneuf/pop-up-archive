@@ -18,7 +18,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
 
     # if no query defined, respond with error code 400
     if (!query_str or !query_str.match(/\S/))
-      render :json => {:error => "Empty search query", :status => 400}.to_json, :status => 400 and return
+      #render :json => {:error => "Empty search query", :status => 400}.to_json, :status => 400 and return
     end 
 
     @searcher = ItemSearcher.new(params)

@@ -35,8 +35,8 @@ class ItemSearcher
 
     # this calculation is different than in Audiosearch, where RESULTS_PER_PAGE
     # is ignored.
-    if !@size && !@from && @page
-      @from = (@page - 1) * RESULTS_PER_PAGE
+    if !@size && !@from && @page.present?
+      @from = (@page.to_i - 1) * RESULTS_PER_PAGE
       @size = RESULTS_PER_PAGE
     end 
 
