@@ -10,6 +10,8 @@ class Item < ActiveRecord::Base
 
   STANDARD_ROLES = ['producer', 'interviewer', 'interviewee', 'creator', 'host', 'guest']
 
+  SEARCH_RESULTS_PER_PAGE = 20
+
   settings index: { 
     number_of_shards: 2, 
     number_of_replicas: 1,

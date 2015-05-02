@@ -9,6 +9,10 @@ class ItemSearcher
 
   MIN_FIELDS = ['id', 'title', 'collection_title', 'tags', 'image_url', 'audio_files']
 
+  def pager_params
+    { size: @size, from: @from, page: @page }
+  end
+
   def initialize(params)
     @params    = params
     @query_str = params[:q] || params[:query]
@@ -20,7 +24,7 @@ class ItemSearcher
       @sort_order = sstr[1]
     end
     @filters   = params[:f] || params[:filters]
-    @page      = params[:page].to_i
+    @page      = params[:page] || 1
     @size      = params[:size]
     @from      = params[:from]
     @def_op    = params[:op] || 'AND'
@@ -35,9 +39,10 @@ class ItemSearcher
 
     # this calculation is different than in Audiosearch, where RESULTS_PER_PAGE
     # is ignored.
-    if !@size && !@from && @page.present?
-      @from = (@page.to_i - 1) * RESULTS_PER_PAGE
-      @size = RESULTS_PER_PAGE
+    @page = @page.to_i
+    if !@size && !@from && @page > 0
+      @from = (@page - 1) * Item::SEARCH_RESULTS_PER_PAGE
+      @size = Item::SEARCH_RESULTS_PER_PAGE
     end 
 
     filter_query_string  # prefilter
