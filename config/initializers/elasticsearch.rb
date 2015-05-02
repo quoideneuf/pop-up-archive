@@ -1,8 +1,6 @@
 require 'elasticsearch/model'
 require 'ansi'
 
-RESULTS_PER_PAGE = 10 unless defined?(RESULTS_PER_PAGE)
-
 es_url = 'http://localhost:9200'
 if ENV['BONSAI_URL'] || ENV['ELASTICSEARCH_URL']
   es_url = ENV['BONSAI_URL'] || ENV['ELASTICSEARCH_URL']

@@ -30,7 +30,7 @@ module Searchable
     # ransack/meta_search and elasticsearch both try and inject a class search() method,
     # so we declare our own and Try To Do the Right Thing
     def self.search(*args, &block)
-      if args.first.is_a?(Search)
+      if args.first.is_a?(Search) || args.first.is_a?(String)
         return self.__elasticsearch__.search(*args, &block)
       else
         return ransack(*args, &block)
