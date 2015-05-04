@@ -45,13 +45,13 @@ class OembedController < ApplicationController
 
     respond_to do |format|
       format.html {
-        render :formats => [:json], :content_type => "application/json"
+        render :formats => [:html, :json], :content_type => "application/json"
       }
       format.json {
-        render :formats => [:json]
+        render :formats => [:html, :json]
       }
       format.xml {
-        render :formats => [:xml]  # TODO
+        render :formats => [:html, :xml]  # TODO
       }
       format.all {
         render :json => { :error => "Format not implemented", :status => 501 }.to_json, :status => 501
