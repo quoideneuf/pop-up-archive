@@ -130,6 +130,16 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
     };
 
   });
+  
+  $scope.callEditor = function() {
+    $scope.$broadcast('CallEditor');
+    $scope.editTable = true;
+  };
+
+  $scope.callSave = function() {
+    $scope.$broadcast('CallSave');
+    $scope.editTable = false;
+  };
 
 }])
 .controller("OrderTranscriptFormCtrl", ['$scope', '$window', '$q', 'Me', 'AudioFile', function($scope, $window, $q, Me, AudioFile) {
