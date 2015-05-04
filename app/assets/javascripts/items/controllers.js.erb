@@ -244,18 +244,6 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     return encodeURIComponent(text);
   };
   
-
-  $scope.callEditor = function() {
-    $scope.$broadcast('CallEditor');
-    mixpanel.track("Edit Transcript",{"Item": $scope.item.title});
-    $scope.editTable = true;
-  };
-
-  $scope.callSave = function() {
-    $scope.$broadcast('CallSave');
-    $scope.editTable = false;
-  }
-
 // Update placeholder speaker names with contributor names
   $scope.assignSpeaker = function(contributor, speaker) {
     speaker.name = contributor.id.person.name;
