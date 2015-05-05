@@ -34,7 +34,7 @@ class AudioFile < ActiveRecord::Base
   TRANSCRIBE_RATE_PER_MINUTE = 2.00;  # TODO used?
 
   # status messages
-  UNKNOWN_STATE               = 'Unknown'
+  UNKNOWN_STATE               = 'Working'
   TRANSCRIPT_PREVIEW_COMPLETE = 'Transcript preview complete'
   TRANSCRIPT_SAMPLE_COMPLETE  = 'Transcript sample complete'
   TRANSCRIPT_BASIC_COMPLETE   = 'Basic transcript complete'
