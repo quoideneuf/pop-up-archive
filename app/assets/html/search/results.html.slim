@@ -26,7 +26,7 @@ ul.pager
             small.pull-right() ({{entry.count}}) 
             .label.label-info ng-click="addSearchFilter(entry)" {{entry.nameForPresenting()}}
           li 
-            a href="#" ng-click="moreClicks(facet)" Show 10 More 
+            a href="#" ng-show="facet.entries().length >= 10" ng-click="moreClicks(facet)" Show 10 More 
   .span8
     h5.result-count.pull-left() {{search.firstItemNumber()}} to {{search.lastItemNumber()}} of {{search.totalHits}} items 
     .sort-options
