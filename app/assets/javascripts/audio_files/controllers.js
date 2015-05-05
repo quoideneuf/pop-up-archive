@@ -133,6 +133,7 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
   
   $scope.callEditor = function() {
     $scope.$broadcast('CallEditor');
+    mixpanel.track("Edit Transcript",{"Item": $scope.item.title});
     $scope.editTable = true;
   };
 
