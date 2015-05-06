@@ -16,6 +16,10 @@ class Transcriber < ActiveRecord::Base
     @_premium ||= self.find_by_name('speechmatics')
   end
 
+  def self.voicebase
+    @_voicebase ||= self.find_by_name('voicebase')
+  end
+
   # call this whenever making price changes
   def invalidate_caches
     @_basic = nil
