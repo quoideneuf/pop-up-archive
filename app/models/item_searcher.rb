@@ -13,7 +13,7 @@ class ItemSearcher
     { size: @size, from: @from, page: @page }
   end
 
-  def initialize(params)
+  def initialize(params, current_user=nil)
     @params    = params
     @query_str = params[:q] || params[:query]
     @sort_by   = params[:sort_by]
@@ -28,7 +28,7 @@ class ItemSearcher
     @size      = params[:size]
     @from      = params[:from]
     @def_op    = params[:op] || 'AND'
-    @current_user = params[:current_user] || nil
+    @current_user = current_user || params[:current_user] || nil
     @debug     = params[:debug]
     @include_related = params[:related]
 

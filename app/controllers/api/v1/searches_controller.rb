@@ -15,7 +15,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
   end
 
   def prep_search
-    @searcher = ItemSearcher.new(params)
+    @searcher = ItemSearcher.new(params, current_user)
     @es_resp = @searcher.search
   end
  
