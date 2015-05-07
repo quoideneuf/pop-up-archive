@@ -269,6 +269,9 @@ class Tasks::VoicebaseTranscribeTask < Task
         cost_type: cost_type,
         subscription_plan_id: audio_file.user.billable_subscription_plan_id,
       )
+
+      # TODO must be rewritten for voicebase structure
+      # TODO requires that voicebase turn on speaker id
       speakers = response.speakers
       words    = response.words
 
