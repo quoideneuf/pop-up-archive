@@ -20,7 +20,7 @@ gem 'etagger', github: 'rails/etagger'
 gem 'cache_digests'
 gem 'dalli'
 
-gem 'media_monster_client'
+gem 'fixer_client', :git => 'git://github.com/PRX/fixer_client.git'
 gem 'pg'
 gem 'postgres_ext'
 gem 'acts_as_list'

@@ -49,7 +49,7 @@ describe Tasks::TranscodeTask do
   end
 
   # it "should add transcode task to job" do
-  #   job = MediaMonster::Job.new
+  #   job = Hashie::Mash.new
   #   tasks = @task.add_transcode_task(job, 'test', @task.formats['ogg'])
   #   task = tasks.first
   #   task.task_type.should eq 'transcode'
@@ -60,7 +60,7 @@ describe Tasks::TranscodeTask do
   # end
 
   it "should create a transcode job" do
-    job = MediaMonster::Job.new
+    job = Hashie::Mash.new
     @task.should_receive(:create_job).and_yield(job)
     @task.create_transcode_job
     job.job_type.should eq 'audio'
