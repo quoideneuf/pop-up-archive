@@ -4,7 +4,7 @@ class Api::V1::TranscriptsController < Api::V1::BaseController
   expose :audio_file
   expose(:transcript) {
     if params[:audio_file_id]
-      audio_file.timed_transcript 
+      audio_file.best_transcript
     else
       Transcript.find params[:id]
     end

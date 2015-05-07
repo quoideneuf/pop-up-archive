@@ -227,7 +227,7 @@ PUATPlayer.prototype = {
       }
       var escTxt         = tweetStr.replace(/<.+?>/g, '');
       modal.find(".share-link").html(lnk);
-      modal.find(".share-text").html(escTxt);
+      modal.find(".share-text").val(escTxt);
       modal.find("label[for='timestamp']").html("&nbspStart at:&nbsp"+hms);
       modal.find(".share-text").on("keyup", function() {
         escTxt = modal.find(".share-text").val();

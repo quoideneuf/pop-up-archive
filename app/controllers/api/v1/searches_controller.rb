@@ -1,49 +1,22 @@
 class Api::V1::SearchesController < Api::V1::BaseController
+  
   def show
-    query_builder = QueryBuilder.new(params, current_user)
-    page = params[:page].to_i
-    query_str = params[:query]
-    sort_by   = params[:sort_by]
-    filters   = params[:filters]
+    prep_search
 
-    search_query = Search.new(items_index_name) do
-      if page.present? && page > 1
-        from (page - 1) * RESULTS_PER_PAGE
-      end
-      size RESULTS_PER_PAGE
-
-      query_builder.query do |q|
-        query &q
-      end
-
-      query_builder.facets do |my_facet|
-        facet my_facet.name, &my_facet
-      end
-
-      query_builder.filters do |my_filter|
-        filter my_filter.type, my_filter.value
-      end
-
-      # determine sort order
-      if sort_by
-        sort do
-          by query_builder.sort_column, query_builder.sort_order 
-        end
-      elsif !query_str.present? or query_str.length == 0
-        sort do
-          by 'created_at', 'desc'
-        end
-      else
-        sort do
-          by '_score', 'desc'
-        end
-      end
-
-      highlight transcript: { number_of_fragments: 0 }
-    end
-
-    response = Item.search(search_query).response
-    @search = ItemResultsPresenter.new(response)
-    respond_with @search
+    # try try try to get some results. If none for AND search, expand to OR.
+    if @es_resp.response.hits.total == 0
+      Rails.logger.debug "zero hits for initial query. trying again with looser logical OR"
+      params[:op] = 'OR'
+      prep_search
+    end 
+    @search = ItemResultsPresenter.new(@es_resp.response)
+    #Rails.logger.debug("pager_params=#{@searcher.pager_params.inspect}")
+    respond_with @search 
   end
+
+  def prep_search
+    @searcher = ItemSearcher.new(params, current_user)
+    @es_resp = @searcher.search
+  end
+ 
 end

@@ -81,7 +81,10 @@ class Tasks::TranscribeTask < Task
   def notify_user
     return unless (user && audio_file && audio_file.item)
     return if extras['notify_sent']
-    r = TranscriptCompleteMailer.new_auto_transcript(user, audio_file, audio_file.item).deliver
+    if audio_file.item.extra.has_key? 'callback'
+      CallbackWorker.perform_async(audio_file.item_id, audio_file.id, audio_file.item.extra['callback']) unless Rails.env.test?
+    end
+    r = TranscriptCompleteMailer.new_auto_transcript(user, audio_file, audio_file.item).deliver_now
     extras['notify_sent'] = DateTime.now.to_s
     r
   end

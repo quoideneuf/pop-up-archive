@@ -98,4 +98,9 @@ class CallbacksController < ApplicationController
     head 200  # always say ok
   end
 
+  def tester
+    Rails.logger.debug("callback tester OK")
+    head 200 # always say ok
+  end
+
 end

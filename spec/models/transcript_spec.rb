@@ -2,6 +2,9 @@ require 'spec_helper'
 
 describe Transcript do
 
+  before { StripeMock.start }
+  after { StripeMock.stop }
+
   before(:all) do
     @transcript = FactoryGirl.create :transcript
   end

@@ -13,7 +13,7 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
     $scope.query = new Query();
   }
 }])
-.controller('SearchResultsCtrl', ['$scope', 'Search', 'Loader', '$location', '$routeParams', 'Query', 'Collection', 'SearchResults', '$http', function ($scope, Search, Loader, $location, $routeParams, Query, Collection, SearchResults, $http) {
+.controller('SearchResultsCtrl', ['$scope', 'Search', 'Loader', '$location', '$routeParams', 'Query', 'Collection', 'SearchResults', '$http', '$window', function ($scope, Search, Loader, $location, $routeParams, Query, Collection, SearchResults, $http, $window) {
   $scope.location = $location;
   
   $scope.$watch('location.search().query', function (searchquery) {
@@ -189,5 +189,24 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
   $scope.toggleView = function () {
     $scope.newView=!$scope.newView;
   };
+
+  $scope.facetClicks = function(facet, termsOpen) {
+    if (termsOpen === true) {
+      mixpanel.track("Facet expand", {
+        "Facet": facet.name,
+        "User": $scope.currentUser.name,
+        "Email": $scope.currentUser.email
+      }); 
+    } 
+  }
+
+  $scope.moreClicks = function(facet) {
+    $window.alert("Thanks for your feedback! This feature is under consideration.");
+    mixpanel.track("10 More Facets", {
+      "Facet": facet.name,
+      "User": $scope.currentUser.name,
+      "Email": $scope.currentUser.email
+     });    
+  }
 
 }]);

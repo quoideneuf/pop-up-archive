@@ -349,7 +349,7 @@
       template: '<div class="file-transcript">' +
                   '<table class="table">' +
                     '<tr ng-repeat="text in transcript track by $index" ng-class="{current: transcriptStart== {{text.startTime | round}}}" ng-init="originalSpeaker=text.speakerId">' +
-                      '<td class="play"><a ng-click="seekTo(text.startTime)"><i class="fa fa-play-circle"></i></a></td>' +
+                      '<td class="play"><a ng-click="seekTo(text.startTime)"><i class="fa fa-play"></i></a></td>' +
                       '<td class ="timestamp" ng-class="{keytime: $index % 5 != 0}" ng-show="showRange">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-hide="editRow" class="speaker" title="{{assignSpeaker(text.speakerId)}}" ng-bind="speakerChange(transcript[$index-1].speakerId, text.speakerId)"></td>' +

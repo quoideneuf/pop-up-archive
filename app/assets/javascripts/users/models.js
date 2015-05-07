@@ -63,6 +63,16 @@ angular.module('Directory.users.models', ['RailsModel'])
     return this.role == "member";
   };
 
+  User.prototype.mayUpload = function() {
+    if (!this.overMonthlyLimit) {
+      return true;
+    }
+    if (self.overMonthlyLimit && self.hasCreditCard() && !self.isOrgMember()) {
+      return false;
+    }
+    return true;
+  };
+
   User.prototype.hasCommunityPlan = function () {
     return !!(!this.plan || !this.plan.id || this.plan.name.match(/Community/));
   };
@@ -156,6 +166,9 @@ angular.module('Directory.users.models', ['RailsModel'])
     }
     return sub.update().then(function (plan) {
       return User.get('me');
+    }, function(error) {
+      console.log("subscription update failed: ", error);
+      alert("Subscription update failed. Please contact support.");
     });
   };
 

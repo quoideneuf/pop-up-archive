@@ -228,13 +228,26 @@ namespace :reports do
     # set up report
     buf = []
     buf.push "PUA Customer Subscription Event Report for #{now.strftime('%Y-%m')}\n"
-    buf.push '-'*80, "\n"
-    buf.push "Date       ID                    Name             Plan\n"
-    buf.push '-'*80, "\n" 
+    buf.push '-'*90, "\n"
+    buf.push sprintf("%10s %4s %21s %25s  %25s\n", 'Date', 'ID', 'Name', 'Old Plan', 'New Plan')
+    buf.push '-'*90, "\n" 
     comments.each do |comment|
+      #puts '='*80
       dt = comment.created_at.strftime('%Y-%m-%d')
+      event = JSON.parse(comment.body)
+      #pp event
+      chg = event['data']['previous_attributes']
+      #puts '-'*40
+      #pp chg
+      next unless chg
+
+      # we only care about plan changes
+      next unless chg.has_key? 'plan'
+
+      # new plan vs old plan
+      old_plan = chg['plan']['id']
       user = comment.resource
-      line = sprintf("%s %s %21s %10s %4s\n", dt, user.id, user.name.slice(0,20), user.plan.name, user.pop_up_hours)
+      line = sprintf("%10s %4s %21s %25s  %25s\n", dt, user.id, user.name.slice(0,20), old_plan, user.plan.id)
       buf.push line
     end 
     if send_mail && buf.size > 0

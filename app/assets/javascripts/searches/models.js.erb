@@ -3,27 +3,36 @@ angular.module('Directory.searches.models', ['RailsModel', 'Directory.items.mode
   var Search = Model({url:'/api/search', name: 'search'});
 
   Search.prototype.lastItemNumber = function () {
-    return Math.min(this.page * <%= RESULTS_PER_PAGE %>, this.totalHits);
+    return Math.min(this.page * <%= Item::SEARCH_RESULTS_PER_PAGE %>, this.totalHits);
   }
 
   Search.prototype.firstItemNumber = function () {
-    return Math.min((this.page-1)* <%= RESULTS_PER_PAGE %> + 1, this.totalHits);
+    return Math.min((this.page-1)* <%= Item::SEARCH_RESULTS_PER_PAGE %> + 1, this.totalHits);
   }
 
   Search.prototype.hasMoreResults = function () {
     return (this.lastItemNumber() < this.totalHits);
   }
 
-  Search.prototype.facetsAsObjects = function () {
+  Search.prototype.facetsAsObjects = function (visibility) {
+    visibility = visibility || false;
     if (typeof this._facetObjects !== 'undefined') {
       return this._facetObjects;
     }
-
     this._facetObjects = [];
-    angular.forEach(this.facets, function (facet, name) {
-      this.push(new Facet(name, facet));
-    }, this._facetObjects);
-
+    // if visibility is true returns subset of facets for display
+    if (visibility) {
+      angular.forEach(this.facets, function (facet, name) {
+        if (facet._type === "terms" && facet.terms && facet.terms.length) {
+          this.push(new Facet(name, facet))
+        }
+      }, this._facetObjects);
+    }
+    else {
+      angular.forEach(this.facets, function (facet, name) {
+        this.push(new Facet(name, facet));
+      }, this._facetObjects);
+    }
     return this._facetObjects;
   }
 
