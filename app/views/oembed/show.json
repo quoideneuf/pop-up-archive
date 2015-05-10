@@ -4,12 +4,14 @@
 <% if @type == "rich" %>
 <%== 
 {
+  type: "rich",
   version: '1.0',
+  provider_name: 'Pop Up Archive',
+  provider_url: 'https://popuparchive.com',
   title: @title,
-  url: @url,
+  html: render( partial: @partial_path ),
   width: @width,
   height: @height,
-  html: render( partial: @partial_path ),
 }.to_json
 %>
 <% end %>
