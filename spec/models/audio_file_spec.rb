@@ -328,6 +328,15 @@ describe AudioFile do
       @audio_file.current_status.should eq AudioFile::TRANSCRIBE_INPROCESS
     end
 
+    it "should cancel audio when it gets too old w/o finishing" do
+      @audio_file.calc_current_status.should eq AudioFile::STUCK
+      @audio_file.original_file_url = 'http://example.com/file.mp3'
+      @audio_file.save!
+      Timecop.travel( Time.now.utc + AudioFile::MAX_TTL + 1 )
+      @audio_file.calc_current_status.should eq AudioFile::CANCELLED
+      Timecop.return
+    end
+
   end
 
 end

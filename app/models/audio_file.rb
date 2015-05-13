@@ -33,6 +33,9 @@ class AudioFile < ActiveRecord::Base
 
   TRANSCRIBE_RATE_PER_MINUTE = 2.00;  # TODO used?
 
+  # after how many seconds do we consider this file DOA and cancel its processing
+  MAX_TTL = 86400 * 3  # 3 days
+
   # status messages
   UNKNOWN_STATE               = 'Working'
   TRANSCRIPT_PREVIEW_COMPLETE = 'Transcript preview complete'
@@ -45,6 +48,7 @@ class AudioFile < ActiveRecord::Base
   TRANSCODING_INPROCESS       = 'Transcoding'
   TRANSCRIBE_INPROCESS        = 'Transcribing'
   STUCK                       = 'Processing'
+  CANCELLED                   = 'Cancelled'
 
   # status enum
   STATUS_CODES = {
@@ -58,7 +62,8 @@ class AudioFile < ActiveRecord::Base
     H: 'COPYING_INPROCESS',
     I: 'TRANSCODING_INPROCESS',
     J: 'TRANSCRIBE_INPROCESS',
-    K: 'STUCK'
+    K: 'STUCK',
+    X: 'CANCELLED',
   }
 
   # returns object to which this audio_file should be accounted.
@@ -198,6 +203,7 @@ class AudioFile < ActiveRecord::Base
 
   def process_update_file
     return true if is_finished?
+    return true if is_cancelled?
 
     # logger.debug "af #{id} call copy_to_item_storage"
     copy_to_item_storage
@@ -731,7 +737,11 @@ class AudioFile < ActiveRecord::Base
     basic_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::TranscribeTask"}
     premium_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::SpeechmaticsTranscribeTask"}
     #Rails.logger.warn("1c elapsed: #{Time.now - st_time}")
-    if (self.transcoded? or self.is_mp3?) and (self.has_basic_transcribe_task_in_progress?(basic_transcript_tasks) or self.has_premium_transcribe_task_in_progress?(premium_transcript_tasks))
+    if (self.transcoded? or self.is_mp3?) \
+      and ( \
+        self.has_basic_transcribe_task_in_progress?(basic_transcript_tasks) \
+     or self.has_premium_transcribe_task_in_progress?(premium_transcript_tasks) \
+      )
       #STDERR.puts "TRANSCRIBE_INPROCESS"
       status = TRANSCRIBE_INPROCESS
     end
@@ -745,6 +755,9 @@ class AudioFile < ActiveRecord::Base
     # to produce a transcript, which is the end goal in any case.
     if self.stuck?
       status = STUCK
+    end
+    if self.is_expired?
+      status = CANCELLED
     end
     #Rails.logger.warn("2a elapsed: #{Time.now - st_time}")
 
@@ -773,6 +786,15 @@ class AudioFile < ActiveRecord::Base
     status
   end
 
+  def is_cancelled?
+    status = current_status
+    return status == CANCELLED
+  end
+
+  def is_expired?
+    (self.created_at.to_i + MAX_TTL) < Time.now.utc.to_i
+  end
+
   def is_finished?
     status = current_status
     if status == TRANSCRIPT_SAMPLE_COMPLETE
@@ -780,6 +802,8 @@ class AudioFile < ActiveRecord::Base
     elsif status == TRANSCRIPT_BASIC_COMPLETE
       return true
     elsif status == TRANSCRIPT_PREMIUM_COMPLETE
+      return true
+    elsif status == CANCELLED
       return true
     else
       return false
