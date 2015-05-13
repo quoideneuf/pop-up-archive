@@ -235,6 +235,7 @@ GEM
     docile (1.1.5)
     doorkeeper (1.4.2)
       railties (>= 3.1)
+    dotenv (2.0.1)
     elasticsearch (1.0.8)
       elasticsearch-api (= 1.0.7)
       elasticsearch-transport (= 1.0.7)
@@ -710,10 +711,10 @@ GEM
       json (~> 1.8.1)
       mime-types (>= 1.25, < 3.0)
       rest-client (~> 1.4)
-    stripe-ruby-mock (2.1.1)
+    stripe-ruby-mock (2.0.5)
       dante (>= 0.2.0)
       jimson-temp
-      stripe (= 1.20.1)
+      stripe (>= 1.15.0)
     subexec (0.1.0)
     switch_user (0.9.5)
     temple (0.7.5)
@@ -778,6 +779,7 @@ DEPENDENCIES
   devise (~> 3.4.1)
   devise_invitable!
   doorkeeper (~> 1.4.2)
+  dotenv
   elasticsearch-extensions
   elasticsearch-model (~> 0.1.6)
   elasticsearch-rails (~> 0.1.6)
@@ -854,7 +856,7 @@ DEPENDENCIES
   state_machine
   stopwords-filter
   stripe (= 1.20.1)
-  stripe-ruby-mock
+  stripe-ruby-mock (= 2.0.5)
   switch_user
   terminal-notifier-guard
   test_after_commit
