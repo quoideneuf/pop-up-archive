@@ -192,6 +192,10 @@ class Item < ActiveRecord::Base
     storage.direct_upload? ? storage : collection.upload_to
   end
 
+  def get_storage
+    collection.try(:default_storage)
+  end
+
   def storage
     storage_configuration || collection.try(:default_storage)
   end
