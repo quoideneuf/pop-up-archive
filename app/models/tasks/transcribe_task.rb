@@ -9,11 +9,12 @@ class Tasks::TranscribeTask < Task
     begin
       dest = destination
     rescue URI::InvalidComponentError => err
-      self.extras['error'] = "#{err}"
+      self.extras['error'] = "Bad URI #{err}"
       self.cancel!
       return true
     end
     if dest and dest.length > 0
+      self.extras['transcript'] = dest
       connection = Fog::Storage.new(storage.credentials)
       uri        = URI.parse(dest)
       begin
@@ -30,7 +31,7 @@ class Tasks::TranscribeTask < Task
         # can't find the file.
         # if the task is older than a day, consider the file gone for good.
         if self.created_at < DateTime.now-1
-          self.extras['error'] = "#{err}"
+          self.extras['error'] = "Failed to fetch transcript #{dest}: #{err}"
           self.cancel!
           return true
         end
@@ -40,13 +41,13 @@ class Tasks::TranscribeTask < Task
 
       rescue Excon::Errors::Found => err
         # for whatever reason we got a fatal response (e.g. too many redirects)
-        self.extras['error'] = "#{err}"
+        self.extras['error'] = "Failed to fetch transcript #{dest}: #{err}"
         self.cancel!
         return true
 
       rescue Excon::Errors::InternalServerError => err
         # unknown internal error
-        self.extras['error'] = "#{err}"
+        self.extras['error'] = "Failed to fetch transcript #{dest}: #{err}"
         self.cancel!
         return true
 
