@@ -122,6 +122,11 @@ describe AudioFile do
 
   context "copy and move collections" do
 
+    it "should explicitly inherit storage_id on create" do
+      audio_file = FactoryGirl.create :audio_file_private
+      audio_file.storage_id.should eq(audio_file.item.storage_id)
+    end
+
     it "should not create a copy task for current storage id" do
 
       audio_file = FactoryGirl.build :audio_file
