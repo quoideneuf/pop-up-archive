@@ -71,7 +71,7 @@ gem 'carrierwave'
 
 gem 'rmagick'
 gem 'mini_magick', :git => 'git://github.com/fschwahn/mini_magick.git'
-gem 'fog', '~> 1.29.0'
+gem 'fog', '~> 1.30.0'
 
 gem 'heroku-api', '~> 0.3.22'
 gem 'excon'
