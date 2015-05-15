@@ -104,7 +104,21 @@ describe Tasks::VoicebaseTranscribeTask do
     it "processes transcript result" do
       
       trans = task.process_transcript(response)
-      # TODO
+      #STDERR.puts trans.timed_texts.pretty_inspect
+      timed_text_chunks = trans.chunked_by_time(6)
+      #STDERR.puts timed_text_chunks.pretty_inspect
+      # transform a little to make it easier to test
+      tt_chunks = {}
+      timed_text_chunks.each do |ttc|
+        tt_chunks[ttc['ts']] = ttc['text']
+      end
+      tt_chunks.should eq( {
+        "00:00:00" => ["we people of the United States, in order to form a more",
+                       "perfect Union, establish Justice, insure domestic tranquility,"],
+        "00:00:10" => ["provide for the common defense, promote the general welfare and secure the blessings",
+                       "of liberty to ourselves and our posterity, do ordain and establish this Constitution"],
+        "00:00:20" => ["for the United States of America"]
+      } )
 
     end
 
