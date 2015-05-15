@@ -34,7 +34,7 @@ class AudioFile < ActiveRecord::Base
   TRANSCRIBE_RATE_PER_MINUTE = 2.00;  # TODO used?
 
   # after how many seconds do we consider this file DOA and cancel its processing
-  MAX_TTL = 86400 * 3  # 3 days
+  MAX_TTL = 86400 * 1  # 1 day
 
   # status messages
   UNKNOWN_STATE               = 'Working'
