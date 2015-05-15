@@ -12,7 +12,7 @@ class Task < ActiveRecord::Base
   COMPLETE = 'complete'
   CANCELLED = 'cancelled'
 
-  MAX_WORKTIME = 60 * 60 * 4  # 4 hours, expressed in seconds
+  MAX_WORKTIME = 60 * 60 * 2  # 2 hours, expressed in seconds
   RETRY_DELAY  = 900          # 15 minutes, expressed in seconds
 
   scope :incomplete, -> { where('status not in (?)', [COMPLETE, CANCELLED]) }
