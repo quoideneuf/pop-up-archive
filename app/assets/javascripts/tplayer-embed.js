@@ -47,7 +47,7 @@ requirejs(['jquery', 'jquery.jplayer', 'assets/bootstrap.min.js', 'tplayer'], fu
     return false;
   };
   // because css is prepended, check in reverse load order
-  $.each(['/assets/embed.css', '/assets/bootstrap.min.css'], function(idx,cssName) {
+  $.each(['/assets/embed/embed-v1.css', '/assets/bootstrap.min.css'], function(idx,cssName) {
     if (!cssIsLoaded(cssName)) {
       loadCss(rootUrl + cssName);
     } 
