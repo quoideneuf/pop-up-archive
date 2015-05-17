@@ -15,28 +15,43 @@ $body-stack: Verdana, Arial, san-serif;
 @import "mixins";
 
 /* Pop Up Archive embedable transcripted player */
+
 .pua-tplayer-oembed {
-  .related {
-    margin-top: 1em;
+  .pull-left {
+    float: left;
+  }
+  .pull-right {
+    float: right;
+  }
+  a:hover {
+    color: $dark-gray;
   }
   .tplayer-bar {
     height: 50px;
     position: relative;
     .jp-controls, .tplayer-stats {
       @include vertical-align;
-      float: left;
       max-width: 10%;
     }
     .jp-progress {
       @include vertical-align;
       width: auto;
     }
+    .tplayer-stats {
+      padding-left: 8px;
+      white-space: nowrap;
+      div {
+        width: auto;
+        float: left;
+      }
+      .jp-time-holder {
+        color: #aaa;
+        font-size: 90%;
+      }
+    }
   }
   .twitter-share-button {
     margin-left: .5em;
-  }
-  .links {
-    margin: inherit;
   }
   .img-player {
     .img {
@@ -49,11 +64,6 @@ $body-stack: Verdana, Arial, san-serif;
     .body {
       width: 100%;
     }
-    .show-img {
-      float: left;
-      vertical-align: top;
-      padding-right: 1em;
-    }
     img {
       max-width:100%;
       max-height:100%;
@@ -64,25 +74,7 @@ $body-stack: Verdana, Arial, san-serif;
     border: none;
   }
 
-  .highlight .table {
-    height: 50px;
-    overflow: hidden;
-  }
-
-  .snippet {
-    cursor: pointer;
-  }
-
-  .snippet:hover {
-    background: $nondescript-gray;
-
-  }
-
   $transcriptViewHeight: 200px;
-
-  body.tplayer {
-    padding: 0;
-  }
 
   .player h2 {
     font-size: 2em;
@@ -106,18 +98,11 @@ $body-stack: Verdana, Arial, san-serif;
     }
   }
 
-  .player-tags {
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    margin-top: 1em;
-  }
-
   .ts-search {
     margin: 0 0 5px;
     display: inline;
     float: right;
+    position: relative;
     input {
       padding: 5px 14px 4px 5px;
       border-radius: 5px;
@@ -158,11 +143,6 @@ $body-stack: Verdana, Arial, san-serif;
     .result-numbers {
       display: inline-block;
     }
-    .orb-circle {
-      position: absolute;
-      top: 0;
-      right: 73px;
-    }
   }
 
   .pua-tplayer {
@@ -170,18 +150,8 @@ $body-stack: Verdana, Arial, san-serif;
     table-layout: fixed;
   }
 
-  // .pua-tplayer, .tplayer {
-  //   float: left;
-  // }
-
   .player {
     padding: 0;
-  }
-
-  .tplayer .tags {
-    width: 100%;
-    height: 100% !important;
-    overflow: auto;
   }
 
   .title-sub p, .title-sub  a {
@@ -221,10 +191,6 @@ $body-stack: Verdana, Arial, san-serif;
 
   .tplayer .timings-transcript .transcript {
     cursor:pointer;
-  }
-
-  .pua-tplayer .tplayer {
-    width: 100%;
   }
 
   .pua-tplayer-text {
@@ -292,7 +258,7 @@ $body-stack: Verdana, Arial, san-serif;
   .tplayer-bar {
     width: 100%;
     line-height: 1;
-    .jp-progress .jp-seek-bar .ts-find-hit {
+    .ts-find-hit {
       top: 0;
       background-color: $accent-color;
       opacity: .3;
@@ -301,37 +267,6 @@ $body-stack: Verdana, Arial, san-serif;
       position: absolute;
     }
   }
-
-  .source a {
-    color: $dark-gray;
-    text-decoration: none;
-  }
-
-  .source a:hover {
-    color: $medium-gray;
-  }
-
-  .attribution a {
-    text-decoration: none;
-    color: #ccc;  
-    padding-left: .2em;
-  }
-
-  a.category:hover {
-    color: $dark-gray;
-  }
-
-  a.tag{
-    font-family: "futura-pt", Helvetica, san-serif;
-    font-weight: 900;
-    font-size: 1.1em;
-    margin-right: 1em;
-    text-decoration: none;
-    color: $medium-gray;
-    white-space: nowrap;
-    float: left;
-  }
-
 
   /* The seeking class is added/removed inside jPlayer */
   div.jp-seeking-bg {
@@ -368,41 +303,10 @@ $body-stack: Verdana, Arial, san-serif;
     overflow:hidden;
   }
 
-  /* scrubber is invisible, used for creating waveform */
-  .player .scrubber {
-    display: none;
-  }
-  .player .scrubber canvas {
-    width: 100%;
-    height: 100%;
-  }
-
   .player h2 {
     font-size: 24px;
     color: #444;
     margin: 0;
-  }
-
-  .pua-tplayer .tplayer-stats {
-    padding-left: 8px;
-    white-space: nowrap;
-  }
-
-  .pua-tplayer .tplayer-stats div {
-    width: auto;
-    float: left;
-  }
-
-  .pua-tplayer .tplayer-stats .jp-time-holder {
-    color: #aaa;
-    font-size: 90%;
-  }
-
-  .pua-up-link span {
-    background: url(/assets/storage/pop.png) no-repeat center;
-    display: inline-block;
-    height: 29px;
-    width: 29px;
   }
 
   .player .hidden, .hidden {
