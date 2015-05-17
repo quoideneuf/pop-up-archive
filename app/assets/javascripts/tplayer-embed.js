@@ -46,14 +46,14 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
     return false;
   };
   // because css is prepended, check in reverse load order
-  $.each(['/assets/tplayer.css', '/assets/jPlayer.css'], function(idx,cssName) {
+  $.each(['/assets/embed.css'], function(idx,cssName) {
     if (!cssIsLoaded(cssName)) {
       loadCss(rootUrl + cssName);
     } 
   });
 
   // always load font-awesome from cdn
-  loadCss('//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
+  loadCss('http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
 
   //console.log("everything loaded");
 
