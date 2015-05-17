@@ -7,8 +7,9 @@ requirejs.config({
   baseUrl: require.toUrl('')
 });
 
-requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
+requirejs(['jquery', 'jquery.jplayer', 'assets/bootstrap.min.js', 'tplayer'], function($) {
   var sc = $("script");
+  console.log(sc);
   var rootUrl = null;
   $.each(sc, function(idx, tag) {
     //console.log(tag);
@@ -46,14 +47,14 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
     return false;
   };
   // because css is prepended, check in reverse load order
-  $.each(['/assets/embed.css'], function(idx,cssName) {
+  $.each(['/assets/embed.css', '/assets/bootstrap.min.css'], function(idx,cssName) {
     if (!cssIsLoaded(cssName)) {
       loadCss(rootUrl + cssName);
     } 
   });
 
   // always load font-awesome from cdn
-  loadCss('http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
+  loadCss('//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
 
   //console.log("everything loaded");
 
