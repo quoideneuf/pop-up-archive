@@ -108,6 +108,7 @@ $body-stack: Verdana, Arial, san-serif;
       border: 1px solid gray;
       margin-right: 5px;
       width: 170px;
+      height: auto;
     }
     @include mobile {
       margin: 0 -25px 5px;
@@ -129,12 +130,15 @@ $body-stack: Verdana, Arial, san-serif;
       background-color: #eee;
       border: 0;
       padding: 3px;
+      height: 30px;
+      vertical-align: top;
     }
     .last-result, .next-result {
       display: inline-block;
       width: 24px;
       text-align: center;
       cursor: pointer;
+      @include vertical-align;
       &.inactive {
         display: none;
       }
