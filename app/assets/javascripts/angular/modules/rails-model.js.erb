@@ -101,7 +101,7 @@ angular.module('RailsModel', ['rails'])
       queryParams = queryParams || {};
       context = context || {};
       var hash = JSON.stringify([queryParams, context]);
-
+      queryParams['_ui'] = 1;
       var result = factory.$get(factory.resourceUrl(context), queryParams).then(function (data) {
         if (typeof queryCache[hash] == 'undefined') {
           queryCache[hash] = data;
