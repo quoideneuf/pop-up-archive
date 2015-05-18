@@ -203,6 +203,9 @@ $body-stack: Verdana, Arial, san-serif;
     .popover {
       visibility: visible; // always
     }
+    p {
+      display: none;
+    }
   }
 
   .pua-tplayer-text.hover {
