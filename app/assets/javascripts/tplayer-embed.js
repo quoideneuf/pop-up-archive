@@ -7,9 +7,9 @@ requirejs.config({
   baseUrl: require.toUrl('')
 });
 
-requirejs(['jquery', 'jquery.jplayer', 'assets/bootstrap.min.js', 'tplayer'], function($) {
+requirejs(['jquery', 'jquery.jplayer', 'bootstrap.min', 'tplayer'], function($) {
   var sc = $("script");
-  console.log(sc);
+  //console.log(sc);
   var rootUrl = null;
   $.each(sc, function(idx, tag) {
     //console.log(tag);
