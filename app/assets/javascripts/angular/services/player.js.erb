@@ -416,7 +416,8 @@
           scope.editRow = true;
           //focus cursor in first row of transcript input
           $timeout(function() {
-            angular.element(window.document.getElementsByClassName('inp-first')).click();
+            var container = jQuery(el);
+            container.find('.inp-first').click();
           });
         });
 

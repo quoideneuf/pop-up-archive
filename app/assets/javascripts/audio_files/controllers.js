@@ -142,6 +142,23 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
     $scope.editTable = false;
   };
 
+  $scope.transcriptExpanded = false;
+
+  $scope.expandTranscript = function () {
+    $scope.transcriptExpanded = true;
+  };
+
+  $scope.collapseTranscript = function () {
+    $scope.transcriptExpanded = false;
+  };
+
+  $scope.transcriptClass = function () {
+    if ($scope.transcriptExpanded) {
+      return "expanded";
+    }
+    return "collapsed";
+  };
+
 }])
 .controller("OrderTranscriptFormCtrl", ['$scope', '$window', '$q', 'Me', 'AudioFile', function($scope, $window, $q, Me, AudioFile) {
 

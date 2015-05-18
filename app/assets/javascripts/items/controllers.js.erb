@@ -129,23 +129,6 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     return found;
   }
 
-  $scope.transcriptExpanded = false;
-
-  $scope.expandTranscript = function () {
-    $scope.transcriptExpanded = true;
-  };
-
-  $scope.collapseTranscript = function () {
-    $scope.transcriptExpanded = false;
-  };
-
-  $scope.transcriptClass = function () {
-    if ($scope.transcriptExpanded) {
-      return "expanded";
-    }
-    return "collapsed";
-  };
-
   // our version of angular-strap does not support prefixEvent (below)
   // so listen on 'modal-hide'
   // TODO change when we upgrade.
