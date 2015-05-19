@@ -109,12 +109,23 @@ class AudioFile < ActiveRecord::Base
   def set_user_id(uid=nil)
     if uid.nil?
       # find a valid user
+
+      # first test that billable_to is defined or define-able
+      billable_to = nil
+      begin
+        billable_to = self.billable_to # might raise error
+      rescue => err
+        # warn, set placeholder and return
+        Rails.logger.warn(err)
+        self.user_id = 0
+        return
+      end
       if collection.creator_id
         self.user_id = collection.creator_id
-      elsif collection.billable_to.is_a?(User)
-        self.user_id = collection.billable_to.id
-      elsif collection.billable_to.is_a?(Organization)
-        self.user_id = collection.billable_to.users.first.id
+      elsif billable_to.is_a?(User)
+        self.user_id = billable_to.id
+      elsif billable_to.is_a?(Organization)
+        self.user_id = billable_to.users.first.id
       else
         raise "Failed to find a valid User to assign to AudioFile"
       end
@@ -856,6 +867,9 @@ class AudioFile < ActiveRecord::Base
   end 
 
   def before_validation_callback
+    if new_record? && !self.storage_id && self.item
+      self.storage_id = self.item.storage_id
+    end
     set_metered
     set_current_status
   end

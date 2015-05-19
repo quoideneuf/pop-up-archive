@@ -302,5 +302,24 @@ namespace :fixer do
     end
   end
 
+#########################################################################################################
+## migration to fixer.popuparchive.com
+
+  desc "migrate storage_id on items and audio_files"
+  task migrate_storage_ids: [:environment] do
+    # my dev env tests show this performs at about 100 rows/sec
+    Item.where(storage_id: nil).find_in_batches do |items|
+      items.each do |item|
+        item.update_attribute(:storage_id, item.collection.default_storage_id)
+      end
+    end
+    AudioFile.where(storage_id: nil).find_in_batches do |afs|
+      afs.each do |af|
+        next unless af.item
+        af.update_attribute(:storage_id, af.item.storage_id)
+      end
+    end
+  end
+
 end
 

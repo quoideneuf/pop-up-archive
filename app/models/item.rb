@@ -192,6 +192,10 @@ class Item < ActiveRecord::Base
     storage.direct_upload? ? storage : collection.upload_to
   end
 
+  def get_storage
+    collection.try(:default_storage)
+  end
+
   def storage
     storage_configuration || collection.try(:default_storage)
   end
@@ -291,15 +295,16 @@ class Item < ActiveRecord::Base
   end
 
   def set_defaults
-    return true unless is_public.nil?
-    self.is_public = (collection.present? && collection.items_visible_by_default)
+    if is_public.nil?
+      self.is_public = (collection.present? && collection.items_visible_by_default)
+    end
+    if storage_id.nil?
+      self.storage_id = (collection.present? ? collection.default_storage_id : nil)
+    end
     true
   end
 
   def handle_collection_change
-    # do nothing if item has its own storage config defined
-    # this means that it has already been explicitly set to this storage. leave it be
-    return true if (storage_configuration)
 
     # if there is no change in collection id, no need to change
     return true unless (collection_id_was && collection_id)
@@ -313,7 +318,7 @@ class Item < ActiveRecord::Base
 
     # if this is the same storage bucket and provider, then flipping is_public (above)
     # is all we are required to do.
-    return true if (collection_was.default_storage == collection_is.default_storage)
+    return true if (self.storage == collection_is.default_storage)
 
     # if we get here, then move the associated assets too.
 
@@ -321,10 +326,8 @@ class Item < ActiveRecord::Base
     self.audio_files.each do |af|
       if af.storage_configuration
 
-        # af already stored in the right place? remove association to af specific storage
+        # af already stored in the right place? nothing to do.
         if af.storage_configuration == collection_is.default_storage
-          af.storage_configuration = nil
-          af.update_attribute(:storage_id, nil)
 
         # af NOT stored in the right place? move it to the correct storage for this item
         else
