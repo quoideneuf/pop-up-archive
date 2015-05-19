@@ -705,6 +705,7 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
+    staccato (0.3.1)
     state_machine (1.2.0)
     stopwords-filter (0.3.1)
     stripe (1.20.1)
@@ -852,6 +853,7 @@ DEPENDENCIES
   soundcloud
   speechmatics!
   spring
+  staccato
   state_machine
   stopwords-filter
   stripe (= 1.20.1)

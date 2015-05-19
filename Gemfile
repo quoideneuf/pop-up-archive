@@ -125,6 +125,7 @@ gem 'obscenity'
 gem 'text-table'
 
 gem 'mixpanel-ruby'
+gem 'staccato'
 
 gem 'activeadmin', github: 'activeadmin', branch: 'master'
 gem 'active_admin_sidebar'

@@ -225,6 +225,8 @@ class AudioFile < ActiveRecord::Base
 
     transcribe_audio
 
+    premium_transcribe_audio
+
   rescue Exception => e
     logger.error e.message
     logger.error e.backtrace.join("\n")

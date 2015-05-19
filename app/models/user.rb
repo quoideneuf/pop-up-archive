@@ -209,6 +209,11 @@ class User < ActiveRecord::Base
           trial_end = customer.class.end_of_this_month
           prorate   = false
         end
+        # if moving from community to non-community, treat like trial
+        if orig_plan.is_community? && !plan.is_community?
+          trial_end = customer.class.end_of_this_month
+          prorate = false
+        end
       end 
 
       subscr.plan = plan.id

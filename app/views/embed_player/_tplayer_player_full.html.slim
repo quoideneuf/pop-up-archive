@@ -5,7 +5,7 @@
 - item       ||= @item || @audio_file.item
 
 .pua-tplayer id="pua-tplayer-#{file_id}-player"
-    .img-player.tplayer
+    .img-player
       .jp-jplayer.pua-tplayer id="pua-tplayer-#{file_id}"
       .jp-audio.player id="jp_container-#{file_id}" 
         .jp-type-single
@@ -33,9 +33,7 @@
             .clear
             .tplayer-bar
               .tplayer-bar-inner
-              .jp-controls
-                button.jp-rewind.player-button id="jp-reverse-button-#{file_id}"
-                  i.fa.fa-fast-backward.no-mobile
+              .jp-controls.pull-left
                 button.jp-play.player-button id="jp-play-button-#{file_id}" data-collection='#{item.collection_title}' data-file='#{title} (#{file_id.to_s})'
                   i.fa.fa-play
                 button.jp-pause.player-button id="jp-pause-button-#{file_id}"
@@ -59,10 +57,3 @@
               a href="http://get.adobe.com/flashplayer/" target="_blank"
                 | Flash plugin
               | . 
-/ tr.links
-/   td.blank
-/   td
-/     .attribution
-/     - if logos[audio_file.item.physical_location]
-/       a href="#{audio_file.item.digital_location}"
-/         img class="logo" src="#{logos[audio_file.item.physical_location]}"
