@@ -7,12 +7,13 @@ requirejs.config({
   baseUrl: require.toUrl('')
 });
 
-requirejs(['jquery', 'jquery.jplayer', 'bootstrap.min', 'tplayer'], function($) {
+requirejs(['jquery', 'jquery.jplayer', 'bootstrap.min'], function($) {
+  require(['tplayer']);
   var sc = $("script");
   //console.log(sc);
   var rootUrl = null;
   $.each(sc, function(idx, tag) {
-    //console.log(tag);
+    console.log(tag);
     if (!tag.src || rootUrl) {
         return;
     }   
