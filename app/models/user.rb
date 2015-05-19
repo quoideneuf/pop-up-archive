@@ -184,7 +184,7 @@ class User < ActiveRecord::Base
       # these are API defaults; we just make them explicit
       trial_end = nil
       prorate   = true
-      orig_plan = subscr.plan
+      orig_plan = subscr.plan # isa Stripe::Plan
       ####################################################################
       # new customer setting non-community subscription for the first time
       if (!customer.stripe_customer || customer.in_first_month?) && plan.is_community?
@@ -210,7 +210,7 @@ class User < ActiveRecord::Base
           prorate   = false
         end
         # if moving from community to non-community, treat like trial
-        if orig_plan.is_community? && !plan.is_community?
+        if (orig_plan.id == :community || orig_plan.name == "Community") && !plan.is_community?
           trial_end = customer.class.end_of_this_month
           prorate = false
         end
