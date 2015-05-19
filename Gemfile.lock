@@ -144,9 +144,9 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    acts_as_list (0.7.2)
+    acts_as_list (0.6.0)
       activerecord (>= 3.0)
-    angularjs-rails-resource (2.0.0)
+    angularjs-rails-resource (0.2.5)
     ansi (1.5.0)
     arbre (1.0.3)
       activesupport (>= 3.0.0)
@@ -761,9 +761,9 @@ PLATFORMS
 DEPENDENCIES
   active_admin_sidebar
   activeadmin!
-  acts_as_list
+  acts_as_list (= 0.6.0)
   amara!
-  angularjs-rails-resource
+  angularjs-rails-resource (= 0.2.5)
   ansi
   autoscaler (~> 0.2.0)
   better_errors
@@ -793,8 +793,8 @@ DEPENDENCIES
   excon
   factory_girl_rails
   feedjira
-  fog (~> 1.30.0)
   fixer_client!
+  fog (~> 1.30.0)
   foreman
   fuzzy_match (~> 2.1.0)
   geocoder
