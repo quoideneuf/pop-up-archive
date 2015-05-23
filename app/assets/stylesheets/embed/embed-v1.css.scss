@@ -79,6 +79,11 @@ $body-stack: Verdana, Arial, san-serif;
     background: inherit;
     h2 {
       font-size: 2em;
+      color: #444;
+      margin: -10px 0;
+      width: 85%;
+      display: inline-block;
+      word-wrap: break-word;
     }
   }
 
@@ -309,12 +314,6 @@ $body-stack: Verdana, Arial, san-serif;
     width:0px;
     height: 100%;
     overflow:hidden;
-  }
-
-  .player h2 {
-    font-size: 24px;
-    color: #444;
-    margin: 0;
   }
 
   .player .hidden, .hidden {
