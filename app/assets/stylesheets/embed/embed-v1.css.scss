@@ -75,8 +75,11 @@ $body-stack: Verdana, Arial, san-serif;
 
   $transcriptViewHeight: 200px;
 
-  .player h2 {
-    font-size: 2em;
+  .player {
+    background: inherit;
+    h2 {
+      font-size: 2em;
+    }
   }
 
   .tplayer.scrolling {
@@ -280,7 +283,6 @@ $body-stack: Verdana, Arial, san-serif;
   }
 
   .jp-progress {
-    background: #fff 0px -240px no-repeat;
     width: 100%; 
     height: 60px;
     padding: 0 2px 2px 2px;
