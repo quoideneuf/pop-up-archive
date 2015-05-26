@@ -483,7 +483,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         ).success(function(data) {
           contentType = data["content-type"];
           if (!contentType.match(/audio/)) {
-            inputField.closest('.control-group').addClass('error');
+            inputField.closest('.form-group').addClass('error');
             inputField.after('<span class="help-block">Not a valid audio link</span>');
             return;
           } else {
