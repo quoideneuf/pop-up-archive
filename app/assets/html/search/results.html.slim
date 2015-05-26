@@ -2,7 +2,7 @@ ul.pager
   li.previous ng-class="{disabled: search.page <= 1}"
     a ng-click="search.page <= 1 || backPage()" href='#' &larr; Previous
   li.centered
-    form.form-search.with-tags ng-controller="SearchCtrl" ng-submit="query.commit()"
+    form.form-inline.with-tags ng-controller="SearchCtrl" ng-submit="query.commit()"
       .input-group
         input.search-query.form-control ng-model='query.string' type='search' placeholder="Search"
         button.btn.btn-default type='submit' go
