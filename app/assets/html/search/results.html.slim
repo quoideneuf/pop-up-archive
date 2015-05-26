@@ -17,7 +17,7 @@ ul.pager
     .facet ng-repeat="facet in search.facetsAsObjects(true)" ng-show="facet.visible()"
       h5 ng-click="termsOpen = !termsOpen; facetClicks(facet, termsOpen)" ng-init="termsOpen=$first"
         | {{facet.name | lowercase}}
-      ul.unstyled.terms
+      ul.list-unstyled.terms
         li ng-repeat="entry in facet.entries()"
           small.pull-right() ({{entry.count}}) 
           .label.label-info ng-click="addSearchFilter(entry)" {{entry.nameForPresenting()}}

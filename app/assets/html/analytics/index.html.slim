@@ -4,7 +4,7 @@ div ng-controller="AnalyticsCtrl"
       h2 Analytics
       .facet
         h5 Filter by Collection
-        ul.unstyled.terms
+        ul.list-unstyled.terms
           li ng-repeat="dataCollection in analyticsData.dataCollections"
             .checkbox
               input checkbox-group="" type="checkbox" name="selectedEntries[]" value="{{dataCollection}}" ng-model="dataCollection.selected" ng-click="toggleCollection(dataCollection)"
