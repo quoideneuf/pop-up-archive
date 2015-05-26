@@ -18,19 +18,19 @@ section ng-controller="CreditCardCtrl"
           label.control-label for="number" Credit Card
           .controls
             input type="text" size="20" name="number" data-stripe="number"
-            span.help-inline ng-show="errors.number" ng-bind="errors.number"
+            span.help-block ng-show="errors.number" ng-bind="errors.number"
         .form-group ng-class="{error: errors.cvc}"
           label.control-label for="cvc" CVC
           .controls
             input type="text" size="4" name="cvc" data-stripe="cvc"
-            span.help-inline ng-show="errors.cvc" ng-bind="errors.cvc"
+            span.help-block ng-show="errors.cvc" ng-bind="errors.cvc"
         .form-group ng-class="{error: errors.exp_month || errors.exp_year }"
           label.control-label for="exp-month" Exp. (MM/YYYY)
           .controls
             input type="text" size="2" name="exp-month" data-stripe="exp-month"
             | &nbsp;/&nbsp;
             input type="text" size="4" name="exp-year" data-stripe="exp-year"
-            span.help-inline ng-show="errors.exp_month + errors.exp_year" ng-bind="errors.exp_month + errors.exp_year"
+            span.help-block ng-show="errors.exp_month + errors.exp_year" ng-bind="errors.exp_month + errors.exp_year"
       hr
       p ng-hide="creditCard"
         p ng-show="onDemandRequiresCC"

@@ -463,7 +463,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     else {
       // clear any error first
       inputField.closest('.form-group').removeClass('error');
-      inputField.next('.help-inline').remove();
+      inputField.next('.help-block').remove();
 
       // validate the URL string
       var urlPattern = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?$/;
@@ -471,7 +471,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         // add warning to input field
         //console.log("bad url:", remoteFileUrl);
         inputField.closest('.form-group').addClass('error');
-        inputField.after('<span class="help-inline">Fix the URL</span>');
+        inputField.after('<span class="help-block">Fix the URL</span>');
         return;
       }
       var contentType;
@@ -484,7 +484,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
           contentType = data["content-type"];
           if (!contentType.match(/audio/)) {
             inputField.closest('.control-group').addClass('error');
-            inputField.after('<span class="help-inline">Not a valid audio link</span>');
+            inputField.after('<span class="help-block">Not a valid audio link</span>');
             return;
           } else {
             inputField.val(''); // clear field for re-use
