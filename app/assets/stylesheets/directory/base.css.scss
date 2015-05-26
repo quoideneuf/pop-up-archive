@@ -57,6 +57,10 @@ p {
   padding-top: 200px;
 }
 
+.navbar-default {
+  background-color: #f2efef;
+}
+
 .navbar {
   .nav {
     margin: 9px 0 0 0;
@@ -259,11 +263,11 @@ form.form-big {
     line-height: 28px;
   }
 
-  .input-append .btn {
+  .input-group .btn {
     border-radius: 0 28px 28px 0;
   }
 
-  .input-append .search-query {
+  .input-group .search-query {
     border-radius: 28px 0 0 28px;
   }
 }
@@ -747,7 +751,7 @@ ul.search-pills {
 
 //Navbar
 
-$navbarHeight: 105px;
+$navbarHeight: 75px;
 $authNavbarHeight: 75px;
 
 .navbar-shadow {
@@ -806,7 +810,7 @@ $authNavbarHeight: 75px;
     .form-search {
       line-height: 20px;
       height: 20px;
-      .input-append {
+      .input-group {
         width: 100%;
 
         button {
@@ -888,7 +892,30 @@ form.with-tags {
 
 /* contact modal */
 .modal {
-  display: none;
+//  display: none;
+}
+
+// modal background with angular-strap
+.modal-backdrop.am-fade {
+  opacity: .5;
+  transition: opacity .15s linear;
+  &.ng-enter {
+    opacity: 0;
+    &.ng-enter-active {
+      opacity: .5;
+    }
+  }
+  &.ng-leave {
+    opacity: .5;
+    &.ng-leave-active {
+      opacity: 0;
+    }
+  }
+}
+
+.modal-body .form-horizontal .form-group {
+  margin-left: 15px;
+  margin-right: 15px;
 }
 
 // horizontal radio button groups
@@ -1005,14 +1032,14 @@ form.with-tags {
 .message-expanded {
   border-top: 1px solid #edeff2;
   text-align:center;
-  width: 660px;
+  //width: 660px;
   margin-left: -15px;
   margin-bottom: 8px;
 }
 
 .message-shadow {
   display: block;
-  width: 660px;
+  //width: 660px;
   margin-left: -15px;
 
   border-top: 1px solid #edeff2;
@@ -1794,16 +1821,16 @@ table.usage {
   .navbar-static-top .container,
   .navbar-fixed-top .container,
   .container,
-  .span12,
-  .span10,
-  .span9 {
+  .col-md-12,
+  .col-md-10,
+  .col-md-9 {
     width: auto;
   }
 }
 
 /* nav breaks-per-item */
 @media screen and (max-width: 900px) {
-  .nav-collapse .pull-right li a #my_dashboard .nav-label {
+  .navbar-collapse .pull-right li a #my_dashboard .nav-label {
     display: none;
   }
   body, body.authn, .navbar-fixed-top .navbar-inner, .navbar-fixed-bottom .navbar-inner {
@@ -1812,20 +1839,20 @@ table.usage {
   }
 }
 @media screen and (max-width: 860px) {
-  .nav-collapse .pull-right li a #my_collections .nav-label {
+  .navbar-collapse .pull-right li a #my_collections .nav-label {
     display: none;
   }
 }
 @media screen and (max-width: 750px) {
-  .nav-collapse .pull-right li a #user_name .nav-label {
+  .navbar-collapse .pull-right li a #user_name .nav-label {
     display: none;
   }
-  .nav-collapse .pull-right li a .nav-label {
+  .navbar-collapse .pull-right li a .nav-label {
     display:none;
   }
 }
 @media screen and (max-width: 600px) {
-  .nav-collapse .nav.pull-right {
+  .navbar-collapse .nav.pull-right {
     /* stop pulling right */
     float: left;
   }

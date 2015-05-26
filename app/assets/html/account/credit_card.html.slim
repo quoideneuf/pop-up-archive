@@ -14,17 +14,17 @@ section ng-controller="CreditCardCtrl"
         strong() {{pendingPlanObj.amount/100|currency}} per {{pendingPlanObj.interval}}.
       hr ng-show="pendingPlanObj"
       .stripe-cc.form-horizontal
-        .control-group ng-class="{error: errors.number}"
+        .form-group ng-class="{error: errors.number}"
           label.control-label for="number" Credit Card
           .controls
             input type="text" size="20" name="number" data-stripe="number"
             span.help-inline ng-show="errors.number" ng-bind="errors.number"
-        .control-group ng-class="{error: errors.cvc}"
+        .form-group ng-class="{error: errors.cvc}"
           label.control-label for="cvc" CVC
           .controls
             input type="text" size="4" name="cvc" data-stripe="cvc"
             span.help-inline ng-show="errors.cvc" ng-bind="errors.cvc"
-        .control-group ng-class="{error: errors.exp_month || errors.exp_year }"
+        .form-group ng-class="{error: errors.exp_month || errors.exp_year }"
           label.control-label for="exp-month" Exp. (MM/YYYY)
           .controls
             input type="text" size="2" name="exp-month" data-stripe="exp-month"

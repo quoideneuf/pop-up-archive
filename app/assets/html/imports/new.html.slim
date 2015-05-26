@@ -1,5 +1,5 @@
-.row-fluid
-  .span11 
+.row
+  .col-md-11 
       div class="newimportdiv"
 				h1 style="color:#997067" drag and drop anywhere or select a spreadsheet:
 
@@ -7,7 +7,7 @@
         form.import ng-controller='FSImportCtrl'
           fieldset 
             span file-button="" style='margin-right: 4px;'
-              button.btn Choose spreadsheet
+              button.btn.btn-default Choose spreadsheet
 
             ul ng-show='files.length > 0'
               li ng-repeat="file in files" {{file.name}}

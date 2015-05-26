@@ -3,9 +3,9 @@ ul.pager
     a ng-click="search.page <= 1 || backPage()" href='#' &larr; Previous
   li.centered
     form.form-search.with-tags ng-controller="SearchCtrl" ng-submit="query.commit()"
-      .input-append
-        input.search-query ng-model='query.string' type='search' placeholder="Search"
-        button.btn type='submit' go
+      .input-group
+        input.search-query.form-control ng-model='query.string' type='search' placeholder="Search"
+        button.btn.btn-default type='submit' go
       ul.inline.tags
         li.label ng-repeat="part in query.queryParts"
           | {{part | queryPartHumanReadable }}
@@ -13,21 +13,17 @@ ul.pager
   li.next ng-class="{disabled:!search.hasMoreResults()}"
     a ng-click="!search.hasMoreResults() || nextPage()" href="#" Next &rarr;
 .row
-  .span4.facets
-    .facet ng-repeat="facet in search.facetsAsObjects(true)"
+  .col-md-4.facets
+    .facet ng-repeat="facet in search.facetsAsObjects(true)" ng-show="facet.visible()"
       h5 ng-click="termsOpen = !termsOpen; facetClicks(facet, termsOpen)" ng-init="termsOpen=$first"
         | {{facet.name | lowercase}}
-        i.fa.fa-chevron-down ng-show="!termsOpen"
-        i.fa.fa-chevron-up ng-show="termsOpen"
-
-      .terms ng-show="termsOpen"
-        ul.unstyled
-          li ng-repeat="entry in facet.entries()"
-            small.pull-right() ({{entry.count}}) 
-            .label.label-info ng-click="addSearchFilter(entry)" {{entry.nameForPresenting()}}
-          li 
-            a href="#" ng-show="facet.entries().length >= 10" ng-click="moreClicks(facet)" Show 10 More 
-  .span8
+      ul.unstyled.terms
+        li ng-repeat="entry in facet.entries()"
+          small.pull-right() ({{entry.count}}) 
+          .label.label-info ng-click="addSearchFilter(entry)" {{entry.nameForPresenting()}}
+        li 
+          a href="#" ng-show="facet.entries().length >= 10" ng-click="moreClicks(facet)" Show 10 More
+  .col-md-8
     h5.result-count.pull-left() {{search.firstItemNumber()}} to {{search.lastItemNumber()}} of {{search.totalHits}} items 
     .sort-options
       select ng-model="selectedSort" ng-options="item.name for item in sortOptions" ng-change="sortResults(selectedSort)"

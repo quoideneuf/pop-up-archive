@@ -6,7 +6,7 @@
         |Featured: 
         a href="https://www.popuparchive.com/collections/4425" Popcast
         |, the new podcast from Pop Up Archive
-      .span12
+      .col-md-12
         .featured-collection
           a href='/collections/4425' 
             img.expimg-main src="#{asset_path('explore/pocast-300x200.png')}"
@@ -17,7 +17,7 @@
           |, Pop Up Archive's house podcast, Eliza Smith excavates audio from Pop Up Archive's public collections, from recordings on wax cylinder to NASA's interstellar rumbles. Listen to Smith resurface and reexamine forgotten sounds in this series of intimate micro-podcasts.
     h3 Archival Voices
     .row ng-hide="newView"
-      .span12
+      .col-md-12
         .featured-collection
           a href='/collections/938'
             img.expimg src="#{asset_path('explore/terkel.jpg')}"
@@ -59,7 +59,7 @@
             |.
     h3 New Voices  
     .row ng-hide="newView"
-      .span12
+      .col-md-12
         .featured-collection
           a href='https://www.popuparchive.com/collections/3247'
             img.expimg src="#{asset_path('explore/kqed-space.png')}"
@@ -95,7 +95,7 @@
 
   .row ng-hide="newView"
     h3 Browse by Category
-    .span4.top-terms ng-repeat="facet in search.facetsAsObjects()" ng-show="facet.visible()"
+    .col-md-4.top-terms ng-repeat="facet in search.facetsAsObjects()" ng-show="facet.visible()"
       h4() {{facet.name | lowercase}}
       ul ng-controller="SearchCtrl" ng-submit="query.commit()"
         li ng-repeat="entry in facet.entries()"
@@ -105,7 +105,7 @@
           a ng-click="setQuery({field: facet.name, letter: 'A'}); toggleView()"  More...
   .container ng-show="newView"   
     .row
-      .span12
+      .col-md-12
         .browse
           ul#letters
             li ng-repeat="letter in letters"
@@ -114,6 +114,6 @@
           a ng-click="toggleView()" Back to All Facets 
     .row 
       .results
-        .span4 ng-repeat="term in terms"
+        .col-md-4 ng-repeat="term in terms"
           ul
             li ng-click="termSearch({field: field, term: term.term})" {{term.term}} ({{term.count}})
