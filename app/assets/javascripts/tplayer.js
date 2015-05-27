@@ -206,8 +206,13 @@ PUATPlayer.prototype = {
         }
       }
     });
-    $('#share-modal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget);
+    var modalId = 'share-modal-'+self.fileId;
+    $('#'+modalId).on('show.bs.modal', function (ev) {
+      if (!ev.relatedTarget) {
+        console.log("cannot find clicked button for modal:", ev);
+        return;
+      }
+      var button = $(ev.relatedTarget);
       var row    = button.parents('.pua-tplayer-text');
       var ttbl   = button.parents('.tplayer.scrolling');
       var offset = row.data('offset');

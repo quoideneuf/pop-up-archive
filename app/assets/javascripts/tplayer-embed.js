@@ -7,13 +7,13 @@ requirejs.config({
   baseUrl: require.toUrl('')
 });
 
-requirejs(['jquery', 'jquery.jplayer', 'bootstrap.min'], function($) {
+requirejs(['jquery', 'jquery.jplayer', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' ], function($) {
   require(['tplayer']);
   var sc = $("script");
   //console.log(sc);
   var rootUrl = null;
   $.each(sc, function(idx, tag) {
-    console.log(tag);
+    //console.log(tag);
     if (!tag.src || rootUrl) {
         return;
     }   
@@ -40,7 +40,7 @@ requirejs(['jquery', 'jquery.jplayer', 'bootstrap.min'], function($) {
         continue;
       }
       //console.log("css:", css.href);
-      if (css.href == rootUrl+cssName) {
+      if (css.href == rootUrl+cssName || css.href == cssName) {
         //console.log('css already loaded:', cssName);
         return true;
       }
@@ -48,9 +48,18 @@ requirejs(['jquery', 'jquery.jplayer', 'bootstrap.min'], function($) {
     return false;
   };
   // because css is prepended, check in reverse load order
-  $.each(['/assets/embed/embed-v1.css', '/assets/bootstrap.min.css'], function(idx,cssName) {
+  $.each([
+    '/assets/embed/embed-v1.css', 
+    '//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css', 
+    '//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'
+    ], function(idx,cssName) {
     if (!cssIsLoaded(cssName)) {
-      loadCss(rootUrl + cssName);
+      if (cssName.match('^//')) {
+        loadCss(cssName);
+      }
+      else {
+        loadCss(rootUrl + cssName);
+      }
     } 
   });
 

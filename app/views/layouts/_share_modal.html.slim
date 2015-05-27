@@ -1,4 +1,6 @@
-#share-modal.modal.fade aria-hidden="true" aria-labelledby="shareModal" role="dialog" tabindex="-1" 
+- file_id    ||= @file_id
+- modal_id = 'share-modal-'+file_id
+.modal.fade id="#{modal_id}" aria-hidden="true" aria-labelledby="shareModal" role="dialog" tabindex="-1" 
   .modal-dialog
     .modal-content
       .modal-header

@@ -39,11 +39,11 @@ javascript:
                       .tools
                         span.ts
                           = tpart[:offsets][idx].to_i.to_s
-                        i.share.fa.fa-twitter.fa-large data-toggle="modal" data-target="#share-modal" data-data-offset="#{tpart[:offsets][idx].to_i.to_s}"
+                        i.share.fa.fa-twitter.fa-large data-toggle="modal" data-target="#share-modal-#{file_id}" data-offset="#{tpart[:offsets][idx].to_i.to_s}"
                       .text
                         = ttext
     - else
       |  Sadly, this audio has not yet been transcribed. Please try back later and/or let us know via 
-      a href="mailto:info@audiosear.ch" 
+      a href="mailto:edison@popuparchive.com" 
         | email
       | . 
