@@ -17,7 +17,7 @@ section ng-controller="ItemFormCtrl"
         h3 Drag and drop a file anywhere on the site
         div style="margin:-10px 0 10px 0;" or
         span file-button="" style='margin-right: 4px;'
-          button.btn.btn-large style="margin-bottom:5px;" Upload one file at a time
+          button.btn.btn-large.upload-file-button style="margin-bottom:5px;" Upload one file at a time
         div style="margin:0 0 10px 0;" or
         input.text.input.remote-item-url type='text' placeholder="Insert Url"
         span style='margin: 4px;'
@@ -29,7 +29,7 @@ section ng-controller="ItemFormCtrl"
            br
            | Additional uploads will be charged at the rate of $#{Billable::OVERAGE_HOURLY_RATE}/hour.
 
-        .alert.alert-danger 
+        .alert.alert-warning
           p
            | Periods not allowed in file names. (For example, episode1.wav, and 
            strong not 
@@ -75,7 +75,7 @@ section ng-controller="ItemFormCtrl"
 
           .clearfix.controls
             span.pull-right file-button=""
-              button.btn Add Files to Item
+              button.btn.upload-file-button Add Files to Item
 
         .control-group ng-show="currentUser.mayUpload()"
           label.control-label

@@ -395,7 +395,12 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.clear = function() {
     $scope.hideUploadModal();
-  }
+  };
+
+  $scope.looksLikeValidFileName = function(file) {
+    var extPattern = /\.(aac|aif|aiff|alac|flac|m4a|m4p|mp2|mp3|mp4|ogg|raw|spx|wav|wma)$/;
+    return file.match(extPattern);
+  };
 
   // used by the upload-button callback when new files are selected
   $scope.setFiles = function(event) {
@@ -404,6 +409,26 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     $scope.$apply(function($scope) {
 
       var newFiles = element[0].files;
+
+      // validate file extension(s). If any fail, they all fail.
+
+      // clear any error first
+      element.closest('.control-group').removeClass('error');
+      element.next('.alert-error').remove();
+      var numValid = 0;
+      angular.forEach(newFiles, function(file) {
+        if (!$scope.looksLikeValidFileName(file.name)) {
+          element.closest('.control-group').addClass('error');
+          element.after('<div class="alert alert-error">Not a valid audio file: '+file.name+'</div>');
+        }
+        else {
+          numValid++;
+        }
+      });
+      if (numValid !== newFiles.length) {
+        //console.log("some invalid file names found");
+        return;
+      }
 
       // default title to first file if not already set
       if (!$scope.item.title || $scope.item.title == "") {
@@ -474,8 +499,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         return;
       }
       var contentType;
-      var extPattern = /\.(aac|aif|aiff|alac|flac|m4a|m4p|mp2|mp3|mp4|ogg|raw|spx|wav|wma)$/
-      if (!remoteFileUrl.match(extPattern)) {
+      if (!$scope.looksLikeValidFileName(remoteFileUrl)) {
         $http.post(
           '/headcheck',
           {url: remoteFileUrl}
