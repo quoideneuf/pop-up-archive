@@ -867,8 +867,8 @@ class AudioFile < ActiveRecord::Base
   end 
 
   def before_validation_callback
-    if new_record? && !self.storage_id && self.item
-      self.storage_id = self.item.storage_id
+    if new_record? && !self.storage_id && self.item && self.collection
+      self.storage_id = self.collection.default_storage.id
     end
     set_metered
     set_current_status
