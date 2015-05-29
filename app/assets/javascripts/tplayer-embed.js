@@ -7,11 +7,13 @@ requirejs.config({
   baseUrl: require.toUrl('')
 });
 
-requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
+requirejs(['jquery', 'jquery.jplayer', 'bootstrap.min'], function($) {
+  require(['tplayer']);
   var sc = $("script");
+  //console.log(sc);
   var rootUrl = null;
   $.each(sc, function(idx, tag) {
-    //console.log(tag);
+    console.log(tag);
     if (!tag.src || rootUrl) {
         return;
     }   
@@ -46,7 +48,7 @@ requirejs(['jquery', 'jquery.jplayer', 'tplayer'], function($) {
     return false;
   };
   // because css is prepended, check in reverse load order
-  $.each(['/assets/tplayer.css', '/assets/jPlayer.css'], function(idx,cssName) {
+  $.each(['/assets/embed/embed-v1.css', '/assets/bootstrap.min.css'], function(idx,cssName) {
     if (!cssIsLoaded(cssName)) {
       loadCss(rootUrl + cssName);
     } 

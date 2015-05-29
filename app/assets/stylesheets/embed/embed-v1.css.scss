@@ -1,0 +1,380 @@
+/*variables*/
+$primary-color: #000000; /*black*/
+$accent-color: #FF5078;  /*pink*/
+$accent-hover: #E04A6A;
+$accent-selected: #AD3A51;
+$light-gray: #F6F6F6;
+$nondescript-gray: #DDDDDD;
+$dark-gray: #545454;
+$medium-gray: #939393;
+
+$heading-stack: Helvetica, san-serif;
+$body-stack: Verdana, Arial, san-serif;
+
+// import stylesheets
+@import "mixins";
+
+/* Pop Up Archive embedable transcripted player */
+
+.pua-tplayer-oembed {
+  .pull-left {
+    float: left;
+  }
+  .pull-right {
+    float: right;
+  }
+  a:hover {
+    color: $dark-gray;
+  }
+  .tplayer-bar {
+    height: 50px;
+    position: relative;
+    .jp-controls, .tplayer-stats {
+      @include vertical-align;
+      max-width: 10%;
+    }
+    .jp-progress {
+      @include vertical-align;
+      width: auto;
+    }
+    .tplayer-stats {
+      padding-left: 8px;
+      white-space: nowrap;
+      div {
+        width: auto;
+        float: left;
+      }
+      .jp-time-holder {
+        color: #aaa;
+        font-size: 90%;
+      }
+    }
+  }
+  .twitter-share-button {
+    margin-left: .5em;
+  }
+  .img-player {
+    .img {
+      max-width: 100px;
+      width: 15%;
+      overflow: auto;
+      float: left;
+    }
+    .body {
+      width: 100%;
+    }
+    img {
+      max-width:100%;
+      max-height:100%;
+    }
+  }
+
+  .modal-header, .modal-footer {
+    border: none;
+  }
+
+  $transcriptViewHeight: 200px;
+
+  .player h2 {
+    font-size: 2em;
+  }
+
+  .tplayer.scrolling {
+    width: 100%;
+    display: block;
+    height: $transcriptViewHeight;
+    overflow-y: scroll;
+    padding: 0;
+    .highlight {
+      color: #FFF;
+      background-color: $accent-color;
+      font: inherit;
+      padding: 0 1px;
+    }
+    @include mobile {
+      margin: 5px -30px;
+      width: calc(100% + 60px);
+    }
+  }
+
+  .ts-search {
+    margin: 0 0 5px;
+    display: inline;
+    float: right;
+    position: relative;
+    input {
+      padding: 5px 14px 4px 5px;
+      border-radius: 5px;
+      border: 1px solid gray;
+      margin-right: 5px;
+      width: 170px;
+      height: auto;
+    }
+    @include mobile {
+      margin: 0 -25px 5px;
+      input {
+        width: 140px;
+      }
+    }
+    span.clear-find {
+      position: relative;
+      margin-right: -8px;
+      right: 19px;
+      top: -2px;
+      cursor: pointer;
+      display: none;
+    }
+    .search-submit {
+      border-radius: 5px;
+      background-image: none;
+      background-color: #eee;
+      border: 0;
+      padding: 3px;
+      height: 30px;
+      vertical-align: top;
+    }
+    .last-result, .next-result {
+      display: inline-block;
+      width: 24px;
+      text-align: center;
+      cursor: pointer;
+      @include vertical-align;
+      &.inactive {
+        display: none;
+      }
+    }
+    .result-numbers {
+      display: inline-block;
+    }
+  }
+
+  .pua-tplayer {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .player {
+    padding: 0;
+  }
+
+  .title-sub p, .title-sub  a {
+    font-size: .9em;
+    color: $medium-gray;
+    margin: 0;
+    vertical-align: top;
+    line-height: 2em;
+  }
+
+  .title-sub p:after {
+    float: clear;
+  }
+  .date {
+    color: $medium-gray;
+    width: 100%;
+    font-size: .9em;
+  }
+
+  .pua-tplayer {
+    //border: 1px solid #ddd;
+    width: 100%;
+  }
+
+  .timings {
+    text-align: center;
+  }
+
+  .timings-transcript {
+    width: 100%;
+  }
+
+  .tplayer .timings-transcript .timings {
+    vertical-align: top;
+    color: #aaa;
+  }
+
+  .tplayer .timings-transcript .transcript {
+    cursor:pointer;
+  }
+
+  .pua-tplayer-text {
+    padding-left: 1em;
+    font-size: 95%;
+    line-height: 1.6;
+    .popover {
+      visibility: visible; // always
+    }
+    p {
+      margin: 0px;
+    }
+  }
+
+  .pua-tplayer-text.hover {
+    color: #aaa;
+    .tools {
+      visibility: visible;
+    }
+    .popover {
+      color: #000;
+    }
+  }
+
+  .tplayer .timings-transcript .transcript {
+    .text {
+      line-height: 1.7em;
+    }
+    .tools {
+      width: 20px;  // fixed width placeholder for show-on-hover
+    }
+  }
+
+  .pua-tplayer-text.selected {
+    .text {
+      background-color: #FFFBCC;
+    }
+    .tools {
+      visibility: visible;
+    }
+  }
+
+  .pua-tplayer-text .ts {
+    display: none;
+    //display: inline-block;
+    // to debug, toggle comments above
+    color: #aaa;
+    margin-right: 1em;
+    width: 3em;
+    text-align: right;
+  }
+
+  .pua-tplayer-text .text {
+    //float: left;
+    display: table-cell;
+  }
+
+  .pua-tplayer-text .tools {
+    visibility: hidden;
+    display: table-cell;
+    //float:right;
+  }
+
+  .copy-widget {
+    //width: 100px;
+  }
+
+  .tplayer-bar {
+    width: 100%;
+    line-height: 1;
+    .ts-find-hit {
+      top: 0;
+      background-color: $accent-color;
+      opacity: .3;
+      width: 1%;
+      height: 100%;
+      position: absolute;
+    }
+  }
+
+  /* The seeking class is added/removed inside jPlayer */
+  div.jp-seeking-bg {
+    background: #eee;
+  }
+
+  .jp-progress {
+    background: #fff 0px -240px no-repeat;
+    width: 100%; 
+    height: 60px;
+    padding: 0 2px 2px 2px;
+    margin-bottom: 4px;
+    overflow:hidden;
+    margin-right: 8px;
+    position: relative;
+    display: block;
+  }
+
+  .jp-seek-bar {
+    background: #eee 0px -260px repeat-x;
+    width: 100%;
+    height: 20px;
+    overflow:hidden;
+    cursor:pointer;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .jp-play-bar {
+    background: $dark-gray;
+    width:0px;
+    height: 100%;
+    overflow:hidden;
+  }
+
+  .player h2 {
+    font-size: 24px;
+    color: #444;
+    margin: 0;
+  }
+
+  .player .hidden, .hidden {
+    display: none;
+  }
+
+  .loading-overlay {
+    z-index: 10000;
+    position: fixed;
+    width: calc(100% - 62px);
+    height: 200px;
+    background: rgba(0, 0, 0, 0.7);
+    opacity: 1;
+    @include transition(opacity, 0.2s, ease);
+
+    .pua-tplayer-text.selected {
+      background: none;
+    }
+
+    &.ui-animate {
+      opacity: 0;
+    }
+    .loading-indicator {
+      position: absolute;
+      top: 50%;
+      left: 45%;
+      margin-top: -15px;
+      width: 100%;
+      text-align:center;
+      color: #fff;
+      font-weight: 800; 
+      font-size: 2em; 
+    }
+  }
+
+  #share-modal {
+    .too-many-chars {
+      color: red;
+    }
+    .modal-body {
+      padding-top: 0;
+    }
+    .share-button {
+      background-color: #55acee;
+      color: #FFF;
+    }
+  }
+
+  .player-button {
+    border: none;
+    background: transparent;
+    padding: .3em;
+    cursor: pointer;
+    i {
+      font-size: 3em;
+      opacity: .8;
+      color: #939393;
+      &:hover {
+        color: black;
+        opacity: 1;
+        cursor: pointer;
+      }
+    }
+  }
+}
