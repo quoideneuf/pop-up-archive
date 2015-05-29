@@ -1,4 +1,6 @@
-class OembedController < ApplicationController
+class OembedController < Api::V1::BaseController
+
+  # we inherit from Api::V1::BaseController in order to use OAuth or Devise authn
 
   rescue_from ActiveRecord::RecordNotFound, :with => :not_found
 
@@ -8,6 +10,9 @@ class OembedController < ApplicationController
       render :json => { :error => "not found", :status => 404 }.to_json, :status => :not_found
       return
     end
+
+    # must check authz of the asked-for URL
+    cur_user = current_user_with_oauth
 
     # templates handle jsonp response, if necessary.
     @callback = params[:callback]
@@ -21,6 +26,34 @@ class OembedController < ApplicationController
       @embed      = true
       @file_id    = route_action[:file_id]
       @audio_file = AudioFile.find(@file_id)
+      if !@audio_file
+        render :json => { :error => "not found", :status => 404 }.to_json, :status => :not_found
+        return
+      end
+
+      # check authz
+      may_read    = true
+      if !@audio_file.item.is_public
+        logger.debug("private item");
+        if cur_user
+          ability = Ability.new(cur_user)
+          if !ability.can?(:read, @audio_file.item)
+            logger.debug("current_user may not read")
+            may_read = false
+          else
+            logger.debug("current_user may read")
+          end 
+        else
+          logger.debug("no current_user")
+          may_read = false
+        end 
+      end
+      if !may_read
+        render :text => { :error => "permission denied", :status => 403 }.to_json, :status => 403 
+        return
+      end
+
+      # authz ok, continue.
       @mp3        = @audio_file.public_url(extension: :mp3)
       #@ogg        = @audio_file.public_url(extension: :ogg)
       @transcript = @audio_file.best_transcript
