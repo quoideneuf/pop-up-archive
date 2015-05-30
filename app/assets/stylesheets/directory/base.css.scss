@@ -501,6 +501,13 @@ h5.result-count {
   border-bottom: 4px solid white;
   float: left;
   text-align: right;
+  select {
+    width: 220px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    height: 25px;
+    line-height: 25px;
+  }
 }
 
 .result-count-footer {
