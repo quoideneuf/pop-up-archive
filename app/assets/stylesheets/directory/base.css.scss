@@ -660,8 +660,9 @@ h5.result-count {
         }
 
         .tag {
-          border-radius: 13px;
+          border-radius: 13px!important;
           padding: 4px 12px;
+          text-shadow: none;
         }
 
         .confirmed {
