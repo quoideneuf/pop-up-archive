@@ -51,7 +51,7 @@
   .timestamp {
     width: 16px; 
     text-align:left; 
-    padding: 0 5px;
+    padding: 2px 5px;
   }
 
   .keytime {
@@ -80,16 +80,18 @@
 	}
 
 	table {
-		td {
-			padding: 2px;
-			border: none;
+    tbody{
+      td {
+        padding: 2px;
+        border: none;
 
-			a i {
-			    color: black;
-			    opacity: .5;
-			    text-decoration: none;
-			}
-		}
+        a i {
+            color: black;
+            opacity: .5;
+            text-decoration: none;
+        }
+      }
+    }
 
 		input {
 			border: none;
