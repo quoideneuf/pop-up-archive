@@ -75,7 +75,6 @@ ul {
 
 }
 
-
 h1 {
   color: #7c7b81;
   font-family: 'soleil', helvetica, sans-serif !important;
@@ -139,27 +138,22 @@ footer, footer p {
       display: block;
       float: left;
       height: 33px;
-      transition: margin-top 250ms ease 500ms;
-      -webkit-transition: margin-top 250ms ease 500ms;
-      -moz-transition: margin-top 250ms ease 500ms;
-      -o-transition: margin-top 250ms ease 500ms;
+      @include transition(margin-top, 500ms, ease, 2000ms)
     }
 
     .logo-square {
       color: #fff;
       background-color: #F25A4C; /* coral */
       font-size: 85%;
-      min-height: 30px;
-      min-width: 30px;
+      height: 40px;
+      width: 40px;
       padding: 5px;
+      overflow: hidden;
     }
 
     .logo-square .up {
-      margin-top: -10px;
-      transition: margin-top 250ms ease 500ms;
-      -webkit-transition: margin-top 250ms ease 500ms;
-      -moz-transition: margin-top 250ms ease 500ms;
-      -o-transition: margin-top 250ms ease 500ms;
+      line-height: 40px;
+      @include transition(margin-top, 500ms, ease, 2000ms)
     }
 
     .prx {
