@@ -728,10 +728,6 @@ ul.terms {
   }
 }
 
-ul.pager {
-  height: 32px;
-}
-
 ul.search-pills {
   position: absolute;
   top: 5px;
@@ -821,10 +817,9 @@ $authNavbarHeight: 75px;
     width: 700px;
     .form-inline {
       line-height: 20px;
-      height: 20px;
+      height: 40px;
       .input-group {
         width: 100%;
-
         button {
           box-shadow: none;
           border: 1px solid rgb(181,155,109);
@@ -834,13 +829,25 @@ $authNavbarHeight: 75px;
           background: rgb(181,155,109);
           color: #fff;
           text-shadow: none;
+          -webkit-border-radius: 0 14px 14px 0;
+          -moz-border-radius: 0 14px 14px 0;
+          border-radius: 0 14px 14px 0;
+          float: left;
+        }
+        input {
+          width: 92%;
+          height: 31px;
+          -webkit-border-radius: 14px 0 0 14px;
+          -moz-border-radius: 14px 0 0 14px;
+          border-radius: 14px 0 0 14px;
         }
       }
       width: 100%;
-      input {
-        width: 85%;
-      }
     }
+  }
+  .label {
+    background-color: #999;
+    margin-left: 2px;
   }
 }
 
