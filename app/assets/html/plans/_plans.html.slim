@@ -71,13 +71,10 @@
   //Sample audio player  
   .row.player
     .col-md-1
-      button.player-button ng-disabled="player.time == 0" ng-click="rewind()"
-        i.fa.fa-fast-backward
+      i.player-button.fa.fa-fast-backward ng-disabled="player.time == 0" ng-click="rewind()"   
     .col-md-1    
-      button.player-button ng-hide="isPlaying()" ng-click="play(exampleAudioFile.url)"
-        i.fa.fa-play   
-      button.player-button ng-show="isPlaying()" ng-click="pause()"
-        i.fa.fa-pause
+      i.player-button.fa.fa-play ng-hide="isPlaying()" ng-click="play(exampleAudioFile.url)"     
+      i.player-button.fa.fa-pause ng-show="isPlaying()" ng-click="pause()" 
     .col-md-8     
       .scrubber
         .bar ng-show="isLoaded()" ng-style="{width:player.time*100/player.duration+'%'}"

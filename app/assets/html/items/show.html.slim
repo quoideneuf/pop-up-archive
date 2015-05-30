@@ -84,21 +84,17 @@ meta view-head="view-head" property="og:type" content="article"
               span.fa.fa-caret-down
 
       .row.player
-        .col-md-1
-          button.player-button ng-disabled="player.time == 0" ng-click="player.rewind()"
-            i.fa.fa-fast-backward
-        .col-md-1
-          button.player-button ng-hide="isPlaying()" ng-click="play()"
-            i.fa.fa-play
-          button.player-button ng-show="isPlaying()" ng-click="player.pause()"
-            i.fa.fa-pause
-        .col-md-8
+        .col-md-12
+          .player-buttons
+            i.player-button.fa.fa-fast-backward ng-disabled="player.time == 0" ng-click="player.rewind()"
+            i.player-button.fa.fa-play ng-hide="isPlaying()" ng-click="play()"
+            i.player-button.fa.fa-pause ng-show="isPlaying()" ng-click="player.pause()"
+          .timecodes 
+            div ng-show="player.time"
+              span() {{player.time | timeCode}}
+              span ng-show="item.duration" &#47; {{item.getDurationString()}}
           .scrubber
             .bar ng-show="isLoaded()" ng-style="{width:player.time*100/player.duration+'%'}"
-        .col-md-2
-          .timecodes ng-show="player.time"
-            span() {{player.time | timeCode}}
-            span ng-show="item.duration" &#47; {{item.getDurationString()}}
 
       .row.ts-info-row ng-show="audioFile.transcript.parts.length"
         //Basic or Premium label
