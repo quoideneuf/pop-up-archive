@@ -199,7 +199,7 @@ class Task < ActiveRecord::Base
 
     # puts "\n\ncreate job: " + Thread.current.backtrace.join("\n")
     job_params = job_maker.call( Hashie::Mash.new )
-    FixerWorker.perform_async(job_params)
+    FixerWorker.perform_async(job_params, self.id)
 
   end
 
