@@ -1,5 +1,5 @@
 - if user_signed_in?
-  ul.nav
+  ul.navbar-nav.nav
     li
       a bs-dropdown="userMenu"
       
@@ -11,5 +11,5 @@
         span#loading-gear.animated.flash ng-show="loading()"
           i.fa.fa-large.fa-gear.fa-spin style="color: #333"
 - else
-  ul.nav
+  ul.navbar-nav.nav
     li= link_to( '<i class="fa fa-user"></i> sign in'.html_safe, new_user_session_path, { target: '_self'})

@@ -5,7 +5,7 @@
 
 	.modal-body
 		form.form-horizontal 
-		    .control-group
+		    .form-group
 	          .controls ng-hide="item.contributions.length > 0"
 	            label.pull-left style='padding-top: 5px;'
 	              i No contributors.
@@ -18,11 +18,11 @@
 	            span.field
 	              input ui-select2="peopleSelect" type="hidden" ng-model="contribution.person"
 
-	            button.btn type="button" ng-click="deleteContribution(contribution)" Delete
+	            button.btn.btn-default type="button" ng-click="deleteContribution(contribution)" Delete
 
 	          .clearfix.controls
 	          	button.btn.btn-danger.pull-right type="button" ng-click="submit()" Save Contriubtors
-	            button.btn.pull-right type="button" ng-click="addContribution()" Add Contributor
+	            button.btn.btn-default.pull-right type="button" ng-click="addContribution()" Add Contributor
 
 	.modal-footer
-	  button.btn type="button" ng-click="dismiss()" Close 
+	  button.btn.btn-default type="button" ng-click="dismiss()" Close 

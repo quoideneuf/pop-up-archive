@@ -51,7 +51,7 @@
   .timestamp {
     width: 16px; 
     text-align:left; 
-    padding: 0 5px;
+    padding: 2px 5px;
   }
 
   .keytime {
@@ -80,16 +80,18 @@
 	}
 
 	table {
-		td {
-			padding: 2px;
-			border: none;
+    tbody{
+      td {
+        padding: 2px;
+        border: none;
 
-			a i {
-			    color: black;
-			    opacity: .5;
-			    text-decoration: none;
-			}
-		}
+        a i {
+            color: black;
+            opacity: .5;
+            text-decoration: none;
+        }
+      }
+    }
 
 		input {
 			border: none;
@@ -131,7 +133,8 @@
   .search-group {
     display: inline-block;
     position: relative;
-    margin-right: .2em;  
+    margin-right: .2em;
+    margin-top: 3px; 
   }
 
   .clear-filter {
@@ -149,19 +152,13 @@
 
   .search-query {
     width: 50px;
-    padding: 3px 12px;
-    z-index: 1;
-    font-size: 14px;
-    top: 2px;
-    border: 1px solid #ddd;
-    outline: none;
-    -webkit-transition: 0.2s;
-    transition: 0.2s;
-    -moz-transition: 0.2s;
-    -o-transition: 0.2s;
+    border-radius: 22px;
+    min-width: 75px;
+    @include transition(all, 0.2s, ease);
+    height: 27px;
 
     &:active, &:focus, &.extended {
-      width: 150px;
+      width: 200px;
     }
   }
 }

@@ -1,7 +1,5 @@
 @import "pop-up_bootstrap";
-/*
- *= require rails_bootstrap_forms
- */
+@import "rails_bootstrap_forms";
 @import "auth_buttons";
 
 body {

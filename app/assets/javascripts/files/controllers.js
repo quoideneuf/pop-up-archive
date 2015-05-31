@@ -208,7 +208,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
 
         // all set, now show that modal!
         $q.when($scope.uploadModal).then( function (modalEl) {
-          modalEl.modal('show');
+          modalEl.show();
         });
         
       }
