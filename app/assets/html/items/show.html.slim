@@ -101,8 +101,8 @@ meta view-head="view-head" property="og:type" content="article"
         .col-md-5.transcript-label
           span.ts-type() {{audioFile.transcriptType}} Transcript
 
-          i.fa.fa-question-circle ng-show="audioFile.transcriptType == 'Basic'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['basicTranscript']" data-placement="bottom"    
-          i.fa.fa-question-circle ng-show="audioFile.transcriptType == 'Premium'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['premiumTranscript']" data-placement="bottom"
+          i.fa.fa-question-circle ng-show="audioFile.transcriptType == 'Basic'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['basicTranscript']" data-placement="bottom" html="true" auto-close="true"
+          i.fa.fa-question-circle ng-show="audioFile.transcriptType == 'Premium'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['premiumTranscript']" data-placement="bottom" html="true" auto-close="true"
 
           //Reprocess as Premium button
           button.btn.btn-default.ts-upgrade id="premium-ondemand-{{audioFile.id}}" ng-show="currentUser.canEdit(item) && audioFile.transcriptType == 'Basic' && !audioFile.premiumInProgress && audioFile.duration" ng-click="orderPremiumTranscript(audioFile, $event)" title="Your cost: {{audioFile.premiumRetailCost}}"

@@ -20,7 +20,7 @@ div.modal ng-controller='CollectionFormCtrl'
           .form-group
             label.control-label
               | Store Media
-              i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['copyMedia']" data-placement="top"
+              i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['copyMedia']" data-placement="top" html="true" auto-close="true"
             .controls.radio-group
               input.radio_button type="radio" name="copyMedia" ng-value="true" ng-model="collection.copyMedia" ng-change="copyMediaChange()"
               label.radio-label
@@ -51,7 +51,7 @@ div.modal ng-controller='CollectionFormCtrl'
           .form-group
             label.control-label
               | Upload Images
-              i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['image']" data-placement="top"
+              i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['image']" data-placement="top" html="true" auto-close="true"
             .controls ng-show="collection.images.length > 0"
               table.table.file-table
                 tr.file ng-repeat="image in collection.images"

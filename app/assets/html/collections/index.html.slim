@@ -1,7 +1,7 @@
 .row style="display:inline;"
   h1 style="display:inline;" My Collections
   .page-nav.pull-right
-    button.btn.btn-default type="button" bs-popover="batchUpload" data-placement="bottom" 
+    button.btn.btn-default type="button" bs-popover="batchUpload" data-placement="bottom" html="true" auto-close="true"
       i.fa.fa-th-list
       |  Batch Upload
 
@@ -9,14 +9,14 @@
   .alert.alert-info
     | Use collections to group and organize your audio files. Upload a file below to create an 
     span.colhighlight Item
-    i.fa.fa-question-circle style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['item']" data-placement="bottom"
+    i.fa.fa-question-circle style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['item']" data-placement="bottom" html="true" auto-close="true"
     | page in any Pop Up Archive collection.
   button.collection-button.add-collection ng-href="#" ng-click="newCollection()"
     i.fa.fa-plus &nbsp
     | Create a Collection
   ul.collections-list
     li.collection-box ng-repeat="collection in collections | notUploads"
-      span bs-popover="itemHelp['privacy']" data-placement="left" class="ribbon" ng-class="{'public': collection.itemsVisibleByDefault, 'private': !collection.itemsVisibleByDefault}"
+      span bs-popover="itemHelp['privacy']" data-placement="left" html="true" autoClose="true" class="ribbon" ng-class="{'public': collection.itemsVisibleByDefault, 'private': !collection.itemsVisibleByDefault}"
       a ng-href="/collections/{{collection.id}}"
         .col-image ng-show="collection.imageFiles.length" style="background-image:url('{{collection.getThumbImage()}}')"
         .image ng-hide="collection.imageFiles.length"
@@ -35,13 +35,13 @@
         .labels ng-hide="collection.numberOfAudioFiles == 0"
           .col-xs-4 
             | File
-            i.fa.fa-question-circle style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['audfile']" data-placement="right"
+            i.fa.fa-question-circle style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['audfile']" data-placement="right" html="true" auto-close="true"
           .col-xs-4 
             | Item
-            i.fa.fa-question-circle style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['colitem']" data-placement="right"
+            i.fa.fa-question-circle style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['colitem']" data-placement="right" html="true" auto-close="true"
           .col-xs-4 
             | Status
-            i.fa.fa-question-circle style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['status']" data-placement="right"
+            i.fa.fa-question-circle style="margin-left:1px; margin-right:3px;" bs-popover="itemHelp['status']" data-placement="right" html="true" auto-close="true"
         ul.items-list
           li ng-repeat="file in collection.recentFiles"
             .col-xs-4 ng-class-odd=" 'odd-file' " {{file.fileName  | limitTo : 32}}
