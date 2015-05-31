@@ -110,8 +110,7 @@ class Tasks::TranscribeTask < Task
         job.priority    = 2
         job.retry_delay = Task::RETRY_DELAY
         job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
-        job.tasks       = []
-        job.tasks << {
+        job.tasks       = [
           sequence: {
             tasks: [
               {
@@ -130,7 +129,7 @@ class Tasks::TranscribeTask < Task
               }
             ]
           }
-        }
+        ] 
         job
       end
     else
