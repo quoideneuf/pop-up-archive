@@ -110,24 +110,27 @@ class Tasks::TranscribeTask < Task
         job.priority    = 2
         job.retry_delay = Task::RETRY_DELAY
         job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
-        job.sequences   = [{
-          tasks: [
-            {
-              task_type: 'cut', 
-              options: {
-                length: 120, 
-                fade: 0
+        job.tasks       = []
+        job.tasks << {
+          sequence: [{
+            tasks: [
+              {
+                task_type: 'cut', 
+                options: {
+                  length: 120, 
+                  fade: 0
+                }
+              },
+              {
+                task_type: 'transcribe',
+                result:    destination,
+                call_back: call_back_url,
+                label:     self.id,
+                options:   transcribe_options
               }
-            },
-            {
-              task_type: 'transcribe',
-              result:    destination,
-              call_back: call_back_url,
-              label:     self.id,
-              options:   transcribe_options
-            }
-          ]
-        }]
+            ]
+          }]
+        }
         job
       end
     else
