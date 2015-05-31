@@ -112,7 +112,7 @@ class Tasks::TranscribeTask < Task
         job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
         job.tasks       = []
         job.tasks << {
-          sequence: [{
+          sequence: {
             tasks: [
               {
                 task_type: 'cut', 
@@ -129,7 +129,7 @@ class Tasks::TranscribeTask < Task
                 options:   transcribe_options
               }
             ]
-          }]
+          }
         }
         job
       end
