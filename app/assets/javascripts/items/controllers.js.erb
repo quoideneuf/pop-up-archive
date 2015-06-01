@@ -311,7 +311,6 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     // console.log('ItemFormCtrl submit: ', $scope.item);
     var saveItem = $scope.item;
     this.item = $scope.initializeItem(true);
-    $scope.clear();
 
     var uploadFiles = saveItem.files;
     saveItem.files = [];
@@ -328,7 +327,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     });
 
     if (saveItem.id) {
-
+      // console.log("save item id", saveItem.id);
       saveItem.update().then(function (data) {
         // reset tags
         saveItem.tagList2Tags();
@@ -390,12 +389,6 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     $scope.item.images.push({ name: 'name', remoteFileUrl: imageUrl, size: ''});
     //console.log("url link", $scope.urlForImage);
     $scope.urlForImage = "";
-  };
-
-
-
-  $scope.clear = function() {
-    $scope.hideUploadModal();
   };
 
   $scope.looksLikeValidFileName = function(file) {
