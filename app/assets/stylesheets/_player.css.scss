@@ -24,7 +24,9 @@
     height: 3.5em;
     overflow: hidden;
     width: 100%;
-    @include fill-span;
+    display: block;
+    float: none;
+    width: auto;
 
     canvas {
       width: 100%;
