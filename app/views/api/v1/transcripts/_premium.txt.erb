@@ -1,9 +1,13 @@
 <%- prev_speaker_id = 0 -%>
 <%- transcript.timed_texts.each do |tt| -%>
-<%= if prev_speaker_id != tt.speaker_id
-	"\n\r" +  format_time(tt.start_time) + "\r\n" +
-	transcript.speaker_name(tt.speaker_id) + "\n"
-	end -%>
+<% if params["timestamps"] == "true" %>
+	<%= if prev_speaker_id != tt.speaker_id
+		"\n\r" +  format_time(tt.start_time) + "\r\n" +
+		transcript.speaker_name(tt.speaker_id) + "\n"
+		end -%>
+<% end %>
 <%= tt.text + " " -%>
-<%- prev_speaker_id = tt.speaker_id -%>
+<% if params["timestamps"] == "true" %>
+	<%- prev_speaker_id = tt.speaker_id -%>
+<% end %>
 <%- end -%>
