@@ -6,7 +6,7 @@
       h2.center Personal Plans
   .row.parent
     .plan-well.col-md-4 ng-repeat="plan in plans | filter: {'interval': getInterval()} | orderBy:'amount' | limitTo: planOffset" ng-class="{current: isCurrentPlan(plan), selected: isSelectedPlan(plan), disabled: isDisabled(plan.name)}" ng-click="isDisabled(plan.name) ||changePlan(plan)"
-        h3 {{plan.name}}
+        h3() {{plan.name}}
         h4 ng-show="plan.name == 'Community'" 1 hour of processing per month
         h4 ng-show="plan.name != 'Community'" of processing per month
         object ng-show="plan.name == 'Community'" type="image/svg+xml" data="/assets/pricing/free.svg"
