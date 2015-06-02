@@ -1,3 +1,5 @@
+@import "mixins";
+
 $navbarBackground: rgb(242, 239, 239);
 
 html {
@@ -138,7 +140,7 @@ footer, footer p {
       display: block;
       float: left;
       height: 33px;
-      @include transition(margin-top, 500ms, ease, 2000ms)
+      @include transition(margin-top, 500ms, ease, 2000ms);
     }
 
     .logo-square {
@@ -153,7 +155,7 @@ footer, footer p {
 
     .logo-square .up {
       line-height: 40px;
-      @include transition(margin-top, 500ms, ease, 2000ms)
+      @include transition(margin-top, 500ms, ease, 2000ms);
     }
 
     .prx {
