@@ -26,11 +26,11 @@ $body-stack: Verdana, Arial, san-serif;
     height: 50px;
     position: relative;
     .jp-controls, .tplayer-stats {
-      @include vertical-align;
+      @include vertical-center;
       float: left;
     }
     .jp-progress {
-      @include vertical-align;
+      @include vertical-center;
       width: auto;
       display: block;
       float: none;
