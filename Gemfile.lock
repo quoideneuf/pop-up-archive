@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/PRX/fixer_client.git
-  revision: 5ca7a58e043956ec26ca2b43677fc2b4ec461d85
+  revision: cedbaeef7d1f9dad6ba76ea457f721c7e5ba4239
   specs:
-    fixer_client (0.0.1)
+    fixer_client (0.1.0)
       activesupport
       excon
       faraday
@@ -408,7 +408,7 @@ GEM
     has_scope (0.6.0)
       actionpack (>= 3.2, < 5)
       activesupport (>= 3.2, < 5)
-    hashie (3.4.1)
+    hashie (3.4.2)
     heroku-api (0.3.23)
       excon (~> 0.44)
       multi_json (~> 1.8)
@@ -452,8 +452,8 @@ GEM
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (5.0.3)
       railties (>= 3.2.16)
-    json (1.8.2)
-    jwt (1.4.1)
+    json (1.8.3)
+    jwt (1.5.0)
     kaminari (0.16.3)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
@@ -472,7 +472,7 @@ GEM
     mime-types (2.5)
     mimemagic (0.3.0)
     mini_portile (0.6.2)
-    minitest (5.6.1)
+    minitest (5.7.0)
     mixpanel-ruby (2.1.0)
     multi_json (1.11.0)
     multi_xml (0.5.5)
