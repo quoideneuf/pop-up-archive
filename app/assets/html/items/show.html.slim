@@ -120,7 +120,7 @@ meta view-head="view-head" property="og:type" content="article"
             button.btn.btn-default ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave(); collapseTranscript()"
               i.fa.fa-save
               |  Save Text
-            button.btn.btn-default ng-show="currentUser.canEdit(item) && audioFile.transcriptType != 'Basic'" bs-modal="'#{asset_path 'items/assign_speakers_form.html'}'"
+            button.btn.btn-default ng-show="currentUser.canEdit(item) && audioFile.transcriptType != 'Basic'" bs-modal="modal" data-template="#{asset_path 'items/assign_speakers_form.html'}" data-animation="am-fade-and-slide-top"
               i.fa.fa-user
               |  Assign Speakers
             button.btn.btn-default.expand-transcript ng-click="collapseTranscript()" ng-show="transcriptExpanded"
