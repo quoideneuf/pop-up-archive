@@ -10,7 +10,7 @@ form.form-inline ng-controller="ImportMappingCtrl"
     p Don't see a field you want? Select "Extra" in the dropdown. But for the best possible filtering and search results, map your data to the pre-existing Pop Up Archive fields.
 
     i.fa.fa-info-sign 
-     a bs-modal="'#{asset_path 'imports/field_descriptions.html'}'"  Destination Field Descriptions
+     a bs-modal="modal" data-template="#{asset_path 'imports/field_descriptions.html'}"  Destination Field Descriptions
 
   .well
     label for='collection-id'
