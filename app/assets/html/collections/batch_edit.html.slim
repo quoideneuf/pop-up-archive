@@ -10,7 +10,7 @@
   .selection-actions
     small ng-pluralize="" count="selectedItems.length" when="{'0':'', 'one':'{{selectedItems[0].getTitle()}}', 'other': 'selecting {} items'}"
     .buttons
-      button.btn.btn-default bs-modal="'#{asset_path 'collections/tags_form.html'}'"
+      button.btn.btn-default bs-modal="modal" data-template="#{asset_path 'collections/tags_form.html'}"
         i.fa.fa-tags  Edit Tags
       button.btn.btn-default ng-click="clearSelection()"
         i.fa.fa-times-circle  Clear Selection
