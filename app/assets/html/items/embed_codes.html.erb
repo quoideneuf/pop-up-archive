@@ -1,7 +1,11 @@
-<section class="embed-codes">
+<section class="modal embed-codes">
+ <div class="modal-dialog">
+  <div class="modal-content">
 
   <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+    <button type="button" class="close" arial-label="Close" ng-click="$hide()">
+     <span aria-hidden="true">&times;</span>
+    </button>
     <h3>Embed Codes</h3>
     <div><a target="_blank" href="https://github.com/popuparchive/pop-up-archive/wiki/Transcript-Player#embed-the-tplayer">Read more about embedding.</a></div>
   </div>
@@ -42,9 +46,11 @@
   </div>
 
   <div class="modal-footer">
-    <button class="btn" type="button" ng-click="dismiss()">Close</button>
+    <button class="btn btn-default" type="button" ng-click="$hide()">Close</button>
   </div>
 
+ </div>
+ </div>
 </section>
 <script type="text/javascript">
   $(document).ready(function() {

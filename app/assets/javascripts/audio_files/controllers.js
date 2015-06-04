@@ -35,7 +35,7 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
 
   $scope.showEmbedCodesModal = function() {
     $q.when($scope.embedCodesModal).then(function(modalEl) {
-      modalEl.modal('show');
+      modalEl.show();
     });
   };
 
