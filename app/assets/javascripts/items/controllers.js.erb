@@ -407,13 +407,13 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       // validate file extension(s). If any fail, they all fail.
 
       // clear any error first
-      element.closest('.control-group').removeClass('error');
-      element.next('.alert-error').remove();
+      element.closest('.form-group').removeClass('has-error');
+      element.next('.alert-danger').remove();
       var numValid = 0;
       angular.forEach(newFiles, function(file) {
         if (!$scope.looksLikeValidFileName(file.name)) {
-          element.closest('.control-group').addClass('error');
-          element.after('<div class="alert alert-error">Not a valid audio file: '+file.name+'</div>');
+          element.closest('.form-group').addClass('has-error');
+          element.after('<div class="alert alert-danger">Not a valid audio file: '+file.name+'</div>');
         }
         else {
           numValid++;
@@ -480,7 +480,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     }
     else {
       // clear any error first
-      inputField.closest('.form-group').removeClass('error');
+      inputField.closest('.form-group').removeClass('has-error');
       inputField.next('.help-block').remove();
 
       // validate the URL string
@@ -488,7 +488,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
       if (!remoteFileUrl.match(urlPattern)) {
         // add warning to input field
         //console.log("bad url:", remoteFileUrl);
-        inputField.closest('.form-group').addClass('error');
+        inputField.closest('.form-group').addClass('has-error');
         inputField.after('<span class="help-block">Fix the URL</span>');
         return;
       }
@@ -500,7 +500,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
         ).success(function(data) {
           contentType = data["content-type"];
           if (!contentType.match(/audio/)) {
-            inputField.closest('.form-group').addClass('error');
+            inputField.closest('.form-group').addClass('has-error');
             inputField.after('<span class="help-block">Not a valid audio link</span>');
             return;
           } else {
