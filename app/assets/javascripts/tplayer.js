@@ -224,6 +224,8 @@ PUATPlayer.prototype = {
       var lnk    = window.shortURL + '/t/' + itemId;
       var lnkWithOffset = lnk + '/' + offset;
       var tweetStr = row.find(".text").html().trim();
+      console.log('row', row, 'ttbl', ttbl, 'modal', modal, 'lnk', lnk, 'hms', hms);
+      console.log('tweetStr', tweetStr);
       if ($(".pua-tplayer-text[data-idx='"+(idx+1)+"']").length !== 0) {
         tweetStr += " " + $(".pua-tplayer-text[data-idx='"+(idx+1)+"']").find(".text").html().trim();
       }
