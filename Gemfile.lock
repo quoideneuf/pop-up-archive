@@ -358,7 +358,7 @@ GEM
     gibbon (1.1.5)
       httparty
       multi_json (>= 1.9.0)
-    globalid (0.3.3)
+    globalid (0.3.5)
       activesupport (>= 4.1.0)
     growl (1.0.3)
     guard (2.12.5)
@@ -394,7 +394,6 @@ GEM
     heroku-api (0.3.23)
       excon (~> 0.44)
       multi_json (~> 1.8)
-    hike (1.2.3)
     hitimes (1.2.2)
     httmultiparty (0.3.16)
       httparty (>= 0.7.3)
@@ -435,7 +434,7 @@ GEM
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (5.0.3)
       railties (>= 3.2.16)
-    json (1.8.2)
+    json (1.8.3)
     jwt (1.4.1)
     kaminari (0.16.3)
       actionpack (>= 3.0.0)
@@ -446,7 +445,7 @@ GEM
       celluloid (~> 0.16.0)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
-    loofah (2.0.1)
+    loofah (2.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.9)
     mail (2.6.3)
@@ -457,10 +456,10 @@ GEM
       json
       oauth
     method_source (0.8.2)
-    mime-types (2.4.3)
+    mime-types (2.6.1)
     mimemagic (0.3.0)
     mini_portile (0.6.2)
-    minitest (5.5.1)
+    minitest (5.7.0)
     mixpanel-ruby (2.0.1)
     multi_json (1.11.0)
     multi_xml (0.5.5)
@@ -543,7 +542,7 @@ GEM
       railties (>= 3.1, < 5.0)
     rabl (0.11.6)
       activesupport (>= 2.3.14)
-    rack (1.6.0)
+    rack (1.6.1)
     rack-cors (0.3.1)
     rack-protection (1.5.3)
       rack
@@ -689,12 +688,9 @@ GEM
       httmultiparty (>= 0.3)
       httparty (>= 0.7.3)
     spring (1.3.4)
-    sprockets (2.12.3)
-      hike (~> 1.2)
-      multi_json (~> 1.0)
+    sprockets (3.2.0)
       rack (~> 1.0)
-      tilt (~> 1.1, != 1.3.0)
-    sprockets-rails (2.2.4)
+    sprockets-rails (2.3.1)
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
@@ -823,7 +819,7 @@ DEPENDENCIES
   quiet_assets
   rabl
   rack-cors
-  rails (~> 4.1)
+  rails (~> 4.2.1)
   rails_12factor
   rb-fchange
   rb-fsevent
