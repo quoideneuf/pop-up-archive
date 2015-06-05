@@ -110,7 +110,7 @@ angular.module('Directory.alerts', ['ngLoadingIndicators'])
             '<span class="status">{{alert.status}}:</span> {{alert.message}}' +
           '</div>' +
           '<div class="progress progress-striped" ng-class="{active:alert.progress && alert.progress < 100}">' +
-            '<div class="bar" ng-style="{width:alert.progress+\'%\'}"></div>' +
+            '<div role="progressbar" class="progress-bar progress-bar-striped" ng-style="{width:alert.progress+\'%\'}"></div>' +
           '</div>' +
       '</a>' +
       '<hr/>' +
