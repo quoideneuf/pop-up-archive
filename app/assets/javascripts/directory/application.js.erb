@@ -314,6 +314,10 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
       }
     });
 
+    // you can test alert CSS/layout like this:
+    // $s = angular.element('body').scope();
+    // $s.testAlert();
+    // ^^ use your js console to execute
     $scope.testAlert = function() {
       var alert = new Alert();
       alert.category = 'test';
