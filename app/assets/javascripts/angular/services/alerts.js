@@ -104,7 +104,7 @@ angular.module('Directory.alerts', ['ngLoadingIndicators'])
   var template = '' +
   '<ul class="dropdown-menu alert-showers" role="menu" aria-labelledby="alerts-dropdown" ng-hide="alerts.length == 0">' +
     '<li class="alert-shower" ng-repeat="alert in alerts" ng-class="{pending:!(alert.done)}">' +
-      '<a class="pull-right dismiss" ng-click="alert.dismiss(); $event.stopPropagation()" ><i class="icon-remove-circle"></i></a></br>' +
+      '<a class="pull-right dismiss" ng-click="alert.dismiss(); $event.stopPropagation()" ><i class="glyphicon glyphicon-remove-circle"></i></a></br>' +
       '<a ng-href="{{alert.path}}">' +
           '<div class="message">' +
             '<span class="status">{{alert.status}}:</span> {{alert.message}}' +
