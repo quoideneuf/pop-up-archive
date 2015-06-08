@@ -1312,7 +1312,9 @@ form.with-tags {
     margin-bottom: 60px;
     
     img {
-      width: 18%;
+      width: 150px;
+      max-width: 18%;
+      height: auto;
       border-radius: 50%;
       position: absolute;
       top: 25px;
