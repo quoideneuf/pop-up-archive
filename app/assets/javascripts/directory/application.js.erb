@@ -320,8 +320,10 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
     // ^^ use your js console to execute
     $scope.testAlert = function() {
       var alert = new Alert();
+      alert.status   = 'complete';
       alert.category = 'test';
       alert.message = 'this is a test';
+      alert.progress = 100;
       alert.add();
     }
 
