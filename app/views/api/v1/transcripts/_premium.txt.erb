@@ -6,8 +6,7 @@
 else 
 	"\n\r"
 end %>
-<%= transcript.speaker_name(tt.speaker_id) + "\n" %>
 <% end %>
-<%= tt.text + " " %>
+<%= tt.text + " " -%>
 <% prev_speaker_id = tt.speaker_id %>
 <% end %>
