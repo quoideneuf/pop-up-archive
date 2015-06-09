@@ -38,17 +38,18 @@ class OembedController < Api::V1::BaseController
         if cur_user
           ability = Ability.new(cur_user)
           if !ability.can?(:read, @audio_file.item)
-            logger.debug("current_user may not read")
+            logger.warn("current_user may not read")
             may_read = false
           else
-            logger.debug("current_user may read")
+            logger.warn("current_user may read")
           end 
         else
-          logger.debug("no current_user")
+          logger.warn("no current_user")
           may_read = false
         end 
       end
       if !may_read
+        logger.warn("current_user #{cur_user.id} !may_read #{@audio_file.item_id}")
         render :text => { :error => "permission denied", :status => 403 }.to_json, :status => 403 
         return
       end
