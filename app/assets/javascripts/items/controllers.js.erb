@@ -392,7 +392,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   };
 
   $scope.looksLikeValidFileName = function(file) {
-    var extPattern = /\.(aac|aif|aiff|alac|flac|m4a|m4p|mp2|mp3|mp4|ogg|raw|spx|wav|wma)$/;
+    var extPattern = /\.(aac|aif|aiff|alac|flac|m4a|m4p|mp2|mp3|mp4|ogg|raw|spx|wav|wma)$/i;
     return file.match(extPattern);
   };
 
