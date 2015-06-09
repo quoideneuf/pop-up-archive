@@ -32,7 +32,7 @@ class Api::V1::BaseController < Api::BaseController
 
   def ping_trackers
     u = current_user_with_oauth
-    if u && ENV['GOOGLE_ANALYTICS_KEY'] && !params['_ui']
+    if u && ENV['GOOGLE_ANALYTICS_KEY'] && !params['_ui'] && Rails.env.production?
       path = request.original_fullpath + "&_user_id=#{u.id}"
       ttl  = "API request - User #{u.id}"
       GAWorker.perform_async(:pageview, path: path, title: ttl)

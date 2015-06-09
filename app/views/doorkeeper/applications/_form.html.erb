@@ -18,7 +18,7 @@
         <%= f.text_field :redirect_uri %>
         <%= doorkeeper_errors_for application, :redirect_uri %>
         <% if Doorkeeper.configuration.native_redirect_uri %>
-          <span class="help-inline">Use <%= Doorkeeper.configuration.native_redirect_uri %> for local tests</span>
+          <span class="help-block">Use <%= Doorkeeper.configuration.native_redirect_uri %> for local tests</span>
         <% end %>
       </div>
     </div>

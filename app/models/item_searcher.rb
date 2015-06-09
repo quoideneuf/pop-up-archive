@@ -255,9 +255,8 @@ class ItemSearcher
           by query_builder.sort_column, query_builder.sort_order
         end
       elsif !has_query
-        #Rails.logger.warn "no query defined -- sort date_created desc"
         sort do
-          by 'date_created', 'desc'
+          by 'created_at', 'desc'
         end
       else
         sort do

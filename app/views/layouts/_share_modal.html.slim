@@ -1,10 +1,12 @@
-#share-modal.modal.fade aria-hidden="true" aria-labelledby="shareModal" role="dialog" tabindex="-1" 
+- file_id    ||= @file_id
+- modal_id = 'share-modal-'+file_id
+.modal.fade id="#{modal_id}" aria-hidden="true" aria-labelledby="shareModal" role="dialog" tabindex="-1" 
   .modal-dialog
     .modal-content
       .modal-header
         button.close aria-label="Close" data-dismiss="modal" type="button" 
           span aria-hidden="true"  &times;
-        h3.modal-title Edit & share this snippet
+        h3.modal-title Edit and share this snippet
       .modal-body
         p
           div.pull-right

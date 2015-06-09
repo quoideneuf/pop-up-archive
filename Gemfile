@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.0.0'
 
-gem 'rails', '~> 4.1' 
+gem 'rails', '~> 4.2.1' 
 
 # these used to be in the "assets" group under Rails 3
 # but that group is removed in Rails 4 so we include here.
@@ -144,7 +144,7 @@ group :development do
   gem 'spring'
   gem 'pry-rails'
   gem 'pry-stack_explorer'
-  gem 'pry-debugger'
+  gem 'byebug'
   gem 'pry-remote'
  end
 

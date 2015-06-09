@@ -26,11 +26,11 @@ $body-stack: Verdana, Arial, san-serif;
     height: 50px;
     position: relative;
     .jp-controls, .tplayer-stats {
-      @include vertical-align;
+      @include vertical-center;
       float: left;
     }
     .jp-progress {
-      @include vertical-align;
+      @include vertical-center;
       width: auto;
       display: block;
       float: none;
@@ -218,7 +218,7 @@ body.tplayer {
   }
   span.clear-find {
     position: relative;
-    margin-right: -8px;
+    margin-right: -7px;;
     right: 19px;
     top: -2px;
     cursor: pointer;
@@ -229,7 +229,7 @@ body.tplayer {
     background-image: none;
     background-color: #eee;
     border: 0;
-    vertical-align: bottom;
+    // vertical-align: bottom;
     padding: 3px;
   }
   .last-result, .next-result {
@@ -237,7 +237,7 @@ body.tplayer {
     padding: 5px;
     width: 24px;
     height: 28px;
-    vertical-align: bottom;
+    // vertical-align: bottom;
     text-align: center;
     cursor: pointer;
     &.inactive {
