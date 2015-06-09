@@ -17,8 +17,8 @@
     font-size: 1.4em;
     line-height: 32px;
     }
-    float:left;
-    width: 357px;
+    // float:left;
+    // width: 357px;
     h2 {
       padding: 30px 15px 30px 0px;
       margin: 0;
@@ -43,8 +43,8 @@
     }
   }
   #services{
-    float:left;
-    width: 310px;
+    // float:left;
+    // width: 310px;
     background-color: #f25a4c;
     padding: 10px 45px 33px;
     ul {
@@ -61,11 +61,10 @@
     }
   }
   #rightsidebar{
-    float:left;
-    width: 183px;
+    padding: 0;
     img {
-      padding: 16px 42px;
-      width: 110px;
+      max-width: 100%;
+      padding: 14px 13px;
     }
   .rsidebar {
     background-color: #3d3d3e;
@@ -87,7 +86,6 @@
   #logos {
     padding-top: 20px;
     float: left;
-    width: 100%;
     #slug-center {
       font-family: soleil, sans-serif !important;
       color: #2c677f;

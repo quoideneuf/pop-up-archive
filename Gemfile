@@ -143,7 +143,7 @@ group :development do
   gem 'spring'
   gem 'pry-rails'
   gem 'pry-stack_explorer'
-  gem 'pry-debugger'
+  gem 'byebug'
   gem 'pry-remote'
  end
 

@@ -2,6 +2,9 @@ require 'spec_helper'
 
 describe ItemSearcher do
 
+  before { StripeMock.start }
+  after { StripeMock.stop }
+
   it "can parse params" do
     params = {
       q: 'foo',

@@ -1,46 +1,43 @@
-section ng-controller="OrderPremiumTranscriptFormCtrl"
-
-  / .modal-header
-  /   button type="button" class="close" data-dismiss="modal" aria-hidden="true" x
-
-  /   / h3 
-  /   /   span.logo Up
-  /   /   |grade to Premium
-
-  .modal-body
-    button type="button" class="close" data-dismiss="modal" aria-hidden="true" x
-    form.form-horizontal name='orderTranscriptForm'
-      h4 Try our Premium transcripts
-      p 
-        a href="https://popuparchiveorg.zendesk.com/hc/en-us/articles/203658720-I-m-not-satisfied-with-the-quality-of-my-machine-transcript-"
-          | Not satisfied with your Basic transcript?
-      p 
-        |  Reprocess with Premium software, specially trained on broadcast and oral history voices. Features include:
-        ul
-         li
-           | Improved word accuracy
-         li
-           | Editable speaker differentiation
-         li
-           | Machine-generated punctuation and capitalization
-      .alert
-        | For this file of
-        b()  {{ item.getDurationString(audioFile.duration) }}
-        |, a charge of
-        b()  {{ audioFile.premiumRetailCost }}
-        |  will be billed to you at the end of the month.
-      .alert ng-show="!currentUser.hasCard"
-        | Since you don't yet have a credit card on file with us, 
-        | clicking Order below will prompt you for your billing information.
-      p 
-        |Like what you see? You can always 
-        a href="/pricing"
-          |  sign up for a premium subscription plan
-        |  and get more higher accuracy transcripts at a reduced rate.
-      / p
-      /   a href="https://popuparchiveorg.zendesk.com/hc/en-us/articles/203618600-What-are-Basic-and-Premium-transcripts-"
-      /     | More about Pop Up Archive machine transcripts. 
-
-  .modal-footer
-    button.btn type="button" ng-click="clear()" Close
-    button.btn.btn-success ng-click='submit()' Order Premium Transcript
+section.modal ng-controller="OrderPremiumTranscriptFormCtrl"
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button type="button" class="close" aria-label="Close" ng-click="$hide()"
+          span aria-hidden="true" &times;
+    
+      .modal-body
+        form.form-horizontal name='orderTranscriptForm'
+          h4 Try our Premium transcripts
+          p 
+            a href="https://popuparchiveorg.zendesk.com/hc/en-us/articles/203658720-I-m-not-satisfied-with-the-quality-of-my-machine-transcript-"
+              | Not satisfied with your Basic transcript?
+          p 
+            |  Reprocess with Premium software, specially trained on broadcast and oral history voices. Features include:
+            ul
+             li
+               | Improved word accuracy
+             li
+               | Editable speaker differentiation
+             li
+               | Machine-generated punctuation and capitalization
+          .alert
+            | For this file of
+            b()  {{ item.getDurationString(audioFile.duration) }}
+            |, a charge of
+            b()  {{ audioFile.premiumRetailCost }}
+            |  will be billed to you at the end of the month.
+          .alert ng-show="!currentUser.hasCard"
+            | Since you don't yet have a credit card on file with us, 
+            | clicking Order below will prompt you for your billing information.
+          p 
+            |Like what you see? You can always 
+            a href="/pricing"
+              |  sign up for a premium subscription plan
+            |  and get more higher accuracy transcripts at a reduced rate.
+          / p
+          /   a href="https://popuparchiveorg.zendesk.com/hc/en-us/articles/203618600-What-are-Basic-and-Premium-transcripts-"
+          /     | More about Pop Up Archive machine transcripts. 
+    
+      .modal-footer
+        button.btn.btn-default type="button" ng-click="clear(); $hide()" Close
+        button.btn.btn-success ng-click='submit()' Order Premium Transcript

@@ -1,3 +1,4 @@
+@import "mixins";
 @import "pop-up_bootstrap";
 @import "my-collections";
 @import "player";
@@ -55,6 +56,10 @@ p {
 .file-drop-zone-overlay {
   text-align: center;
   padding-top: 200px;
+}
+
+.navbar-default {
+  background-color: #f2efef;
 }
 
 .navbar {
@@ -179,9 +184,10 @@ p {
 
 #alerts-container ul.dropdown-menu {
   padding-left:8px;
-  width: 320px;
-  overflow-y: scroll;
-  max-height: 500px;
+  width: 325px;
+  overflow: hidden;
+  overflow-y: auto;
+  max-height: 200px;
 }
 
 .number-circle {
@@ -259,17 +265,29 @@ form.form-big {
     line-height: 28px;
   }
 
-  .input-append .btn {
+  .input-group .btn {
     border-radius: 0 28px 28px 0;
   }
 
-  .input-append .search-query {
+  .input-group .search-query {
     border-radius: 28px 0 0 28px;
   }
 }
 
 .search-query {
   width: 100%;
+}
+
+.navbar-form .search-query {
+  padding: 4px 14px;
+  margin-bottom: 0;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 18px;
 }
 
 td.import-fieldtext {
@@ -485,6 +503,13 @@ h5.result-count {
   border-bottom: 4px solid white;
   float: left;
   text-align: right;
+  select {
+    width: 220px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    height: 25px;
+    line-height: 25px;
+  }
 }
 
 .result-count-footer {
@@ -636,8 +661,9 @@ h5.result-count {
         }
 
         .tag {
-          border-radius: 13px;
+          border-radius: 13px!important;
           padding: 4px 12px;
+          text-shadow: none;
         }
 
         .confirmed {
@@ -675,6 +701,7 @@ h5.result-count {
           border: 0;
           border-radius: 13px;
           color: white;
+          text-shadow: none;
 
           &:hover {
             background: #5970B1;
@@ -712,10 +739,6 @@ ul.terms {
   }
 }
 
-ul.pager {
-  height: 32px;
-}
-
 ul.search-pills {
   position: absolute;
   top: 5px;
@@ -747,7 +770,7 @@ ul.search-pills {
 
 //Navbar
 
-$navbarHeight: 105px;
+$navbarHeight: 75px;
 $authNavbarHeight: 75px;
 
 .navbar-shadow {
@@ -803,12 +826,11 @@ $authNavbarHeight: 75px;
     display: inline-block;
     overflow: hidden;
     width: 700px;
-    .form-search {
+    .form-inline {
       line-height: 20px;
-      height: 20px;
-      .input-append {
+      height: 40px;
+      .input-group {
         width: 100%;
-
         button {
           box-shadow: none;
           border: 1px solid rgb(181,155,109);
@@ -818,13 +840,25 @@ $authNavbarHeight: 75px;
           background: rgb(181,155,109);
           color: #fff;
           text-shadow: none;
+          -webkit-border-radius: 0 14px 14px 0;
+          -moz-border-radius: 0 14px 14px 0;
+          border-radius: 0 14px 14px 0;
+          float: left;
+        }
+        input {
+          width: 92%;
+          height: 31px;
+          -webkit-border-radius: 14px 0 0 14px;
+          -moz-border-radius: 14px 0 0 14px;
+          border-radius: 14px 0 0 14px;
         }
       }
       width: 100%;
-      input {
-        width: 85%;
-      }
     }
+  }
+  .label {
+    background-color: #999;
+    margin-left: 2px;
   }
 }
 
@@ -888,7 +922,30 @@ form.with-tags {
 
 /* contact modal */
 .modal {
-  display: none;
+//  display: none;
+}
+
+// modal background with angular-strap
+.modal-backdrop.am-fade {
+  opacity: .5;
+  transition: opacity .15s linear;
+  &.ng-enter {
+    opacity: 0;
+    &.ng-enter-active {
+      opacity: .5;
+    }
+  }
+  &.ng-leave {
+    opacity: .5;
+    &.ng-leave-active {
+      opacity: 0;
+    }
+  }
+}
+
+.modal-body .form-horizontal .form-group {
+  margin-left: 15px;
+  margin-right: 15px;
 }
 
 // horizontal radio button groups
@@ -1005,14 +1062,14 @@ form.with-tags {
 .message-expanded {
   border-top: 1px solid #edeff2;
   text-align:center;
-  width: 660px;
+  //width: 660px;
   margin-left: -15px;
   margin-bottom: 8px;
 }
 
 .message-shadow {
   display: block;
-  width: 660px;
+  //width: 660px;
   margin-left: -15px;
 
   border-top: 1px solid #edeff2;
@@ -1256,7 +1313,9 @@ form.with-tags {
     margin-bottom: 60px;
     
     img {
-      width: 18%;
+      width: 150px;
+      max-width: 18%;
+      height: auto;
       border-radius: 50%;
       position: absolute;
       top: 25px;
@@ -1536,7 +1595,7 @@ form.with-tags {
   width: 940px;
 }
 
-.span6 .dl-horizontal {
+.dl-horizontal {
   dd {
     margin-left: 120px;
     margin-bottom: 10px;
@@ -1685,7 +1744,6 @@ ul.pricing {
 }
 
 .transcript-label {
-  width: 137px;
   padding: 4px; 
   display: inline;
 }
@@ -1794,16 +1852,16 @@ table.usage {
   .navbar-static-top .container,
   .navbar-fixed-top .container,
   .container,
-  .span12,
-  .span10,
-  .span9 {
+  .col-md-12,
+  .col-md-10,
+  .col-md-9 {
     width: auto;
   }
 }
 
 /* nav breaks-per-item */
 @media screen and (max-width: 900px) {
-  .nav-collapse .pull-right li a #my_dashboard .nav-label {
+  .navbar-collapse .pull-right li a #my_dashboard .nav-label {
     display: none;
   }
   body, body.authn, .navbar-fixed-top .navbar-inner, .navbar-fixed-bottom .navbar-inner {
@@ -1812,20 +1870,20 @@ table.usage {
   }
 }
 @media screen and (max-width: 860px) {
-  .nav-collapse .pull-right li a #my_collections .nav-label {
+  .navbar-collapse .pull-right li a #my_collections .nav-label {
     display: none;
   }
 }
 @media screen and (max-width: 750px) {
-  .nav-collapse .pull-right li a #user_name .nav-label {
+  .navbar-collapse .pull-right li a #user_name .nav-label {
     display: none;
   }
-  .nav-collapse .pull-right li a .nav-label {
+  .navbar-collapse .pull-right li a .nav-label {
     display:none;
   }
 }
 @media screen and (max-width: 600px) {
-  .nav-collapse .nav.pull-right {
+  .navbar-collapse .nav.pull-right {
     /* stop pulling right */
     float: left;
   }

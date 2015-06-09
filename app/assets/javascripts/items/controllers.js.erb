@@ -178,6 +178,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
 
   $scope.itemStorage = function() {
     $q.when($scope.storageModal).then( function (modalEl) {
+      console.log('modalEl:', modalEl);
       modalEl.modal('show');
     });
   };
@@ -310,7 +311,6 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     // console.log('ItemFormCtrl submit: ', $scope.item);
     var saveItem = $scope.item;
     this.item = $scope.initializeItem(true);
-    $scope.clear();
 
     var uploadFiles = saveItem.files;
     saveItem.files = [];
@@ -327,7 +327,7 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     });
 
     if (saveItem.id) {
-
+      // console.log("save item id", saveItem.id);
       saveItem.update().then(function (data) {
         // reset tags
         saveItem.tagList2Tags();
@@ -391,11 +391,10 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     $scope.urlForImage = "";
   };
 
-
-
-  $scope.clear = function() {
-    $scope.hideUploadModal();
-  }
+  $scope.looksLikeValidFileName = function(file) {
+    var extPattern = /\.(aac|aif|aiff|alac|flac|m4a|m4p|mp2|mp3|mp4|ogg|raw|spx|wav|wma)$/;
+    return file.match(extPattern);
+  };
 
   // used by the upload-button callback when new files are selected
   $scope.setFiles = function(event) {
@@ -404,6 +403,26 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     $scope.$apply(function($scope) {
 
       var newFiles = element[0].files;
+
+      // validate file extension(s). If any fail, they all fail.
+
+      // clear any error first
+      element.closest('.form-group').removeClass('has-error');
+      element.next('.alert-danger').remove();
+      var numValid = 0;
+      angular.forEach(newFiles, function(file) {
+        if (!$scope.looksLikeValidFileName(file.name)) {
+          element.closest('.form-group').addClass('has-error');
+          element.after('<div class="alert alert-danger">Not a valid audio file: '+file.name+'</div>');
+        }
+        else {
+          numValid++;
+        }
+      });
+      if (numValid !== newFiles.length) {
+        //console.log("some invalid file names found");
+        return;
+      }
 
       // default title to first file if not already set
       if (!$scope.item.title || $scope.item.title == "") {
@@ -461,29 +480,28 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     }
     else {
       // clear any error first
-      inputField.closest('.control-group').removeClass('error');
-      inputField.next('.help-inline').remove();
+      inputField.closest('.form-group').removeClass('has-error');
+      inputField.next('.help-block').remove();
 
       // validate the URL string
       var urlPattern = /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?$/;
       if (!remoteFileUrl.match(urlPattern)) {
         // add warning to input field
         //console.log("bad url:", remoteFileUrl);
-        inputField.closest('.control-group').addClass('error');
-        inputField.after('<span class="help-inline">Fix the URL</span>');
+        inputField.closest('.form-group').addClass('has-error');
+        inputField.after('<span class="help-block">Fix the URL</span>');
         return;
       }
       var contentType;
-      var extPattern = /\.(aac|aif|aiff|alac|flac|m4a|m4p|mp2|mp3|mp4|ogg|raw|spx|wav|wma)$/
-      if (!remoteFileUrl.match(extPattern)) {
+      if (!$scope.looksLikeValidFileName(remoteFileUrl)) {
         $http.post(
           '/headcheck',
           {url: remoteFileUrl}
         ).success(function(data) {
           contentType = data["content-type"];
           if (!contentType.match(/audio/)) {
-            inputField.closest('.control-group').addClass('error');
-            inputField.after('<span class="help-inline">Not a valid audio link</span>');
+            inputField.closest('.form-group').addClass('has-error');
+            inputField.after('<span class="help-block">Not a valid audio link</span>');
             return;
           } else {
             inputField.val(''); // clear field for re-use

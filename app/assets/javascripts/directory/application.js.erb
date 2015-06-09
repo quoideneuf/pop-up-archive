@@ -12,15 +12,15 @@
 //
 //= require jquery
 //= require bootstrap.min.js
-//= require bootstrap-datepicker
-//= require select2
 //= require angular
 //= require angular-route
 //= require angular-sanitize
 //= require angular-cookies
 //= require angular-ui
 //= require angular-strap
+//= require angular-strap-tpl
 //= require angularjs/rails/resource
+//= require select2
 //= require mule-upload
 //= require angular-stripe
 //= require ng-player-hater
@@ -244,8 +244,8 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
                   'ngCookies',
                   'analytics',
                   'ui',
-                  '$strap',
-                  '$strap.directives',
+                  'mgcrea.ngStrap',
+                  //'$strap.directives',
                   'RailsUjs',
                   'Directory.dashboard.controllers',
                   'Directory.files.controllers',
@@ -298,9 +298,11 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
     $scope.messages = [];
 
     $scope.addMessage = function(message) {
-      // $scope.$apply(function($scope) {
-        $scope.messages.push(message);
-      // });
+      $scope.messages.push(message);
+    };
+
+    $scope.removeMessage = function(msgIdx) {
+      $scope.messages.splice(msgIdx, 1);
     };
 
     $scope.$on("alertEnded", function (e, alert) {
@@ -314,10 +316,16 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
       }
     });
 
+    // you can test alert CSS/layout like this:
+    // $s = angular.element('body').scope();
+    // $s.testAlert();
+    // ^^ use your js console to execute
     $scope.testAlert = function() {
       var alert = new Alert();
+      alert.status   = 'complete';
       alert.category = 'test';
       alert.message = 'this is a test';
+      alert.progress = 100;
       alert.add();
     }
 

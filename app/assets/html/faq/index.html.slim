@@ -1,9 +1,9 @@
 .faq
   .row
-    .span12
+    .col-md-12
       h2 FAQs
   .row.index
-    .span12
+    .col-md-12
       ul ng-repeat="item in faq"
         li 
           a ng-click="scrollTo(item.link)" {{item.title}}
@@ -16,7 +16,7 @@
         | .
 
   .row ng-repeat="item in faq" 
-    .span12 id='{{item.link}}'
+    .col-md-12 id='{{item.link}}'
       h3() {{item.title}}
       .question ng-repeat="entry in item.questions"
         h4() {{entry.question}}

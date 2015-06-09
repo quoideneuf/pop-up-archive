@@ -30,11 +30,11 @@ $body-stack: Verdana, Arial, san-serif;
     height: 50px;
     position: relative;
     .jp-controls, .tplayer-stats {
-      @include vertical-align;
+      @include vertical-center;
       max-width: 10%;
     }
     .jp-progress {
-      @include vertical-align;
+      @include vertical-center;
       width: auto;
     }
     .tplayer-stats {
@@ -75,8 +75,16 @@ $body-stack: Verdana, Arial, san-serif;
 
   $transcriptViewHeight: 200px;
 
-  .player h2 {
-    font-size: 2em;
+  .player {
+    background: inherit;
+    h2 {
+      font-size: 2em;
+      color: #444;
+      margin: -10px 0;
+      width: 85%;
+      display: inline-block;
+      word-wrap: break-word;
+    }
   }
 
   .tplayer.scrolling {
@@ -101,14 +109,13 @@ $body-stack: Verdana, Arial, san-serif;
     margin: 0 0 5px;
     display: inline;
     float: right;
-    position: relative;
+    // position: relative;
     input {
       padding: 5px 14px 4px 5px;
       border-radius: 5px;
       border: 1px solid gray;
       margin-right: 5px;
       width: 170px;
-      height: auto;
     }
     @include mobile {
       margin: 0 -25px 5px;
@@ -118,7 +125,7 @@ $body-stack: Verdana, Arial, san-serif;
     }
     span.clear-find {
       position: relative;
-      margin-right: -8px;
+      margin-right: -7px;
       right: 19px;
       top: -2px;
       cursor: pointer;
@@ -130,17 +137,16 @@ $body-stack: Verdana, Arial, san-serif;
       background-color: #eee;
       border: 0;
       padding: 3px;
-      height: 30px;
-      vertical-align: top;
     }
     .last-result, .next-result {
       display: inline-block;
+      padding: 5px;
       width: 24px;
+      height: 28px;
       text-align: center;
       cursor: pointer;
-      @include vertical-align;
       &.inactive {
-        display: none;
+        color: $nondescript-gray;
       }
     }
     .result-numbers {
@@ -280,7 +286,6 @@ $body-stack: Verdana, Arial, san-serif;
   }
 
   .jp-progress {
-    background: #fff 0px -240px no-repeat;
     width: 100%; 
     height: 60px;
     padding: 0 2px 2px 2px;
@@ -307,12 +312,6 @@ $body-stack: Verdana, Arial, san-serif;
     width:0px;
     height: 100%;
     overflow:hidden;
-  }
-
-  .player h2 {
-    font-size: 24px;
-    color: #444;
-    margin: 0;
   }
 
   .player .hidden, .hidden {
