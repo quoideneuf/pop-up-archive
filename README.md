@@ -12,7 +12,7 @@
       Ruby Version
     </th>
     <td>
-      2.0.0-p247
+      2.0.0
     </td>
   </tr>
   <tr>
@@ -20,7 +20,7 @@
       Rails Version
     </th>
     <td>
-      3.2.14
+      4.2.1
     </td>
   </tr>
   <tr>
