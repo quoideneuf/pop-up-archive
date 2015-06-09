@@ -49,7 +49,7 @@ class OembedController < Api::V1::BaseController
         end 
       end
       if !may_read
-        logger.warn("current_user #{cur_user.id} !may_read #{@audio_file.item_id}")
+        logger.warn("current_user #{cur_user.id} !may_read #{@audio_file.item_id}") if cur_user
         render :text => { :error => "permission denied", :status => 403 }.to_json, :status => 403 
         return
       end
