@@ -298,9 +298,11 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
     $scope.messages = [];
 
     $scope.addMessage = function(message) {
-      // $scope.$apply(function($scope) {
-        $scope.messages.push(message);
-      // });
+      $scope.messages.push(message);
+    };
+
+    $scope.removeMessage = function(msgIdx) {
+      $scope.messages.splice(msgIdx, 1);
     };
 
     $scope.$on("alertEnded", function (e, alert) {
