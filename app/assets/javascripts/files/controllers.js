@@ -249,7 +249,7 @@ angular.module('Directory.files.controllers', ['fileDropzone', 'Directory.alerts
       {
         onComplete: function () {
           var msg = '"' + file.name + '" upload completed.';
-          msg    += '<a ng-href="' + item.link() + '"> View and edit the item!</a>';
+          msg    += '<a ng-href="' + item.link() + '" href="' + item.link() + '"> View and edit the item!</a>';
           mixpanel.track(
             "Audio Upload Complete", {
               "Collection": item.collectionId + ' ' +item.collectionTitle,
