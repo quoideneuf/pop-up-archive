@@ -131,6 +131,28 @@ describe User do
       user.usage_summary[:this_month][:hours].should eq 1.0
     end
 
+    it "ignores transcripts where is_billable=false" do
+      audio = FactoryGirl.create(:audio_file_private)
+      audio.duration = 3600
+      transcript = FactoryGirl.create :transcript
+      transcript2 = FactoryGirl.create :transcript
+      transcript.transcriber = Transcriber.basic
+      transcript2.transcriber = Transcriber.basic
+      transcript.audio_file_id = audio.id
+      transcript2.audio_file_id = audio.id
+      transcript2.is_billable = false
+      transcript.save!
+      transcript2.save!
+      audio.save!
+      transcript.billable_seconds.should eq 3600
+      transcript2.billable_seconds.should eq 3600
+
+      user = audio.billable_to
+      user.calculate_monthly_usages!
+      user.update_usage_report!
+      user.usage_summary[:this_month][:hours].should eq 1.0  # only 1 of 2 hours billable
+    end
+
   end
 
   context 'storage' do
