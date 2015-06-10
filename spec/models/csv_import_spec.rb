@@ -85,6 +85,7 @@ describe CsvImport do
     attr_reader :analyzed_import
 
     before :all do
+     StripeMock.start
       @analyzed_import = FactoryGirl.create :csv_import
       analyzed_import.analyze!
     end
@@ -95,6 +96,7 @@ describe CsvImport do
         analyzed_import.user.destroy
         analyzed_import.destroy
       end
+      StripeMock.end
     end
 
     it "should start with no rows" do
