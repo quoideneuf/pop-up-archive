@@ -338,7 +338,7 @@ namespace :fixer do
   # second, iterate over all collections and change any whose storage is currently AWS to a new config
     Collection.find_in_batches do |colls|
       colls.each do |coll|
-        next unless coll.default_storage.provider eq 'AWS'
+        next unless coll.default_storage.provider == 'AWS'
         if coll.default_storage.is_public
           coll.default_storage_id = aws_public_store.id
         else
