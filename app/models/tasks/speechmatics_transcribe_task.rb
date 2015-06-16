@@ -161,8 +161,8 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     self.extras['sm_job_status'] = sm_job.job['job_status']
 
     # cancel any rejected jobs.
-    if self.extras['sm_job_status'] == 'rejected'
-      self.extras['error'] = 'Speechmatics job rejected'
+    if self.extras['sm_job_status'] == 'rejected' || self.extras['sm_job_status'] == 'deleted'
+      self.extras['error'] = "Speechmatics job #{self.extras['sm_job_status']}"
       cancel!
       return
     end
