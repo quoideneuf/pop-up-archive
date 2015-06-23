@@ -354,7 +354,7 @@
                       '<td ng-show="showStart">{{toTimestamp(text.startTime)}}</td>' +
                       '<td ng-hide="editRow" class="speaker" title="{{assignSpeaker(text.speakerId)}}" ng-bind="speakerChange(transcript[$index-1].speakerId, text.speakerId)"></td>' +
                       '<td ng-show="editRow && transcriptType != \'Basic\'">' +
-                          '<a bs-popover="speakerPopover"  data-placement="right" data-unique="1">' +
+                          '<a bs-popover data-template="<%= asset_path 'items/speaker_picker.html' %>" data-placement="right" data-unique="1">' +
                             '<span ng-bind="abbreviateSpeaker(text.speakerId)"></span>' +
                             '<i class="icon-chevron-down"></i>' +
                           ' </a>' +
@@ -565,11 +565,6 @@
             text.speakerId= speakerId;
             scope.updateSpeaker(text, originalSpeaker, index);
           }
-        };
-
-        scope.speakerPopover = { 
-          "title": "Select Speaker" + "<button onclick=\"$(this).closest('div.popover').popover('hide');\" type=\"button\" class=\"close\" aria-hidden=\"true\">&times;</button>",
-          "content": "<select ng-change='updateSpeaker(text, originalSpeaker, $index)' ng-model='text.speakerId' ng-options='speaker.id as speaker.name for speaker in speakers'></select>"
         };
 
         //edit transcripts
