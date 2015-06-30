@@ -370,7 +370,7 @@ class ItemSearcher
       end
       # only double-quote multi-term phrases since we do not want to bias
       # scoring weights for stopwords
-      if node[:phrase].str.match(/\ /)
+      if node[:phrase].str.match(/[\ \-]/) or node.has_key?(:field)
         str.push %{"#{node[:phrase].str}"}
       else
         str.push node[:phrase].str
