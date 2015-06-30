@@ -35,13 +35,22 @@ class Tasks::VoicebaseTranscribeTask < Task
 
     # create the remote job
     client = self.class.voicebase_client
-    conf = { configuration: { transcripts: { engine: "premium" } } }.to_json
+    conf = { 
+      configuration: { 
+        transcripts: { engine: "premium" },
+        publish: { 
+          callbacks: [{  
+            method: "POST", 
+            include: ["transcripts", "topics", "metadata"], 
+            url: voicebase_call_back_url(),
+          }]  
+        }   
+      }   
+    }.to_json
     begin
-      # TODO callback_url
       resp = client.upload( 
         media: data_file.path, 
         configuration: conf, 
-        content_type: 'audio/mpeg; charset=binary'
       )
       if !resp or !resp.mediaId
         raise "No mediaId in Voicebase response for task #{self.id}"
@@ -273,7 +282,7 @@ class Tasks::VoicebaseTranscribeTask < Task
       # Voicebase does not currently support speakers w/o clumsy stereo channel assignments,
       # so we do not assign speakers.
       #STDERR.puts response.pretty_inspect
-      words = response.body.words
+      words = response.body.transcript.words
 
       # iterate through the words 
       tt = nil # re-use for re-chunking

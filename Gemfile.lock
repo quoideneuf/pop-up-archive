@@ -68,7 +68,7 @@ GIT
 
 GIT
   remote: git://github.com/popuparchive/voicebase-client-ruby.git
-  revision: b063c4692415989a891b4518b2cff890a238d07d
+  revision: be9455ed116248b6bfe5baaceb024e3da690b19c
   specs:
     voicebase (1.0.0)
       excon
