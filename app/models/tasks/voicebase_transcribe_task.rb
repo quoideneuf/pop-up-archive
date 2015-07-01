@@ -52,8 +52,8 @@ class Tasks::VoicebaseTranscribeTask < Task
         media: data_file.path, 
         configuration: conf, 
       )
-      if !resp or !resp.mediaId
-        raise "No mediaId in Voicebase response for task #{self.id}"
+      if !resp or !resp.respond_to?(:mediaId)
+        raise "No mediaId in Voicebase response for task #{self.id}: #{resp.inspect}"
       end
 
       # save the job reference
