@@ -32,6 +32,7 @@ ActiveAdmin.register Collection do
       table_for collection.items do|tbl|
         tbl.column("ID") {|item| item.id }
         tbl.column("Title") {|item| link_to item.title, superadmin_item_path(item) }
+        tbl.column("Status") {|item| item.audio_files.first ? item.audio_files.first.current_status : 'n/a' }
         tbl.column("Created") {|item| item.created_at }
         tbl.column("Duration") {|item| item.duration }
         tbl.column("Public")   {|item| item.is_public }
