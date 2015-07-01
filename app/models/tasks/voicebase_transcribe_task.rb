@@ -178,6 +178,12 @@ class Tasks::VoicebaseTranscribeTask < Task
     vb_job = client.get '/media/' + extras['job_id']
     self.extras['vb_job_status'] = vb_job.media.status
 
+    if self.extras['vb_job_status'] == 'running'
+      # if VB is still working, return without doing anything
+      logger.warn("Task #{self.id} for Voicebase job #{self.extras['job_id']} still running")
+      return
+    end
+
     # cancel any rejected or failed jobs.
     if self.extras['vb_job_status'] == 'rejected' || self.extras['vb_job_status'] == "failed"
       self.extras['error'] = "Voicebase job #{self.extras['vb_job_status']}"

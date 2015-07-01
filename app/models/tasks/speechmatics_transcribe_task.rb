@@ -160,6 +160,12 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     sm_job = sm.user.jobs(extras['job_id']).get
     self.extras['sm_job_status'] = sm_job.job['job_status']
 
+    # still working?
+    if self.extras['sm_job_status'] == 'transcribing'
+      logger.warn("Task #{self.id} for Speechmatics job #{self.extras['job_id']} still transcribing")
+      return
+    end
+
     # cancel any rejected jobs.
     if self.extras['sm_job_status'] == 'rejected'
       self.extras['error'] = 'Speechmatics job rejected'
