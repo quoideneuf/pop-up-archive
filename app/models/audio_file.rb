@@ -324,8 +324,15 @@ class AudioFile < ActiveRecord::Base
   end
 
   def start_premium_transcribe_job(user, identifier, options={})
-    return if (duration.to_i <= 0)
+    return if (duration.to_i <= 0) # TODO necessary?
+    if ENV['PREMIUM_TRANSCRIBER'] && ENV['PREMIUM_TRANSCRIBER'] == "voicebase"
+      start_voicebase_transcribe_job(user, identifier, options)
+    else
+      start_speechmatics_transcribe_job(user, identifier, options)
+    end
+  end
 
+  def start_speechmatics_transcribe_job(user, identifier, options={})
     if task = (tasks.speechmatics_transcribe.valid.last || tasks.select { |t| t.type == "Tasks::SpeechmaticsTranscribeTask" && !t.cancelled? }.pop)
       logger.warn "speechmatics transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
       task
@@ -335,6 +342,18 @@ class AudioFile < ActiveRecord::Base
       self.tasks << task
       task
     end
+  end
+
+  def start_voicebase_transcribe_job(user, identifier, options={})
+    if task = (tasks.voicebase_transcribe.valid.last || tasks.select { |t| t.type == "Tasks::VoicebaseTranscribeTask" && !t.cancelled? }.pop)
+      logger.warn "voicebase transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
+      task
+    else
+      extras = { 'original' => process_file_url, 'user_id' => user.try(:id) }.merge(options)
+      task = Tasks::VoicebaseTranscribeTask.new(identifier: identifier, extras: extras)
+      self.tasks << task
+      task
+    end 
   end
 
   def start_transcribe_job(user, identifier, options={})

@@ -176,7 +176,13 @@ class Transcript < ActiveRecord::Base
   end
 
   def is_premium?
-    self.transcriber_id == Transcriber.premium.id
+    if self.transcriber_id == Transcriber.premium.id
+      true
+    elsif self.transcriber_id == Transcriber.voicebase.id
+      true
+    else
+      false
+    end
   end
 
   def duration

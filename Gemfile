@@ -101,6 +101,7 @@ gem 'soundcloud'
 gem 'amara', github: 'pkarman/amara'
 
 gem 'speechmatics', github: 'popuparchive/speechmatics', :branch => 'rails3'
+gem 'voicebase', github: 'popuparchive/voicebase-client-ruby'
 
 gem 'prerender_rails'
 

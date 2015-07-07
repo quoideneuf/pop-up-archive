@@ -23,6 +23,43 @@ class CallbacksController < ApplicationController
     end    
   end
 
+  def voicebase
+    # find the task that created the job.
+    # best case is that we have a proper xref in the extras[:job_id]
+    # worst case is that we rely on the callback url to contain the task.extras[:public_id]
+
+    vb_payload = JSON.parse( request.body.read )
+    Rails.logger.warn("#{vb_payload.inspect}")
+
+    media_id = vb_payload['media']['mediaId']
+    ev_status = vb_payload['callback']['event']['status']
+
+    # backwards compat.
+    if params[:model_name] == 'audio_file'
+      af = params[:model_name].camelize.constantize.find(params[:model_id])
+      @resource = af.tasks.voicebase_transcribe.where("extras -> 'job_id' = ?", media_id).first
+    else
+      @resource = Task.where("type='Tasks::VoicebaseTranscribeTask' and extras -> 'public_id' = ?", params[:model_id]).first || \
+                  Task.where("type='Tasks::VoicebaseTranscribeTask' and extras -> 'job_id' = ?", media_id).first
+    end 
+
+    if @resource
+      @resource.extras['job_callback'] = vb_payload
+      @resource.extras['job_status']   = ev_status
+      if @resource.extras['job_id'] && @resource.extras['job_id'] == media_id
+        # base case. proper 2-way xref, nothing to do
+      elsif !@resource.extras['job_id']
+        # worst case. create the job_id now but give it a different key so we can tell it was after-the-fact.
+        @resource.extras['vb_job_id_via_callback'] = media_id
+      end   
+      @resource.save!
+      FinishTaskWorker.perform_async(@resource.id) unless Rails.env.test?
+      head 202
+    else  
+      head 200
+    end
+  end
+
   def speechmatics
     # find the task that created the speechmatics job.
     # best case is that we have a proper xref in the extras[:job_id]
@@ -44,6 +81,7 @@ class CallbacksController < ApplicationController
         # worst case. create the job_id now but give it a different key so we can tell it was after-the-fact.
         @resource.extras['sm_job_id'] = params[:id]
       end
+      @resource.save!
       FinishTaskWorker.perform_async(@resource.id) unless Rails.env.test?
       head 202
     else

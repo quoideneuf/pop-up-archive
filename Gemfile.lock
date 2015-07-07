@@ -67,6 +67,17 @@ GIT
       multi_json
 
 GIT
+  remote: git://github.com/popuparchive/voicebase-client-ruby.git
+  revision: be9455ed116248b6bfe5baaceb024e3da690b19c
+  specs:
+    voicebase (1.0.0)
+      excon
+      faraday
+      faraday_middleware
+      hashie
+      mimemagic
+
+GIT
   remote: git://github.com/radar/paranoia.git
   revision: ceb01415dd7610599a968f0198f43b54603a2595
   branch: rails4
@@ -858,4 +869,5 @@ DEPENDENCIES
   timecop
   uglifier
   unicorn
+  voicebase!
   will_paginate

@@ -1,9 +1,9 @@
 require 'utils'
-require 'speechmatics'
+require 'voicebase'
 
-class Tasks::SpeechmaticsTranscribeTask < Task
+class Tasks::VoicebaseTranscribeTask < Task
 
-  before_validation :set_speechmatics_defaults, :on => :create
+  before_validation :set_voicebase_defaults, :on => :create
 
   after_commit :create_transcribe_job, :on => :create
 
@@ -30,26 +30,36 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     data_file = download_audio_file
 
     # remember the temp file name so we can look up later
-    self.extras['sm_name'] = File.basename(data_file.path)
+    self.extras['vb_name'] = File.basename(data_file.path)
     self.save!
 
-    # create the speechmatics job
-    sm = Speechmatics::Client.new({ :request => { :timeout => 120 } })
+    # create the remote job
+    client = self.class.voicebase_client
+    conf = { 
+      configuration: { 
+        transcripts: { engine: "premium" },
+        publish: { 
+          callbacks: [{  
+            method: "POST", 
+            include: ["transcripts", "topics", "metadata"], 
+            url: voicebase_call_back_url(),
+          }]  
+        }   
+      }   
+    }.to_json
     begin
-      info = sm.user.jobs.create(
-      data_file:    data_file.path,
-      content_type: 'audio/mpeg; charset=binary',
-      notification: 'callback',
-      callback:     call_back_url
+      resp = client.upload( 
+        media: data_file.path, 
+        configuration: conf, 
       )
-      if !info or !info.id
-        raise "No job id in speechmatics response for task #{self.id}"
+      if !resp or !resp.respond_to?(:mediaId)
+        raise "No mediaId in Voicebase response for task #{self.id}: #{resp.inspect}"
       end
 
-      # save the speechmatics job reference
-      self.extras['job_id'] = info.id
+      # save the job reference
+      self.extras['job_id'] = resp.mediaId
       # if we previously had an error, zap it
-      if self.extras['error'] == "No Speechmatics job_id found"
+      if self.extras['error'] == "No Voicebase mediaId found"
         self.extras.delete(:error)
       end
       self.status = :working
@@ -57,12 +67,12 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
     rescue Faraday::Error::TimeoutError => err
 
-      # it is possible that speechmatics got the request
+      # it is possible that VB got the request
       # but we failed to get the response.
       # so check back to see if a record exists for our file.
-      job_id = self.lookup_sm_job_by_name
+      job_id = self.lookup_job_by_name
       if !job_id
-        raise "No job_id captured for speechmatics job in task #{self.id}"
+        raise "No job_id captured for job in task #{self.id}"
       end
 
     rescue
@@ -72,21 +82,29 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
   end
 
-  def lookup_sm_job_by_name
+  def self.voicebase_client
+    client = VoiceBase::Client.new(
+      :id     => ENV['VOICEBASE_AUTH_ID'],
+      :secret => ENV['VOICEBASE_AUTH_SECRET'],
+      :debug  => ENV['VOICEBASE_DEBUG'],
+    )
+    client
+  end
 
-    sm      = Speechmatics::Client.new({ :request => { :timeout => 120 } })
-    sm_jobs = sm.user.jobs.list.jobs
+  def lookup_job_by_name
+    client = self.class.voicebase_client
+    # TODO iterate through /media
+    jobs = client.get '/media'
     job_id  = nil
-    sm_jobs.each do|smjob|
-      if smjob['name'] == self.extras['sm_name']
-        # yes, it was successful even though SM failed to respond.
-        self.extras['job_id'] = job_id = smjob['id']
+    jobs.each do|j|
+      if false  # TODO logic here
+        # yes, it was successful
+        self.extras['job_id'] = job_id = j['mediaId']
         self.save!
         break
       end 
     end
     job_id
-
   end
 
   def update_premium_transcript_usage(now=DateTime.now)
@@ -99,12 +117,12 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     ucalc = UsageCalculator.new(billed_user.entity, now)
 
     # call on user.entity so billing goes to org if necessary
-    billed_duration = ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPTS)
+    billed_duration = ucalc.calculate(Transcriber.voicebase, MonthlyUsage::PREMIUM_TRANSCRIPTS)
 
     # call again on the user if user != entity, just to record usage.
     if billed_user.entity != billed_user
       user_ucalc = UsageCalculator.new(billed_user, now)
-      user_ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
+      user_ucalc.calculate(Transcriber.voicebase, MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
     end
 
     return billed_duration
@@ -119,12 +137,12 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     if outside_work_window?
       return true
 
-    # we failed to register a SM job_id
+    # we failed to register a job_id
     elsif !extras['job_id']
       return true
 
     # process() seems to have failed
-    elsif !extras['sm_name']
+    elsif !extras['vb_name']
       return true
 
     end
@@ -141,46 +159,46 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       cancel!
       return
 
-    # if we have no sm_name, then we never downloaded in prep for SM job
-    elsif !self.extras['sm_name']
+    # if we have no vb_name, then we never downloaded in prep for job
+    elsif !self.extras['vb_name']
       self.process()
       return
 
     elsif !self.extras['job_id']
       # try to look it up, one last time
-      if !self.lookup_sm_job_by_name
-        self.extras['error'] = "No Speechmatics job_id found"
+      if !self.lookup_job_by_name
+        self.extras['error'] = "No Voicebase job_id found"
         cancel!
         return
       end
     end
 
-    # call out to SM and find out what our status is
-    sm = Speechmatics::Client.new({ :request => { :timeout => 120 } })
-    sm_job = sm.user.jobs(extras['job_id']).get
-    self.extras['sm_job_status'] = sm_job.job['job_status']
+    # call out to VB and find out what our status is
+    client = self.class.voicebase_client
+    vb_job = client.get '/media/' + extras['job_id']
+    self.extras['vb_job_status'] = vb_job.media.status
 
-    # still working?
-    if self.extras['sm_job_status'] == 'transcribing'
-      logger.warn("Task #{self.id} for Speechmatics job #{self.extras['job_id']} still transcribing")
+    if self.extras['vb_job_status'] == 'running'
+      # if VB is still working, return without doing anything
+      logger.warn("Task #{self.id} for Voicebase job #{self.extras['job_id']} still running")
       return
     end
 
-    # cancel any rejected jobs.
-    if self.extras['sm_job_status'] == 'rejected' || self.extras['sm_job_status'] == 'deleted'
-      self.extras['error'] = "Speechmatics job #{self.extras['sm_job_status']}"
+    # cancel any rejected or failed jobs.
+    if self.extras['vb_job_status'] == 'rejected' || self.extras['vb_job_status'] == "failed"
+      self.extras['error'] = "Voicebase job #{self.extras['vb_job_status']}"
       cancel!
       return
     end
 
     # jobs marked 'expired' may still have a transcript. Only the audio is expired from their cache.
-    if self.extras['sm_job_status'] == 'expired' or self.extras['sm_job_status'] == 'done'
+    if self.extras['vb_job_status'] == 'expired' or self.extras['vb_job_status'] == 'finished'
       finish!
       return
     end
 
     # if we get here, unknown status, so log and try to finish anyway.
-    logger.warn("Task #{self.id} for Speechmatics job #{self.extras['job_id']} has status '#{self.extras['sm_job_status']}'")
+    logger.warn("Task #{self.id} for Voicebase job #{self.extras['job_id']} has status '#{self.extras['vb_job_status']}'")
     finish!  # attempt to finish. Who knows, we might get lucky.
 
   end
@@ -188,23 +206,24 @@ class Tasks::SpeechmaticsTranscribeTask < Task
   def finish_task
     return unless audio_file
 
-    sm = Speechmatics::Client.new
-    # verify job status == done
-    sm_job = sm.user.jobs(extras['job_id']).get
-    return if sm_job.job['job_status'] == 'transcribing' # not finished yet
+    # verify job status is complete
+    client = self.class.voicebase_client
+    vb_job = client.get '/media/' + extras['job_id'] 
+    return unless vb_job.media.status == 'finished' # not finished yet # TODO
 
     transcript = nil
     begin
-      transcript = sm.user.jobs(self.extras['job_id']).transcript
+      transcript = client.transcripts extras['job_id']
     rescue => err
-      # if SM throws an error (e.g. 404) we just warn and return
+      # if VB throws an error (e.g. 404) we just warn and return
       # since we can't proceed.
       # TODO is this too soft? should we examine and/or re-throw?
-      logger.warn(err)
+      #logger.warn(err)
+      raise err
       return
     end
     if !transcript
-      raise "No Speechmatics transcript found"
+      raise "No Voicebase transcript found"
     end
 
     new_trans  = process_transcript(transcript)
@@ -243,7 +262,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       return trans
     end
 
-    transcriber = Transcriber.find_by_name('speechmatics')
+    transcriber = Transcriber.voicebase
 
     # if this was an ondemand transcript, the cost is retail, not wholesale.
     # 'wholesale' is the cost PUA pays, and translates to zero to the customer under their plan.
@@ -265,45 +284,58 @@ class Tasks::SpeechmaticsTranscribeTask < Task
         cost_type: cost_type,
         subscription_plan_id: audio_file.user.billable_subscription_plan_id,
       )
-      speakers = response.speakers
-      words    = response.words
 
-      speaker_lookup = create_speakers(trans, speakers)
+      # Voicebase does not currently support speakers w/o clumsy stereo channel assignments,
+      # so we do not assign speakers.
+      #STDERR.puts response.pretty_inspect
+      words = response.body.transcript.words
 
-      # iterate through the words and speakers
-      tt = nil
-      speaker_idx = 0
-      prev_speaker = 1
-      words.each do |row|
-        speaker = speakers[speaker_idx]
-        row_end = BigDecimal.new(row['time'].to_s) + BigDecimal.new(row['duration'].to_s)
-        speaker_end = speaker ? (BigDecimal.new(speaker['time'].to_s) + BigDecimal.new(speaker['duration'].to_s)) : row_end
+      # iterate through the words 
+      tt = nil # re-use for re-chunking
+      tt_confidences = []
+      words.each_with_index do |row, idx|
+      # example format
+      # {"p"=>1, "c"=>0.904, "s"=>9, "e"=>2403, "w"=>"we"}
+      # where
+      # p == position
+      # s == start time in ms
+      # e == end time in ms
+      # c == confidence
+      # w == word (term)
+      # m == metadata (flag for punctuation, speaker, etc)
+
+      # we re-chunk up the individual words into phrases of ~ 5sec
+        row_end = BigDecimal.new(row['e'].fdiv(1000).to_s)
+        next_row = words[idx+1] ? words[idx+1] : nil
+        tt_confidences.push row['c']
+        is_punc = false
         if tt
-          if (row_end > speaker_end)
-            tt.save
-            speaker_idx += 1
-            speaker = speakers[speaker_idx] ? speakers[speaker_idx] : speakers[prev_speaker] 
-            tt = nil
-          elsif (row_end - tt[:start_time]) > 5.0
-            tt.save
-            tt = nil
+          tt[:end_time] = row_end
+          if row['m']
+            # always keep punctuation with the word it follows
+            if row['m'] == "punc"
+              tt[:text] += row['w']
+              is_punc = true
+            end
           else
-            tt[:end_time] = row_end
-            space = (row['name'] =~ /^[[:punct:]]/) ? '' : ' '
-            tt[:text] += "#{space}#{row['name']}"
+            space = (row['w'] =~ /^[[:punct:]]/) ? '' : ' '
+            tt[:text] += "#{space}#{row['w']}"
           end
-        end
-
-        if !tt
+          # end the chunk if we are over 5sec and the next word is not punctuation.
+          if (row_end - tt[:start_time]) > 5.0 && (!next_row || !next_row['m'])
+            tt[:confidence] = tt_confidences.inject{ |sum, el| sum + el }.to_f / tt_confidences.size
+            tt.save
+            tt = nil
+            tt_confidences = [] 
+          end
+        else 
           tt = trans.timed_texts.build({
-            start_time: BigDecimal.new(row['time'].to_s),
-            end_time:   row_end,
-            text:       row['name'],
-            speaker_id: speaker ? speaker_lookup[speaker['name']].id : prev_speaker,
+            start_time: BigDecimal.new(row['s'].fdiv(1000).to_s),
+            end_time:   BigDecimal.new(row['e'].fdiv(1000).to_s),
+            text:       row['w'],
+            speaker_id: nil,  # some day...
           })
-          prev_speaker = tt.speaker_id
         end
-        
       end
 
       trans.save!
@@ -311,25 +343,15 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     trans
   end
 
-  def create_speakers(trans, speakers)
-    speakers_lookup = {}
-    speakers_by_name = speakers.inject({}) {|all, s| all.key?(s['name']) ? all[s['name']] << s : all[s['name']] = [s]; all }
-    speakers_by_name.keys.each do |n|
-      times = speakers_by_name[n].collect{|r| [BigDecimal.new(r['time'].to_s), (BigDecimal.new(r['time'].to_s) + BigDecimal.new(r['duration'].to_s))] }
-      speakers_lookup[n] = trans.speakers.create(name: n, times: times)
-    end
-    speakers_lookup
-  end
-
-  def set_speechmatics_defaults
+  def set_voicebase_defaults
     extras['public_id']     = SecureRandom.hex(8)
-    extras['call_back_url'] = speechmatics_call_back_url
+    extras['call_back_url'] = voicebase_call_back_url
     extras['entity_id']     = user.entity.id if user
     extras['duration']      = audio_file.duration.to_i if audio_file
   end
 
-  def speechmatics_call_back_url
-    Rails.application.routes.url_helpers.speechmatics_callback_url(model_name: 'task', model_id: self.extras['public_id'])
+  def voicebase_call_back_url
+    Rails.application.routes.url_helpers.voicebase_callback_url(model_name: 'task', model_id: self.extras['public_id'])
   end
 
   def download_audio_file
