@@ -183,154 +183,154 @@ section.modal ng-controller="ItemFormCtrl"
                 input.text.input#image type='text' placeholder="Insert Url" ng-model='urlForImage'
                 br
     
-              .form-group
-                  .control-label
-                    label
-                      | Contributors
-                      i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['contributors']" data-placement="bottom" html="true" auto-close="true"
-                  .controls ng-hide="item.contributions.length > 0"
-                    label.pull-left style='padding-top: 5px;'
-                      i No contributors.
-                  .control-row.full-row ng-repeat="contribution in item.contributions" ng-hide="contribution._delete"
-                    span.field
-                      select ui-select2="roleSelect" ng-model="contribution.role"
-                        option
-                        option ng-repeat="role in item.standardRoles" value="{{role}}" {{role}}
-    
-                    span.field
-                      input ui-select2="peopleSelect" type="hidden" ng-model="contribution.person"
-    
-                    button.btn.btn-default type="button" ng-click="deleteContribution(contribution)" Delete
-    
-                  .clearfix.controls
-                    button.btn.btn-default.pull-right type="button" ng-click="addContribution()" Add Contributor
-    
+            .form-group
+                .control-label
+                  label
+                    | Contributors
+                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['contributors']" data-placement="bottom" html="true" auto-close="true"
+                .controls ng-hide="item.contributions.length > 0"
+                  label.pull-left style='padding-top: 5px;'
+                    i No contributors.
+                .control-row.full-row ng-repeat="contribution in item.contributions" ng-hide="contribution._delete"
+                  span.field
+                    select ui-select2="roleSelect" ng-model="contribution.role"
+                      option
+                      option ng-repeat="role in item.standardRoles" value="{{role}}" {{role}}
+  
+                  span.field
+                    input ui-select2="peopleSelect" type="hidden" ng-model="contribution.person"
+  
+                  button.btn.btn-default type="button" ng-click="deleteContribution(contribution)" Delete
+  
+                .clearfix.controls
+                  button.btn.btn-default.pull-right type="button" ng-click="addContribution()" Add Contributor
+  
+            .form-group
+              label.control-label
+                | Tags (hit enter to separate tags)
+                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['tags']" data-placement="bottom" html="true" auto-close="true"
+              .controls
+                input.input-xlarge type='hidden' ng-model="item.tagList" ui-select2="tagSelect()"
+  
+            .message-shadow ng-hide='showDetails'
+              a ng-click='showDetails = !showDetails' More Fields
+  
+            .message-expanded ng-show='showDetails'
+              a ng-click='showDetails = !showDetails' Fewer Fields
+  
+            section ng-show='showDetails'
+  
+  
               .form-group
                 label.control-label
-                  | Tags (hit enter to separate tags)
-                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['tags']" data-placement="bottom" html="true" auto-close="true"
+                  | Language
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['language']" data-placement="bottom" html="true" auto-close="true"
                 .controls
-                  input.input-xlarge type='hidden' ng-model="item.tagList" ui-select2="tagSelect()"
-    
-              .message-shadow ng-hide='showDetails'
-                a ng-click='showDetails = !showDetails' More Fields
-    
-              .message-expanded ng-show='showDetails'
-                a ng-click='showDetails = !showDetails' Fewer Fields
-    
-              section ng-show='showDetails'
-    
-    
-                .form-group
-                  label.control-label
-                    | Language
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['language']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    input type='hidden' ui-select2="languageSelect()" ng-model="item.language"
-                .form-group
-                  label.control-label
-                    | Description
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['description']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    textarea.col-md-5 ng-model='item.description' rows="3"
-    
-                .form-group
-                  .control-label
-                    | Series Title
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['seriesTitle']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    input.text.input-xlarge#seriesTitle type='text' ng-model='item.seriesTitle'
-    
-                .form-group
-                  .control-label
-                    | Episode Title
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['episodeTitle']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    input.text.input-xlarge#episodeTitle type='text' ng-model='item.episodeTitle'
-    
-                .form-group
-                  label.control-label
-                    | Date Created
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['dateCreated']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    input.input-small type='text' ng-model='item.dateCreated' data-date-format="yyyy-MM-dd" bs-datepicker="" data-toggle="datepicker" placeholder="yyyy-MM-dd"
-    
-                .form-group
-                  label.control-label
-                    | Date Broadcast
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['dateBroadcast']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    input.input-small type='text' ng-model='item.dateBroadcast' data-date-format="yyyy-MM-dd" bs-datepicker="" data-toggle="datepicker" placeholder="yyyy-MM-dd"
-    
-                .form-group
-                  label.control-label
-                    | Item ID
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['identifier']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    input.text.input-xlarge#identifier type='text' ng-model='item.identifier'
-    
-                .form-group
-                  label.control-label
-                    | Rights
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['rights']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    textarea.col-md-5 ng-model='item.rights' rows="3"
-    
-                .form-group
-                  label.control-label
-                    | Digital Format
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['digitalFormat']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    input.text.input-xlarge#digitalFormat type='text' ng-model='item.digitalFormat'
-    
-                .form-group
-                  label.control-label
-                    | Physical Format
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['physicalFormat']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    input.text.input-xlarge#physicalFormat type='text' ng-model='item.physicalFormat'
-    
-                .form-group
-                  label.control-label
-                    | Physical Location
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['physicalLocation']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    input.text.input-xlarge#physicalLocation type='text' ng-model='item.physicalLocation'
-    
-                .form-group
-                  label.control-label
-                    | Music
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['musicSoundUsed']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    input.text.input-xlarge#musicSoundUsed type='text' ng-model='item.musicSoundUsed'
-    
-                .form-group
-                  label.control-label
-                    | Date Peg
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['datePeg']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    input.text.input-xlarge#datePeg type='text' ng-model='item.datePeg'
-    
-                .form-group
-                  label.control-label
-                    | Geolocation
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['geographicLocation']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    input.text.input-xlarge#geographicLocation type='text' ng-model='item.geographicLocation'
-    
-                .form-group
-                  label.control-label
-                    | Transcription
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['transcription']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    textarea.col-md-5 ng-model='item.transcription' rows="3"
-    
-                .form-group
-                  label.control-label
-                    | Notes
-                    i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['notes']" data-placement="bottom" html="true" auto-close="true"
-                  .controls
-                    textarea.col-md-5 ng-model='item.notes' rows="3"
+                  input type='hidden' ui-select2="languageSelect()" ng-model="item.language"
+              .form-group
+                label.control-label
+                  | Description
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['description']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  textarea.col-md-5 ng-model='item.description' rows="3"
+  
+              .form-group
+                .control-label
+                  | Series Title
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['seriesTitle']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  input.text.input-xlarge#seriesTitle type='text' ng-model='item.seriesTitle'
+  
+              .form-group
+                .control-label
+                  | Episode Title
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['episodeTitle']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  input.text.input-xlarge#episodeTitle type='text' ng-model='item.episodeTitle'
+  
+              .form-group
+                label.control-label
+                  | Date Created
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['dateCreated']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  input.input-small type='text' ng-model='item.dateCreated' data-date-format="yyyy-MM-dd" bs-datepicker="" data-toggle="datepicker" placeholder="yyyy-MM-dd"
+  
+              .form-group
+                label.control-label
+                  | Date Broadcast
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['dateBroadcast']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  input.input-small type='text' ng-model='item.dateBroadcast' data-date-format="yyyy-MM-dd" bs-datepicker="" data-toggle="datepicker" placeholder="yyyy-MM-dd"
+  
+              .form-group
+                label.control-label
+                  | Item ID
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['identifier']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  input.text.input-xlarge#identifier type='text' ng-model='item.identifier'
+  
+              .form-group
+                label.control-label
+                  | Rights
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['rights']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  textarea.col-md-5 ng-model='item.rights' rows="3"
+  
+              .form-group
+                label.control-label
+                  | Digital Format
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['digitalFormat']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  input.text.input-xlarge#digitalFormat type='text' ng-model='item.digitalFormat'
+  
+              .form-group
+                label.control-label
+                  | Physical Format
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['physicalFormat']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  input.text.input-xlarge#physicalFormat type='text' ng-model='item.physicalFormat'
+  
+              .form-group
+                label.control-label
+                  | Physical Location
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['physicalLocation']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  input.text.input-xlarge#physicalLocation type='text' ng-model='item.physicalLocation'
+  
+              .form-group
+                label.control-label
+                  | Music
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['musicSoundUsed']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  input.text.input-xlarge#musicSoundUsed type='text' ng-model='item.musicSoundUsed'
+  
+              .form-group
+                label.control-label
+                  | Date Peg
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['datePeg']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  input.text.input-xlarge#datePeg type='text' ng-model='item.datePeg'
+  
+              .form-group
+                label.control-label
+                  | Geolocation
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['geographicLocation']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  input.text.input-xlarge#geographicLocation type='text' ng-model='item.geographicLocation'
+  
+              .form-group
+                label.control-label
+                  | Transcription
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['transcription']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  textarea.col-md-5 ng-model='item.transcription' rows="3"
+  
+              .form-group
+                label.control-label
+                  | Notes
+                  i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['notes']" data-placement="bottom" html="true" auto-close="true"
+                .controls
+                  textarea.col-md-5 ng-model='item.notes' rows="3"
     
     
       .modal-footer
