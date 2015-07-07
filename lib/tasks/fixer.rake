@@ -319,6 +319,12 @@ namespace :fixer do
         af.update_columns(:storage_id, af.item.storage_id)
       end
     end
+    ImageFile.where(storage_id: nil).find_in_batches do |imgs|
+      imgs.each do |imgf|
+        next unless imgf.imageable
+        imgf.update_columns(:storage_id, imgf.imageable.storage_id)
+      end 
+    end
   end
 
   desc "migrate collection storage ids"
