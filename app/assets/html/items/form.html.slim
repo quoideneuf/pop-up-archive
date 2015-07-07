@@ -53,7 +53,7 @@ section.modal ng-controller="ItemFormCtrl"
               p
                 strong
                   | For separate playback of each file, delete extra files and upload one at a time.         
-            .form-group
+            .form-group ng-hide="item.id > 0"
               label.control-label
                 | Upload File
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles']" data-placement="bottom" html="true" auto-close="true"
@@ -79,7 +79,7 @@ section.modal ng-controller="ItemFormCtrl"
                 span.pull-right file-button=""
                   button.btn.btn-default.upload-file-button Add Files to Item
     
-            .form-group
+            .form-group ng-hide="item.id > 0"
               label.control-label
                 | Add File
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles[][remoteFileUrl]']" data-placement="bottom" html="true" auto-close="true"
