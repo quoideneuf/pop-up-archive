@@ -322,7 +322,7 @@ namespace :fixer do
     ImageFile.where(storage_id: nil).find_in_batches do |imgs|
       imgs.each do |imgf|
         next unless imgf.imageable
-        imgf.update_columns(storage_id: imgf.imageable.storage_id)
+        imgf.update_columns(storage_id: imgf.imageable.storage.id)
       end 
     end
   end
