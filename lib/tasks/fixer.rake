@@ -310,19 +310,19 @@ namespace :fixer do
     # my dev env tests show this performs at about 100 rows/sec
     Item.where(storage_id: nil).find_in_batches do |items|
       items.each do |item|
-        item.update_columns(:storage_id, item.collection.default_storage_id)
+        item.update_columns(storage_id: item.collection.default_storage_id)
       end
     end
     AudioFile.where(storage_id: nil).find_in_batches do |afs|
       afs.each do |af|
         next unless af.item
-        af.update_columns(:storage_id, af.item.storage_id)
+        af.update_columns(storage_id: af.item.storage_id)
       end
     end
     ImageFile.where(storage_id: nil).find_in_batches do |imgs|
       imgs.each do |imgf|
         next unless imgf.imageable
-        imgf.update_columns(:storage_id, imgf.imageable.storage_id)
+        imgf.update_columns(storage_id: imgf.imageable.storage_id)
       end 
     end
   end
