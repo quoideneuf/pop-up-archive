@@ -129,6 +129,7 @@ gem 'text-table'
 gem 'mixpanel-ruby'
 gem 'staccato'
 
+gem 'jquery-rails', '>= 4.0.4'
 gem 'activeadmin', github: 'activeadmin', branch: 'master'
 gem 'active_admin_sidebar'
 gem 'coffee-script'
