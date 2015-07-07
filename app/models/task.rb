@@ -192,26 +192,15 @@ class Task < ActiveRecord::Base
     Utils.private_file_exists?(connection, uri)
   end
 
-  def create_job
+  def create_job(&job_maker)
     return 1 if Rails.env.test?
 
     job_id = nil
 
-    # puts "\n\ntranscode job: " + Thread.current.backtrace.join("\n")
+    # puts "\n\ncreate job: " + Thread.current.backtrace.join("\n")
+    job_params = job_maker.call( Hashie::Mash.new )
+    FixerWorker.perform_async(job_params, self.id)
 
-    begin
-      new_job = MediaMonsterClient.create_job do |job|
-        yield job
-      end
-      
-      logger.debug("create_job: created: #{new_job.inspect}")
-      job_id = new_job.id
-
-    rescue Object=>exception
-      logger.error "create_job: error: #{exception.class.name}: #{exception.message}\n\t#{exception.backtrace.join("\n\t")}"
-      job_id = 1
-    end
-    job_id
   end
 
   def self.get_mismatched_status(task_status)

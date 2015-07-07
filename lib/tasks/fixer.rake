@@ -302,5 +302,60 @@ namespace :fixer do
     end
   end
 
+#########################################################################################################
+## migration to fixer.popuparchive.com
+
+  desc "migrate storage_id on items and audio_files"
+  task migrate_storage_ids: [:environment] do
+    # my dev env tests show this performs at about 100 rows/sec
+    Item.where(storage_id: nil).find_in_batches do |items|
+      items.each do |item|
+        item.update_columns(:storage_id, item.collection.default_storage_id)
+      end
+    end
+    AudioFile.where(storage_id: nil).find_in_batches do |afs|
+      afs.each do |af|
+        next unless af.item
+        af.update_columns(:storage_id, af.item.storage_id)
+      end
+    end
+  end
+
+  desc "migrate collection storage ids"
+  task migrate_collection_storage_ids: [:environment] do
+  # **********************************************************************************************
+  # WARNING: should only run this once per environment since it is destructive and not idempotent.
+  # MUST run AFTER migrate_storage_ids
+  # **********************************************************************************************
+  # we want to assign all existing collections to new storage_configurations
+  # so that any new items/audio_files added to those collections will point at
+  # the new s3 location.
+  
+  # first we create some new StorageConfiguration objects pointing at new AWS location.
+  aws_private_store = StorageConfiguration.create(provider: 'AWS', key: ENV['AWS_ACCESS_KEY'], secret: ENV['AWS_SECRET_ACCESS_KEY'], is_public: false, bucket: ENV['AWS_BUCKET'])
+  aws_public_store = StorageConfiguration.create(provider: 'AWS', key: ENV['AWS_ACCESS_KEY'], secret: ENV['AWS_SECRET_ACCESS_KEY'], is_public: false, bucket: ENV['AWS_BUCKET'])
+
+  # second, iterate over all collections and change any whose storage is currently AWS to a new config
+    Collection.find_in_batches do |colls|
+      colls.each do |coll|
+        next unless coll.default_storage.provider == 'AWS'
+        if coll.default_storage.is_public
+          coll.default_storage_id = aws_public_store.id
+        else
+          coll.default_storage_id = aws_private_store.id
+        end
+        coll.save!
+      end
+    end
+  end
+
+  desc "run all fixer.popuparchive.com migrations"
+  task pua_migrate: [:environment] do
+    Rake::Task["fixer:migrate_storage_ids"].invoke
+    Rake::Task["fixer:migrate_storage_ids"].reenable
+    Rake::Task["fixer:migrate_collection_storage_ids"].invoke
+    Rake::Task["fixer:migrate_collection_storage_ids"].reenable
+  end
+
 end
 

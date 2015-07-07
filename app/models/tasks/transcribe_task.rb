@@ -110,16 +110,27 @@ class Tasks::TranscribeTask < Task
         job.priority    = 2
         job.retry_delay = Task::RETRY_DELAY
         job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
-        job.add_sequence do |seq|
-          seq.add_task({task_type: 'cut', options: {length: 120, fade: 0}})
-          seq.add_task({
-            task_type: 'transcribe',
-            result:    destination,
-            call_back: call_back_url,
-            label:     self.id,
-            options:   transcribe_options
-          })
-        end
+        job.tasks       = [
+          sequence: {
+            tasks: [
+              {
+                task_type: 'cut', 
+                options: {
+                  length: 120, 
+                  fade: 0
+                }
+              },
+              {
+                task_type: 'transcribe',
+                result:    destination,
+                call_back: call_back_url,
+                label:     self.id,
+                options:   transcribe_options
+              }
+            ]
+          }
+        ] 
+        job
       end
     else
       j = create_job do |job|
@@ -128,13 +139,15 @@ class Tasks::TranscribeTask < Task
         job.priority = 3
         job.retry_delay = Task::RETRY_DELAY
         job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
-        job.add_task({
+        job.tasks       = []
+        job.tasks << {
           task_type: 'transcribe',
           result:    destination,
           call_back: call_back_url,
           label:     self.id,
           options:   transcribe_options
-        })
+        }
+        job
       end
     end
 

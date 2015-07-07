@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.0.0'
 
-gem 'rails', '~> 4.1' 
+gem 'rails', '~> 4.2.1' 
 
 # these used to be in the "assets" group under Rails 3
 # but that group is removed in Rails 4 so we include here.
@@ -13,17 +13,18 @@ gem 'uglifier'
 #gem 'coffee-rails'
 #gem 'bootstrap-sass'
 gem 'bootstrap_form'
-gem 'angularjs-rails-resource'
+gem 'angularjs-rails-resource', '= 0.2.5'
 gem 'ng_player_hater-rails'
 
 gem 'etagger', github: 'rails/etagger'
 gem 'cache_digests'
 gem 'dalli'
 
-gem 'media_monster_client'
+gem 'dotenv'
+gem 'fixer_client', :git => 'git://github.com/PRX/fixer_client.git'
 gem 'pg'
 gem 'postgres_ext'
-gem 'acts_as_list'
+gem 'acts_as_list', '= 0.6.0'
 gem 'multi_json'
 
 gem 'decent_exposure'
@@ -171,7 +172,7 @@ group :test do
   gem 'capybara'
   gem 'poltergeist'
   gem 'shoulda-matchers'
-  gem 'stripe-ruby-mock', require: 'stripe_mock'
+  gem 'stripe-ruby-mock', '= 2.0.5', require: 'stripe_mock'
   gem 'simplecov'
   gem 'coveralls'
   gem 'elasticsearch-extensions'
