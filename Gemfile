@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.0.0'
 
-gem 'rails', '~> 4.2.2' 
+gem 'rails', '~> 4.2.3' 
 
 # these used to be in the "assets" group under Rails 3
 # but that group is removed in Rails 4 so we include here.
@@ -17,7 +17,6 @@ gem 'angularjs-rails-resource', '= 0.2.5'
 gem 'ng_player_hater-rails'
 
 gem 'etagger', github: 'rails/etagger'
-gem 'cache_digests'
 gem 'dalli'
 
 gem 'dotenv'
