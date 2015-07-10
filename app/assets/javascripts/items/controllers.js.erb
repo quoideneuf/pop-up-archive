@@ -313,6 +313,11 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     this.item = $scope.initializeItem(true);
 
     var uploadFiles = saveItem.files;
+    if (uploadFiles.length > 1 && !saveItem.id) {
+      // disallow multi-file upload on new Items
+      $scope.showFilesAlert = true;
+      return;
+    }
     saveItem.files = [];
     var uploadImageFiles = saveItem.images;
     saveItem.images = [];
