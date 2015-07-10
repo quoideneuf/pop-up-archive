@@ -82,5 +82,8 @@
     = f.password_field :password_confirmation, placeholder: "Password (again)"
   input name='card_token' type='hidden' disabled=''
     
-  .pull-right.align-right = render "devise/shared/links"
-  button.btn.btn-primary onClick="_gaq.push(['_trackEvent', 'Registration', 'Registered']);" Sign Up
+  .clear
+    button.btn.btn-primary onClick="_gaq.push(['_trackEvent', 'Registration', 'Registered']);" Sign Up
+  
+  = render "devise/shared/links"
+  
