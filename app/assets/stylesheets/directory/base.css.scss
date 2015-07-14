@@ -1401,8 +1401,16 @@ form.with-tags {
 }
 
 #mce-EMAIL {
-  width: 60%;
+  width: 80%;
   margin: 1em; 
+}
+
+label {
+  width: 450px;
+}
+
+.mc-field-group {
+  padding-top: 10px;
 }
 
 #mc_embed_signup_scroll {
@@ -1414,11 +1422,16 @@ form.with-tags {
   margin: 2em;
 }
 
+.news {
+  font-family: helvetica, sans-serif;
+  color: #5970b1;
+}
+
 #mc-embedded-subscribe {
   border-style: none;
   border-radius: 1em;
   font-family: 'soleil', helvetica, sans-serif;
-  padding: 1em;
+  padding: .5em;
   color: white;
   font-size: 1.2em;
   background: #2c677f;
