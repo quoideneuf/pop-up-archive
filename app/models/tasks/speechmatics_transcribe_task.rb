@@ -344,7 +344,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
 
   def notify_user
     return unless (user && audio_file && audio_file.item)
-    return if extras['notify_sent']
+    return if extras['notify_sent'] || (ENV["DO_NOT_EMAIL"].include? user.id.to_s)
     if audio_file.item.extra.has_key? 'callback'
       CallbackWorker.perform_async(audio_file.item_id, audio_file.id, audio_file.item.extra['callback']) unless Rails.env.test?
     end
