@@ -43,6 +43,8 @@
       dd() {{ me.email }}
       dt Current Plan
       dd() {{ me.plan.name }}
+      dt ng-show="me.plan.trialEnd" Trial End
+      dd ng-show="me.plan.trialEnd" {{ me.plan.trialEnd }}
 
 .row
   .well.usage

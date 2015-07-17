@@ -57,7 +57,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   expose(:plan){ get_plan }
-  expose(:card_available?) { get_card_available || offer_code == 'prx' }
+  expose(:card_available?) { get_card_available || offer_code == 'radiorace' }
   expose(:offer_code) { session[:offer_code] }
 
   def get_plan
@@ -84,6 +84,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     if session[:plan_id].present?
       plan_id = session.delete(:plan_id)
       user.subscribe!(SubscriptionPlanCached.find(plan_id), session.delete(:offer_code))
+      return unless Rails.env == 'production'
       gb = Gibbon::API.new
       gb.lists.subscribe(:id => "39650ec21b",
                    :email => {:email=> user.email},

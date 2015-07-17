@@ -174,4 +174,58 @@ angular.module('Directory.account.controllers', ['stripe', 'Directory.account.mo
   subscribe = function (plan) {
     window.location = "/users/sign_up?plan_id=" + plan.id;
   }
-}]);
+}])
+
+.controller('PRXAccountPlanCtrl', ['$scope', 'Me', 'Plan', '$location', function ($scope, Me, Plan, $location) {    
+  // $scope.me = true;    
+  // Plan.get().then(function (plans) {   
+  //   angular.forEach(plans, function (plan) {   
+  //     if (plan.name == "Radio Race Free Trial") {    
+  //       console.log(plan);  
+  //       min = plan.amount; 
+  //       suggest = plan;   
+  //     }    
+  //   });       
+  //   $scope.plan = suggest;   
+  // });    
+   
+  // Me.authenticated(function (me) {   
+  //   $scope.me = me;    
+  // });    
+   
+  // $scope.subscribe = function () {   
+  //   $scope.signingUp = true;   
+  //   $scope.me.subscribe($scope.plan.id, 'prx').then(function () {    
+  //     $location.path('/account');    
+  //   });    
+  // };   
+   
+  // $scope.cancel = function () {    
+  //   $location.path('/account/plan');   
+  // }    
+}]) 
+
+.controller('PRXSignUpCtrl', ['$scope', 'Me', 'Plan', '$location', function ($scope, Me, Plan, $location) { 
+  Plan.get().then(function (plans) {   
+    angular.forEach(plans, function (plan) {   
+      if (plan.interval == 'month' && plan.name == "Radio Race Free Trial") {     
+        suggest = plan;         
+      }
+    });     
+    $scope.plan = suggest;
+  });
+  $scope.signUpPua=function () {
+    Me.authenticated(function (me) { 
+      var currentUser = $scope.currentUser || $scope.me;
+      $scope.me = me;
+      $scope.signingUp = true;   
+      $scope.me.subscribe($scope.plan.id, 'radiorace').then(function () {    
+        $location.path('/account');    
+      }); 
+    })
+  }
+  $scope.signUpNew=function () {
+    $scope.signingUp = true;   
+    window.location.href = '/users/sign_up?plan_id=' + $scope.plan.id + '&offer_code=radiorace';          
+  }
+}])
