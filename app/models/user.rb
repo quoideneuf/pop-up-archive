@@ -172,9 +172,9 @@ class User < ActiveRecord::Base
       subscr = customer.stripe_subscription(cus)
     end
     subscr.metadata[:orig_start] = subscr.metadata[:start]
-    if (offer == 'prx')
+    if (offer == 'radiorace')
       subscr.plan = plan.id
-      subscr.trial_end = 90.days.from_now.to_i
+      subscr.trial_end = 30.days.from_now.to_i
     else
       # see https://github.com/popuparchive/pop-up-archive/issues/1011
       # initial sign-up has "trial" until the first day of the next month.
@@ -276,10 +276,19 @@ class User < ActiveRecord::Base
       amount: plan.amount,
       pop_up_hours: plan.hours,
       trial: customer.trial,  # TODO cache this better to avoid needing to call customer() at all.
+      trial_end: trial_end(),
       interim: customer.is_interim_trial?,
       interval: plan.interval,
       is_premium: plan.has_premium_transcripts? ? true : false,
     }
+  end
+
+  def trial_end
+    Time.at(created_at.to_i + customer.trial.days.to_i)
+  end
+
+  def is_trial_ended?
+    return trial_end() < Time.now
   end
 
   def customer

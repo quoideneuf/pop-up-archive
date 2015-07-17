@@ -8,6 +8,9 @@ section.modal ng-controller="ItemFormCtrl"
         h3 ng-hide='item.id > 0' Create an Audio Item
     
       .modal-body
+        h3 ng-show="currentUser.trialEnded && !currentUser.hasCreditCard()"
+          | You're free trial has ended.
+          a href="/account/plan"  Upgrade now!
         h3 ng-show="currentUser.overMonthlyLimit && !currentUser.hasCreditCard() && !currentUser.isOrgMember()"
          | You are over your monthly limit and do not have a credit card on file.
          a href="/account/plan"  Upgrade now!
