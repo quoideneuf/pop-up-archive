@@ -49,7 +49,7 @@ class Customer
     return nil unless cust
     subscr = stripe_subscription(cust)
     return nil unless subscr
-    if subscr.status == "trialing" && subscr.trial_end && subscr.trial_end > self.class.end_of_this_month
+    if subscr.status == "trialing" && subscr.trial_end && subscr.trial_end >= self.class.end_of_this_month
       return true
     else
       return false
