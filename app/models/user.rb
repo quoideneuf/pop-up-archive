@@ -284,10 +284,15 @@ class User < ActiveRecord::Base
   end
 
   def trial_end
-    Time.at(created_at.to_i + customer.trial.days.to_i)
+    if customer.trial
+      Time.at(created_at.to_i + customer.trial.days.to_i)
+    else
+      false
+    end
   end
 
   def is_trial_ended?
+    return false unless trial_end()
     return trial_end() < Time.now
   end
 
