@@ -296,6 +296,26 @@ class User < ActiveRecord::Base
     return trial_end() < Time.now
   end
 
+  def prorated_charge_for_month(dtim)
+    # get number of days active in the month
+    days_in_month = dtim.end_of_month.strftime('%d').to_i
+    #STDERR.puts "days_in_month=#{days_in_month}"
+    active_days = days_in_month - self.created_at.strftime('%d').to_i
+    #STDERR.puts "active_days=#{active_days}"
+
+    # get cost-per-day
+    # Stripe reports amount in cents, so we convert to dollars.
+    cost_per_day = (self.plan.amount / 100).fdiv(days_in_month)
+    #STDERR.puts "cost_per_day=#{cost_per_day}"
+    if self.plan.interval == 'year'
+      cost_per_day = (self.plan.amount / 100).fdiv(365)
+      #STDERR.puts "cost_per_day=#{cost_per_day} [yearly charge]"
+    end
+
+    # multiply
+    cost_per_day * active_days
+  end
+
   def customer
     return @_customer if !@_customer.nil?
     begin
