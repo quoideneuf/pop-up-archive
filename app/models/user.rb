@@ -175,7 +175,6 @@ class User < ActiveRecord::Base
     if (offer == 'radiorace')
       subscr.plan = plan.id
       subscr.trial_end = 30.days.from_now.to_i
-      subscr.coupon = offer
     else
       # see https://github.com/popuparchive/pop-up-archive/issues/1011
       # initial sign-up has "trial" until the first day of the next month.
@@ -285,8 +284,10 @@ class User < ActiveRecord::Base
   end
 
   def trial_end
-    if customer.trial
-      Time.at(created_at.to_i + customer.trial.days.to_i)
+    cus = customer.stripe_customer
+    subscr = customer.stripe_subscription(cus)
+    if subscr && subscr.trial_end
+      Time.at(subscr.trial_end)
     else
       false
     end
@@ -294,7 +295,7 @@ class User < ActiveRecord::Base
 
   def is_trial_ended?
     return false unless trial_end()
-    return trial_end() < Time.now
+    return trial_end() <= Time.now
   end
 
   def prorated_charge_for_month(dtim)
