@@ -301,6 +301,16 @@ describe User do
       # rewind the clock
       Timecop.return
     end
+
+    it 'ends special offer trial after 30 days' do
+      trial_plan    = SubscriptionPlanCached.create trial_period_days: 30, hours: 1, amount: 2000, name: 'Free Trial'
+      user.subscribe!(trial_plan, 'radiorace')
+      user.is_trial_ended?.should eq false
+       # fast forward the clock artificially
+      Timecop.travel( 31.days.from_now.to_i )
+      sleep 2
+      user.is_trial_ended?.should eq true
+    end
   end
 
   context '#add_default_collection' do
