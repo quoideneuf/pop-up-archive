@@ -175,6 +175,7 @@ class User < ActiveRecord::Base
     if (offer == 'radiorace')
       subscr.plan = plan.id
       subscr.trial_end = 30.days.from_now.to_i
+      subscr.coupon = offer
     else
       # see https://github.com/popuparchive/pop-up-archive/issues/1011
       # initial sign-up has "trial" until the first day of the next month.

@@ -69,8 +69,17 @@ class SubscriptionPlanCached
       end
     end
     if !stripe_plan
+      init_opts = {
+        id: plan_id,
+        name: options[:name],
+        amount: options[:amount],
+        currency: 'USD',
+        interval: interval,
+      }
+      # merge any other options not already present
+      init_opts.merge!(options)
       begin
-        stripe_plan = Stripe::Plan.create(id: plan_id, name: options[:name], amount: options[:amount], currency: 'USD', interval: interval)
+        stripe_plan = Stripe::Plan.create(init_opts)
       rescue Stripe::InvalidRequestError => err
         # re-throw with more detail
         raise "Could not create Stripe plan for '#{plan_id}': #{err}" + stripe_plans.inspect
