@@ -207,7 +207,7 @@ class User < ActiveRecord::Base
           trial_end = customer.class.end_of_this_month
         end
         # if moving from community to non-community, treat like trial
-        if (orig_plan.id == :community || orig_plan.name == "Community") && !plan.is_community?
+        if (orig_plan.id == :premium_community || orig_plan.name == "Premium Community") && !plan.is_community?
           trial_end = customer.class.end_of_this_month
         end
       end 
@@ -316,6 +316,25 @@ class User < ActiveRecord::Base
 
     # multiply
     cost_per_day * active_days
+  end
+
+  # returns number of hours (float) in the current billing cycle.
+  # NOTE that for Community plan users the current billing cycle == eternity.
+  def hours_remaining
+    if plan.is_community?
+      pop_up_hours - transcript_usage_cache['premium_seconds'].to_i.fdiv(3600)
+    else
+      pop_up_hours - hours_used_in_month
+    end
+  end
+
+  def hours_used_in_month(dtim=DateTime.now)
+    secs = 0
+    this_month = dtim.strftime('%Y-%m')
+    monthly_usages.where(yearmonth: this_month).each do |mu|
+      secs += mu.value
+    end
+    secs.fdiv(3600)
   end
 
   def customer

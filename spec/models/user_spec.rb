@@ -153,6 +153,33 @@ describe User do
       user.usage_summary[:this_month][:hours].should eq 1.0  # only 1 of 2 hours billable
     end
 
+    it "calculates Community plan usage regardless of month" do
+      audio = FactoryGirl.create(:audio_file_private)
+      audio.duration = 900
+      transcript = FactoryGirl.create :transcript
+      transcript2 = FactoryGirl.create :transcript
+      transcript.transcriber = Transcriber.premium
+      transcript2.transcriber = Transcriber.premium
+      transcript.audio_file_id = audio.id
+      transcript2.audio_file_id = audio.id
+      transcript2.is_billable = false  # usage calculator will ignore
+      transcript.save!
+      transcript2.save!
+      audio.save!
+      transcript.billable_seconds.should eq 900
+      transcript2.billable_seconds.should eq 900 # calculates ok, but not included in usage below.
+
+      user = audio.billable_to
+      user.calculate_monthly_usages!
+      user.update_usage_report!
+
+      user.plan.is_community?().should be_truthy
+      user.hours_remaining.should eq 0.75  # only one transcript counted
+      Timecop.travel( 90.days.from_now.to_i )
+      user.hours_remaining.should eq 0.75
+      Timecop.return
+    end
+
   end
 
   context 'storage' do
@@ -228,7 +255,7 @@ describe User do
     end
 
     it 'returns the name of the plan' do
-      user.plan_name.should eq 'Community'
+      user.plan_name.should eq 'Premium Community'
     end
 
     it 'can have a card added' do
@@ -278,7 +305,7 @@ describe User do
     end
 
     it 'has community plan number of hours when there is no subscription' do
-      user.pop_up_hours.should eq 1
+      user.pop_up_hours.should eq free_plan.hours
     end
 
     it "knows when the monthly billing cycle has started" do
@@ -310,7 +337,16 @@ describe User do
       Timecop.travel( 31.days.from_now.to_i )
       sleep 2
       user.is_trial_ended?.should eq true
+      Timecop.return
     end
+
+    it "is not constrained by month for free plan" do
+      user.hours_remaining.should eq free_plan.hours
+      Timecop.travel( 90.days.from_now.to_i )
+      user.hours_remaining.should eq free_plan.hours
+      Timecop.return
+    end
+
   end
 
   context '#add_default_collection' do
