@@ -8,12 +8,32 @@ class Transcriber < ActiveRecord::Base
 
   after_commit :invalidate_caches, on: :update
 
+  def self.ids_for_type(usage_type)
+    if usage_type == 'basic'
+      [ self.basic.id ]
+    else
+      [ self.speechmatics.id, self.voicebase.id ]
+    end
+  end
+
   def self.basic
     @_basic ||= self.find_by_name('google_voice')
   end
 
   def self.premium
-    @_premium ||= self.find_by_name('speechmatics')
+    @_premium ||= self.get_premium
+  end
+
+  def self.get_premium
+    if ENV['PREMIUM_TRANSCRIBER'] && ENV['PREMIUM_TRANSCRIBER'] == "voicebase"
+      self.voicebase
+    else
+      self.speechmatics
+    end
+  end
+
+  def self.speechmatics
+    @_speechmatics ||= self.find_by_name('speechmatics')
   end
 
   def self.voicebase

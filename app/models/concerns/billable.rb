@@ -94,9 +94,15 @@ module Billable
     # this satisfies chained callers.
     return "select * from transcripts where id < 0" unless billable_collection_ids.size > 0
 
+    # transcriber_id may be an array
+    tids = transcriber_id
+    if transcriber_id.is_a?(Array)
+      tids = transcriber_id.join(',')
+    end
+
     items_sql = "select i.id from items as i where i.collection_id in (#{billable_collection_ids.join(',')})"
     audio_files_sql = "select af.id from audio_files as af where af.duration is not null and af.item_id in (#{items_sql})"
-    transcripts_sql = "select * from transcripts as t where t.transcriber_id=#{transcriber_id} and t.audio_file_id in (#{audio_files_sql})"
+    transcripts_sql = "select * from transcripts as t where t.transcriber_id in (#{tids}) and t.audio_file_id in (#{audio_files_sql})"
     transcripts_sql += " and t.created_at between '#{start_dtim}' and '#{end_dtim}'"
     transcripts_sql += " and t.is_billable=true"
     transcripts_sql += " order by t.created_at asc"
@@ -121,10 +127,16 @@ module Billable
     # abort early if we have no collections
     return "select * from transcripts where id < 0" if collection_ids.size == 0
 
+    # transcriber_id may be an array
+    tids = transcriber_id
+    if transcriber_id.is_a?(Array)
+      tids = transcriber_id.join(',')
+    end
+
     items_sql = "select i.id from items as i where i.collection_id in (#{collection_ids.join(',')})"
     audio_files_sql = "select af.id from audio_files as af "
     audio_files_sql += "where af.duration is not null and af.user_id=#{self.id} and af.item_id in (#{items_sql})"
-    transcripts_sql = "select * from transcripts as t where t.transcriber_id=#{transcriber_id} and t.audio_file_id in (#{audio_files_sql})"
+    transcripts_sql = "select * from transcripts as t where t.transcriber_id in (#{tids}) and t.audio_file_id in (#{audio_files_sql})"
     transcripts_sql += " and t.created_at between '#{start_dtim}' and '#{end_dtim}'"
     transcripts_sql += " and t.is_billable=true"
     transcripts_sql += " order by t.created_at asc"
