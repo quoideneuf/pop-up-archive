@@ -305,11 +305,16 @@ describe User do
     it 'ends special offer trial after 30 days' do
       trial_plan    = SubscriptionPlanCached.create trial_period_days: 30, hours: 1, amount: 2000, name: 'Free Trial'
       user.subscribe!(trial_plan, 'radiorace')
-      user.is_trial_ended?.should eq false
+      user.is_offer_ended?.should eq false
        # fast forward the clock artificially
       Timecop.travel( 31.days.from_now.to_i )
       sleep 2
-      user.is_trial_ended?.should eq true
+      user.is_offer_ended?.should eq true
+      #should not have an offer_ended date after plan update
+      user.subscribe!(plan)
+      cus = user.customer.stripe_customer
+      subscr = user.customer.stripe_subscription(cus)
+      subscr.metadata[:offer_end].should eq ""
     end
   end
 
