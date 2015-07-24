@@ -298,45 +298,6 @@ class User < ActiveRecord::Base
     return trial_end() <= Time.now
   end
 
-  def prorated_charge_for_month(dtim)
-    # get number of days active in the month
-    days_in_month = dtim.end_of_month.strftime('%d').to_i
-    #STDERR.puts "days_in_month=#{days_in_month}"
-    active_days = days_in_month - self.created_at.strftime('%d').to_i
-    #STDERR.puts "active_days=#{active_days}"
-
-    # get cost-per-day
-    # Stripe reports amount in cents, so we convert to dollars.
-    cost_per_day = (self.plan.amount / 100).fdiv(days_in_month)
-    #STDERR.puts "cost_per_day=#{cost_per_day}"
-    if self.plan.interval == 'year'
-      cost_per_day = (self.plan.amount / 100).fdiv(365)
-      #STDERR.puts "cost_per_day=#{cost_per_day} [yearly charge]"
-    end
-
-    # multiply
-    cost_per_day * active_days
-  end
-
-  # returns number of hours (float) in the current billing cycle.
-  # NOTE that for Community plan users the current billing cycle == eternity.
-  def hours_remaining
-    if plan.is_community?
-      pop_up_hours - transcript_usage_cache['premium_seconds'].to_i.fdiv(3600)
-    else
-      pop_up_hours - hours_used_in_month
-    end
-  end
-
-  def hours_used_in_month(dtim=DateTime.now)
-    secs = 0
-    this_month = dtim.strftime('%Y-%m')
-    monthly_usages.where(yearmonth: this_month).each do |mu|
-      secs += mu.value
-    end
-    secs.fdiv(3600)
-  end
-
   def customer
     return @_customer if !@_customer.nil?
     begin

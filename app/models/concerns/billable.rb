@@ -144,6 +144,7 @@ module Billable
     return transcripts_sql
   end
 
+  # limit (optional) should be a DateTime object
   def transcript_usage(limit=nil)
     # keyed by yyyy-mm in chron order
     usage = {}
@@ -425,6 +426,84 @@ module Billable
     body    = sprintf("You have used %d (%d%%) of your monthly limit of %d hours.", \
                 summ[:this_month][:hours], ((summ[:this_month][:hours] / plan_hours) * 100), plan_hours)
     MyMailer.usage_alert(subject, body, self.entity.owner.email).deliver
+  end
+
+  def prorated_charge_for_month(dtim)
+    # get number of days active in the month
+    days_in_month = dtim.end_of_month.strftime('%d').to_i
+    #STDERR.puts "days_in_month=#{days_in_month}"
+    active_days = days_in_month - self.created_at.strftime('%d').to_i
+    #STDERR.puts "active_days=#{active_days}"
+
+    # get cost-per-day
+    # Stripe reports amount in cents, so we convert to dollars.
+    cost_per_day = (self.plan.amount / 100).fdiv(days_in_month)
+    #STDERR.puts "cost_per_day=#{cost_per_day}"
+    if self.plan.interval == 'year'
+      cost_per_day = (self.plan.amount / 100).fdiv(365)
+      #STDERR.puts "cost_per_day=#{cost_per_day} [yearly charge]"
+    end 
+
+    # multiply
+    cost_per_day * active_days
+  end 
+
+  # returns number of hours (float) in the current billing cycle.
+  # NOTE that for Community plan users the current billing cycle == eternity.
+  def hours_remaining
+    if plan.is_community?
+      pop_up_hours - premium_community_transcripts_usage.fdiv(3600)
+    else
+      pop_up_hours - premium_noncommunity_transcripts_usage.fdiv(3600)
+    end 
+  end
+
+  # return total transcript duration for all months where
+  # subscription plan was community
+  def premium_community_transcripts_usage
+    comm_plan_id = SubscriptionPlanCached.community.as_plan.id
+    premium_ids = Transcriber.ids_for_type('premium')
+    total_secs = 0
+    monthly_usages.each do |mu|
+      next unless mu.value > 0
+      dtim = DateTime.parse(mu.yearmonth+'-01')
+      sql = sql_for_transcripts_usage_for_month_of(dtim, premium_ids)
+      next unless sql
+      Transcript.find_by_sql(sql).each do |tr|
+        next unless tr.subscription_plan_id == comm_plan_id
+        af = tr.audio_file_lazarus
+        total_secs += tr.billable_seconds(af)
+      end
+    end
+    total_secs
+  end
+
+  # returns total transcript duration for current month
+  # for non-community subscription plans.
+  def premium_noncommunity_transcripts_usage
+    comm_plan_id = SubscriptionPlanCached.community.as_plan.id
+    premium_ids = Transcriber.ids_for_type('premium')
+    sql = sql_for_transcripts_usage_for_month_of(DateTime.now, premium_ids)
+
+    # abort early if we have no valid SQL
+    return 0 if !sql
+
+    total_secs = 0
+    Transcript.find_by_sql(sql).each do |tr|
+      next if tr.subscription_plan_id == comm_plan_id
+      af = tr.audio_file_lazarus
+      total_secs += tr.billable_seconds(af)
+    end 
+    total_secs
+  end
+
+  def hours_used_in_month(dtim=DateTime.now)
+    secs = 0 
+    this_month = dtim.strftime('%Y-%m')
+    monthly_usages.where(yearmonth: this_month).each do |mu|
+      secs += mu.value
+    end 
+    secs.fdiv(3600)
   end
 
 end

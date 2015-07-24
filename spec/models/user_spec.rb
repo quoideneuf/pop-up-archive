@@ -133,6 +133,7 @@ describe User do
 
     it "ignores transcripts where is_billable=false" do
       audio = FactoryGirl.create(:audio_file_private)
+      audio.user = audio.billable_to # override factory default
       audio.duration = 3600
       transcript = FactoryGirl.create :transcript
       transcript2 = FactoryGirl.create :transcript
@@ -155,11 +156,17 @@ describe User do
 
     it "calculates Community plan usage regardless of month" do
       audio = FactoryGirl.create(:audio_file_private)
+      audio.user = audio.billable_to # override factory default
+      user = audio.billable_to
+      audio.user_id.should eq user.id
+      user.subscription_plan_id = user.plan.as_plan.id
       audio.duration = 900
       transcript = FactoryGirl.create :transcript
       transcript2 = FactoryGirl.create :transcript
       transcript.transcriber = Transcriber.premium
       transcript2.transcriber = Transcriber.premium
+      transcript.subscription_plan_id = audio.billable_to.billable_subscription_plan_id
+      transcript2.subscription_plan_id = audio.billable_to.billable_subscription_plan_id
       transcript.audio_file_id = audio.id
       transcript2.audio_file_id = audio.id
       transcript2.is_billable = false  # usage calculator will ignore
@@ -169,7 +176,6 @@ describe User do
       transcript.billable_seconds.should eq 900
       transcript2.billable_seconds.should eq 900 # calculates ok, but not included in usage below.
 
-      user = audio.billable_to
       user.calculate_monthly_usages!
       user.update_usage_report!
 
@@ -178,6 +184,53 @@ describe User do
       Timecop.travel( 90.days.from_now.to_i )
       user.hours_remaining.should eq 0.75
       Timecop.return
+    end
+
+    it "premium transcripts under Community plan do not count toward plan limit if User upgrades" do
+      paid_plan = SubscriptionPlanCached.create hours: 10, amount: 200, name: 'big_premium'
+      comm_plan = SubscriptionPlanCached.community
+      audio = FactoryGirl.create(:audio_file_private)
+      audio.user = audio.billable_to # override factory default
+      user = audio.billable_to
+      audio.user_id.should eq user.id
+      user.subscription_plan_id = user.plan.as_plan.id
+      audio.duration = 900
+      audio_hours = audio.duration.fdiv(3600)
+      transcript = FactoryGirl.create :transcript
+      transcript.transcriber = Transcriber.premium
+      transcript.audio_file_id = audio.id
+      transcript.subscription_plan_id = audio.billable_to.billable_subscription_plan_id
+      transcript.save!
+      audio.save!
+      transcript.billable_seconds.should eq audio.duration
+
+      user.calculate_monthly_usages!
+      user.update_usage_report!
+      user.plan.is_community?().should be_truthy
+      user.hours_remaining.should eq (comm_plan.hours - audio_hours)
+
+      # upgrade
+      stripe_helper = StripeMock.create_test_helper
+      card_token    = stripe_helper.generate_card_token
+      user.update_card!(card_token)
+      user.subscribe!(paid_plan)
+      user.subscription_plan_id = user.plan.as_plan.id
+      user.save!
+      audio.user.reload
+
+      # new transcript
+      transcript2 = FactoryGirl.create :transcript
+      transcript2.transcriber = Transcriber.premium
+      transcript2.audio_file_id = audio.id
+      transcript2.subscription_plan_id = user.billable_subscription_plan_id
+      transcript2.save!
+      transcript2.billable_seconds.should eq audio.duration
+      audio.save!
+
+      # only count the new transcript against monthly usage
+      user.calculate_monthly_usages!
+      user.update_usage_report!
+      user.hours_remaining.should eq (paid_plan.hours - audio_hours)
     end
 
   end

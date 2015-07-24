@@ -123,12 +123,16 @@ class SubscriptionPlanCached
     SubscriptionPlan.sync_with_stripe(self)
   end
 
+  def as_plan
+    SubscriptionPlan.find_by_stripe_plan_id(self.id)
+  end
+
   def is_community?
-    self.id == :premium_community || self.name == "Premium Community"
+    self.id == 'premium_community' || self.name == "Premium Community"
   end
 
   def is_basic_community?
-    self.id == :community || self.name == "Community"
+    self.id == 'community' || self.name == "Community"
   end
 
   # if the plan id has _business_ or _enterprise_ or _premium_ in it, we'll do premium transcripts
