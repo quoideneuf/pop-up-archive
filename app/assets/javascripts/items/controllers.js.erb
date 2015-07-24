@@ -138,44 +138,6 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     jQuery('button.ts-upgrade').not('.disabled').prop('disabled', false);
   });
 
-  $scope.getPremiumCostAndPromptOrder = function() {
-    var audioFile = $scope.item.newAudioFile($scope.selectedAudioFile);
-    $scope.audioFile = audioFile;
-    $scope.orderPremiumTranscriptModal = $modal({
-      template: '/assets/audio_files/order_premium_transcript.html', 
-      persist: true, 
-      show: true, 
-      backdrop: 'static', 
-      scope: $scope, 
-      prefixEvent: 'orderPremiumTranscriptModal'
-    });
-  };
-
-  // when premium transcript successfully ordered, disable its associated button.
-  $scope.$on('premiumTranscriptOrdered', function(event, audioFile) {
-    var btn = jQuery('#premium-ondemand-'+audioFile.id);
-    //console.log("btn: ", btn);
-    btn.html('Premium transcript ordered');
-    btn.addClass('disabled'); // flag as permanently off
-    btn.prop('disabled', true);
-  });
-
-  $scope.orderPremiumTranscript = function(af, $ev) {
-    $scope.selectedAudioFile = af; // track so our listeners can get it.
-
-    // disable all buttons immediately to prevent multiple clicks
-    // modal listener (above) will re-enable
-    jQuery('button.ts-upgrade').not('.disabled').prop('disabled', true);
-
-    $scope.getPremiumCostAndPromptOrder();
-    //mixpanel tracking
-    mixpanel.track(
-      "Reprocess Button Clicked",{
-          "User": $scope.currentUser.name + ' ' + $scope.currentUser.email
-          }
-    );
-  };
-
   $scope.itemStorage = function() {
     $q.when($scope.storageModal).then( function (modalEl) {
       console.log('modalEl:', modalEl);

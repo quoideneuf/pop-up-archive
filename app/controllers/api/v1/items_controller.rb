@@ -44,14 +44,10 @@ class Api::V1::ItemsController < Api::V1::BaseController
 
   def create
     if current_user.is_over_monthly_limit?
-      if !current_user.has_active_credit_card? || current_user.role == :member
-        render status: 413, json: {
-          error: 'Monthly limit exceeded',
-        }
-        return
-      else
-        item.transcript_type = 'premium' # force overage charge
-      end
+      render status: 413, json: {
+        error: 'Monthly limit exceeded',
+      }
+      return
     end
     item.valid?
     item.save
