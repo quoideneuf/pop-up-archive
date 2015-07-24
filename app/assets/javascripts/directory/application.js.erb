@@ -183,6 +183,11 @@ stations, universities, multimedia producers, and oral history archives large an
       templateUrl: "<%= asset_path 'imports/show.html' %>",
       controller: "ImportCtrl"
     })
+    .when('/jobs', {
+      templateUrl: "<%= asset_path 'dashboard/jobs.html' %>",
+      title: "Jobs",
+      description: "Join Pop Up Archive."
+    })
     .when('/organization', {
       templateUrl: "<%= asset_path 'organizations/show.html' %>",
       controller:  "OrganizationCtrl",
