@@ -163,6 +163,7 @@ class User < ActiveRecord::Base
   end
 
   def subscribe!(plan, offer = nil)
+    # plan is_a SubscriptionPlanCached object
     cus = customer.stripe_customer
     subscr = customer.stripe_subscription(cus)
     # we should always have a baseline subscription at stripe, no matter what.
