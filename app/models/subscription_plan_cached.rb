@@ -48,6 +48,19 @@ class SubscriptionPlanCached
     end
   end
 
+  def self.basic_community
+    if Rails.env.test?
+      return create(plan_id: 'community', name: 'Community', amount: 0)
+    end 
+    Rails.cache.fetch([:plans, :group, :community], expires_in: 30.minutes) do
+      spc = ungrandfathered.find { |p| p.id == 'community' and p.name == 'Community'}
+      if !spc
+        raise "Cannot find 'community' plan"
+      end 
+      return spc 
+    end 
+  end
+
   # the create() method is really only for testing, since we manage Stripe
   # plans through the Stripe website.
   # We implement it here as a way of creating plans via stripe-mock gem
@@ -114,9 +127,13 @@ class SubscriptionPlanCached
     self.id == :premium_community || self.name == "Premium Community"
   end
 
+  def is_basic_community?
+    self.id == :community || self.name == "Community"
+  end
+
   # if the plan id has _business_ or _enterprise_ or _premium_ in it, we'll do premium transcripts
   def has_premium_transcripts?
-    self.id.match(/_(business|enterprise|premium)_/)
+    self.id.match(/_(business|enterprise|premium)_/) or self.is_community?
   end
 
   attr_reader :name, :amount, :hours, :id, :interval

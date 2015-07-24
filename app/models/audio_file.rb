@@ -326,16 +326,14 @@ class AudioFile < ActiveRecord::Base
     # or if parent Item was created with premium-on-demand
     return if item.is_premium?
 
-    # always do the first 2 minutes
-    start_transcribe_job(user, 'ts_start', {start_only: true})
-
-    if (storage.at_internet_archive? || (user && (user.plan != SubscriptionPlanCached.community)))
+    # Mechabasic, e.g., gets ts_all transcripts
+    if (storage.at_internet_archive? || (user && !user.plan.has_premium_transcripts?))
       start_transcribe_job(user, 'ts_all')
     end
   end
 
   def start_premium_transcribe_job(user, identifier, options={})
-    return if (duration.to_i <= 0) # TODO necessary?
+    return if (duration.to_i <= 0)
     if ENV['PREMIUM_TRANSCRIBER'] && ENV['PREMIUM_TRANSCRIBER'] == "voicebase"
       start_voicebase_transcribe_job(user, identifier, options)
     else
@@ -543,8 +541,8 @@ class AudioFile < ActiveRecord::Base
     # and there are no transcripts yet created, 
     # and no tasks in process.
     unfinished_tasks = self.unfinished_tasks
-    basic_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::TranscribeTask"}
-    premium_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::SpeechmaticsTranscribeTask"}
+    basic_transcript_tasks = unfinished_tasks.select{|t| t.type == "Tasks::TranscribeTask"}
+    premium_transcript_tasks = unfinished_premium_transcribe_tasks
     if tscripts.size == 0 and !has_basic_transcribe_task_in_progress?(basic_transcript_tasks) and !has_premium_transcribe_task_in_progress?(premium_transcript_tasks)
       return true
     end
@@ -553,7 +551,7 @@ class AudioFile < ActiveRecord::Base
     if user && user.plan
       user_plan = user.plan
       # expect 2-minute preview only
-      if user_plan == SubscriptionPlanCached.community
+      if user_plan.is_basic_community?
         return false
       end
       # expect premium transcript
@@ -567,7 +565,7 @@ class AudioFile < ActiveRecord::Base
         end
       end
       # expect basic transcript
-      if user_plan != SubscriptionPlanCached.community
+      if !user_plan.has_premium_transcripts?
         if has_basic_transcript?(tscripts)
           return false
         elsif has_basic_transcribe_task_in_progress?(basic_transcript_tasks)
@@ -585,11 +583,15 @@ class AudioFile < ActiveRecord::Base
     self.tasks.unfinished
   end
 
+  def unfinished_premium_transcribe_tasks
+    unfinished_tasks.select{|t| t.type == "Tasks::SpeechmaticsTranscribeTask" or t.type == "Tasks::VoicebaseTranscribeTask" }
+  end
+
   def has_basic_transcribe_task_in_progress?(tsks=self.unfinished_tasks.transcribe)
     tsks.size > 0
   end
 
-  def has_premium_transcribe_task_in_progress?(tsks=self.unfinished_tasks.speechmatics_transcribe)
+  def has_premium_transcribe_task_in_progress?(tsks=self.unfinished_transcribe_tasks)
     tsks.size > 0
   end
 
@@ -770,8 +772,8 @@ class AudioFile < ActiveRecord::Base
     end
 
     unfinished_tasks = all_tasks.select{|t| t.status != Task::COMPLETE && t.status != Task::CANCELLED}
-    basic_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::TranscribeTask"}
-    premium_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::SpeechmaticsTranscribeTask"}
+    basic_transcript_tasks = unfinished_tasks.select{|t| t.type == "Tasks::TranscribeTask"}
+    premium_transcript_tasks = unfinished_premium_transcribe_tasks
     #Rails.logger.warn("1c elapsed: #{Time.now - st_time}")
     if (self.transcoded? or self.is_mp3? or self.is_mp3_transcode_complete?) \
       and ( \
@@ -790,12 +792,14 @@ class AudioFile < ActiveRecord::Base
     # it is possible the chain has sufficiently recovered enough
     # to produce a transcript, which is the end goal in any case.
     if self.stuck?
+      #STDERR.puts "STUCK!"
       status = STUCK
     end
     if self.is_expired?
       status = CANCELLED
     end
     #Rails.logger.warn("2a elapsed: #{Time.now - st_time}")
+    #STDERR.puts "status == #{status} plan == #{user.plan.name}"
 
     # now transcript checks
     tscripts = self.transcripts_alone
