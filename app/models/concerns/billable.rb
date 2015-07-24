@@ -475,10 +475,10 @@ module Billable
 
   # returns total transcript duration for current month
   # for non-community subscription plans.
-  def premium_noncommunity_transcripts_usage
+  def premium_noncommunity_transcripts_usage(dtim=DateTime.now)
     comm_plan_id = SubscriptionPlanCached.community.as_plan.id
     premium_ids = Transcriber.ids_for_type('premium')
-    sql = sql_for_transcripts_usage_for_month_of(DateTime.now, premium_ids)
+    sql = sql_for_transcripts_usage_for_month_of(dtim, premium_ids)
 
     # abort early if we have no valid SQL
     return 0 if !sql
