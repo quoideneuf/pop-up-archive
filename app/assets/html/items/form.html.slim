@@ -8,15 +8,15 @@ section.modal ng-controller="ItemFormCtrl"
         h3 ng-hide='item.id > 0' Create an Audio Item
     
       .modal-body
-        h3 ng-show="currentUser.trialEnded && !currentUser.hasCreditCard()"
-          | You're free trial has ended.
+        h3 ng-show="currentUser.offerEnded && !currentUser.hasCreditCard()"
+          | Your free trial has ended.
           a href="/account/plan"  Upgrade now!
         h3 ng-show="currentUser.overMonthlyLimit && !currentUser.hasCreditCard() && !currentUser.isOrgMember()"
          | You are over your monthly limit and do not have a credit card on file.
          a href="/account/plan"  Upgrade now!
         h3 ng-show="currentUser.overMonthlyLimit && currentUser.isOrgMember()"
          | You are over your organization's monthly limit.
-        form.item-form.form-horizontal name='newItemForm' ng-show="!currentUser.overMonthlyLimit || (currentUser.overMonthlyLimit && currentUser.hasCreditCard() && !currentUser.isOrgMember())"
+        form.item-form.form-horizontal name='newItemForm' ng-show="showForm()"
     
           div.form-group.remote-item ng-hide='(item.id > 0) || (item.files.length > 0) || (remoteFileUrls)' style="text-align:center;"
             h3 Drag and drop a file anywhere on the site

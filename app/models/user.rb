@@ -287,18 +287,18 @@ class User < ActiveRecord::Base
   def offer_end
     cus = customer.stripe_customer
     subscr = customer.stripe_subscription(cus)
-    offer_end=subscr.metadata[:offer_end].to_i
+    return nil unless subscr
+    offer_end=subscr.metadata[:offer_end].to_i || nil
     if offer_end > 0
-      Rails.logger.debug "***************************************************** #{subscr.metadata[:offer_end]}}"
       Time.at(offer_end)
     else
-      false
+      nil
     end
   end
 
   def is_offer_ended?
     return false unless offer_end()
-    return offer_end() >= Time.now
+    return offer_end() <= Time.now
   end
 
   def prorated_charge_for_month(dtim)

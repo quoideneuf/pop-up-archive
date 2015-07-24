@@ -271,6 +271,18 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
     $scope.showFilesAlert = false;
   };
 
+  $scope.showForm = function() {
+    if ($scope.currentUser.offerEnded && !$scope.currentUser.hasCreditCard()) {
+      return false
+    } else if ($scope.currentUser.overMonthlyLimit && $scope.currentUser.hasCreditCard() && !$scope.currentUser.isOrgMember()) {
+      return true
+    } else if (!$scope.currentUser.overMonthlyLimit) {
+      return true
+    } else {
+      return false
+    } 
+  }
+
   $scope.$watch('item', function (is) {
     if (!angular.isUndefined(is) && (is.id > 0) && angular.isUndefined(is.adoptToCollection)) {
       is.adoptToCollection = is.collectionId;
