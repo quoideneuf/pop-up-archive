@@ -1,4 +1,4 @@
-.navbar.navbar-fixed-top.navbar-default ng-class="{'over-monthly-limit': currentUser.overMonthlyLimit || (currentUser.trialEnded && !currentUser.hasCard)}"
+.navbar.navbar-fixed-top.navbar-default ng-class="{'over-monthly-limit': currentUser.overMonthlyLimit || (currentUser.offerEnded && !currentUser.hasCard)}"
   .container.navbar-inner
     .navbar-header
       h1.site-title.authn
@@ -15,7 +15,7 @@
         | .&nbsp;
         a href="/account/plan"
           | Upgrade now!
-      .over-limit-msg.alert.alert-error.ng-cloak ng-show="currentUser.trialEnded && !currentUser.hasCard"
+      .over-limit-msg.alert.alert-error.ng-cloak ng-show="currentUser.offerEnded && !currentUser.hasCard"
         | Your 
         a href="/account" 
           | trial 

@@ -174,7 +174,7 @@ class User < ActiveRecord::Base
     subscr.metadata[:orig_start] = subscr.metadata[:start]
     if (offer == 'radiorace')
       subscr.plan = plan.id
-      subscr.trial_end = 30.days.from_now.to_i
+      subscr.metadata[:offer_end] = 30.days.from_now.to_i
     else
       # see https://github.com/popuparchive/pop-up-archive/issues/1011
       # initial sign-up has "trial" until the first day of the next month.
@@ -221,6 +221,7 @@ class User < ActiveRecord::Base
       subscr.metadata[:coupon]    = offer
       subscr.metadata[:in_first_month] = customer.in_first_month?
       subscr.metadata[:is_community]   = plan.is_community?
+      subscr.metadata[:offer_end]     = nil
     end
 
     # custom metadata, including start time (so we can test effectively)
@@ -276,26 +277,28 @@ class User < ActiveRecord::Base
       amount: plan.amount,
       pop_up_hours: plan.hours,
       trial: customer.trial,  # TODO cache this better to avoid needing to call customer() at all.
-      trial_end: trial_end(),
+      offer_end: offer_end(),
       interim: customer.is_interim_trial?,
       interval: plan.interval,
       is_premium: plan.has_premium_transcripts? ? true : false,
     }
   end
 
-  def trial_end
+  def offer_end
     cus = customer.stripe_customer
     subscr = customer.stripe_subscription(cus)
-    if subscr && subscr.trial_end
-      Time.at(subscr.trial_end)
+    offer_end=subscr.metadata[:offer_end].to_i
+    if offer_end > 0
+      Rails.logger.debug "***************************************************** #{subscr.metadata[:offer_end]}}"
+      Time.at(offer_end)
     else
       false
     end
   end
 
-  def is_trial_ended?
-    return false unless trial_end()
-    return trial_end() <= Time.now
+  def is_offer_ended?
+    return false unless offer_end()
+    return offer_end() >= Time.now
   end
 
   def prorated_charge_for_month(dtim)
