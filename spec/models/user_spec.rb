@@ -231,6 +231,7 @@ describe User do
       user.calculate_monthly_usages!
       user.update_usage_report!
       user.hours_remaining.should eq (paid_plan.hours - audio_hours)
+      user.is_over_monthly_limit?().should be_falsey
     end
 
   end

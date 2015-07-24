@@ -401,12 +401,7 @@ module Billable
   end
 
   def is_over_monthly_limit?
-    summ = self.entity.usage_summary
-    if summ[:this_month][:overage][:hours].to_f > 0
-      return true
-    else
-      return false
-    end
+    self.entity.hours_remaining <= 0.0
   end
 
   def is_within_sight_of_monthly_limit?
@@ -451,10 +446,10 @@ module Billable
   # returns number of hours (float) in the current billing cycle.
   # NOTE that for Community plan users the current billing cycle == eternity.
   def hours_remaining
-    if plan.is_community?
-      pop_up_hours - premium_community_transcripts_usage.fdiv(3600)
+    if self.entity.plan.is_community?
+      self.entity.pop_up_hours - self.entity.premium_community_transcripts_usage.fdiv(3600)
     else
-      pop_up_hours - premium_noncommunity_transcripts_usage.fdiv(3600)
+      self.entity.pop_up_hours - self.entity.premium_noncommunity_transcripts_usage.fdiv(3600)
     end 
   end
 
