@@ -1,3 +1,9 @@
+/*variables*/
+$pua-red: #f25a4c;
+$dark-purple: #5e5692;
+$light-blue: #85D0F1;
+$blue-violet: #5970B1;
+
 @import "mixins";
 @import "pop-up_bootstrap";
 @import "my-collections";
@@ -1913,4 +1919,20 @@ table.usage {
     margin-left: 0;
   }
 }
+
+//jobs
+.jobs {
+  p, ul {
+    line-height: 1.8em;
+    font-size: 1.2em;
+  }
+  ul {
+    margin-left: 50px;
+  }
+  .highlight {
+    font-weight: 700;
+    color: $blue-violet;
+  }
+}
+//end jobs
 
