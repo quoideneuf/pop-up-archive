@@ -126,7 +126,7 @@ namespace :s3migrate do
     lscmd = "aws s3 ls --recursive --profile #{profile} s3://#{bucket}/"
     files = %x( #{lscmd} ).split(/$/).map(&:strip)
     list  = {}
-    files.each do |line|
+    files.each do |fline|
       flines = fline.split
       next unless flines[3]
       list[ flines[3] ] = flines[2]
