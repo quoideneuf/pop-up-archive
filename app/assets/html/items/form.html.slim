@@ -5,7 +5,7 @@ section.modal ng-controller="ItemFormCtrl"
         button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="$hide()" &times;
     
         h3 ng-show='item.id > 0' Edit {{item.title}}
-        h3 ng-hide='item.id > 0' Create an Audio Item
+        h3 ng-hide='(item.id > 0) || !showForm()' Create an Audio Item
     
       .modal-body
         h3 ng-show="currentUser.offerEnded && !currentUser.hasCreditCard()"
@@ -333,4 +333,4 @@ section.modal ng-controller="ItemFormCtrl"
     
       .modal-footer
         button.btn.btn-default type="button" ng-click="$hide()" Close
-        button.btn.btn-success ng-show='(item.id > 0) || (item.files.length > 0) || (remoteFileUrls)' ng-disabled='!item.id && !remoteFileUrls && (!item.collectionId || item.files.length <= 0) || newItemForm.$invalid' ng-click='submit(); $hide()' Save
+        button.btn.btn-success ng-show='((item.id > 0) || (item.files.length > 0) || (remoteFileUrls)) && showForm()' ng-disabled='!item.id && !remoteFileUrls && (!item.collectionId || item.files.length <= 0) || newItemForm.$invalid' ng-click='submit(); $hide()' Save
