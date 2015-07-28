@@ -76,7 +76,7 @@ namespace :s3migrate do
   def copy_bucket_dir(token, old_bucket, verbose=false)
     new_bucket = ENV['AWS_BUCKET']
     # get contents of old bucket dir
-    cmd = "aws s3 ls --profile prx s3://#{old_bucket}/#{token}/"
+    cmd = "aws s3 ls --recursive --profile prx s3://#{old_bucket}/#{token}/"
     verbose and puts cmd
     contents = %x( #{cmd} ).split(/$/).map(&:strip)
     dir_contents = {}
@@ -101,7 +101,7 @@ namespace :s3migrate do
     system(sync_cmd) or raise "#{sync_cmd} failed: #{$?}"
 
     # verify everything copied ok
-    ls_cmd = "aws s3 ls --profile pua s3://#{new_bucket}/#{token}/"
+    ls_cmd = "aws s3 ls --recursive --profile pua s3://#{new_bucket}/#{token}/"
     verbose and puts ls_cmd
     new_contents = %x( #{ls_cmd} ).split(/$/).map(&:strip)
     new_dir_contents = {}
