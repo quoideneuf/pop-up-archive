@@ -128,10 +128,12 @@ namespace :s3migrate do
     list  = {}
     dirs.each do |line|
       dir = (line.split)[1]
+      next unless dir
       cmd = "aws s3 ls --profile #{profile} s3://#{bucket}/#{dir}"
       files = %x( #{cmd} ).split(/$/).map(&:strip)
       files.each do |fline|
         flines = fline.split
+        next unless flines[3]
         list[dir + flines[3]] = flines[2]
       end
     end
