@@ -48,7 +48,7 @@ namespace :s3migrate do
   task :item, [:item_id] => [:environment] do |t, args|
     verbose = ENV['VERBOSE']
     item = Item.find(args.item_id.to_i)
-    copy_item(item)
+    copy_item(item, ENV['FORCE'] ? false : true )
   end
 
   def copy_item(item, strict=true)
