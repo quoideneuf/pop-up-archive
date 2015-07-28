@@ -2,6 +2,11 @@ require 'pp'
 
 namespace :s3migrate do
 
+  desc "compare PRX and PUA buckets"
+  task :compare_buckets => [:environment] do
+    compare_buckets()
+  end
+
   desc "Copy all Items from PRX S3 bucket to PUA bucket"
   task :all_items => [:environment] do
     verbose = ENV['VERBOSE']
@@ -114,6 +119,48 @@ namespace :s3migrate do
     end
 
     copy_ok
+  end
+
+  def build_bucket_list(profile, bucket)
+    verbose = ENV['VERBOSE']
+    lscmd = "aws s3 ls --profile #{profile} s3://#{bucket}/"
+    dirs  = %x( #{lscmd} ).split(/$/).map(&:strip)
+    list  = {}
+    dirs.each do |line|
+      dir = (line.split)[1]
+      cmd = "aws s3 ls --profile #{profile} s3://#{bucket}/#{dir}"
+      files = %x( #{cmd} ).split(/$/).map(&:strip)
+      files.each do |fline|
+        flines = fline.split
+        list[dir + flines[3]] = flines[2]
+      end
+    end
+    verbose and pp list
+    list
+  end
+
+  def compare_buckets
+    prx_bucket = 'pop-up-archive'
+    pua_bucket = 'www-prod-popuparchive'
+    prx_list = build_bucket_list('prx', prx_bucket)
+    pua_list = build_bucket_list('pua', pua_bucket)
+
+    # we expect the union of the 2 sets to represent all the assets
+    # copied from prx -> pua. if there are any items @ prx that are
+    # not @ pua, and they are not soft-deleted in the db, then we have a problem.
+    union_keys = prx_list.keys & pua_list.keys
+    prx_list.keys.each do |prx_file|
+      next if union_keys.include?(prx_file) # skip union
+      
+      # parse string to get token and look up Item
+      parts = prx_file.match(/^(.*?)\.(.+?)\.popuparchive\.org/)
+      token = parts[2]
+      item = Item.where(token: token).first
+      next unless item # must be deleted
+      puts "Missing Item #{item.id}contents at PUA: #{prx_file}"
+
+    end
+
   end
 
 end
