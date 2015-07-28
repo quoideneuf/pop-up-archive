@@ -150,6 +150,10 @@ namespace :s3migrate do
       
       # parse string to get token and look up Item
       parts = prx_file.match(/^(.*?)\.(.+?)\.popuparchive\.org/)
+      unless parts
+        puts "No parts match for '#{prx_file}'"
+        next
+      end
       token = parts[2]
       item = Item.where(token: token).first
       next unless item # must be deleted
