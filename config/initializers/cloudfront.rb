@@ -1,3 +1,5 @@
+unless Rails.env.test?
+
 Aws::CF::Signer.configure do |config|
   # mangle our env var to get it into expected key syntax
   priv_key = ENV['CLOUDFRONT_KEY'].gsub('"', '').gsub(/\\n/, "\n")
@@ -60,3 +62,5 @@ module CarrierWave
     end
   end
 end
+
+end # do not run in test mode
