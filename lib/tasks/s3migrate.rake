@@ -55,6 +55,8 @@ namespace :s3migrate do
     verbose = ENV['VERBOSE']
     if strict and item.storage.key == ENV['AWS_ACCESS_KEY_ID']
       raise "Item #{item.id} already configured to use PUA storage"
+    elsif !strict and item.storage.bucket == ENV['AWS_BUCKET']
+      item.storage.bucket = 'pop-up-archive' # temp override
     end 
     if copy_bucket_dir(item.token, item.storage.bucket, verbose)
       puts "Copy for item #{item.id} ok"
