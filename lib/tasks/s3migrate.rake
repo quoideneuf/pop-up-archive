@@ -4,7 +4,7 @@ namespace :s3migrate do
 
   desc "compare PRX and PUA buckets"
   task :compare_buckets => [:environment] do
-    compare_buckets()
+    compare_buckets(ENV['OK_TO_COPY'])
   end
 
   desc "Copy all Items from PRX S3 bucket to PUA bucket"
@@ -51,9 +51,9 @@ namespace :s3migrate do
     copy_item(item)
   end
 
-  def copy_item(item)
+  def copy_item(item, strict=true)
     verbose = ENV['VERBOSE']
-    if item.storage.key == ENV['AWS_ACCESS_KEY_ID']
+    if strict and item.storage.key == ENV['AWS_ACCESS_KEY_ID']
       raise "Item #{item.id} already configured to use PUA storage"
     end 
     if copy_bucket_dir(item.token, item.storage.bucket, verbose)
@@ -135,7 +135,7 @@ namespace :s3migrate do
     list
   end
 
-  def compare_buckets
+  def compare_buckets(ok_to_copy=false)
     prx_bucket = 'pop-up-archive'
     pua_bucket = 'www-prod-popuparchive'
     prx_list = build_bucket_list('prx', prx_bucket)
@@ -145,6 +145,7 @@ namespace :s3migrate do
     # copied from prx -> pua. if there are any items @ prx that are
     # not @ pua, and they are not soft-deleted in the db, then we have a problem.
     union_keys = prx_list.keys & pua_list.keys
+    seen_tokens = {}
     prx_list.keys.each do |prx_file|
       next if union_keys.include?(prx_file) # skip union
       
@@ -155,10 +156,14 @@ namespace :s3migrate do
         next
       end
       token = parts[1]
+      next if seen_tokens[token]
+      seen_tokens[token] = true
       item = Item.where(token: token).first
       next unless item # must be deleted
-      puts "Missing Item #{item.id}contents at PUA: #{prx_file}"
-
+      puts "Missing Item #{item.id} contents at PUA: #{prx_file}"
+      next unless ok_to_copy
+      item.storage.bucket = prx_bucket # force to be old bucket temporarily
+      copy_item(item, false)  # turn off strict check
     end
 
   end
