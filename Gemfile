@@ -68,6 +68,7 @@ gem 'geocoder'
 gem 'will_paginate'
 
 gem 'carrierwave'
+gem 'cloudfront-signer'
 
 gem 'rmagick'
 gem 'mini_magick', :git => 'git://github.com/fschwahn/mini_magick.git'
