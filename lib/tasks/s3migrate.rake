@@ -149,12 +149,12 @@ namespace :s3migrate do
       next if union_keys.include?(prx_file) # skip union
       
       # parse string to get token and look up Item
-      parts = prx_file.match(/^(.*?)\.(.+?)\.popuparchive\.org/)
+      parts = prx_file.match(/^(.+?\.popuparchive\.org)/)
       unless parts
         puts "No parts match for '#{prx_file}'"
         next
       end
-      token = parts[2]
+      token = parts[1]
       item = Item.where(token: token).first
       next unless item # must be deleted
       puts "Missing Item #{item.id}contents at PUA: #{prx_file}"
