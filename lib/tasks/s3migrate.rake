@@ -123,19 +123,13 @@ namespace :s3migrate do
 
   def build_bucket_list(profile, bucket)
     verbose = ENV['VERBOSE']
-    lscmd = "aws s3 ls --profile #{profile} s3://#{bucket}/"
-    dirs  = %x( #{lscmd} ).split(/$/).map(&:strip)
+    lscmd = "aws s3 ls --recursive --profile #{profile} s3://#{bucket}/"
+    files = %x( #{lscmd} ).split(/$/).map(&:strip)
     list  = {}
-    dirs.each do |line|
-      dir = (line.split)[1]
-      next unless dir
-      cmd = "aws s3 ls --profile #{profile} s3://#{bucket}/#{dir}"
-      files = %x( #{cmd} ).split(/$/).map(&:strip)
-      files.each do |fline|
-        flines = fline.split
-        next unless flines[3]
-        list[dir + flines[3]] = flines[2]
-      end
+    files.each do |line|
+      flines = fline.split
+      next unless flines[3]
+      list[ flines[3] ] = flines[2]
     end
     verbose and pp list
     list
