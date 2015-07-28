@@ -2,7 +2,7 @@ Aws::CF::Signer.configure do |config|
   # mangle our env var to get it into expected key syntax
   priv_key = ENV['CLOUDFRONT_KEY'].gsub('"', '').gsub(/\\n/, "\n")
   config.key          = priv_key
-  config.key_pair_id  = ENV['AWS_ACCESS_KEY_ID']
+  config.key_pair_id  = ENV['CLOUDFRONT_KEY_PAIR_ID']
   config.default_expires = 3600 # 1hr as seconds
 end
 
