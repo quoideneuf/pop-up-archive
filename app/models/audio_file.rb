@@ -591,7 +591,7 @@ class AudioFile < ActiveRecord::Base
     tsks.size > 0
   end
 
-  def has_premium_transcribe_task_in_progress?(tsks=self.unfinished_transcribe_tasks)
+  def has_premium_transcribe_task_in_progress?(tsks=self.unfinished_premium_transcribe_tasks)
     tsks.size > 0
   end
 
