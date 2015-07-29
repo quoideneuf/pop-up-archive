@@ -148,8 +148,15 @@ namespace :s3migrate do
     # not @ pua, and they are not soft-deleted in the db, then we have a problem.
     union_keys = prx_list.keys & pua_list.keys
     seen_tokens = {}
+
+    # allow for running in parallel
+    start_at = ENV["START_AT"]
     prx_list.keys.each do |prx_file|
       next if union_keys.include?(prx_file) # skip union
+
+      if start_at and prx_file[0,1].downcase == start_at.downcase
+        next
+      end
       
       # parse string to get token and look up Item
       parts = prx_file.match(/^(.+?\.popuparchive\.org)/)
