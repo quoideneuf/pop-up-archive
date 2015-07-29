@@ -154,7 +154,7 @@ namespace :s3migrate do
     prx_list.keys.each do |prx_file|
       next if union_keys.include?(prx_file) # skip union
 
-      if start_at and prx_file[0,1].downcase == start_at.downcase
+      if start_at and prx_file[0,1].downcase < start_at.downcase
         next
       end
       
