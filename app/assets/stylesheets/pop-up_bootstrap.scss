@@ -36,7 +36,7 @@ ul {
 }
 
 .navbar-fixed-top {
-  background: rgb(242, 239, 239) !important;
+  background: rgb(242, 239, 239);
 }
 
 .navbar {
@@ -186,9 +186,10 @@ footer, footer p {
   }
 }
 
-.over-monthly-limit {
+.navbar-fixed-top.over-monthly-limit {
   background-color: #f2dede;
   border: 2px solid #eed3d7;
+
 }
 
 .over-limit-msg {

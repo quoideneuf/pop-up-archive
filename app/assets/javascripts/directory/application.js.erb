@@ -90,10 +90,10 @@ can find and hear exactly what they're looking for."
       title: "Sign Up for Pop Up Archive",
       description: "Choose one of our monthly individual plans. If you have lots of audio, contact us to discuss enterprise services."
     })
-    .when('/pricing/prx', {
+    .when('/radiorace', {
       templateUrl: "<%= asset_path 'account/plans_prx.html' %>",
       controller: 'PRXSignUpCtrl',
-      title: "Sign Up &raquo; PRX Special Offer"
+      title: "Sign Up &raquo; Radio Race Special Offer"
     })
     .when('/account', {
       templateUrl: "<%= asset_path 'account/index.html' %>",
@@ -107,10 +107,10 @@ can find and hear exactly what they're looking for."
       title: "Account &raquo Plans",
       loginRequired: true
     })
-    .when('/account/plan/prx', {
+    .when('/account/plan/radiorace', {
       templateUrl: "<%= asset_path 'account/plans_prx.html' %>",
       controller: "PRXAccountPlanCtrl",
-      title: "Account &raquol Plans &raquo PRX Special Offer",
+      title: "Account &raquol Plans &raquo Radio Race Special Offer",
       loginRequired: true
     })
     .when('/collections', {

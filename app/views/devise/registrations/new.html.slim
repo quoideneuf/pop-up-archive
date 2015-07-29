@@ -25,7 +25,7 @@
       | plan at the rate of&nbsp;
       strong #{number_to_currency(plan.amount/100)} per #{plan.interval}
       - if offer_code == 'prx'
-        | <br>with a <strong>90-day</strong> free trial offer <strong>especially for PRX Members</strong>
+        | <br>with a <strong>30-day free trial</strong> offer especially for <strong>Radio Race participants</strong>
       |.
     - else
       | You are signing up for the&nbsp;
@@ -82,5 +82,8 @@
     = f.password_field :password_confirmation, placeholder: "Password (again)"
   input name='card_token' type='hidden' disabled=''
     
-  .pull-right.align-right = render "devise/shared/links"
-  button.btn.btn-primary onClick="_gaq.push(['_trackEvent', 'Registration', 'Registered']);" Sign Up
+  .clear
+    button.btn.btn-primary onClick="_gaq.push(['_trackEvent', 'Registration', 'Registered']);" Sign Up
+  
+  = render "devise/shared/links"
+  

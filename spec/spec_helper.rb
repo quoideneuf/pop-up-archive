@@ -7,7 +7,10 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
 ]
-SimpleCov.start 'rails'
+SimpleCov.start 'rails' do
+  add_filter "/admin/"             # 3rd party
+  add_filter "/app/models/search/" # 3rd party
+end
 
 # require 'webmock'
 # WebMock.disable_net_connect!(:allow_localhost => true)

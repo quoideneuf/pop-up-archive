@@ -285,7 +285,7 @@ form.form-big {
 }
 
 .navbar-form .search-query {
-  padding: 4px 14px;
+  padding: 0 14px;
   margin-bottom: 0;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size: 13px;
@@ -498,7 +498,6 @@ h5.result-count {
   font-size: 16px;
   display: block;
   background: none;
-  border-bottom: 4px solid white;
   padding-bottom: 10px;
   margin-bottom: 10px;
   width: 50%;
@@ -506,7 +505,6 @@ h5.result-count {
 
 .sort-options {
   width: 50%;
-  border-bottom: 4px solid white;
   float: left;
   text-align: right;
   select {
@@ -852,8 +850,8 @@ $authNavbarHeight: 75px;
           float: left;
         }
         input {
-          width: 92%;
-          height: 31px;
+          width: 90%;
+          height: 17px;
           -webkit-border-radius: 14px 0 0 14px;
           -moz-border-radius: 14px 0 0 14px;
           border-radius: 14px 0 0 14px;
@@ -1935,4 +1933,10 @@ table.usage {
   }
 }
 //end jobs
+
+#contact-modal {
+  .modal-header {
+    border-bottom: none;
+  }
+}
 

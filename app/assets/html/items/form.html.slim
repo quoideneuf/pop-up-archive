@@ -5,15 +5,18 @@ section.modal ng-controller="ItemFormCtrl"
         button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="$hide()" &times;
     
         h3 ng-show='item.id > 0' Edit {{item.title}}
-        h3 ng-hide='item.id > 0' Create an Audio Item
+        h3 ng-hide='(item.id > 0) || !showForm()' Create an Audio Item
     
       .modal-body
+        h3 ng-show="currentUser.offerEnded && !currentUser.hasCreditCard()"
+          | Your free trial has ended.
+          a href="/account/plan"  Upgrade now!
         h3 ng-show="currentUser.overMonthlyLimit && !currentUser.hasCreditCard() && !currentUser.isOrgMember()"
          | You are over your monthly limit and do not have a credit card on file.
          a href="/account/plan"  Upgrade now!
         h3 ng-show="currentUser.overMonthlyLimit && currentUser.isOrgMember()"
          | You are over your organization's monthly limit.
-        form.item-form.form-horizontal name='newItemForm' ng-show="!currentUser.overMonthlyLimit || (currentUser.overMonthlyLimit && currentUser.hasCreditCard() && !currentUser.isOrgMember())"
+        form.item-form.form-horizontal name='newItemForm' ng-show="showForm()"
     
           div.form-group.remote-item ng-hide='(item.id > 0) || (item.files.length > 0) || (remoteFileUrls)' style="text-align:center;"
             h3 Drag and drop a file anywhere on the site
@@ -48,8 +51,7 @@ section.modal ng-controller="ItemFormCtrl"
               a ng-click="hideAlert()" style='text-decoration: none; color: #da4f49; float: right; margin-right: -20px;' 
                 i.fa.fa-remove
               p 
-                | Are you sure? Add multiple files to your upload only for 
-                a href="https://www.popuparchive.com/collections/938/items/24904" multi-part recordings.
+                | Multiple files are not supported.
               p
                 strong
                   | For separate playback of each file, delete extra files and upload one at a time.         
@@ -71,15 +73,11 @@ section.modal ng-controller="ItemFormCtrl"
                       a href="#" ng-click="removeAudioFile(audioFile)" style='text-decoration: none; color: #da4f49;'
                         i.fa.fa-times-circle
                 
-              / p.alert.alert-info.pull-right 
-              /   i.fa.fa-star-empty
-              /   |   Upload and save one audio file at a time. Click "Add Files to Item" only for multi-part recordings.
-    
-              .clearfix.controls
+              .clearfix.controls ng-hide="item.files.length > 0"
                 span.pull-right file-button=""
                   button.btn.btn-default.upload-file-button Add Files to Item
     
-            .form-group ng-hide="item.id > 0"
+            .form-group ng-hide="item.id > 0 || item.files.length > 0 || remoteFileUrls.length > 0"
               label.control-label
                 | Add File
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles[][remoteFileUrl]']" data-placement="bottom" html="true" auto-close="true"
@@ -335,4 +333,4 @@ section.modal ng-controller="ItemFormCtrl"
     
       .modal-footer
         button.btn.btn-default type="button" ng-click="$hide()" Close
-        button.btn.btn-success ng-show='(item.id > 0) || (item.files.length > 0) || (remoteFileUrls)' ng-disabled='!item.id && !remoteFileUrls && (!item.collectionId || item.files.length <= 0) || newItemForm.$invalid' ng-click='submit(); $hide()' Save
+        button.btn.btn-success ng-show='((item.id > 0) || (item.files.length > 0) || (remoteFileUrls)) && showForm()' ng-disabled='!item.id && !remoteFileUrls && (!item.collectionId || item.files.length <= 0) || newItemForm.$invalid' ng-click='submit(); $hide()' Save
