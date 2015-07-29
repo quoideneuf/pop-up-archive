@@ -47,6 +47,10 @@ class Organization < ActiveRecord::Base
     owner ? owner.plan : SubscriptionPlanCached.community
   end
 
+  def pop_up_hours
+    plan.hours
+  end
+
   def owner_contact
     owner ? sprintf("%s <%s>", owner.name, owner.email) : '(nil)'
   end
