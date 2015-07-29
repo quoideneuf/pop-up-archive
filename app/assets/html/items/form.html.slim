@@ -54,8 +54,9 @@ section.modal ng-controller="ItemFormCtrl"
                 | Multiple files are not supported.
               p
                 strong
-                  | For separate playback of each file, delete extra files and upload one at a time.         
-            .form-group ng-hide="item.id > 0"
+                  | For separate playback of each file, delete extra files and upload one at a time.
+
+            .form-group ng-hide="item.audioFiles.length > 0 || item.files.length > 0 || remoteFileUrls.length > 0"
               label.control-label
                 | Upload File
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles']" data-placement="bottom" html="true" auto-close="true"
@@ -77,7 +78,7 @@ section.modal ng-controller="ItemFormCtrl"
                 span.pull-right file-button=""
                   button.btn.btn-default.upload-file-button Add Files to Item
     
-            .form-group ng-hide="item.id > 0 || item.files.length > 0 || remoteFileUrls.length > 0"
+            .form-group ng-hide="item.audioFiles.length > 0 || item.files.length > 0 || remoteFileUrls.length > 0"
               label.control-label
                 | Add File
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles[][remoteFileUrl]']" data-placement="bottom" html="true" auto-close="true"
@@ -100,6 +101,9 @@ section.modal ng-controller="ItemFormCtrl"
               label.control-label
                 | Current Files
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles']" data-placement="bottom" html="true" auto-close="true"
+              .controls ng-show="item.hasPendingDeletes()"
+                label.pull-left style='padding-top: 5px;'
+                  i You must click Save to confirm file deletion.
               .controls ng-hide="item.audioFiles.length > 0"
                 label.pull-left style='padding-top: 5px;'
                   i No current files.
