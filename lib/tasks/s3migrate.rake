@@ -168,11 +168,17 @@ namespace :s3migrate do
       next if seen_tokens[token]
       seen_tokens[token] = true
       item = Item.where(token: token).first
-      next unless item # must be deleted
-      puts "Missing Item #{item.id} contents at PUA: #{prx_file}"
+      collection = Collection.where(token: token).first
+      next unless (item or collection) # must be deleted
       next unless ok_to_copy
-      item.storage.bucket = prx_bucket # force to be old bucket temporarily
-      copy_item(item, false)  # turn off strict check
+      if item
+        puts "Missing Item #{item.id} contents at PUA: #{prx_file}"
+        item.storage.bucket = prx_bucket # force to be old bucket temporarily
+        copy_item(item, false)  # turn off strict check
+      elsif collection
+        puts "Missing Collection #{collection.id} contents at PUA: #{prx_file}"
+        copy_bucket(collection.token, prx_bucket, true)
+      end
     end
 
   end
