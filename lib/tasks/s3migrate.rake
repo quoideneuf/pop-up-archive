@@ -44,6 +44,15 @@ namespace :s3migrate do
     end
   end
 
+  desc "Copy all Collections"
+  task :all_collections => [:environment] do
+    verbose = ENV['VERBOSE']
+    Collection.find_in_batches do |colls|
+    colls.each do |coll|
+      copy_bucket_dir(coll.token, 'pop-up-archive', verbose)
+    end
+  end
+
   desc "Copy single Item contents from PRX S3 bucket to PUA bucket"
   task :item, [:item_id] => [:environment] do |t, args|
     verbose = ENV['VERBOSE']
