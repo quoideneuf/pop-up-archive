@@ -98,6 +98,14 @@ describe AudioFile do
       audio_file.tasks.last.class.should == Tasks::DetectDerivativesTask
     end
 
+    it "should not create a CopyToS3 task if already mp3" do
+     audio_file = FactoryGirl.create :audio_file
+     audio_file.storage.should be_automatic_transcode
+     audio_file.check_tasks
+     audio_file.filename.should eq 'test.mp3'
+     audio_file.has_task?('Tasks::CopyToS3Task').should be_falsey
+    end
+
     it "should create transcode task" do
       audio_file = FactoryGirl.create :audio_file_private
       audio_file.storage.should_not be_automatic_transcode
