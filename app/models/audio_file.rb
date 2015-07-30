@@ -172,7 +172,18 @@ class AudioFile < ActiveRecord::Base
 
   def url(*args)
     if has_file? and !file.nil?
-      file.try(:url, *args) 
+      # temporarily re-assign storage if IA + mp3
+      #STDERR.puts "args==#{args.inspect} automatic_transcode?==#{storage.automatic_transcode?}"
+      orig_storage = nil
+      copy_to_s3_task = tasks.copy_to_s3.valid.last
+      if storage.automatic_transcode? && args[0] == 'mp3' && copy_to_s3_task
+        #STDERR.puts "re-assigning storage to #{copy_to_s3_task.storage.provider}"
+        orig_storage = self.storage_id
+        self.storage_id = copy_to_s3_task.storage_id
+      end
+      u = file.try(:url, *args)
+      self.storage_id = orig_storage if orig_storage
+      u
     else 
       original_file_url
     end
@@ -224,6 +235,10 @@ class AudioFile < ActiveRecord::Base
     premium_transcribe_audio
   end
 
+  def has_task?(type)
+    tasks.any? { |t| t.type == type }
+  end
+
   def process_file
     # don't process file if no file to process yet (s3 upload)
     return if !has_file? && original_file_url.blank?
@@ -250,6 +265,7 @@ class AudioFile < ActiveRecord::Base
     copy_original
     transcode_audio
     copy_to_item_storage
+    start_copy_to_s3_job
     transcribe_audio
     premium_transcribe_audio
     if !needs_transcript?
@@ -427,6 +443,46 @@ class AudioFile < ActiveRecord::Base
 
     task = Tasks::DetectDerivativesTask.new(identifier: 'detect_derivatives')
     task.urls = detect_urls
+    self.tasks << task
+  end
+
+  # for IA storage, copy the .mp3 to popup_storage after the derivative is detected.
+  def start_copy_to_s3_job
+    return unless storage.automatic_transcode?
+    return if is_mp3?
+
+    if !has_file?
+      logger.debug "detect_derivatives audio_file #{self.id} not yet saved to archive.org"
+      return
+    end
+
+    # does a task already exist?
+    if task = (tasks.copy_to_s3.valid.where(identifier: 'copy_to_s3').last || tasks.select { |t| t.type == "Tasks:CopyToS3Task" && t.cancelled? }.pop)
+      logger.warn "copy_to_s3 task #{task.id} already exists for audio_file #{self.id}"
+      return
+    end
+
+    s3_storage = StorageConfiguration.popup_storage
+    # must save so task points to actual db record
+    s3_storage.save!
+
+    orig = self.process_file_url # should be .mp3 file
+    dest = self.destination({ storage: s3_storage, version: 'mp3' })
+
+    # protocol-free links are valid for browsers but not for us
+    if orig.match('^//')
+      orig = 'http:' + orig
+    end 
+
+    task = Tasks::CopyToS3Task.new(
+      identifier: 'copy_to_s3',
+      storage_id: s3_storage.id,
+      extras: {
+        'user_id'     => self.user_id,
+        'original'    => orig,
+        'destination' => dest
+      }   
+    )   
     self.tasks << task
   end
 
