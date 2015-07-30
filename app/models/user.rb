@@ -325,6 +325,23 @@ class User < ActiveRecord::Base
         cus
       end
     else
+      # check first if customer with this email was created in the last minute
+      # to avoid dupe creation. We can't search by email, so must just list limited by time.
+      Stripe::Customer.all(created: { gte: Time.now.to_i - 60 }).tap do |custs| 
+        custs.each do |cust|
+          if cust.email == self.email
+            self.customer_id = cust.id
+            update_attribute :customer_id, cust.id if persisted?
+            @_customer = Customer.new(cust)
+            Rails.cache.write([:customer, :individual, cust.id], @_customer, expires_in: cache_ttl)
+            sp = SubscriptionPlan.find_by_stripe_plan_id(@_customer.plan_id||SubscriptionPlanCached.community.id)
+            update_attribute :subscription_plan_id, sp.id if persisted?
+          end
+        end
+      end
+      return @_customer if @_customer
+      
+      # go ahead and create
       Customer.new(Stripe::Customer.create(email: email, description: name)).tap do |cus|
         #STDERR.puts cus.inspect
         #STDERR.puts cus.stripe_customer.inspect
