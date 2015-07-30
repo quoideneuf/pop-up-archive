@@ -48,8 +48,9 @@ namespace :s3migrate do
   task :all_collections => [:environment] do
     verbose = ENV['VERBOSE']
     Collection.find_in_batches do |colls|
-    colls.each do |coll|
-      copy_bucket_dir(coll.token, 'pop-up-archive', verbose)
+      colls.each do |coll|
+        copy_bucket_dir(coll.token, 'pop-up-archive', verbose)
+      end
     end
   end
 
