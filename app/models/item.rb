@@ -34,7 +34,9 @@ class Item < ActiveRecord::Base
       indexes :created_at,            type: 'date',   include_in_all: false, index_name: 'date_added'
       indexes :description,           type: 'string'
       indexes :identifier,            type: 'string'
-      indexes :title,                 type: 'string'
+      # title defined 2 ways per
+      # https://www.elastic.co/guide/en/elasticsearch/guide/current/multi-fields.html
+      indexes :title,                 type: 'string', fields: { raw: { type: 'string', index: 'not_analyzed' } }
       indexes :tags, type: 'string',  index_name: 'tag', analyzer: 'caseinsensitive', store: 'yes', term_vector: 'yes'
       indexes :contributors,          type: 'string',  index_name: 'contributor'
       indexes :physical_location,     type: 'string'
