@@ -51,6 +51,13 @@ namespace :s3migrate do
     copy_item(item, ENV['FORCE'] ? false : true )
   end
 
+  desc "Copy single Collection contents"
+  task :collection, [:coll_id] => [:environment] do |t, args|
+    verbose = ENV['VERBOSE']
+    collection = Collection.find(args.coll_id.to_i)
+    copy_bucket_dir(coll.token, 'pop-up-archive', verbose)
+  end
+
   def copy_item(item, strict=true)
     verbose = ENV['VERBOSE']
     if strict and item.storage.key == ENV['AWS_ACCESS_KEY_ID']
@@ -177,7 +184,7 @@ namespace :s3migrate do
         copy_item(item, false)  # turn off strict check
       elsif collection
         puts "Missing Collection #{collection.id} contents at PUA: #{prx_file}"
-        copy_bucket(collection.token, prx_bucket, true)
+        copy_bucket_dir(collection.token, prx_bucket, true)
       end
     end
 
