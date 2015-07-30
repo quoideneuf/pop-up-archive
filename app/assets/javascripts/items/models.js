@@ -257,6 +257,18 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     return new AudioFile(af);
   }
 
+  Item.prototype.hasPendingDeletes = function() {
+    var pending = 0;
+    var item    = this;
+    angular.forEach(item.audioFiles, function(af, idx) {
+      var audioFile = new AudioFile(af);
+      if (audioFile._delete) {
+        pending++;
+      }
+    });
+    return pending > 0 ? true : false;
+  }
+
   // update existing audioFiles
   Item.prototype.updateAudioFiles = function () {
     var item = this;
