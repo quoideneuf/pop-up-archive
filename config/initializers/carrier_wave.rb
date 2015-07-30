@@ -5,8 +5,8 @@ CarrierWave.configure do |config|
   config.root = Rails.root.join('tmp')
   config.cache_dir = "#{Rails.root}/tmp/uploads"
 
-
   config.storage        = :fog
+  config.asset_host     = ENV['CDN'] unless Rails.env.test?
   config.fog_directory  = ENV['AWS_BUCKET']
   config.fog_public     = false
 
