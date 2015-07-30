@@ -115,6 +115,9 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     return false if status == CANCELLED
     return false if status == COMPLETE
 
+    # in test mode, never stuck
+    return false if Rails.env.test?
+
     # older than max worktime and incomplete
     if outside_work_window?
       return true

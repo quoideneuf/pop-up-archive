@@ -7,19 +7,17 @@
   .row.parent
     .plan-well.col-md-4 ng-repeat="plan in plans | filter: {'interval': getInterval()} | orderBy:'amount' | limitTo: planOffset" ng-class="{current: isCurrentPlan(plan), selected: isSelectedPlan(plan), disabled: isDisabled(plan.name)}" ng-click="isDisabled(plan.name) ||changePlan(plan)"
         h3() {{plan.name}}
-        h4 ng-show="plan.name == 'Community'" 1 hour of processing per month
-        h4 ng-show="plan.name != 'Community'" of processing per month
-        object ng-show="plan.name == 'Community'" type="image/svg+xml" data="/assets/pricing/free.svg"
+        h4 ng-show="plan.is_community" 1 hour of free processing 
+        h4 ng-show="!plan.is_community" of processing per month
+        object ng-show="plan.name == 'Premium Community'" type="image/svg+xml" data="/assets/pricing/free.svg"
         object ng-show="plan.name == '1 Hour'" type="image/svg+xml" data="/assets/pricing/hourglass_1.svg"
         object ng-show="plan.name == '5 Hours'" type="image/svg+xml" data="/assets/pricing/hourglass_5.svg"
         //price
-        h3() ${{plan.amount/100}}
-        h4 per {{plan.interval}}
+        h3 ng-show="!plan.is_community" ${{plan.amount/100}}
+        h4 ng-show="!plan.is_community" per {{plan.interval}}
 
         ul.pricing
           li ng-show="isPremiumPlan(plan)" Premium Machine Transcripts 
-          li ng-show="!isPremiumPlan(plan)" 2-Minute Basic Machine Transcripts
-          li ng-show="!isPremiumPlan(plan)" On-Demand Premium Transcripts $#{Billable::OVERAGE_HOURLY_RATE}/hr
           / ul ng-show="isPremiumPlan(plan)"
           /   li Improved Accuracy
           /   li Automatic Speaker Differentiation

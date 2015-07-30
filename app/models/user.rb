@@ -163,6 +163,7 @@ class User < ActiveRecord::Base
   end
 
   def subscribe!(plan, offer = nil)
+    # plan is_a SubscriptionPlanCached object
     cus = customer.stripe_customer
     subscr = customer.stripe_subscription(cus)
     # we should always have a baseline subscription at stripe, no matter what.
@@ -207,7 +208,7 @@ class User < ActiveRecord::Base
           trial_end = customer.class.end_of_this_month
         end
         # if moving from community to non-community, treat like trial
-        if (orig_plan.id == :community || orig_plan.name == "Community") && !plan.is_community?
+        if (orig_plan.id == :premium_community || orig_plan.name == "Premium Community") && !plan.is_community?
           trial_end = customer.class.end_of_this_month
         end
       end 
@@ -299,26 +300,6 @@ class User < ActiveRecord::Base
   def is_offer_ended?
     return false unless offer_end()
     return offer_end() <= Time.now
-  end
-
-  def prorated_charge_for_month(dtim)
-    # get number of days active in the month
-    days_in_month = dtim.end_of_month.strftime('%d').to_i
-    #STDERR.puts "days_in_month=#{days_in_month}"
-    active_days = days_in_month - self.created_at.strftime('%d').to_i
-    #STDERR.puts "active_days=#{active_days}"
-
-    # get cost-per-day
-    # Stripe reports amount in cents, so we convert to dollars.
-    cost_per_day = (self.plan.amount / 100).fdiv(days_in_month)
-    #STDERR.puts "cost_per_day=#{cost_per_day}"
-    if self.plan.interval == 'year'
-      cost_per_day = (self.plan.amount / 100).fdiv(365)
-      #STDERR.puts "cost_per_day=#{cost_per_day} [yearly charge]"
-    end
-
-    # multiply
-    cost_per_day * active_days
   end
 
   def customer

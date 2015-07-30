@@ -183,19 +183,29 @@ describe AudioFile do
       @audio_file.transcribe_audio
     end
 
-    it 'should order start and all transcripts for internet archive audio' do
+    it 'only basic_community plan should order all transcripts for internet archive audio' do
       @audio_file = FactoryGirl.build :audio_file
       @audio_file.original_file_url="test.mp3"
       @audio_file.user.plan.should eq SubscriptionPlanCached.community
       @audio_file.transcoded_at = Time.now
-      @audio_file.should_receive(:start_transcribe_job)
-      @audio_file.should_receive(:start_transcribe_job)
+      @audio_file.should_receive(:start_transcribe_job).exactly(0).times
       @audio_file.transcribe_audio
     end
 
-    it 'should order start and all transcripts for organizations' do
+    it 'basic_community plan should order all transcripts for internet archive audio' do
+      @audio_file = FactoryGirl.build :audio_file
+      @audio_file.original_file_url="test.mp3"
+      @audio_file.user.subscribe!(SubscriptionPlanCached.basic_community)
+      @audio_file.user.plan.should eq SubscriptionPlanCached.basic_community
+      @audio_file.transcoded_at = Time.now
+      @audio_file.should_receive(:start_transcribe_job).exactly(1).times
+      @audio_file.transcribe_audio
+    end
+
+    it 'only basic_community should order all transcripts for organizations' do
       @audio_file.user.organization = FactoryGirl.build :organization
-      @audio_file.should_receive(:start_transcribe_job)
+      @audio_file.user.organization.plan.should eq SubscriptionPlanCached.community
+      @audio_file.should_receive(:start_transcribe_job).exactly(0).times
       @audio_file.transcribe_audio
     end
 
@@ -311,6 +321,7 @@ describe AudioFile do
   describe "current_status" do
     before(:each) {
       @audio_file = FactoryGirl.create :audio_file_no_copy_media
+      #@audio_file.user.subscribe!(SubscriptionPlanCached.community)
     }
 
     it "should default to STUCK with zero tasks" do
@@ -325,6 +336,7 @@ describe AudioFile do
       task.add_chunk!('2')
       task.finish!
       # reload to get current status
+      #STDERR.puts "checking audio_file.status"
       @audio_file.reload
       #STDERR.puts "2: upload task status == #{task.status}"
       #STDERR.puts "af #{@audio_file.id} status_code == #{@audio_file.status_code}"
