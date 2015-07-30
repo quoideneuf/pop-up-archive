@@ -41,11 +41,15 @@ angular.module('Directory.searches.controllers', ['Directory.loader', 'Directory
 
   $scope.defaultMiniMarkImage = '<%= asset_path("minimark.png") %>';
 
-  $scope.sortOptions = [{name: "Relevancy", sort_by: "_score", sort_order: "desc"},
-                      {name: "Newest Added to Oldest Added", sort_by: "date_added", sort_order: "desc"}, 
-                      {name: "Oldest Added to Newest Added", sort_by: "date_added", sort_order: "asc"},
-                      {name: "Newest Created to Oldest Created", sort_by: "date_created", sort_order: "desc"},
-                      {name: "Oldest Created to Newest Created", sort_by: "date_created", sort_order: "asc"}];
+  $scope.sortOptions = [
+    {name: "Relevancy", sort_by: "_score", sort_order: "desc"},
+    {name: "Newest Added to Oldest Added", sort_by: "date_added", sort_order: "desc"}, 
+    {name: "Oldest Added to Newest Added", sort_by: "date_added", sort_order: "asc"},
+    {name: "Newest Created to Oldest Created", sort_by: "date_created", sort_order: "desc"},
+    {name: "Oldest Created to Newest Created", sort_by: "date_created", sort_order: "asc"},
+    {name: "Title, A-Z", sort_by: "title.raw", sort_order: "asc"},
+    {name: "Title, Z-A", sort_by: "title.raw", sort_order: "desc"}
+  ];
                         
   $scope.sortResults = function (args) {
     $location.search('sortBy', args.sort_by);
