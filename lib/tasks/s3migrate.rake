@@ -55,7 +55,7 @@ namespace :s3migrate do
   task :collection, [:coll_id] => [:environment] do |t, args|
     verbose = ENV['VERBOSE']
     collection = Collection.find(args.coll_id.to_i)
-    copy_bucket_dir(coll.token, 'pop-up-archive', verbose)
+    copy_bucket_dir(collection.token, 'pop-up-archive', verbose)
   end
 
   def copy_item(item, strict=true)
