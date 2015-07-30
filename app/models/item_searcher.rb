@@ -251,7 +251,7 @@ class ItemSearcher
 
       # determine sort order
       if has_sort
-        Rails.logger.warn("has_sort==true. column==#{query_builder.sort_column} dir=#{query_builder.sort_order}")
+        #Rails.logger.warn("has_sort==true. column==#{query_builder.sort_column} dir=#{query_builder.sort_order}")
         sort do
           by query_builder.sort_column, query_builder.sort_order
         end
