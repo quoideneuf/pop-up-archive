@@ -96,7 +96,7 @@ describe CsvImport do
         analyzed_import.user.destroy
         analyzed_import.destroy
       end
-      StripeMock.end
+      StripeMock.stop
     end
 
     it "should start with no rows" do

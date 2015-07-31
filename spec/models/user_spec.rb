@@ -44,7 +44,17 @@ describe User do
       User.get_user_ids_for_transcripts_since.should eq ['1']  # seed data only
     end
     it "should chew on raw sql for created since" do
-      User.created_in_month.should eq [User.find(1)] # seed data only
+      # assuming tests don't cross midnight on last day of month...
+      # coerce everything into a hash so we can compare realistically.
+      created = {}
+      expected = {}
+      User.all.each do |u|
+        expected[ u.id ] = true
+      end
+      User.created_in_month.each do |u|
+        created[ u.id ] = true
+      end
+      created.should eq expected
     end
   end
 
