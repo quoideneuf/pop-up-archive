@@ -13,6 +13,39 @@ describe User do
       user.apply_oauth(auth)
       user.email.should eq 'test@popuparchive.org'
     end
+
+    it "should create from session hash" do
+      user = User.new_with_session({}, { 
+        'devise.oauth_data' => { 
+          'provider' => 'dummy', 'uid' => '123', 'email' => 'you@example.com', 'name' => 'foo' 
+        }
+      })
+      user.email.should eq 'you@example.com'
+      user.uid.should eq '123'
+    end
+  end
+
+  context 'convenience' do
+    it "should serialize to email" do
+      user.to_s.should eq user.email
+    end
+    it "should treat searchable_collection_ids like collection_ids" do
+      user.searchable_collection_ids.should eq user.collection_ids
+    end
+    it "should wrap collections_title_id" do
+      coll = user.collections.first
+      colls = { coll.id.to_s => coll.title }
+      user.collections_title_id.should eq colls
+    end
+    it "should wrap collections_without_my_uploads" do
+      user.collections.should eq user.collections_without_my_uploads
+    end
+    it "should chew on raw sql for transcripts since" do
+      User.get_user_ids_for_transcripts_since.should eq ['1']  # seed data only
+    end
+    it "should chew on raw sql for created since" do
+      User.created_in_month.should eq [User.find(1)] # seed data only
+    end
   end
 
   context 'usage' do
@@ -25,6 +58,10 @@ describe User do
     }
 
     let(:audio_file) { FactoryGirl.create(:audio_file_private) }
+
+    it "should identify owner" do
+      user.owner.should eq user
+    end
 
     it 'gets usage for current month' do
       user.usage_for('test').should == 0
@@ -320,6 +357,7 @@ describe User do
       user.active_credit_card.should be_nil
       user.update_card!(card_token)
       user.active_credit_card.should_not be_nil
+      user.has_active_credit_card?().should be_truthy
     end
 
     it 'can get current card json ' do
