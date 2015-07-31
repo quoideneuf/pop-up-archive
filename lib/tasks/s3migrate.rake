@@ -176,7 +176,7 @@ namespace :s3migrate do
       end
       
       # parse string to get token and look up Item
-      parts = prx_file.match(/^(.+?\.popuparchive\.org)/)
+      parts = prx_file.match(/^(.+?)\//)
       unless parts
         puts "No parts match for '#{prx_file}'"
         next
