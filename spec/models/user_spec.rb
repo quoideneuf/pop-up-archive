@@ -61,7 +61,7 @@ describe User do
   context 'usage' do
 
     let(:org_user) {
-      now = DateTime.now
+      now = DateTime.now.utc
       ou = FactoryGirl.create :organization_user
       ou.organization.monthly_usages.create(use: 'test', year: now.year, month: now.month, value: 10)
       ou
@@ -90,7 +90,7 @@ describe User do
     end
 
     it 'updates usage' do
-      time = DateTime.now
+      time = DateTime.now.utc
       user.usage_for('test', time).to_i.should == 0
       user.update_usage_for('test', {:seconds => 100, :cost => 0, :retail_cost => 0}, time)
       user.usage_for('test', time).should eq 100
