@@ -104,13 +104,13 @@ angular.module('Directory.alerts', ['ngLoadingIndicators'])
   var template = '' +
   '<ul class="dropdown-menu alert-showers" role="menu" aria-labelledby="alerts-dropdown" ng-hide="alerts.length == 0">' +
     '<li class="alert-shower" ng-repeat="alert in alerts" ng-class="{pending:!(alert.done)}">' +
-      '<a class="pull-right dismiss" ng-click="alert.dismiss(); $event.stopPropagation()" ><i class="icon-remove-circle"></i></a></br>' +
+      '<a class="pull-right dismiss" ng-click="alert.dismiss(); $event.stopPropagation()" ><i class="glyphicon glyphicon-remove-circle"></i></a></br>' +
       '<a ng-href="{{alert.path}}">' +
           '<div class="message">' +
             '<span class="status">{{alert.status}}:</span> {{alert.message}}' +
           '</div>' +
-          '<div class="progress progress-striped" ng-class="{active:alert.progress && alert.progress < 100}">' +
-            '<div class="bar" ng-style="{width:alert.progress+\'%\'}"></div>' +
+          '<div class="progress" ng-class="{active:alert.progress && alert.progress < 100}">' +
+            '<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{{alert.progress}}" aria-valuemin="0" aria-valuemax="100" ng-style="{width:alert.progress+\'%\'}"></div>' +
           '</div>' +
       '</a>' +
       '<hr/>' +

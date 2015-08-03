@@ -206,8 +206,13 @@ PUATPlayer.prototype = {
         }
       }
     });
-    $('#share-modal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget);
+    var modalId = 'share-modal-'+self.fileId;
+    $('#'+modalId).on('show.bs.modal', function (ev) {
+      if (!ev.relatedTarget) {
+        console.log("cannot find clicked button for modal:", ev);
+        return;
+      }
+      var button = $(ev.relatedTarget);
       var row    = button.parents('.pua-tplayer-text');
       var ttbl   = button.parents('.tplayer.scrolling');
       var offset = row.data('offset');
@@ -219,6 +224,8 @@ PUATPlayer.prototype = {
       var lnk    = window.shortURL + '/t/' + itemId;
       var lnkWithOffset = lnk + '/' + offset;
       var tweetStr = row.find(".text").html().trim();
+      console.log('row', row, 'ttbl', ttbl, 'modal', modal, 'lnk', lnk, 'hms', hms);
+      console.log('tweetStr', tweetStr);
       if ($(".pua-tplayer-text[data-idx='"+(idx+1)+"']").length !== 0) {
         tweetStr += " " + $(".pua-tplayer-text[data-idx='"+(idx+1)+"']").find(".text").html().trim();
       }

@@ -1,0 +1,6 @@
+.popover style="min-width:150px"
+  .arrow
+  button type="button" class="close" ng-click="$hide()" aria-hidden="true"  &times;
+  h3 class="popover-title" Select Speaker
+  .popover-content
+    select ng-change='updateSpeaker(text, originalSpeaker, $index)' ng-model='text.speakerId' ng-options='speaker.id as speaker.name for speaker in speakers'

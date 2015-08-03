@@ -98,6 +98,7 @@ module Billable
     audio_files_sql = "select af.id from audio_files as af where af.duration is not null and af.item_id in (#{items_sql})"
     transcripts_sql = "select * from transcripts as t where t.transcriber_id=#{transcriber_id} and t.audio_file_id in (#{audio_files_sql})"
     transcripts_sql += " and t.created_at between '#{start_dtim}' and '#{end_dtim}'"
+    transcripts_sql += " and t.is_billable=true"
     transcripts_sql += " order by t.created_at asc"
 
     return transcripts_sql
@@ -125,6 +126,7 @@ module Billable
     audio_files_sql += "where af.duration is not null and af.user_id=#{self.id} and af.item_id in (#{items_sql})"
     transcripts_sql = "select * from transcripts as t where t.transcriber_id=#{transcriber_id} and t.audio_file_id in (#{audio_files_sql})"
     transcripts_sql += " and t.created_at between '#{start_dtim}' and '#{end_dtim}'"
+    transcripts_sql += " and t.is_billable=true"
     transcripts_sql += " order by t.created_at asc"
 
     return transcripts_sql

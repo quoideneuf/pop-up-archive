@@ -7,8 +7,8 @@ meta view-head="view-head" property="og:type" content="article"
 
 .container ng-show="currentUser.canEdit(item) || collection.itemsVisibleByDefault"
   //Search Results Navigation
-  .row-fluid
-    .span12
+  .row
+    .col-md-12
       //ul.pager ng-show="nextItem || previousItem || searchResults.query"
         / li.previous ng-class="{disabled: !previousItem}"
         /   a ng-href='{{previousItem.link()}}' &larr; Previous
@@ -20,7 +20,7 @@ meta view-head="view-head" property="og:type" content="article"
         / li.next ng-class="{disabled: !nextItem}"
         /   a ng-href="{{nextItem.link()}}" Next &rarr;
   //Buttons in between the previous and next buttons
-  .row-fluid style="text-align:center;"
+  .row style="text-align:center;"
     //Donate Button
     a href="http://www.radiotopia.fm/#donate" ng-click="clickDonate()" target="_blank"
       .donatediv ng-show="displayDonate()"
@@ -29,29 +29,29 @@ meta view-head="view-head" property="og:type" content="article"
     a.btn.btn-info.promotebtn ng-show="currentUser.canEdit(item) && collection.itemsVisibleByDefault" href="https://popuparchiveorg.zendesk.com/hc/en-us/sections/200651284-SHARING-POP-UP-DATA" ng-click="clickPromote()"
       i.fa.fa-bolt
       |  Promote your story
-  .row-fluid.item-detail
+  .row.item-detail
     //Breadcrumbs
-    .span6 
+    .col-md-6 
       p
         a ng-href='/collections' Pop Up Archive
         |  &raquo;
         a ng-href="/collections/{{collection.id}}" {{collection.title}}
     //Item-level buttons
-    .span6
+    .col-md-6
       .btn-group.pull-right
-        button.btn ng-show="currentUser.canEdit(item)" ng-click="uploadFile()"
+        button.btn.btn-default ng-show="currentUser.canEdit(item)" ng-click="uploadFile()"
           i.fa.fa-edit
           |  Edit Item
         button.btn.btn-danger ng-show="currentUser.canEdit(item)" ng-disabled="!currentUser.isAdmin()" ng-click="deleteItem()"
           i.fa.fa-trash
           |  Delete Item    
-  .row-fluid.thumb-and-title
+  .row.thumb-and-title
     //Thumb and Title
-    .span11
+    .col-md-11
       img ng-if="(item.imageFiles && item.imageFiles.length) || (collection.imageFiles && collection.imageFiles.length)" ng-src="{{ updateImage() }}"
       h1 view-title="view-title" {{item.title}}
     //Storage location
-    .span1
+    .col-md-1
       a ng-show="currentUser.canEdit(item)" ng-click="itemStorage()"
         span.storage.pull-right ng-class="Storage.storageClass(item.storage)"
 
@@ -61,111 +61,107 @@ meta view-head="view-head" property="og:type" content="article"
   a ng-show="collection.itemsVisibleByDefault" twitter="twitter" class="tweetButton" data-lang="en" data-count='none' data-via='PopUpArchive' data-size="medium"
 
   //Description      
-  .row-fluid
-    .span12
+  .row
+    .col-md-12
       p ng-show="item.description" ng-bind-html="item.description"
   //Audio file repeat
   .item-detail ng-show="item.audioFiles.length"
     section.audio-file ng-repeat="audioFile in item.audioFiles" ng-controller="AudioFileCtrl"
 
-      .row-fluid
+      .row
         //Audio file title
-        .span9
+        .col-md-9
           h4 ng-show="item.audioFiles.length > 1" {{audioFile.filename || 'no audio file'}}
         //File-level buttons
-        .span3
+        .col-md-3
           .btn-group.pull-right
-            button.btn type="button" ng-show="collection.itemsVisibleByDefault" ng-click="showEmbedCodesModal()"
+            button.btn.btn-default type="button" ng-show="collection.itemsVisibleByDefault" ng-click="showEmbedCodesModal()"
               i.fa.fa-link
               |  Embed Codes
-            button.btn.dropdown-toggle.download-btn type="button" bs-dropdown="downloadLinks" data-toggle="dropdown"  
+            button.btn.btn-default.dropdown-toggle.download-btn type="button" bs-dropdown="downloadLinks" data-toggle="dropdown" data-placement="bottom-right"
               i.fa.fa-download-alt 
               |  Export  
               span.fa.fa-caret-down
 
-      .row-fluid.player
-        .span1
-          button.player-button ng-disabled="player.time == 0" ng-click="player.rewind()"
-            i.fa.fa-fast-backward
-        .span1
-          button.player-button ng-hide="isPlaying()" ng-click="play()"
-            i.fa.fa-play
-          button.player-button ng-show="isPlaying()" ng-click="player.pause()"
-            i.fa.fa-pause
-        .span8
+      .row.player
+        .col-md-12
+          .player-buttons
+            i.player-button.fa.fa-fast-backward ng-disabled="player.time == 0" ng-click="player.rewind()"
+            i.player-button.fa.fa-play ng-hide="isPlaying()" ng-click="play()"
+            i.player-button.fa.fa-pause ng-show="isPlaying()" ng-click="player.pause()"
+          .timecodes 
+            div ng-show="player.time"
+              span() {{player.time | timeCode}}
+              span ng-show="item.duration" &#47; {{item.getDurationString()}}
           .scrubber
             .bar ng-show="isLoaded()" ng-style="{width:player.time*100/player.duration+'%'}"
-        .span2
-          .timecodes ng-show="player.time"
-            span() {{player.time | timeCode}}
-            span ng-show="item.duration" &#47; {{item.getDurationString()}}
 
-      .row-fluid.ts-info-row ng-show="audioFile.transcript.parts.length"
+      .row.ts-info-row ng-show="audioFile.transcript.parts.length"
         //Basic or Premium label
-        .span5.transcript-label
+        .col-md-5.transcript-label
           span.ts-type() {{audioFile.transcriptType}} Transcript
 
-          i.fa.fa-question-circle ng-show="audioFile.transcriptType == 'Basic'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['basicTranscript']" data-placement="bottom"    
-          i.fa.fa-question-circle ng-show="audioFile.transcriptType == 'Premium'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['premiumTranscript']" data-placement="bottom"
+          i.fa.fa-question-circle ng-show="audioFile.transcriptType == 'Basic'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['basicTranscript']" data-placement="bottom" html="true" auto-close="true"
+          i.fa.fa-question-circle ng-show="audioFile.transcriptType == 'Premium'" style="margin-left:2px; margin-bottom:2px; margin-right:8px;" bs-popover="itemHelp['premiumTranscript']" data-placement="bottom" html="true" auto-close="true"
 
           //Reprocess as Premium button
-          button.btn.ts-upgrade id="premium-ondemand-{{audioFile.id}}" ng-show="currentUser.canEdit(item) && audioFile.transcriptType == 'Basic' && !audioFile.premiumInProgress && audioFile.duration" ng-click="orderPremiumTranscript(audioFile, $event)" title="Your cost: {{audioFile.premiumRetailCost}}"
+          button.btn.btn-default.ts-upgrade id="premium-ondemand-{{audioFile.id}}" ng-show="currentUser.canEdit(item) && audioFile.transcriptType == 'Basic' && !audioFile.premiumInProgress && audioFile.duration" ng-click="orderPremiumTranscript(audioFile, $event)" title="Your cost: {{audioFile.premiumRetailCost}}"
             i.fa.fa-star-empty
             |  Reprocess as Premium
-          button.btn.ts-upgrade id="premium-ondemand-{{audioFile.id}}" ng-show="audioFile.transcriptType == 'Basic' && audioFile.premiumInProgress" ng-disabled="true"
+          button.btn.btn-default.ts-upgrade id="premium-ondemand-{{audioFile.id}}" ng-show="audioFile.transcriptType == 'Basic' && audioFile.premiumInProgress" ng-disabled="true"
             i.fa.fa-time
             |  Premium in progress
         //Transcript-level buttons        
-        .span7.transcript-options
+        .col-md-7.transcript-options
           .btn-group.pull-right ng-show="audioFile.transcript.parts.length"
-            button.btn ng-show="currentUser.canEdit(item) && !editTable" ng-disabled="allowEditButton(audioFile)" ng-click="callEditor(); expandTranscript(); play();"
+            button.btn.btn-default ng-show="currentUser.canEdit(item) && !editTable" ng-disabled="allowEditButton(audioFile)" ng-click="callEditor(); expandTranscript(); play();"
               i.fa.fa-edit
               |  Edit Text
-            button.btn ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave(); collapseTranscript()"
+            button.btn.btn-default ng-show="currentUser.canEdit(item) && editTable" ng-click="callSave(); collapseTranscript()"
               i.fa.fa-save
               |  Save Text
-            button.btn ng-show="currentUser.canEdit(item) && audioFile.transcriptType != 'Basic'" bs-modal="'#{asset_path 'items/assign_speakers_form.html'}'"
+            button.btn.btn-default ng-show="currentUser.canEdit(item) && audioFile.transcriptType != 'Basic'" bs-modal="modal" data-template="#{asset_path 'items/assign_speakers_form.html'}" data-animation="am-fade-and-slide-top"
               i.fa.fa-user
               |  Assign Speakers
-            button.btn.expand-transcript ng-click="collapseTranscript()" ng-show="transcriptExpanded"
+            button.btn.btn-default.expand-transcript ng-click="collapseTranscript()" ng-show="transcriptExpanded"
               i.fa.fa-double-angle-up
               |  Collapse
-            button.btn.expand-transcript ng-click="expandTranscript()" ng-show="!transcriptExpanded"
+            button.btn.btn-default.expand-transcript ng-click="expandTranscript()" ng-show="!transcriptExpanded"
               i.fa.fa-double-angle-down
               |  Expand
           .search-group.pull-right
-            input.search-query ng-class="{extended:!!transcriptFilter}" ng-model="transcriptFilter" placeholder="Search"
+            input.search-query.form-control ng-class="{extended:!!transcriptFilter}" ng-model="transcriptFilter" placeholder="Search"
             a.clear-filter.fa.fa-times-circle ng-show="transcriptFilter.length > 0" ng-click="transcriptFilter=''"
-            .row-fluid.ts-info-row ng-show="audioFile.transcript.parts.length"
+            .row.ts-info-row ng-show="audioFile.transcript.parts.length"
 
       //Key commands
-      .row-fluid.key-commands ng-show="editTable"
-        .span3
+      .row.key-commands ng-show="editTable"
+        .col-md-3
           ul
             li.fa.fa-chevron-up
             li.fa.fa-step-forward
             li.bold Shift+Tab:
             li Play from start of line 
-        .span3
+        .col-md-3
           ul
             li.fa.fa-step-forward
             li.bold Tab:
             li Pause/Play          
-        .span3
+        .col-md-3
           ul
             li.fa.fa-hand-right
             li.bold Enter:
             li Next Line
-        .span3
+        .col-md-3
           ul
             li.fa.fa-arrow-up
             li.bold Up:
             li Prev Line
 
       div ng-class="transcriptClass()"
-        .row-fluid
+        .row
         //Amara buttons, phasing this feature out
-          .span12
+          .col-md-12
             ul.arrow-buttons ng-show="showOnAmara()"
               / li ng-show="showOrderTranscript()"
               /   a class='perfect' href="#" ng-click='orderTranscript()'
@@ -186,14 +182,14 @@ meta view-head="view-head" property="og:type" content="article"
               li
                 a href="#" &nbsp;
             
-        .row-fluid
+        .row
           //Transcript
-          .span12
+          .col-md-12
             .transcript ng-class="{true:'glow'}[editTable]" transcript-type="audioFile.transcriptType" speakers="audioFile.transcript.speakers" transcript-text="audioFile.transcript.parts | highlightMatches:transcriptFilter" transcript-editable="currentUser.canEdit(item)" current-time="player.time" save-text="saveText(text)" file-url="fileUrl" auto-scroll="!transcriptFilter" ng-model="transcriptFilter"
 
-        .row-fluid
+        .row
           //Transcript processing alerts
-          .span12
+          .col-md-12
             .alert.alert-info ng-show="audioFile.currentStatus == '#{AudioFile::TRANSCRIPT_SAMPLE_COMPLETE}' && currentUser.canEdit(item)"
               |  Here is the transcription of the first two minutes of your audio.&nbsp;
               strong
@@ -203,14 +199,14 @@ meta view-head="view-head" property="og:type" content="article"
             .alert.alert-info ng-show="(audioFile.currentStatus == '#{AudioFile::TRANSCRIPT_SAMPLE_COMPLETE}' || audioFile.currentStatus == '#{AudioFile::TRANSCRIPT_PREVIEW_COMPLETE}') && !currentUser.canEdit(item)"
               | This is a 2-minute basic transcript preview.
 
-      .row-fluid
+      .row
         //File processing status
-        .span12
+        .col-md-12
           .alert.alert-info ng-show="isFileProcessing(audioFile) && currentUser.canEdit(item)" ng-bind-html="statusNotification(audioFile)"
 
   //Metadata
-  .row-fluid.item-detail.metadata
-    .span6
+  .row.item-detail.metadata
+    .col-md-6
       h4 Metadata
       dl.dl-horizontal
         dt ng-show="item.seriesTitle" Series Title
@@ -240,7 +236,7 @@ meta view-head="view-head" property="og:type" content="article"
         section ng-repeat="(field, value) in item.extra"
           dt() {{field|titleize}}
           dd() {{value}}
-    .span6
+    .col-md-6
       section.rights ng-show="item.rights"
         h5 Rights
         p() {{item.rights}}
@@ -248,53 +244,53 @@ meta view-head="view-head" property="og:type" content="article"
         h5() {{contributorGroup | titleize | pluralize}}
         ul
           li ng-repeat="contribution in item.contributions|filter:{role:contributorGroup}"
-            a.btn ng-href='/search?query=contributor:%22{{contribution.person.name}}%22' {{contribution.person.name}}
+            a.btn.btn-default ng-href='/search?query=contributor:%22{{contribution.person.name}}%22' {{contribution.person.name}}
       section.tags ng-show="item.tags"
         h5 Tags
         ul
           li ng-repeat="tag in item.tags track by $index"
-            a.btn ng-href='/search?query=%28entity:%22{{tag}}%22%20OR%20tag:%22{{tag}}%22%29' {{tag}}
+            a.btn.btn-default ng-href='/search?query=%28entity:%22{{tag}}%22%20OR%20tag:%22{{tag}}%22%29' {{tag}}
             
   //Item notes
-  .row-fluid
-    .span12
+  .row
+    .col-md-12
       section.notes ng-show="item.notes"
         h5 Notes
         p() {{item.notes}}
 
   .item-detail
-    .row-fluid
+    .row
       //Confirmed autogenerated entities
-      .span12
+      .col-md-12
         section.entities ng-show="(item.entities| filter:{isConfirmed:true}).length"
           h5 Related
           ul
             li.entity ng-repeat="entity in item.entities|filter:{isConfirmed:true}"
               .btn-group
-                button.btn.delete ng-click="deleteEntity(entity)" ng-show="currentUser.canEdit(item)"
+                button.btn.btn-default.delete ng-click="deleteEntity(entity)" ng-show="currentUser.canEdit(item)"
                   i.fa.fa-remove
 
-                a.btn ng-href='/search?query=%28entity:%22{{entity.name}}%22%20OR%20tag:%22{{entity.name}}%22%29' ng-click="searchEntity(entity.name)" ng-class="{tag: !currentUser.canEdit(item), confirmed: currentUser.canEdit(item)}" {{entity.name}}
+                a.btn.btn-default ng-href='/search?query=%28entity:%22{{entity.name}}%22%20OR%20tag:%22{{entity.name}}%22%29' ng-click="searchEntity(entity.name)" ng-class="{tag: !currentUser.canEdit(item), confirmed: currentUser.canEdit(item)}" {{entity.name}}
                 
-    .row-fluid
+    .row
       //Unonfirmed autogenerated entities
-      .span12
+      .col-md-12
         section.entities ng-show="(item.entities| filter:{isConfirmed:false}).length"
           b Suggested
-          button.btn.pull-right.clear_all type="button" ng-click="clearEntities()" ng-show="currentUser.canEdit(item)" Clear Suggested
+          button.btn.btn-default.pull-right.clear_all type="button" ng-click="clearEntities()" ng-show="currentUser.canEdit(item)" Clear Suggested
           ul
             li.entity ng-repeat="entity in item.entities| filter:{category:'!relation'} | filter:{isConfirmed:false}| orderBy:'score':true"
               .btn-group
-                button.btn.delete ng-style="{opacity:entity.score < 0.5 ? 0.5 : entity.score}" ng-click="deleteEntity(entity)" ng-show="currentUser.canEdit(item)"
+                button.btn.btn-default.delete ng-style="{opacity:entity.score < 0.5 ? 0.5 : entity.score}" ng-click="deleteEntity(entity)" ng-show="currentUser.canEdit(item)"
                   i.fa.fa-remove
 
-                a.btn ng-href='/search?query=%28entity:%22{{entity.name}}%22%20OR%20tag:%22{{entity.name}}%22%29' ng-click="searchEntity(entity.name)" ng-style="{opacity:entity.score < 0.5 ? 0.5 : entity.score}" ng-class="{tag: !currentUser.canEdit(item)}" {{entity.name}}
+                a.btn.btn-default ng-href='/search?query=%28entity:%22{{entity.name}}%22%20OR%20tag:%22{{entity.name}}%22%29' ng-click="searchEntity(entity.name)" ng-style="{opacity:entity.score < 0.5 ? 0.5 : entity.score}" ng-class="{tag: !currentUser.canEdit(item)}" {{entity.name}}
 
-                button.btn.confirm ng-style="{opacity:entity.score < 0.5 ? 0.5 : entity.score}" ng-click="confirmEntity(entity)" ng-show="currentUser.canEdit(item)"
+                button.btn.btn-default.confirm ng-style="{opacity:entity.score < 0.5 ? 0.5 : entity.score}" ng-click="confirmEntity(entity)" ng-show="currentUser.canEdit(item)"
                   i.fa.fa-check
 
-    .row-fluid
+    .row
       //User generated transcript
-      .span12.transcription ng-show="item.transcription"
+      .col-md-12.transcription ng-show="item.transcription"
           h5 Transcription
           p() {{item.transcription}}

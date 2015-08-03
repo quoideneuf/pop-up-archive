@@ -146,7 +146,7 @@ class Transcript < ActiveRecord::Base
     timed_texts.each do |tt|
       start_time = tt.start_time.to_i
       if !cur_chunk or !prev_start or (start_time - prev_start) > chunk_size
-        puts "prev_start=#{prev_start.inspect}  start_time=#{start_time.inspect}  chunk_size=#{chunk_size.inspect}"
+        #puts "prev_start=#{prev_start.inspect}  start_time=#{start_time.inspect}  chunk_size=#{chunk_size.inspect}"
         prev_start = start_time
         if cur_chunk
           chunks.push cur_chunk
@@ -176,7 +176,13 @@ class Transcript < ActiveRecord::Base
   end
 
   def is_premium?
-    self.transcriber_id == Transcriber.premium.id
+    if self.transcriber_id == Transcriber.premium.id
+      true
+    elsif self.transcriber_id == Transcriber.voicebase.id
+      true
+    else
+      false
+    end
   end
 
   def duration

@@ -1,13 +1,14 @@
-.container#enterprise
-  .row-fluid
-    #intro
+#enterprise
+  .row
+    .col-lg-1
+    #intro.col-xs-12.col-lg-4
       p#slug Make your organization's sound searchable, accessible, and reusable. 
-      a.button.btn.btn-large.btn-info.center#ent data-toggle="modal" data-target="#contact-modal"
+      a.button.btn.btn-lg.btn-info.center#ent data-toggle="modal" data-target="#contact-modal"
         |Let's Get Started. Contact Us.      
       img src="#{asset_path('enterprise1.jpg')}"      
       p Our tools are lightweight, so they work for the everyman and some of the biggest media collections in the world. Our work began with extensive user research with radio producers and distributors and institutional archives. Our current clients include major media stations, universities, multimedia producers, and oral history archives large and small. 
       
-    #services
+    #services.col-xs-12.col-lg-4
       ul
         li 
           span.strong Auto-transcription, timestamps, and keywords 
@@ -49,7 +50,7 @@
           br
           |Dedicated email/phone customer support with guaranteed response within 24 hours.
       
-    #rightsidebar
+    #rightsidebar.col-xs-12.col-lg-2
       .rsidebar  
         p.strong "The archive they have built for us will streamline our newsroom operations moving forward by enabling us to organize, track, and reuse our valuable content."
         p -Ashleyanne Krigbaum, Producer / Reporter / All-around heroine, KALW
@@ -63,9 +64,13 @@
       img src="#{asset_path('reel.png')}"
       img src="#{asset_path('volume.png')}"
       /! img src="#{asset_path('disk.png')}"
-    #logos
+    .col-lg-1
+  .row
+    .col-lg-1
+    #logos.col-xs-12.col-lg-10
       #slug-center 
         | Some of our awesome and contented clients
         i.fa.fa-thumbs-up
       img src="#{asset_path('home/logos-white.jpg')}"
+    .col-lg-1
 

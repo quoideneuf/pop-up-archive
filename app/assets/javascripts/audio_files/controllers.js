@@ -4,9 +4,14 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
 
   $scope.downloadLinks = [
       {
-        text: 'Text Format',
+        text: 'Text Format with Timestamps',
         target: '_self',
-        href: "/api/items/" + $scope.item.id + "/audio_files/" + $scope.audioFile.id + "/transcript.txt"
+        href: "/api/items/" + $scope.item.id + "/audio_files/" + $scope.audioFile.id + "/transcript.txt?timestamps=true"
+      },
+      {
+        text: 'Text Format without Timestamps',
+        target: '_self',
+        href: "/api/items/" + $scope.item.id + "/audio_files/" + $scope.audioFile.id + "/transcript.txt?timestamps=false"
       },
       {
         text: 'SRT Format (Captions)',
@@ -30,7 +35,7 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
 
   $scope.showEmbedCodesModal = function() {
     $q.when($scope.embedCodesModal).then(function(modalEl) {
-      modalEl.modal('show');
+      modalEl.show();
     });
   };
 

@@ -1,6 +1,6 @@
 .container.ng-cloak ng-hide="hideFooter"
-  .row-fluid
-    .span12.navbar#colophon
+  .row
+    .col-md-12.navbar.navbar-nav.nav#colophon
       h1.site-title
         a ng-href='/' title="Pop Up Archive" rel="home"
           .logo.pop Pop
@@ -10,7 +10,8 @@
           logo.prx
             | in cahoots with 
             img src='#{asset_path("prx_logo.png")}' alt="PRX"
-      ul.nav.pull-right
+      ul.nav.pull-right.navbar-right.navbar-nav
+        li= link_to('jobs', '/jobs')
         li= link_to('enterprise', '/enterprise', {target: '_self'})
         li= link_to('team', '/team', {target: '_self'})
         li
@@ -39,7 +40,7 @@
           li  
             a href="http://www.popuparchive.com/" Pop Up Archive
     .row-fluid
-      .span12
+      .col-md-12
         .site-info
           ul
             li

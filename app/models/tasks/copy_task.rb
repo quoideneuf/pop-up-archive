@@ -41,13 +41,14 @@ class Tasks::CopyTask < Task
       job.retry_delay = Task::RETRY_DELAY
       job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
       job.priority    = 1
-
-      job.add_task({
+      job.tasks = []
+      job.tasks << {
         task_type: 'copy',
         label:     self.id,
         result:    destination,
         call_back: call_back_url
-      })
+      }
+      job
     end
   end
 

@@ -12,15 +12,15 @@
 //
 //= require jquery
 //= require bootstrap.min.js
-//= require bootstrap-datepicker
-//= require select2
 //= require angular
 //= require angular-route
 //= require angular-sanitize
 //= require angular-cookies
 //= require angular-ui
 //= require angular-strap
+//= require angular-strap-tpl
 //= require angularjs/rails/resource
+//= require select2
 //= require mule-upload
 //= require angular-stripe
 //= require ng-player-hater
@@ -90,10 +90,10 @@ can find and hear exactly what they're looking for."
       title: "Sign Up for Pop Up Archive",
       description: "Choose one of our monthly individual plans. If you have lots of audio, contact us to discuss enterprise services."
     })
-    .when('/pricing/prx', {
+    .when('/radiorace', {
       templateUrl: "<%= asset_path 'account/plans_prx.html' %>",
       controller: 'PRXSignUpCtrl',
-      title: "Sign Up &raquo; PRX Special Offer"
+      title: "Sign Up &raquo; Radio Race Special Offer"
     })
     .when('/account', {
       templateUrl: "<%= asset_path 'account/index.html' %>",
@@ -107,10 +107,10 @@ can find and hear exactly what they're looking for."
       title: "Account &raquo Plans",
       loginRequired: true
     })
-    .when('/account/plan/prx', {
+    .when('/account/plan/radiorace', {
       templateUrl: "<%= asset_path 'account/plans_prx.html' %>",
       controller: "PRXAccountPlanCtrl",
-      title: "Account &raquol Plans &raquo PRX Special Offer",
+      title: "Account &raquol Plans &raquo Radio Race Special Offer",
       loginRequired: true
     })
     .when('/collections', {
@@ -183,6 +183,11 @@ stations, universities, multimedia producers, and oral history archives large an
       templateUrl: "<%= asset_path 'imports/show.html' %>",
       controller: "ImportCtrl"
     })
+    .when('/jobs', {
+      templateUrl: "<%= asset_path 'dashboard/jobs.html' %>",
+      title: "Jobs",
+      description: "Join Pop Up Archive."
+    })
     .when('/organization', {
       templateUrl: "<%= asset_path 'organizations/show.html' %>",
       controller:  "OrganizationCtrl",
@@ -244,8 +249,8 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
                   'ngCookies',
                   'analytics',
                   'ui',
-                  '$strap',
-                  '$strap.directives',
+                  'mgcrea.ngStrap',
+                  //'$strap.directives',
                   'RailsUjs',
                   'Directory.dashboard.controllers',
                   'Directory.files.controllers',
@@ -298,9 +303,11 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
     $scope.messages = [];
 
     $scope.addMessage = function(message) {
-      // $scope.$apply(function($scope) {
-        $scope.messages.push(message);
-      // });
+      $scope.messages.push(message);
+    };
+
+    $scope.removeMessage = function(msgIdx) {
+      $scope.messages.splice(msgIdx, 1);
     };
 
     $scope.$on("alertEnded", function (e, alert) {
@@ -314,10 +321,16 @@ Law, Silicon Valley, public media organizations, archives, standards-making bodi
       }
     });
 
+    // you can test alert CSS/layout like this:
+    // $s = angular.element('body').scope();
+    // $s.testAlert();
+    // ^^ use your js console to execute
     $scope.testAlert = function() {
       var alert = new Alert();
+      alert.status   = 'complete';
       alert.category = 'test';
       alert.message = 'this is a test';
+      alert.progress = 100;
       alert.add();
     }
 

@@ -109,12 +109,23 @@ class AudioFile < ActiveRecord::Base
   def set_user_id(uid=nil)
     if uid.nil?
       # find a valid user
+
+      # first test that billable_to is defined or define-able
+      billable_to = nil
+      begin
+        billable_to = self.billable_to # might raise error
+      rescue => err
+        # warn, set placeholder and return
+        Rails.logger.warn(err)
+        self.user_id = 0
+        return
+      end
       if collection.creator_id
         self.user_id = collection.creator_id
-      elsif collection.billable_to.is_a?(User)
-        self.user_id = collection.billable_to.id
-      elsif collection.billable_to.is_a?(Organization)
-        self.user_id = collection.billable_to.users.first.id
+      elsif billable_to.is_a?(User)
+        self.user_id = billable_to.id
+      elsif billable_to.is_a?(Organization)
+        self.user_id = billable_to.users.first.id
       else
         raise "Failed to find a valid User to assign to AudioFile"
       end
@@ -290,7 +301,7 @@ class AudioFile < ActiveRecord::Base
 
   def premium_transcribe_audio(user=self.user)
     # only start this if transcode is complete
-    return unless transcoded_at or self.is_mp3?
+    return unless transcoded_at or self.is_mp3? or is_mp3_transcode_complete?
     return unless ((user && user.plan.has_premium_transcripts?) || item.is_premium?)
 
     # do not re-create if we have one already
@@ -309,7 +320,7 @@ class AudioFile < ActiveRecord::Base
     #for IA only start if transcode complete
     return if !self.transcoded? and storage.at_internet_archive?
     # only start if transcode is complete
-    return unless self.transcoded? or self.is_mp3?
+    return unless self.transcoded? or self.is_mp3? or self.is_mp3_transcode_complete?
     # don't bother if this is premium plan
     return if (user && user.plan.has_premium_transcripts?)
     # or if parent Item was created with premium-on-demand
@@ -324,8 +335,15 @@ class AudioFile < ActiveRecord::Base
   end
 
   def start_premium_transcribe_job(user, identifier, options={})
-    return if (duration.to_i <= 0)
+    return if (duration.to_i <= 0) # TODO necessary?
+    if ENV['PREMIUM_TRANSCRIBER'] && ENV['PREMIUM_TRANSCRIBER'] == "voicebase"
+      start_voicebase_transcribe_job(user, identifier, options)
+    else
+      start_speechmatics_transcribe_job(user, identifier, options)
+    end
+  end
 
+  def start_speechmatics_transcribe_job(user, identifier, options={})
     if task = (tasks.speechmatics_transcribe.valid.last || tasks.select { |t| t.type == "Tasks::SpeechmaticsTranscribeTask" && !t.cancelled? }.pop)
       logger.warn "speechmatics transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
       task
@@ -335,6 +353,18 @@ class AudioFile < ActiveRecord::Base
       self.tasks << task
       task
     end
+  end
+
+  def start_voicebase_transcribe_job(user, identifier, options={})
+    if task = (tasks.voicebase_transcribe.valid.last || tasks.select { |t| t.type == "Tasks::VoicebaseTranscribeTask" && !t.cancelled? }.pop)
+      logger.warn "voicebase transcribe task #{task.id} #{identifier} already exists for audio file #{self.id}"
+      task
+    else
+      extras = { 'original' => process_file_url, 'user_id' => user.try(:id) }.merge(options)
+      task = Tasks::VoicebaseTranscribeTask.new(identifier: identifier, extras: extras)
+      self.tasks << task
+      task
+    end 
   end
 
   def start_transcribe_job(user, identifier, options={})
@@ -415,6 +445,10 @@ class AudioFile < ActiveRecord::Base
       break if !complete
     end
     complete
+  end
+
+  def is_mp3_transcode_complete?
+    tasks.transcode.with_status('complete').where(identifier: "mp3_transcode").last
   end
 
   def check_transcode_complete
@@ -573,7 +607,7 @@ class AudioFile < ActiveRecord::Base
 
   def order_premium_transcript(cur_user)
     # TODO create named exception classes for these errors
-    if !transcoded_at and !self.is_mp3?
+    if !transcoded_at and !self.is_mp3? and !is_mp3_transcode_complete?
       raise "Cannot order premium transcript for audio that has not been transcoded"
     end
     if !cur_user.super_admin? && !cur_user.active_credit_card
@@ -739,7 +773,7 @@ class AudioFile < ActiveRecord::Base
     basic_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::TranscribeTask"}
     premium_transcript_tasks = unfinished_tasks.select{|t| t.type = "Tasks::SpeechmaticsTranscribeTask"}
     #Rails.logger.warn("1c elapsed: #{Time.now - st_time}")
-    if (self.transcoded? or self.is_mp3?) \
+    if (self.transcoded? or self.is_mp3? or self.is_mp3_transcode_complete?) \
       and ( \
         self.has_basic_transcribe_task_in_progress?(basic_transcript_tasks) \
      or self.has_premium_transcribe_task_in_progress?(premium_transcript_tasks) \
@@ -856,6 +890,9 @@ class AudioFile < ActiveRecord::Base
   end 
 
   def before_validation_callback
+    if new_record? && !self.storage_id && self.item && self.collection
+      self.storage_id = self.collection.default_storage.id
+    end
     set_metered
     set_current_status
   end

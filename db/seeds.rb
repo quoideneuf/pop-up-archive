@@ -18,7 +18,13 @@ transcribers = Transcriber.create([
     url:  'http://speechmatics.com/',
     cost_per_min: 62,  # 1000ths of a dollar
     description: 'speechmatics',
-  }
+  },
+  {
+    name: 'voicebase',
+    url:  'http://voicebase.com/',
+    cost_per_min: 50,  # 1000ths of a dollar
+    description: 'voicebase',
+  },
 ])
 
 # collections require a valid owner (billable_to)

@@ -131,6 +131,28 @@ describe User do
       user.usage_summary[:this_month][:hours].should eq 1.0
     end
 
+    it "ignores transcripts where is_billable=false" do
+      audio = FactoryGirl.create(:audio_file_private)
+      audio.duration = 3600
+      transcript = FactoryGirl.create :transcript
+      transcript2 = FactoryGirl.create :transcript
+      transcript.transcriber = Transcriber.basic
+      transcript2.transcriber = Transcriber.basic
+      transcript.audio_file_id = audio.id
+      transcript2.audio_file_id = audio.id
+      transcript2.is_billable = false
+      transcript.save!
+      transcript2.save!
+      audio.save!
+      transcript.billable_seconds.should eq 3600
+      transcript2.billable_seconds.should eq 3600
+
+      user = audio.billable_to
+      user.calculate_monthly_usages!
+      user.update_usage_report!
+      user.usage_summary[:this_month][:hours].should eq 1.0  # only 1 of 2 hours billable
+    end
+
   end
 
   context 'storage' do
@@ -278,6 +300,21 @@ describe User do
 
       # rewind the clock
       Timecop.return
+    end
+
+    it 'ends special offer trial after 30 days' do
+      trial_plan    = SubscriptionPlanCached.create trial_period_days: 30, hours: 1, amount: 2000, name: 'Free Trial'
+      user.subscribe!(trial_plan, 'radiorace')
+      user.is_offer_ended?.should eq false
+       # fast forward the clock artificially
+      Timecop.travel( 31.days.from_now.to_i )
+      sleep 2
+      user.is_offer_ended?.should eq true
+      #should not have an offer_ended date after plan update
+      user.subscribe!(plan)
+      cus = user.customer.stripe_customer
+      subscr = user.customer.stripe_subscription(cus)
+      subscr.metadata[:offer_end].should eq ""
     end
   end
 

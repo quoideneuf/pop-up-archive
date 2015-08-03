@@ -16,6 +16,11 @@ describe Item do
     end
   end
 
+  it "inherits collection storage_id explicitly" do
+    item = FactoryGirl.create :item
+    item.storage_id.should eq item.collection.default_storage_id
+  end
+
   it 'calculates a duration' do
     item = FactoryGirl.create :item_with_audio
     item.audio_files(true).inspect

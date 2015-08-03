@@ -63,13 +63,15 @@ class Tasks::TranscodeTask < Task
       job.priority    = 4
       job.retry_delay = Task::RETRY_DELAY
       job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
-      job.add_task({
+      job.tasks = []
+      job.tasks << {
         task_type: 'transcode',
         result:    destination,
         call_back: call_back_url,
         options:   extras,
         label:     label
-      })
+      }
+      job
     end
   end
 

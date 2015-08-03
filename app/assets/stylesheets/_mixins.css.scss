@@ -40,12 +40,12 @@
   }
 }
 
-@mixin transition($transition-property, $transition-time, $method) {
-    -webkit-transition: $transition-property $transition-time $method;
-    -moz-transition: $transition-property $transition-time $method;
-    -ms-transition: $transition-property $transition-time $method;
-    -o-transition: $transition-property $transition-time $method;
-    transition: $transition-property $transition-time $method;
+@mixin transition($transition-property, $transition-time, $method, $delay:"") {
+    -webkit-transition: $transition-property $transition-time $method #{$delay};
+    -moz-transition: $transition-property $transition-time $method #{$delay};
+    -ms-transition: $transition-property $transition-time $method #{$delay};
+    -o-transition: $transition-property $transition-time $method #{$delay};
+    transition: $transition-property $transition-time $method #{$delay};
 }
 
 @mixin transform($trans-type) {
@@ -56,7 +56,7 @@
   -webkit-transform: $trans-type;
 }
 
-@mixin vertical-align {
+@mixin vertical-center {
     position: relative;
     top: 50%;
     -webkit-transform: translateY(-50%);
@@ -93,4 +93,10 @@
   @media (max-width: 480px) {
     @content;
   }
+}
+
+@mixin fill-span {
+  display: block;
+  float: none;
+  width: auto;
 }

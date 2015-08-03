@@ -7,7 +7,7 @@
   type: "rich",
   version: '1.0',
   provider_name: 'Pop Up Archive',
-  provider_url: 'https://popuparchive.com',
+  provider_url: 'https://www.popuparchive.com',
   title: @title,
   html: render( partial: @partial_path ),
   width: @width,
