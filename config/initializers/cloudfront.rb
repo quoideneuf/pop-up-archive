@@ -26,7 +26,7 @@ module CarrierWave
       #
       # [String] the location where this file is accessible via a url
       #
-      def url(options = {})
+      def signed_url(options = {})
         if file.respond_to?(:url) and not file.url.blank?
           file.method(:url).arity == 0 ? Aws::CF::Signer.sign_url(file.url) : Aws::CF::Signer.sign_url(file.url(options))
         elsif file.respond_to?(:path)
