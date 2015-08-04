@@ -106,6 +106,14 @@ describe AudioFile do
      audio_file.has_task?('Tasks::CopyToS3Task').should be_truthy
     end
 
+    it "should use CopyToS3 storage for mp3 url" do
+      audio_file = FactoryGirl.create :audio_file
+      audio_file.storage.should be_automatic_transcode
+      audio_file.check_tasks
+      audio_file.url(:mp3).should end_with('.popuparchive.org/test.mp3')
+      audio_file.url(:ogg).should end_with('.popuparchive.org/test.ogg')
+    end
+
     it "should create transcode task" do
       audio_file = FactoryGirl.create :audio_file_private
       audio_file.storage.should_not be_automatic_transcode

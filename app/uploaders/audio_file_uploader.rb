@@ -30,7 +30,9 @@ class AudioFileUploader < CarrierWave::Uploader::Base
   end
 
   def path=(p)
-    file.path=p
+    if file.respond_to?(:path=)
+      file.path = p
+    end
   end
 
   def store_dir
