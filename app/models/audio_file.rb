@@ -178,7 +178,7 @@ class AudioFile < ActiveRecord::Base
       orig_storage = nil
       copy_to_s3_task = tasks.copy_to_s3.valid.last
       if use_storage.automatic_transcode? && (args[0].to_s == 'mp3' || is_mp3?) && copy_to_s3_task
-        #STDERR.puts "temp re-assigning storage to #{copy_to_s3_task.storage.provider}"
+        STDERR.puts "temp re-assigning storage to #{copy_to_s3_task.storage.provider}"
         orig_storage = self.storage_id
         self.storage_id = copy_to_s3_task.storage_id
         use_storage = copy_to_s3_task.storage
