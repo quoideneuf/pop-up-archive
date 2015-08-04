@@ -174,16 +174,16 @@ class AudioFile < ActiveRecord::Base
     if has_file? and !file.nil?
       use_storage = storage
       # temporarily re-assign storage if IA + mp3
-      #STDERR.puts "args==#{args.inspect} automatic_transcode?==#{storage.automatic_transcode?}"
+      #STDERR.puts "args==#{args.inspect} automatic_transcode?==#{use_storage.automatic_transcode?}"
       orig_storage = nil
       copy_to_s3_task = tasks.copy_to_s3.valid.last
       if storage.automatic_transcode? && args[0] == 'mp3' && copy_to_s3_task
-        STDERR.puts "temp re-assigning storage to #{copy_to_s3_task.storage.provider}"
+        #STDERR.puts "temp re-assigning storage to #{copy_to_s3_task.storage.provider}"
         orig_storage = self.storage_id
         self.storage_id = copy_to_s3_task.storage_id
         use_storage = copy_to_s3_task.storage
       end
-      if use_storage.at_amazon?
+      if file.asset_host && use_storage.at_amazon?
         u = file.try(:signed_url, *args)
       else
         u = file.try(:url, *args)

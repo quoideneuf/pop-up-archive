@@ -1,5 +1,3 @@
-unless Rails.env.test?
-
 Aws::CF::Signer.configure do |config|
   # mangle our env var to get it into expected key syntax
   priv_key = ENV['CLOUDFRONT_KEY'].gsub('"', '').gsub(/\\n/, "\n")
@@ -27,21 +25,9 @@ module CarrierWave
       # [String] the location where this file is accessible via a url
       #
       def signed_url(options = {})
-        if file.respond_to?(:url) and not file.url.blank?
-          file.method(:url).arity == 0 ? Aws::CF::Signer.sign_url(file.url) : Aws::CF::Signer.sign_url(file.url(options))
-        elsif file.respond_to?(:path)
-          path = encode_path(file.path.gsub(File.expand_path(root), ''))
-
-          if host = asset_host
-            if host.respond_to? :call
-              Aws::CF::Signer.sign_url("#{host.call(file)}#{path}")
-            else
-              Aws::CF::Signer.sign_url("#{host}#{path}")
-            end
-          else
-            Aws::CF::Signer.sign_url((base_path || "") + path)
-          end
-        end
+        #STDERR.puts "file.signed_url options=#{options.inspect}"
+        u = url(options)
+        Aws::CF::Signer.sign_url(u)
       end
     end # Url
   end # Uploader
@@ -62,5 +48,3 @@ module CarrierWave
     end
   end
 end
-
-end # do not run in test mode
