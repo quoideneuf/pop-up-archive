@@ -453,7 +453,6 @@ class AudioFile < ActiveRecord::Base
   # for IA storage, copy the .mp3 to popup_storage after the derivative is detected.
   def start_copy_to_s3_job
     return unless storage.automatic_transcode?
-    return if is_mp3?
 
     if !has_file?
       logger.debug "detect_derivatives audio_file #{self.id} not yet saved to archive.org"
