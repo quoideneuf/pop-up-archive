@@ -44,6 +44,11 @@ module CarrierWave
              # Delete 'if statement' related to fog_public
              public_url
           end
+
+          # provider setter for CopyToS3Task temp assignment
+          def path=(p)
+            @path = p
+          end
        end
     end
   end

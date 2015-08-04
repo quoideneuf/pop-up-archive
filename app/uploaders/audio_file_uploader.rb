@@ -29,6 +29,10 @@ class AudioFileUploader < CarrierWave::Uploader::Base
     end
   end
 
+  def path=(p)
+    file.path=p
+  end
+
   def store_dir
     model.store_dir
   end

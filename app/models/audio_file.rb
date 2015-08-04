@@ -172,23 +172,36 @@ class AudioFile < ActiveRecord::Base
 
   def url(*args)
     if has_file? and !file.nil?
-      use_storage = storage
-      # temporarily re-assign storage if IA + mp3
+      # temporarily re-assign storage+path if IA + mp3
       #STDERR.puts "args==#{args.inspect} automatic_transcode?==#{use_storage.automatic_transcode?}"
-      orig_storage = nil
+      orig_storage    = nil
+      orig_path       = nil
       copy_to_s3_task = tasks.copy_to_s3.valid.last
-      if use_storage.automatic_transcode? && (args[0].to_s == 'mp3' || is_mp3?) && copy_to_s3_task
-        STDERR.puts "temp re-assigning storage to #{copy_to_s3_task.storage.provider}"
-        orig_storage = self.storage_id
-        self.storage_id = copy_to_s3_task.storage_id
-        use_storage = copy_to_s3_task.storage
+      if storage.automatic_transcode? && (args[0].to_s == 'mp3' || is_mp3?) && copy_to_s3_task
+        #STDERR.puts "temp re-assigning storage to #{copy_to_s3_task.storage.provider} #{copy_to_s3_task.storage_id}"
+        orig_storage               = self.storage_configuration
+        self.storage_configuration = copy_to_s3_task.storage
+        orig_path                  = file.mp3.path
+        file.mp3.path              = File.join([store_dir, orig_path].compact)
       end
-      if file.asset_host && use_storage.at_amazon?
+
+      # only sign the URL if the storage requires it.
+      if file.asset_host && storage.at_amazon?
         u = file.try(:signed_url, *args)
       else
         u = file.try(:url, *args)
       end
-      self.storage_id = orig_storage if orig_storage
+
+      # restore original values if we had temporarily re-assigned
+      if orig_storage
+        self.storage_configuration = orig_storage
+        #STDERR.puts "storage re-stored to #{self.storage}"
+      end
+      if orig_path
+        file.mp3.path = orig_path
+        #STDERR.puts "path restored to #{orig_path}"
+      end
+
       u
     else 
       original_file_url
