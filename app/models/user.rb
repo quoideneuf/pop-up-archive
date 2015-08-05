@@ -325,9 +325,9 @@ class User < ActiveRecord::Base
         cus
       end
     else
-      # check first if customer with this email was created in the last minute
+      # check first if customer with this email was created in the last 10 minutes
       # to avoid dupe creation. We can't search by email, so must just list limited by time.
-      Stripe::Customer.all(created: { gte: Time.now.to_i - 60 }).tap do |custs| 
+      Stripe::Customer.all(created: { gte: Time.now.to_i - 600 }).tap do |custs| 
         custs.each do |cust|
           if cust.email == self.email
             self.customer_id = cust.id
