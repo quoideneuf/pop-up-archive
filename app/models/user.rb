@@ -304,6 +304,7 @@ class User < ActiveRecord::Base
 
   def customer
     return @_customer if !@_customer.nil?
+    return unless self.email
     begin
       cache_ttl = Rails.application.config.stripe_cache
     rescue
@@ -325,6 +326,9 @@ class User < ActiveRecord::Base
         cus
       end
     else
+
+      return unless persisted?
+
       # check first if customer with this email was created in the last 10 minutes
       # to avoid dupe creation. We can't search by email, so must just list limited by time.
       Stripe::Customer.all(created: { gte: Time.now.to_i - 600 }).tap do |custs| 
