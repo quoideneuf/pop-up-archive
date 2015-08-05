@@ -34,9 +34,8 @@ class Item < ActiveRecord::Base
       indexes :created_at,            type: 'date',   include_in_all: false, index_name: 'date_added'
       indexes :description,           type: 'string'
       indexes :identifier,            type: 'string'
-      # title defined 2 ways per
-      # https://www.elastic.co/guide/en/elasticsearch/guide/current/multi-fields.html
-      indexes :title,                 type: 'string', fields: { raw: { type: 'string', index: 'not_analyzed' } }
+      indexes :title,                 type: 'string'
+      indexes :title_sort,            type: 'string', index: 'not_analyzed'
       indexes :tags, type: 'string',  index_name: 'tag', analyzer: 'caseinsensitive', store: 'yes', term_vector: 'yes'
       indexes :contributors,          type: 'string',  index_name: 'contributor'
       indexes :physical_location,     type: 'string'
@@ -239,6 +238,7 @@ class Item < ActiveRecord::Base
       ([:contributors] + STANDARD_ROLES.collect{|r| r.pluralize.to_sym}).each do |assoc|
         json[assoc]      = send(assoc).map{|c| c.as_json }
       end
+      json[:title_sort]  = title_for_index_sort
       json[:audio_files] = audio_for_index
       json[:image_files] = images_for_index
       json[:tags]        = tags_for_index
@@ -254,6 +254,15 @@ class Item < ActiveRecord::Base
       json[:date_broadcast] = self.date_broadcast.nil? ? nil : self.date_broadcast.as_json
       json[:date_added]     = self.created_at.as_json
     end
+  end
+
+  def title_for_index_sort
+    return '' if self.title.nil?
+    ttl = self.title.strip.downcase
+    # remove any non alphanumerics (mostly for leading quotes etc)
+    ttl.gsub!(/[^\p{Word}]+/, '')
+    # only the first 16 chars to conserve some space and memory at sort time
+    ttl[0,16]
   end
 
   def audio_for_index
