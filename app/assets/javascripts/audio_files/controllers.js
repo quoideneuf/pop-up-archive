@@ -206,6 +206,7 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
     // this event fired by account controller on CC form submit
     // if the onDemandRequiresCC var is true (set below)
     $scope.$on('userHasValidCC', function(event, audioFile) {
+      $scope.orderPremiumCCModal.hide(); //make sure credit card update form is hidden
       $scope.audioFile.orderPremiumTranscript(me).then(function(respTask) {
         $scope.$emit('premiumTranscriptOrdered', $scope.audioFile);
       }).
@@ -249,9 +250,9 @@ angular.module("Directory.audioFiles.controllers", ['ngPlayer'])
   }
 
   $scope.hideOrderPremiumTranscriptModal = function () {
-    $q.when($scope.orderPremiumTranscriptModal).then( function (modalEl) {
-      modalEl.modal('hide');
-    }); 
+    $scope.orderPremiumTranscriptModal.$promise.then(
+      $scope.orderPremiumTranscriptModal.hide()
+    )
   }
 
 }])
