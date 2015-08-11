@@ -245,9 +245,20 @@ namespace :reports do
       next unless chg.has_key? 'plan'
 
       # new plan vs old plan
-      old_plan = chg['plan']['id']
+      old_plan_id = chg['plan']['id']
       user = comment.resource
-      line = sprintf("%10s %4s %21s %25s  %25s\n", dt, user.id, user.name.slice(0,20), old_plan, user.plan.id)
+      new_plan = user.plan
+      old_plan = SubscriptionPlan.find_by_stripe_plan_id( old_plan_id ).as_cached
+      if new_plan.hours.to_i > old_plan.hours.to_i and new_plan.amount.to_i != 0
+        if new_plan.interval == old_plan.interval
+          prorate_charge = (new_plan.amount - old_plan.amount).fdiv(100)
+        else
+          prorate_charge = (new_plan.monthly_amount - old_plan.monthly_amount).fdiv(100)
+        end
+        line = sprintf("%10s %4s %21s %25s  %25s $%5.2f\n", dt, user.id, user.name.slice(0,20), old_plan_id, new_plan.id, prorate_charge)
+      else
+        line = sprintf("%10s %4s %21s %25s  %25s\n", dt, user.id, user.name.slice(0,20), old_plan_id, new_plan.id)
+      end
       buf.push line
     end 
     if send_mail && buf.size > 0

@@ -127,6 +127,14 @@ class SubscriptionPlanCached
 
   alias_method :==, :eql?
 
+  def monthly_amount
+    if interval == 'month'
+      amount
+    else
+      amount.fdiv(12)
+    end
+  end
+
   private
 
   def calculate_plan_hours(id)
