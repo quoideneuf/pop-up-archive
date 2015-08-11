@@ -6,6 +6,7 @@ class MixpanelWorker
 
   sidekiq_options retry: 10, backtrace: true
 
+  # :nocov:
   def perform(event_name, event_args)
     begin
       tracker = Mixpanel::Tracker.new(ENV['MIXPANEL_PROJECT'])
@@ -15,5 +16,6 @@ class MixpanelWorker
     end
     true
   end
+  # :nocov:
 
 end
