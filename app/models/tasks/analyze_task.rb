@@ -39,6 +39,7 @@ class Tasks::AnalyzeTask < Task
     end
   end
 
+  # :nocov:
   def recover!
     if !owner
       extras['error'] = 'No Owner defined'
@@ -50,6 +51,7 @@ class Tasks::AnalyzeTask < Task
       finish!
     end
   end 
+  # :nocov:
 
   def process_analysis(analysis_json)
     item = owner.item
@@ -160,6 +162,7 @@ class Tasks::AnalyzeTask < Task
     entity.save
   end
 
+  # :nocov:
   def create_analyze_job
     j = create_job do |job|
       job.job_type    = 'text'
@@ -177,6 +180,7 @@ class Tasks::AnalyzeTask < Task
       job
     end
   end
+  # :nocov:
 
   def destination
     extras['destination'] || owner.try(:destination, {

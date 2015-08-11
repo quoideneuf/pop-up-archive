@@ -43,6 +43,7 @@ class Tasks::AnalyzeAudioTask < Task
     self.results[:info]
   end
 
+  # :nocov:
   def create_analyze_job
     j = create_job do |job|
       job.job_type    = 'audio'
@@ -59,6 +60,7 @@ class Tasks::AnalyzeAudioTask < Task
       job
     end
   end
+  # :nocov:
 
   def audio_file
     self.owner

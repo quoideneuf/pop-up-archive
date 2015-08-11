@@ -203,6 +203,10 @@ describe Tasks::VoicebaseTranscribeTask do
 
     end
 
+    it "should measure usage" do
+      task.usage_duration.should eq audio_file.duration
+    end 
+
   end
 
 end

@@ -17,6 +17,7 @@ class Tasks::TranscodeTask < Task
     end
   end
 
+  # :nocov:
   def recover!
     if !audio_file
       extras['error'] = 'No owner defined'
@@ -30,12 +31,15 @@ class Tasks::TranscodeTask < Task
       finish!
     end
   end
+  # :nocov:
 
+  # :nocov:
   def destination_exists?
     dest_url = URI.parse(destination)
     connection = Fog::Storage.new(storage.credentials)
     file_exists?(connection, dest_url)
   end
+  # :nocov:
 
   def audio_file
     self.owner
@@ -56,6 +60,7 @@ class Tasks::TranscodeTask < Task
     })
   end
 
+  # :nocov:
   def create_transcode_job
     j = create_job do |job|
       job.job_type    = 'audio'
@@ -74,5 +79,6 @@ class Tasks::TranscodeTask < Task
       job
     end
   end
+  # :nocov:
 
 end

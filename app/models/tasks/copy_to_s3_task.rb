@@ -32,6 +32,7 @@ class Tasks::CopyToS3Task < Task
   end 
   # :nocov:
 
+  # :nocov:
   def create_copy_job
     j = create_job do |job|
       job.job_type    = 'audio'
@@ -49,6 +50,7 @@ class Tasks::CopyToS3Task < Task
       job
     end
   end
+  # :nocov:
 
   def destination
     extras['destination'] || owner.try(:destination, {

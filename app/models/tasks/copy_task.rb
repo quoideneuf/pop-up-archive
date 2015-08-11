@@ -16,6 +16,7 @@ class Tasks::CopyTask < Task
     self.should_process = true
   end
 
+  # :nocov:
   def recover!
     if !owner
       extras['error'] = 'No owner defined'
@@ -27,13 +28,17 @@ class Tasks::CopyTask < Task
       finish!
     end
   end
+  # :nocov:
 
+  # :nocov:
   def destination_exists?
     dest_url = URI.parse(extras['destination'])
     connection = Fog::Storage.new(storage.credentials)
     file_exists?(connection, dest_url)
   end 
+  # :nocov:
 
+  # :nocov:
   def create_copy_job
     j = create_job do |job|
       job.job_type    = 'audio'
@@ -51,6 +56,7 @@ class Tasks::CopyTask < Task
       job
     end
   end
+  # :nocov:
 
   def start_processing
     return unless should_process

@@ -47,6 +47,11 @@ describe Tasks::TranscribeTask do
       expect(ActionMailer::Base.deliveries.size).to eql(1)
     end
 
+    it "should measure usage" do
+      @task.update_transcript_usage
+      @task.usage_duration.should eq @audio_file.duration
+    end
+
   end
 
 end
