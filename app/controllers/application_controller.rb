@@ -7,11 +7,14 @@ class ApplicationController < ActionController::Base
   #  strategy DecentExposure::StrongParametersStrategy
   #end
 
+  # :nocov:
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = exception.message
     redirect_to root_url
   end
+  # :nocov:
 
+  # :nocov:
   def authenticate_superadmin_user!
     authenticate_user!
     unless current_user.super_admin?
@@ -19,6 +22,7 @@ class ApplicationController < ActionController::Base
       redirect_to root_path
     end
   end
+  # :nocov:
 
   def not_found
     respond_to do |format|

@@ -10,6 +10,7 @@ class Tasks::CopyToS3Task < Task
     # TODO flag the owner (audio_file) in any way to indicate the copy is complete?
   end
 
+  # :nocov:
   def recover!
     if !owner
       extras['error'] = 'No owner defined'
@@ -21,12 +22,15 @@ class Tasks::CopyToS3Task < Task
       finish!
     end
   end
+  # :nocov:
 
+  # :nocov:
   def destination_exists?
     dest_url = URI.parse(extras['destination'])
     connection = Fog::Storage.new(storage.credentials)
     file_exists?(connection, dest_url)
   end 
+  # :nocov:
 
   def create_copy_job
     j = create_job do |job|

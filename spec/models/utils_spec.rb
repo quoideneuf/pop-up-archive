@@ -59,4 +59,16 @@ describe Utils do
     end
   end
 
+  it "should generate random string" do
+    Utils.generate_rand_str.length.should eq 10
+  end
+
+  it "should do a head request" do
+    Utils.head_resp('http://prx.org/robots.txt').status.should eq 200
+  end
+
+  it "should catch bad type or url in file type detection" do
+    Utils.is_file_type?(:audio, nil).should be_falsey
+    Utils.is_file_type?(:foobar, 'http://file.mp3').should be_falsey
+  end
 end
