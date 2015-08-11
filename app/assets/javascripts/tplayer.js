@@ -83,6 +83,8 @@ PUATPlayer.prototype = {
 
   setListeners: function() {
     var self = this;
+    var adapter = new playerjs.JPlayerAdapter($(self.jplayer));
+    adapter.ready();
     $("#jp-reverse-button-"+self.fileId).on('click', function() {
       $(self.jplayer).jPlayer('playHead', 0);
     });
