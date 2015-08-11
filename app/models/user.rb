@@ -458,6 +458,7 @@ class User < ActiveRecord::Base
   private
 
   def delete_customer
+    return true unless customer
     return true unless customer.stripe_customer
     customer.stripe_customer.delete
     invalidate_cache
