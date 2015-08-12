@@ -49,6 +49,7 @@ describe User do
       user.usage_for('test', time).should eq 100
       user.update_usage_for('test', {:seconds => 1000, :cost => 1234, :retail_cost => 5678}, time)
       user.usage_for('test', time).should eq 1000
+      user.is_new_in_month?(time).should be_truthy
     end
 
     it "counts deleted audio toward monthly usage" do

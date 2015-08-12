@@ -453,6 +453,16 @@ class User < ActiveRecord::Base
     User.find_by_sql(sql)
   end
 
+  def is_new_in_month?(dtim=DateTime.now)
+    month_start = dtim.utc.beginning_of_month
+    month_end   = dtim.utc.end_of_month
+    if self.created_at < month_end and self.created_at > month_start
+      return true
+    else
+      return false
+    end
+  end
+
   private
 
   def delete_customer
