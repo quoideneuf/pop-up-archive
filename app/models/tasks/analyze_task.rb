@@ -4,6 +4,7 @@ class Tasks::AnalyzeTask < Task
 
   after_commit :create_analyze_job, :on => :create
 
+  # :nocov:
   def finish_task
     return if cancelled?
     if destination && destination.length > 0
@@ -38,6 +39,7 @@ class Tasks::AnalyzeTask < Task
       raise "No destination so cannot finish task #{id}"
     end
   end
+  # :nocov:
 
   # :nocov:
   def recover!
