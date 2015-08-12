@@ -17,6 +17,8 @@ class SubscriptionPlan < ActiveRecord::Base
       )
     else
 
+  # :nocov:
+
       # compare and update if necessary
       needs_update = false
       if spc.name != sp.name
@@ -45,6 +47,8 @@ class SubscriptionPlan < ActiveRecord::Base
         needs_update = true
       end
       sp.save if needs_update
+
+  # :nocov:
 
     end
     return sp

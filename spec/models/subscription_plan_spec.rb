@@ -60,4 +60,10 @@ describe SubscriptionPlanCached do
     user.subscribe!(trial_plan, 'radiorace')
   end
 
+  it "can discern premium plans" do
+    plan = stripe_plan.as_plan
+    plan.has_premium_transcripts?().should be_falsey
+    stripe_plan.has_premium_transcripts?().should be_falsey
+  end
+
 end
