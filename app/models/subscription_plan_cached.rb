@@ -40,7 +40,7 @@ class SubscriptionPlanCached
       return create(plan_id: 'premium_community', name: 'Premium Community', amount: 0)
     end
     Rails.cache.fetch([:plans, :group, :premium_community], expires_in: 30.minutes) do
-      spc = ungrandfathered.find { |p| p.id == 'premium_community' and p.name == 'Premium Community'}
+      spc = ungrandfathered.find { |p| p.id == 'premium_community' }
       if !spc
         raise "Cannot find 'premium_community' plan"
       end
