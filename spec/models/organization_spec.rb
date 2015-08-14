@@ -49,7 +49,7 @@ describe Organization do
     @org.invited_users.size.should eq 0
     expect { @org.invite_user(@user) }.to change { ActionMailer::Base.deliveries.count }.by(1)
     @org.invited_users.size.should eq 1
-    @user.org_invite_url(@org).should match('/'+@org.id+'/')
+    @user.org_invite_url(@org).should match('/'+@org.id.to_s+'/')
     @user.confirm_org_member_invite(@org)
     @user.invitation_accepted_at.should be_truthy
   end
