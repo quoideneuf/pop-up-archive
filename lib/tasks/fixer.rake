@@ -62,6 +62,7 @@ namespace :fixer do
           if ok_to_recover and recover_types.has_key?(task.type)
             begin
               task.recover!
+              task.owner.check_tasks
               report[task.type+'-recovered'] += 1
             rescue Exceptions::PrivateFileNotFound => err
               STDERR.puts err  # warn and continue
