@@ -1,0 +1,19 @@
+.email-header
+  | Hello 
+  = @user.name
+  |,
+
+.email-body
+  p
+    | You've been invited to become a member of the  
+    = @org.name
+    |  organization at Pop Up Archive. 
+  p
+    | To accept this invitation, click on this link:
+  p
+    = link_to @user.org_invite_url(@org), @user.org_invite_url(@org)
+  p
+    | Questions? Just reply to this email.
+
+.email-footer
+  = render('signature')

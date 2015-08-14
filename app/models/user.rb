@@ -302,6 +302,27 @@ class User < ActiveRecord::Base
     return offer_end() <= Time.now
   end
 
+  def send_org_invitation(org)
+    r = OrganizationMemberInviteMailer.new_invite(org, self).deliver_now
+    self.invitation_sent_at = DateTime.now.utc
+    self.invitation_accepted_at = nil
+    self
+  end
+
+  def org_invite_url(org)
+    Rails.application.routes.url_helpers.root_url + 'organization/' + org.id.to_s + '/member/' + self.invitation_token
+  end
+
+  def confirm_org_member_invite(org)
+    return if invitation_accepted_at
+    return unless invitation_sent_at
+    return unless invited_by_id == org.id
+    return unless invited_by_type = 'Organization'
+    self.add_to_team(org)
+    self.invitation_accepted_at = DateTime.now.utc
+    self.save!
+  end
+
   def customer
     return @_customer if !@_customer.nil?
     return unless self.email

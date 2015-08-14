@@ -25,6 +25,23 @@ class Organization < ActiveRecord::Base
 
   ROLES = [:admin, :member]
 
+  # returns Array of User objects where the user's organization_id is not (yet) set
+  # but where the user has an un-accepted invitation to join the org
+  def invited_users
+    User.where(invited_by_id: self.id, invited_by_type: 'Organization', invitation_accepted_at: nil) 
+  end
+
+  def invite_user(user)
+    return if user.organization # already in org
+    user.invited_by_id = self.id
+    user.invited_by_type = 'Organization'
+    user.invitation_token = Utils.generate_rand_str
+    if user.send_org_invitation(self)
+      user.save!
+    end
+    user
+  end
+
   # entity method makes an Org act like a User for billable concern
   def entity
     self
