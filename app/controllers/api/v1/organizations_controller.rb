@@ -18,7 +18,7 @@ class Api::V1::OrganizationsController < Api::V1::BaseController
     if org.invite_user(user)
       respond_to do |format|
         format.html { redirect_to root_url + 'organization' }
-        format.json { render :text => { :error => "invite sent", :status => 200 }.to_json, :status => 200 }
+        format.json { render :text => { :msg => "invite sent", :status => 200 }.to_json, :status => 200 }
       end 
     else
       # error could be any number of things. Do we care enough about the actual reason to return it?

@@ -144,9 +144,8 @@ PopUpArchive::Application.routes.draw do
 
       resources :speakers
 
-      resources :organizations do
-        post 'member', action: 'member'
-      end
+      resources :organizations
+      post '/organizations/:id/member' => 'organizations#member'
 
       resources :plans
 

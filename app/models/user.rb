@@ -317,7 +317,7 @@ class User < ActiveRecord::Base
     return if invitation_accepted_at
     return unless invitation_sent_at
     return unless invited_by_id == org.id
-    return unless invited_by_type = 'Organization'
+    return unless invited_by_type == 'Organization'
     self.add_to_team(org)
     self.invitation_accepted_at = DateTime.now.utc
     self.save!
