@@ -273,7 +273,7 @@ namespace :reports do
   desc "unfinished audio"
   task unfinished_audio: [:environment] do
     four_hours_ago = 4.hours.ago.utc
-    AudioFile.where("status_code not in ('B','C','D','E') and created_at < '#{four_hours_ago}'").find_in_batches do |afs|
+    AudioFile.where("status_code not in ('B','C','D','E','X') and created_at < '#{four_hours_ago}'").find_in_batches do |afs|
       afs.each do |af|
         puts Rails.application.routes.url_helpers.root_url+'superadmin/audio_files/'+af.id.to_s+' '+af.current_status
       end
