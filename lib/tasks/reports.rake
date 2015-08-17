@@ -180,6 +180,20 @@ namespace :reports do
     puts "Total: #{num}" 
   end
 
+  desc "Organizations over their monthly plan usage"
+  task org_overages: [:environment] do
+    puts "Generating report for Organizations with overages"
+    Organization.all.each do |org|
+      plan_secs = org.plan.hours * 3600
+      next if plan_secs == 0
+      org.monthly_usages.each do |mu|
+        if mu.value > plan_secs.to_f
+          printf("%s %6d %20s %40s  %s  $%0.2f\n", mu.yearmonth, mu.entity_id, mu.use, mu.entity.name, mu.value_as_hms, mu.retail_cost)
+        end
+      end
+    end
+  end
+
   desc "prints subscriber sign-up summary for the current month"
   task customer_sign_ups: [:environment] do
 
