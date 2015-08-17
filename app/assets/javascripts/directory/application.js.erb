@@ -137,6 +137,12 @@ can find and hear exactly what they're looking for."
       title: "Explore",
       description: "Navigate Pop Up Archive's collection of public audio by subject."
     })
+    .when('/explore/field/:field/:letter', {
+      templateUrl: "<%= asset_path 'search/letter.html' %>",
+      controller: "ExploreCtrl",
+      title: "Explore",
+      description: "Navigate Pop Up Archive's collection of public audio by subject."
+    })
     .when('/faq', {
       templateUrl: "<%= asset_path 'faq/index.html' %>",
       controller: "FAQController",
