@@ -85,6 +85,13 @@ class ItemSearcher
     end
   end
 
+  # return a list of aggregations query example params={q:"A", f:"hosts"}
+  def aggregation_search
+    query_dsl = prep_aggregation_query
+    @results = Item.search(query_dsl.to_json)
+    @results.response["aggregations"]["facets"]["buckets"]
+  end
+
   # returns suggestions in specialized Hash with autocomplete and item matches
   def suggest
     query_dsl = prep_suggest_query
@@ -220,6 +227,27 @@ class ItemSearcher
     searchq[:query][:mlt][:like_text] = @query_str if item_ids.size == 0
     #searchq[:explain] = true  # helpful when debugging match/scoring
     searchq
+  end
+
+  def prep_aggregation_query
+    query = {
+      :size => 0,
+      :query => {
+        :prefix => {
+          @filters.to_sym => @query_str
+        }
+      },
+      :aggs => {
+        :facets => {
+          :terms => {
+            :field => @filters,
+            :size => 0,
+            :order => { "_term" => "asc" }
+          }
+        }
+      } 
+    }
+    query
   end
 
   def prep_search_query
