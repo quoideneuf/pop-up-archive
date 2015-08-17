@@ -75,6 +75,11 @@ class Utils
       # with the check on, and failure is Worse than a Bad Idea, we turn it off.
       # NOTE that the root cause is probably a bad ssl_ca_path at heroku.
       Excon.defaults[:ssl_verify_peer] = false
+
+      # Excon by default adds the :443 to https URLs, which can break some brittle
+      # servers that fail to parse the Host header
+      Excon.defaults[:omit_default_port] = true
+
       Excon.new(uri)
     end
 
