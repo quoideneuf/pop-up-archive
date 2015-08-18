@@ -94,9 +94,6 @@ angular.module('Directory.users.models', ['RailsModel'])
     var userInOrg = self.organization ? true : false;
     var mnthMap   = {};
     $.each(self.usage.summary.history, function(idx, msum) {
-      if (self.plan.isPremium && msum.type.match(/basic/)) {
-        return true; // filter out some noise
-      }
       if (msum.type.match(/usage only/)) {
         // clarify label
         msum.type = msum.type.replace(/usage only/, 'me');
