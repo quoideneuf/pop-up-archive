@@ -66,7 +66,7 @@ meta view-head="view-head" property="og:type" content="article"
       p ng-show="item.description" ng-bind-html="item.description"
   //Audio file repeat
   .item-detail ng-show="item.audioFiles.length"
-    section.audio-file ng-repeat="audioFile in item.audioFiles" ng-controller="AudioFileCtrl"
+    section.audio-file ng-repeat="audioFile in item.audioFiles | orderBy : 'filename'" ng-controller="AudioFileCtrl"
 
       .row
         //Audio file title
