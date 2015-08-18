@@ -92,7 +92,16 @@ class Tasks::VoicebaseTranscribeTask < Task
   end
 
   def lookup_job_by_name
+    # we might have the id via the callback
+    if extras['vb_job_id_via_callback']
+      self.extras['job_id'] = extras['vb_job_id_via_callback']
+      self.save!
+      return self
+    end
+
+    # otherwise go look for it
     client = self.class.voicebase_client
+    # ########################## TODO ###########################
     # TODO iterate through /media
     jobs = client.get '/media'
     job_id  = nil
