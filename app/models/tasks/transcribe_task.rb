@@ -165,7 +165,7 @@ class Tasks::TranscribeTask < Task
 
     # we call user.entity because that will return the billable object
     ucalc = UsageCalculator.new(billed_user.entity, now)
-    billed_duration = ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPTS)
+    billed_duration = ucalc.calculate(MonthlyUsage::BASIC_TRANSCRIPTS)
 
     # call again on the user if user != entity, just to record usage.
     if billed_user.entity != billed_user

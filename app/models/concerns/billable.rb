@@ -250,13 +250,13 @@ module Billable
     months = (DateTime.parse(created_at.to_s)<<1 .. DateTime.now).select{ |d| d.strftime("%Y-%m-01") if d.day.to_i == 1 } 
     months.each do |dtim|
       ucalc = UsageCalculator.new(self, dtim)
-      ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPTS)
-      ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPTS)
+      ucalc.calculate(MonthlyUsage::BASIC_TRANSCRIPTS)
+      ucalc.calculate(MonthlyUsage::PREMIUM_TRANSCRIPTS)
 
       # calculate non-billable usage if the current actor is a User in an Org
       if self.is_a?(User) and self.entity != self
-        ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPT_USAGE)
-        ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
+        ucalc.calculate(MonthlyUsage::BASIC_TRANSCRIPT_USAGE)
+        ucalc.calculate(MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
       end
     end 
   end 

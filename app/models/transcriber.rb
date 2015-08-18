@@ -9,7 +9,7 @@ class Transcriber < ActiveRecord::Base
   after_commit :invalidate_caches, on: :update
 
   def self.ids_for_type(usage_type)
-    if usage_type == 'basic'
+    if usage_type == 'basic' or usage_type == MonthlyUsage::BASIC_TRANSCRIPTS or usage_type == MonthlyUsage::BASIC_TRANSCRIPT_USAGE
       [ self.basic.id ]
     else
       [ self.speechmatics.id, self.voicebase.id ]

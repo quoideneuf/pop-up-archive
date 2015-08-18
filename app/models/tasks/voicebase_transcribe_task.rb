@@ -123,12 +123,12 @@ class Tasks::VoicebaseTranscribeTask < Task
     ucalc = UsageCalculator.new(billed_user.entity, now)
 
     # call on user.entity so billing goes to org if necessary
-    billed_duration = ucalc.calculate(Transcriber.voicebase, MonthlyUsage::PREMIUM_TRANSCRIPTS)
+    billed_duration = ucalc.calculate(MonthlyUsage::PREMIUM_TRANSCRIPTS)
 
     # call again on the user if user != entity, just to record usage.
     if billed_user.entity != billed_user
       user_ucalc = UsageCalculator.new(billed_user, now)
-      user_ucalc.calculate(Transcriber.voicebase, MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
+      user_ucalc.calculate(MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
     end
 
     return billed_duration
@@ -185,7 +185,7 @@ class Tasks::VoicebaseTranscribeTask < Task
     vb_job = client.get '/media/' + extras['job_id']
     self.extras['vb_job_status'] = vb_job.media.status
 
-    if self.extras['vb_job_status'] == 'running'
+    if self.extras['vb_job_status'] == 'running' || self.extras['vb_job_status'] == 'accepted'
       # if VB is still working, return without doing anything
       logger.warn("Task #{self.id} for Voicebase job #{self.extras['job_id']} still running")
       return

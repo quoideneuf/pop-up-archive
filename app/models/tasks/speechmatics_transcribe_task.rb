@@ -103,12 +103,12 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     ucalc = UsageCalculator.new(billed_user.entity, now)
 
     # call on user.entity so billing goes to org if necessary
-    billed_duration = ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPTS)
+    billed_duration = ucalc.calculate(MonthlyUsage::PREMIUM_TRANSCRIPTS)
 
     # call again on the user if user != entity, just to record usage.
     if billed_user.entity != billed_user
       user_ucalc = UsageCalculator.new(billed_user, now)
-      user_ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
+      user_ucalc.calculate(MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
     end
 
     return billed_duration
