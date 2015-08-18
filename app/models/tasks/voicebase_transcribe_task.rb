@@ -267,6 +267,9 @@ class Tasks::VoicebaseTranscribeTask < Task
       # update status
       audio_file.set_current_status
       audio_file.save!
+
+    else
+      raise "Failed to process transcript from response: #{response.inspect}"
     end
   end
 
