@@ -231,8 +231,8 @@ angular.module('Directory.items.controllers', ['Directory.loader', 'Directory.us
   $scope.showForm = function() {
     if ($scope.currentUser.offerEnded && !$scope.currentUser.hasCreditCard()) {
       return false
-    } else if ($scope.currentUser.overMonthlyLimit && $scope.currentUser.hasCreditCard() && !$scope.currentUser.isOrgMember()) {
-      return true
+    } else if ($scope.currentUser.overMonthlyLimit && !$scope.currentUser.isOrgMember()) {
+      return false
     } else if (!$scope.currentUser.overMonthlyLimit) {
       return true
     } else {
