@@ -187,7 +187,7 @@ class Tasks::VoicebaseTranscribeTask < Task
     vb_job = client.get '/media/' + extras['job_id']
     self.extras['vb_job_status'] = vb_job.media.status
 
-    if self.extras['vb_job_status'] == 'running'
+    if self.extras['vb_job_status'] == 'running' || self.extras['vb_job_status'] == 'accepted'
       # if VB is still working, return without doing anything
       logger.warn("Task #{self.id} for Voicebase job #{self.extras['job_id']} still running")
       return
@@ -206,9 +206,8 @@ class Tasks::VoicebaseTranscribeTask < Task
       return
     end
 
-    # if we get here, unknown status, so log and try to finish anyway.
-    logger.warn("Task #{self.id} for Voicebase job #{self.extras['job_id']} has status '#{self.extras['vb_job_status']}'")
-    finish!  # attempt to finish. Who knows, we might get lucky.
+    # if we get here, unknown status
+    raise("Task #{self.id} for Voicebase job #{self.extras['job_id']} has unknown status '#{self.extras['vb_job_status']}'")
 
   end
 
