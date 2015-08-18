@@ -186,7 +186,7 @@ namespace :reports do
     Organization.all.each do |org|
       plan_secs = org.plan.hours * 3600
       next if plan_secs == 0
-      org.monthly_usages.each do |mu|
+      org.monthly_usages.order('yearmonth desc').each do |mu|
         if mu.value > plan_secs.to_f
           printf("%s %6d %20s %40s  %s  $%0.2f\n", mu.yearmonth, mu.entity_id, mu.use, mu.entity.name, mu.value_as_hms, mu.retail_cost)
         end
@@ -202,7 +202,7 @@ namespace :reports do
         next if user.organization_id
         plan_secs = user.plan.hours * 3600
         next if plan_secs == 0
-        user.monthly_usages.each do |mu|
+        user.monthly_usages.order('yearmonth desc').each do |mu|
           if mu.value > plan_secs.to_f
             printf("%s %6d %20s %40s  %s  $%0.2f\n", mu.yearmonth, mu.entity_id, mu.use, mu.entity.name, mu.value_as_hms, mu.retail_cost)
           end
