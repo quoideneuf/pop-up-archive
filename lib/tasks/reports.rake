@@ -194,6 +194,23 @@ namespace :reports do
     end
   end
 
+  desc "Users over their monthly plan usage"
+  task user_overages: [:environment] do
+    puts "Generating report for Users with overages"
+    User.find_in_batches do |users|
+      users.each do |user|
+        next if user.organization_id
+        plan_secs = user.plan.hours * 3600
+        next if plan_secs == 0
+        user.monthly_usages.each do |mu|
+          if mu.value > plan_secs.to_f
+            printf("%s %6d %20s %40s  %s  $%0.2f\n", mu.yearmonth, mu.entity_id, mu.use, mu.entity.name, mu.value_as_hms, mu.retail_cost)
+          end
+        end
+      end
+    end
+  end
+
   desc "prints subscriber sign-up summary for the current month"
   task customer_sign_ups: [:environment] do
 
