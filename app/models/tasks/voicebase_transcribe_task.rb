@@ -206,10 +206,17 @@ class Tasks::VoicebaseTranscribeTask < Task
   def finish_task
     return unless audio_file
 
-    # verify job status is complete
     client = self.class.voicebase_client
-    vb_job = client.get '/media/' + extras['job_id'] 
-    return unless vb_job.media.status == 'finished' # not finished yet # TODO
+
+    # verify job status is complete
+    if extras['job_status'] != "finished"
+      vb_job = client.get '/media/' + extras['job_id']
+      if vb_job.media.status != "finished"
+        raise "Cannot finish task where VB status != finished (#{vb_job.media.status})"
+      else
+        extras['job_status'] = vb_job.media.status
+      end
+    end
 
     transcript = nil
     begin
@@ -247,6 +254,10 @@ class Tasks::VoicebaseTranscribeTask < Task
 
       # share the glad tidings
       notify_user
+
+      # update status
+      audio_file.set_current_status
+      audio_file.save!
     end
   end
 
