@@ -204,7 +204,7 @@ namespace :reports do
       user.monthly_usages.select {|mu| mu.yearmonth == the_month}.each do |mu|
         usage += mu.value
       end
-      line = sprintf("%s %s %21s %10s %4s   $%5.2f    %s\n", dt, user.id, user.name.slice(0,20), user.plan.name, user.pop_up_hours, user.prorated_charge_for_month(now), Api::BaseHelper::time_definition(usage))
+      line = sprintf("%s %s %21s %10s %4s   $%8.2f    %s\n", dt, user.id, user.name.slice(0,20), user.plan.name, user.pop_up_hours, user.prorated_charge_for_month(now), Api::BaseHelper::time_definition(usage))
       buf.push line
     end
     if send_mail
