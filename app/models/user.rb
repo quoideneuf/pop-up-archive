@@ -27,6 +27,7 @@ class User < ActiveRecord::Base
   has_many :items, through: :collections
   has_many :audio_files, through: :items
   has_many :csv_imports
+  has_many :charges
   has_many :oauth_applications, class_name: 'Doorkeeper::Application', as: :owner
 
   has_many :active_admin_comments, as: :resource
@@ -258,6 +259,14 @@ class User < ActiveRecord::Base
       return customer.plan || SubscriptionPlanCached.community
     end
   end
+
+  def charges
+    if organization && organization.owner_id != id
+      organization.owner.charges
+    else
+      super
+    end
+  end 
 
   def entity
     @_entity ||= organization || self
