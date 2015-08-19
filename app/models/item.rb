@@ -80,7 +80,7 @@ class Item < ActiveRecord::Base
       end
 
       STANDARD_ROLES.each do |role|
-        indexes role.pluralize.to_sym, type: 'string', include_in_all: false, index_name: role, index: 'not_analyzed'
+        indexes role.pluralize.to_sym, type: 'nested', include_in_all: false, analyzer: 'caseinsensitive'
       end
     end
   end
@@ -236,7 +236,7 @@ class Item < ActiveRecord::Base
   def as_indexed_json(params={})
     as_json(params.reverse_merge(DEFAULT_INDEX_PARAMS)).tap do |json|
       ([:contributors] + STANDARD_ROLES.collect{|r| r.pluralize.to_sym}).each do |assoc|
-        json[assoc]      = send(assoc).map{|c| c.as_json }
+        json[assoc]      = send(assoc).map{|c| c.roles_array }
       end
       json[:title_sort]  = title_for_index_sort
       json[:audio_files] = audio_for_index
