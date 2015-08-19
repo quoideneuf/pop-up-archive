@@ -188,7 +188,15 @@ namespace :reports do
       next if plan_secs == 0
       org.monthly_usages.order('yearmonth desc').each do |mu|
         if mu.value > plan_secs.to_f
-          printf("%s %6d %20s %40s  %s  $%0.2f\n", mu.yearmonth, mu.entity_id, mu.use, mu.entity.name, mu.value_as_hms, mu.retail_cost)
+          # use the overage method, not the mu.retail_cost,
+          # to avoid the cases where plan changes or we have transcripts
+          # marked as wholesale that really should count as retail.
+          usage = org.usage_summary(DateTime.parse(mu.yearmonth + '-01'))
+          monthly_secs  = usage[:this_month][:secs]
+          monthly_cost  = usage[:this_month][:cost]
+          printf("%s %6d %20s %40s %32s $%8.2f\n", \
+            mu.yearmonth, mu.entity_id, mu.use, mu.entity.name, \
+            Api::BaseHelper::time_definition(monthly_secs), monthly_cost)
         end
       end
     end
@@ -204,7 +212,15 @@ namespace :reports do
         next if plan_secs == 0
         user.monthly_usages.order('yearmonth desc').each do |mu|
           if mu.value > plan_secs.to_f
-            printf("%s %6d %20s %40s  %s  $%0.2f\n", mu.yearmonth, mu.entity_id, mu.use, mu.entity.name, mu.value_as_hms, mu.retail_cost)
+            # use the overage method, not the mu.retail_cost,
+            # to avoid the cases where plan changes or we have transcripts
+            # marked as wholesale that really should count as retail.
+            usage = user.usage_summary(DateTime.parse(mu.yearmonth + '-01'))
+            monthly_secs  = usage[:this_month][:secs]
+            monthly_cost  = usage[:this_month][:cost]
+            printf("%s %6d %20s %40s %32s $%8.2f\n", \
+              mu.yearmonth, mu.entity_id, mu.use, mu.entity.name, \
+              Api::BaseHelper::time_definition(monthly_secs), monthly_cost)
           end
         end
       end
