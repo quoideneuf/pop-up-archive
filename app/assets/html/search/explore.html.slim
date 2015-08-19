@@ -1,7 +1,7 @@
 .browse_results
   .container#explorewell
     div.featuredcol
-    .row.main-featured  ng-hide="newView" 
+    .row.main-featured 
       h2.center 
         |Featured: 
         a href="https://www.popuparchive.com/collections/4425" Popcast
@@ -16,7 +16,7 @@
           a href="https://www.popuparchive.com/collections/4425" Popcast
           |, Pop Up Archive's house podcast, Eliza Smith excavates audio from Pop Up Archive's public collections, from recordings on wax cylinder to NASA's interstellar rumbles. Listen to Smith resurface and reexamine forgotten sounds in this series of intimate micro-podcasts.
     h3 Archival Voices
-    .row ng-hide="newView"
+    .row
       .col-md-12
         .featured-collection
           a href='/collections/938'
@@ -58,7 +58,7 @@
             a href="https://www.popuparchive.com/search?page=1&sortBy=date_added&sortOrder=desc&query=collection_id:%22583-Illinois%20Public%20Media%22,tag:%22Public%20Education%22" education
             |.
     h3 New Voices  
-    .row ng-hide="newView"
+    .row
       .col-md-12
         .featured-collection
           a href='https://www.popuparchive.com/collections/3247'
@@ -93,7 +93,7 @@
             a href="https://www.popuparchive.com/search?page=1&query=collection_id:%222064-KALW%27s%20Crosscurrents%22,Audiograph" Audiograph
             |  sound of the week.
 
-  .row ng-hide="newView"
+  .row
     h3 Browse by Category
     .col-md-4.top-terms ng-repeat="facet in search.facetsAsObjects()" ng-show="facet.visible()"
       h4() {{facet.name | lowercase}}
@@ -102,18 +102,5 @@
           small.pull-right() ({{entry.count}})
           p ng-click="addSearchFilter(entry)" {{entry.nameForPresenting()}}
         li
-          a ng-click="setQuery({field: facet.name, letter: 'A'}); toggleView()"  More...
-  .container ng-show="newView"   
-    .row
-      .col-md-12
-        .browse
-          ul#letters
-            li ng-repeat="letter in letters"
-              a ng-click="setQuery({letter: letter})" {{letter}} 
-          h4() {{title_term | lowercase}}
-          a ng-click="toggleView()" Back to All Facets 
-    .row 
-      .results
-        .col-md-4 ng-repeat="term in terms"
-          ul
-            li ng-click="termSearch({field: field, term: term.term})" {{term.term}} ({{term.count}})
+          / ng-href="explore/field/{{facet.name}}/a"
+          a ng-click="setQuery({field: facet.name, letter: 'A'})"  More...

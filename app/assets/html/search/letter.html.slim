@@ -1,0 +1,15 @@
+.browse_results	
+	.container   
+	.row
+	  .col-md-12
+	    .browse
+	      ul#letters
+	        li ng-repeat="letter in letters"
+	          a ng-href="/explore/field/{{field}}/{{letter}}" {{letter}} 
+	      h4() {{title_term | lowercase}}
+	      a ng-href="/explore" Back to All Facets 
+	.row 
+	  .results
+	/     .col-md-4 ng-repeat="term in terms"
+	/       ul
+	/         li ng-click="termSearch({field: field, term: term.term})" {{term.term}} ({{term.count}})
