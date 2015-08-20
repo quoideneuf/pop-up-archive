@@ -246,6 +246,11 @@ class AudioFile < ActiveRecord::Base
   # make sure all the relevant tasks have been created.
   # note that each method called is responsible for checking whether it should be created.
   def check_tasks
+    return true if is_finished?
+    if is_cancelled?
+      logger.warn "AudioFile is cancelled and no tasks will be checked"
+      return
+    end
     analyze_audio
     copy_original
     transcode_audio
