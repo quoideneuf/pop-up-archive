@@ -119,7 +119,7 @@ angular.module('Directory.users.models', ['RailsModel'])
       return this.usage.summary.thisMonth.hours;
     }
     else {
-      return (this.usage.summary.thisMonth.secs - (this.communityPlanUsed / 3600));
+      return (this.usage.summary.thisMonth.hours - (this.communityPlanUsed / 3600));
     }
   };
 
