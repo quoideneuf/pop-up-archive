@@ -5,6 +5,8 @@ describe FeedPopUp do
   before { StripeMock.start }
   after { StripeMock.stop }
 
+  let(:feed_url) { 'file://'+Dir.pwd+'/spec/factories/files/feed-atom.xml' }
+
   it "should be constructed with dry_run option" do
     FeedPopUp.new.dry_run.should == false
     FeedPopUp.new(true).dry_run.should == true
@@ -15,9 +17,13 @@ describe FeedPopUp do
     mock_feed.entries = []
     Feedjira::Feed.stub(:fetch_and_parse).and_return(mock_feed)
     collection = FactoryGirl.create :collection_private
-    url = 'http://radio.seti.org/index.xml'
     fpu = FeedPopUp.new(true)
-    fpu.parse(url, collection.id)
+    fpu.parse(feed_url, collection.id)
+  end
+
+  it "should process a real feed" do
+    collection = FactoryGirl.create :collection_private
+    FeedPopUp.update_from_feed(feed_url, collection.id).should eq 25
   end
 
   describe "add audio files" do

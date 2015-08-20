@@ -11,6 +11,7 @@ class Tasks::VoicebaseTranscribeTask < Task
     ProcessTaskWorker.perform_async(self.id) unless Rails.env.test?
   end
 
+  # :nocov:
   def process
 
     # sanity check -- have we already created a remote request?
@@ -81,7 +82,9 @@ class Tasks::VoicebaseTranscribeTask < Task
     end
 
   end
+  # :nocov:
 
+  # :nocov:
   def self.voicebase_client
     client = VoiceBase::Client.new(
       :id     => ENV['VOICEBASE_AUTH_ID'],
@@ -90,7 +93,9 @@ class Tasks::VoicebaseTranscribeTask < Task
     )
     client
   end
+  # :nocov:
 
+  # :nocov:
   def lookup_job_by_name
     # we might have the id via the callback
     if extras['vb_job_id_via_callback']
@@ -115,6 +120,7 @@ class Tasks::VoicebaseTranscribeTask < Task
     end
     job_id
   end
+  # :nocov:
 
   def update_premium_transcript_usage(now=DateTime.now)
     billed_user = user
@@ -126,12 +132,12 @@ class Tasks::VoicebaseTranscribeTask < Task
     ucalc = UsageCalculator.new(billed_user.entity, now)
 
     # call on user.entity so billing goes to org if necessary
-    billed_duration = ucalc.calculate(Transcriber.voicebase, MonthlyUsage::PREMIUM_TRANSCRIPTS)
+    billed_duration = ucalc.calculate(MonthlyUsage::PREMIUM_TRANSCRIPTS)
 
     # call again on the user if user != entity, just to record usage.
     if billed_user.entity != billed_user
       user_ucalc = UsageCalculator.new(billed_user, now)
-      user_ucalc.calculate(Transcriber.voicebase, MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
+      user_ucalc.calculate(MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
     end
 
     return billed_duration
@@ -160,6 +166,7 @@ class Tasks::VoicebaseTranscribeTask < Task
     return false
   end
 
+  # :nocov:
   def recover!
 
     # easy cases first.
@@ -210,7 +217,9 @@ class Tasks::VoicebaseTranscribeTask < Task
     raise("Task #{self.id} for Voicebase job #{self.extras['job_id']} has unknown status '#{self.extras['vb_job_status']}'")
 
   end
+  # :nocov:
 
+  # :nocov:
   def finish_task
     return unless audio_file
 
@@ -271,6 +280,7 @@ class Tasks::VoicebaseTranscribeTask < Task
       raise "Failed to process transcript from response: #{response.inspect}"
     end
   end
+  # :nocov:
 
   def process_transcript(response)
     trans = nil
@@ -376,16 +386,19 @@ class Tasks::VoicebaseTranscribeTask < Task
     Rails.application.routes.url_helpers.voicebase_callback_url(model_name: 'task', model_id: self.extras['public_id'])
   end
 
+  # :nocov:
   def download_audio_file
     connection = Fog::Storage.new(storage.credentials)
     uri        = URI.parse(audio_file_url)
     Utils.download_file(connection, uri)
   end
+  # :nocov:
 
   def audio_file_url
     audio_file.public_url(extension: :mp3)
   end
 
+  # :nocov:
   def notify_user
     return unless (user && audio_file && audio_file.item)
     return if extras['notify_sent']
@@ -397,6 +410,7 @@ class Tasks::VoicebaseTranscribeTask < Task
     self.save!
     r
   end
+  # :nocov:
 
   def audio_file
     owner
@@ -414,6 +428,8 @@ class Tasks::VoicebaseTranscribeTask < Task
     self.extras['duration'].to_i
   end
 
+  # this method does not appear to be used anywhere
+  # :nocov:
   def usage_duration
     # if parent audio_file gets its duration updated after the task was created, for any reason, prefer it
     if duration and duration > 0
@@ -425,5 +441,6 @@ class Tasks::VoicebaseTranscribeTask < Task
       duration
     end
   end
+  # :nocov:
 
 end

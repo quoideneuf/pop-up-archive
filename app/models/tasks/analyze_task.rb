@@ -4,6 +4,7 @@ class Tasks::AnalyzeTask < Task
 
   after_commit :create_analyze_job, :on => :create
 
+  # :nocov:
   def finish_task
     return if cancelled?
     if destination && destination.length > 0
@@ -38,7 +39,9 @@ class Tasks::AnalyzeTask < Task
       raise "No destination so cannot finish task #{id}"
     end
   end
+  # :nocov:
 
+  # :nocov:
   def recover!
     if !owner
       extras['error'] = 'No Owner defined'
@@ -50,6 +53,7 @@ class Tasks::AnalyzeTask < Task
       finish!
     end
   end 
+  # :nocov:
 
   def process_analysis(analysis_json)
     item = owner.item
@@ -160,6 +164,7 @@ class Tasks::AnalyzeTask < Task
     entity.save
   end
 
+  # :nocov:
   def create_analyze_job
     j = create_job do |job|
       job.job_type    = 'text'
@@ -177,6 +182,7 @@ class Tasks::AnalyzeTask < Task
       job
     end
   end
+  # :nocov:
 
   def destination
     extras['destination'] || owner.try(:destination, {

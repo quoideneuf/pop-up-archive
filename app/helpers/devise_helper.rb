@@ -1,4 +1,5 @@
 module DeviseHelper
+  # :nocov:
   def devise_error_messages!
     return '' if resource.errors.empty?
 
@@ -16,4 +17,5 @@ module DeviseHelper
 
     html.html_safe
   end
+  # :nocov:
 end

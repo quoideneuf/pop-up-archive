@@ -5,8 +5,25 @@ CarrierWave.configure do |config|
   config.root = Rails.root.join('tmp')
   config.cache_dir = "#{Rails.root}/tmp/uploads"
 
-
   config.storage        = :fog
+
+  config.asset_host     = proc do |file|
+    #pp file
+    #STDERR.puts "file provider==#{file.model.storage.provider}"
+    #STDERR.puts caller.join("\n")
+    host = nil
+    if Rails.env.test?
+      # TODO a way to test Carrierwave+Fog with better mock
+ 
+    elsif file.model.storage.at_internet_archive?
+      # TODO optional IA CDN?
+ 
+    elsif ENV['CDN']
+      host = ENV['CDN']
+    end
+    host
+  end
+
   config.fog_directory  = ENV['AWS_BUCKET']
   config.fog_public     = false
 

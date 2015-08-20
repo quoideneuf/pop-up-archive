@@ -29,6 +29,12 @@ class AudioFileUploader < CarrierWave::Uploader::Base
     end
   end
 
+  def path=(p)
+    if file.respond_to?(:path=)
+      file.path = p
+    end
+  end
+
   def store_dir
     model.store_dir
   end
@@ -71,6 +77,7 @@ class AudioFileUploader < CarrierWave::Uploader::Base
 
   private
 
+  # :nocov:
   def full_filename(for_file)
     if !version_name
       fn = super(for_file)
@@ -81,7 +88,9 @@ class AudioFileUploader < CarrierWave::Uploader::Base
       "#{base}.#{version_name}"
     end
   end
+  # :nocov:
 
+  # :nocov:
   def full_original_filename
     if !version_name
       super.gsub(",","_")
@@ -92,5 +101,6 @@ class AudioFileUploader < CarrierWave::Uploader::Base
       "#{base}.#{version_name}"
     end
   end
-  
+  # :nocov:
+
 end

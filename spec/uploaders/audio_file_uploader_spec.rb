@@ -21,6 +21,10 @@ describe AudioFileUploader do
     it "handles item storage" do
       item.storage_configuration = weird_config
       expect(uploader.fog_credentials).to eq weird_config.credentials
+      uploader.fog_attributes.should have_key(:collections)
+      uploader.fog_directory.should eq audio_file.destination_directory
+      uploader.fog_public.should eq audio_file.storage.is_public?
+      uploader.store_dir.should eq audio_file.store_dir
     end
 
   end

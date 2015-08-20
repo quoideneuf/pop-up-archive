@@ -7,19 +7,17 @@
   .row.parent
     .plan-well.col-md-4 ng-repeat="plan in plans | filter: {'interval': getInterval()} | orderBy:'amount' | limitTo: planOffset" ng-class="{current: isCurrentPlan(plan), selected: isSelectedPlan(plan), disabled: isDisabled(plan.name)}" ng-click="isDisabled(plan.name) ||changePlan(plan)"
         h3() {{plan.name}}
-        h4 ng-show="plan.name == 'Community'" 1 hour of processing per month
-        h4 ng-show="plan.name != 'Community'" of processing per month
-        object ng-show="plan.name == 'Community'" type="image/svg+xml" data="/assets/pricing/free.svg"
+        h4 ng-show="plan.is_community" 1 hour of free processing total
+        h4 ng-show="!plan.is_community" of processing per month
+        object ng-show="plan.name == '1 Hour Demo'" type="image/svg+xml" data="/assets/pricing/free.svg"
         object ng-show="plan.name == '1 Hour'" type="image/svg+xml" data="/assets/pricing/hourglass_1.svg"
         object ng-show="plan.name == '5 Hours'" type="image/svg+xml" data="/assets/pricing/hourglass_5.svg"
         //price
-        h3() ${{plan.amount/100}}
-        h4 per {{plan.interval}}
+        h3 ng-show="!plan.is_community" ${{plan.amount/100}}
+        h4 ng-show="!plan.is_community" per {{plan.interval}}
 
         ul.pricing
           li ng-show="isPremiumPlan(plan)" Premium Machine Transcripts 
-          li ng-show="!isPremiumPlan(plan)" 2-Minute Basic Machine Transcripts
-          li ng-show="!isPremiumPlan(plan)" On-Demand Premium Transcripts $#{Billable::OVERAGE_HOURLY_RATE}/hr
           / ul ng-show="isPremiumPlan(plan)"
           /   li Improved Accuracy
           /   li Automatic Speaker Differentiation
@@ -62,62 +60,7 @@
             object type="image/svg+xml" data="/assets/pricing/megaphone.svg"
             h3 Lots of audio?      
             h4 Contact us for business services and tools, including automated ingest, hypermedia API and media organization assistance.
-       
-  .row
-    .col-md-12
-      h2 Basic and Premium Transcript Comparison
-      p.center Press play below to view a side-by-side comparison of our Basic and Premium machine transcripts.
-    
-  //Sample audio player  
-  .row.player
-    .col-md-1
-      i.player-button.fa.fa-fast-backward ng-disabled="player.time == 0" ng-click="rewind()"   
-    .col-md-1    
-      i.player-button.fa.fa-play ng-hide="isPlaying()" ng-click="play(exampleAudioFile.url)"     
-      i.player-button.fa.fa-pause ng-show="isPlaying()" ng-click="pause()" 
-    .col-md-8     
-      .scrubber
-        .bar ng-show="isLoaded()" ng-style="{width:player.time*100/player.duration+'%'}"
-    .col-md-2
-      .timecodes
-        span() {{exampleAudioFile.duration}}
-
-  .row
-    .col-md-12
-      table.speakers
-        tr
-          th Basic
-          th Premium
-        tr
-          td Olympia news in Washington 
-          td 
-            span.speaker1 F1 
-            | From N.P.R. News. In Washington 
-        tr
-          td on quarter Coleman
-          td I'm Korva Coleman.
-        tr 
-          td rush it says Ukrainian military operations against separatists in eastern Ukraine today 
-          td Russia says Ukrainian military operations against separatists in eastern Ukraine today 
-        tr
-          td destroyed hope for the Geneva peace plan
-          td have destroyed hope for the Geneva peace plan and fears.
-        tr 
-          td can civilians
-          td Corey Flintoff reports. Russia is accusing Ukraine of attacking civilians. 
-        tr 
-          td President Putin spokesman Dimitri Peskov cause the Ukrainian government separatist a punitive operation is that the government is using military aircraft who did civilians in populated areas 
-          td
-            span.speaker2 M1 
-            | President Putin's spokesman Dmitri because Cove calls the Ukrainian government's move against pro- Russian separatists a punitive operation. 
-        tr  
-          td is that the government is using military aircraft who did civilians in populated areas
-          td He says the government is using military aircraft to shoot civilians in populated areas.
-        tr
-          td Keef says the troops are fighting armed militants it illegal to check points on the outskirts of the eastern city of slavianka
-          td He says the troops are fighting armed militants at illegal checkpoints on the outskirts of the eastern city of Slovenia. 
-
-  .row
+    .row
     .col-md-12
       h2 Plan FAQs
       p.alert.alert-info.pull-center
@@ -130,26 +73,16 @@
     .col-md-6
       ol
         li 
-          p.question What are Basic and Premium Transcripts?
-          strong Basic Transcripts
-          a href="https://www.popuparchive.com/collections/799"  (See sample collection)
-          p 
-            | Basic software is based on a large, general corpus of English language words. Most useful for 
-            strong quick search
-            | ,
-            strong  keyword extraction,
-            |  and to serve as a 
-            strong starting point 
-            | for editing. 
+          p.question What are Premium Transcripts?
 
           strong Premium Transcripts
           a href="https://www.popuparchive.com/collections/3247"  (See sample collection)
           p 
             | Generated using software specially trained to English language broadcast and oral history voices. Features include:
           ul.premul
-            li 
-              | –Editable 
-              strong speaker differentiation (in beta)
+            / li 
+            /   | –Editable 
+            /   strong speaker differentiation (in beta)
             li 
               | –Grammatical analysis for 
               strong punctuation & capitalization 
@@ -193,26 +126,19 @@
         li 
           p.question Can I cancel at any time? 
           p 
-            | Yes, absolutely. When you're logged in, just click your user name, select “account,” then click “Change My Plan.” Choose the free Community Plan to downgrade your account. 
+            | Yes, absolutely. When you're logged in, just click your user name, select “account,” then click “Change My Plan.” Choose the free "1 Hour Demo" to downgrade your account. 
           p
-            | You will not be charged again unless you choose to either upgrade or order more Premium Transcripts on demand. In addition, all uploads to the Internet Archive will remain available at 
+            | You will not be charged again unless you choose upgrade. In addition, you will retain access to all audio and data you've uploaded previously. All uploads to the Internet Archive will remain available at 
             a href="http://archive.org" target="_blank" archive.org
             | .
-          p You will recieve the prorated value for the remainder of that month in the form of processing credits, available if you ever decide to upgrade back to a paid plan.
 
         li 
           p.question What happens if I go over my monthly hour limit?
-          p You will be notified upon login when you have gone over your hourly limit. You will still be able to pay as you go for Premium Transcripts at the rate of $#{Billable::OVERAGE_HOURLY_RATE}/hr, but will be unable to upload anything at the plan rate unless you upgrade or wait until the next month.
+          p You will be notified upon login when you have gone over your hourly limit and will be unable to upload anything for the remainder of the month unless you upgrade.
         li 
           p.question Do unused hours carry over to the next month? 
           p Unused hours do not carry over. The number of hours available to your plan will reset each month from the day you signed up.
         li 
           p.question If I delete audio, do I get more upload space? 
           p No, our monthly limits refer to the total amount of audio that has successfully uploaded, regardless of whether audio has been deleted.
-        li 
-          p.question How am I billed for Premium Transcripts ordered on demand?
-          p The cost of on demand Premium Transcripts, orderable on Community and Professional plans, will be added to your bill and charged at on the 1st of the month after the order using the credit card stored during sign up (Professional) or during your first Premium Transcript order (Community).
-
-          p On demand Premium Transcripts are charged at the rate of $#{Billable::OVERAGE_HOURLY_RATE}/hr. You can review all of the charges to expect beforehand on your account page.
-
-
+        

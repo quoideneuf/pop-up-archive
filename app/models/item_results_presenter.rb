@@ -164,6 +164,7 @@ class ItemResultsPresenter < BasicObject
 
       if @result.transcripts.present?
         @result.transcripts.select {|transcript| keys.include? transcript.transcript }.each do |transcript|
+          next unless audio_file_presenters[transcript.audio_file_id]
           audio_file_presenters[transcript.audio_file_id].transcript_array.push({text: lookup[transcript.transcript], start_time: transcript.start_time, end_time: transcript.end_time })
         end
         audio_file_presenters.values

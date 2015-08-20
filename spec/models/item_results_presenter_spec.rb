@@ -70,4 +70,19 @@ describe ItemResultsPresenter do
 
   end
 
+  describe "live search results" do
+    it "should format live results" do
+      STDERR.puts "To sleep, perchance to ... sync with ES"
+      sleep 1
+
+      searcher = ItemSearcher.new({ q: 'title:hooray' })
+      r = searcher.search
+      r.results.total.should eq 2
+      STDERR.puts "#{r.results.total} hits for #{searcher.query_str}"
+      @irp = ItemResultsPresenter.new(r.response)
+      formatted = @irp.format_results
+      facets    = @irp.facets
+    end
+  end
+
 end

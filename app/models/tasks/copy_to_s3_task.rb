@@ -1,19 +1,13 @@
-class Tasks::CopyTask < Task
+class Tasks::CopyToS3Task < Task
 
-  attr_accessor :should_process
-  @should_process = false
+  # copy a file from somewhere (original) to S3
 
   after_commit :create_copy_job, :on => :create
-  after_commit :start_processing, :on => :update
 
   def finish_task
     return unless owner
-    result_path = URI.parse(extras['destination']).path
-    new_storage_id = storage_id || extras['storage_id'].to_i
 
-    # set the file on the owner, and the storage as the upload_to
-    owner.update_file!(File.basename(result_path), new_storage_id)
-    self.should_process = true
+    # TODO flag the owner (audio_file) in any way to indicate the copy is complete?
   end
 
   # :nocov:
@@ -42,7 +36,7 @@ class Tasks::CopyTask < Task
   def create_copy_job
     j = create_job do |job|
       job.job_type    = 'audio'
-      job.original    = original
+      job.original    = original  # .mp3 file by default
       job.retry_delay = Task::RETRY_DELAY
       job.retry_max   = Task::MAX_WORKTIME / Task::RETRY_DELAY
       job.priority    = 1
@@ -58,15 +52,9 @@ class Tasks::CopyTask < Task
   end
   # :nocov:
 
-  def start_processing
-    return unless should_process
-    self.owner(true).process_file
-    self.should_process = false
-  end
-
   def destination
     extras['destination'] || owner.try(:destination, {
-      storage: storage
+      storage: StorageConfiguration.popup_storage
     })
   end
 

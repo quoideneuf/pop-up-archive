@@ -11,12 +11,12 @@ section.modal ng-controller="ItemFormCtrl"
         h3 ng-show="currentUser.offerEnded && !currentUser.hasCreditCard()"
           | Your free trial has ended.
           a href="/account/plan"  Upgrade now!
-        h3 ng-show="currentUser.overMonthlyLimit && !currentUser.hasCreditCard() && !currentUser.isOrgMember()"
-         | You are over your monthly limit and do not have a credit card on file.
+        h3 ng-show="currentUser.overMonthlyLimit && !currentUser.isOrgMember()"
+         | You are over your monthly limit.
          a href="/account/plan"  Upgrade now!
         h3 ng-show="currentUser.overMonthlyLimit && currentUser.isOrgMember()"
          | You are over your organization's monthly limit.
-        form.item-form.form-horizontal name='newItemForm' ng-show="showForm()"
+        form.item-form.form-horizontal name='newItemForm' ng-show="showForm() && !currentuser.overMonthlyLimit"
     
           div.form-group.remote-item ng-hide='(item.id > 0) || (item.files.length > 0) || (remoteFileUrls)' style="text-align:center;"
             h3 Drag and drop a file anywhere on the site
@@ -28,12 +28,6 @@ section.modal ng-controller="ItemFormCtrl"
             span style='margin: 4px;'
               button.btn.btn-default.btn-lg ng-click="addItemFromURL($event)" style="margin-bottom:10px;" Add Files by URL
     
-            .alert.alert-danger ng-show="currentUser.overMonthlyLimit"
-              h4
-               | You are over your monthly limit.
-               br
-               | Additional uploads will be charged at the rate of $#{Billable::OVERAGE_HOURLY_RATE}/hour.
-    
             .alert.alert-warning 
               p
                | Periods not allowed in file names. (For example, episode1.wav, and 
@@ -41,11 +35,6 @@ section.modal ng-controller="ItemFormCtrl"
                | episode.1.wav.) 
     
           section ng-show='(item.id > 0) || (item.files.length > 0) || (remoteFileUrls)'
-            .alert.alert-danger ng-show="currentUser.overMonthlyLimit"
-              h4  
-               | You are over your monthly limit.
-               br  
-               | Additional uploads will be charged at the rate of $#{Billable::OVERAGE_HOURLY_RATE}/hour.
     
             .alert.alert-danger ng-show="(item.files.length > 1) && showFilesAlert"
               a ng-click="hideAlert()" style='text-decoration: none; color: #da4f49; float: right; margin-right: -20px;' 
@@ -54,8 +43,9 @@ section.modal ng-controller="ItemFormCtrl"
                 | Multiple files are not supported.
               p
                 strong
-                  | For separate playback of each file, delete extra files and upload one at a time.         
-            .form-group ng-hide="item.id > 0"
+                  | For separate playback of each file, delete extra files and upload one at a time.
+
+            .form-group ng-hide="item.audioFiles.length > 0 || item.files.length > 0 || remoteFileUrls.length > 0"
               label.control-label
                 | Upload File
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles']" data-placement="bottom" html="true" auto-close="true"
@@ -77,7 +67,7 @@ section.modal ng-controller="ItemFormCtrl"
                 span.pull-right file-button=""
                   button.btn.btn-default.upload-file-button Add Files to Item
     
-            .form-group ng-hide="item.id > 0 || item.files.length > 0 || remoteFileUrls.length > 0"
+            .form-group ng-hide="item.audioFiles.length > 0 || item.files.length > 0 || remoteFileUrls.length > 0"
               label.control-label
                 | Add File
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles[][remoteFileUrl]']" data-placement="bottom" html="true" auto-close="true"
@@ -100,6 +90,9 @@ section.modal ng-controller="ItemFormCtrl"
               label.control-label
                 | Current Files
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles']" data-placement="bottom" html="true" auto-close="true"
+              .controls ng-show="item.hasPendingDeletes()"
+                label.pull-left style='padding-top: 5px;'
+                  i You must click Save to confirm file deletion.
               .controls ng-hide="item.audioFiles.length > 0"
                 label.pull-left style='padding-top: 5px;'
                   i No current files.
@@ -130,10 +123,10 @@ section.modal ng-controller="ItemFormCtrl"
                     |Are you sure you want to
                     span ng-show='item.id'  move
                     span ng-hide='item.id'  save
-                    | {{item.title}} to the Internet Archive?
+                    |  {{item.title}} to the Internet Archive?
                   div
                     | '{{selectedCollection.title}}' is a
-                    strong() {{selectedCollection.privateOrPublic()}}
+                    strong()  {{selectedCollection.privateOrPublic()}}
                     |  collection.
                   div All audio stored at Internet Archive will be available to stream and download at archive.org and will be visible to all users of Pop Up Archive.
           section ng-show='((item.id > 0) || (item.files.length > 0) || (remoteFileUrls))'
@@ -143,26 +136,6 @@ section.modal ng-controller="ItemFormCtrl"
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['title']" data-placement="bottom" html="true" auto-close="true"
               .controls
                 input.text.input-xlarge#title type='text' name="title" ng-model='item.title' ng-required="true" ng-class="{ 'empty-title' : newItemForm.title.$invalid }"
-            .form-group ng-show="!currentUser.overMonthlyLimit && !item.id && currentUser.defaultTranscriptType() == 'basic' && currentUser.hasCreditCard()"
-              label.control-label
-                | Type
-                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom" html="true" auto-close="true"
-              .controls.radio-group
-                input.radio_button type='radio' name="transcriptType" value="basic" ng-model='item.transcriptType' ng-click="premiumSelected=false"
-                label.radio-label
-                  | Basic
-                input.radio_button type='radio' name="transcriptType" value="premium" ng-model='item.transcriptType' ng-click="premiumSelected=true"
-                label.radio-label
-                  | Premium
-                  span.charge ng-show="premiumSelected"  $#{Billable::OVERAGE_HOURLY_RATE}/hour will be charged to your credit card
-            .form-group ng-show="currentUser.overMonthlyLimit"
-              label.control-label
-                | Type
-                i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['transcriptType']" data-placement="bottom" html="true" auto-close="true"
-              .controls
-                label
-                  | Premium  
-                  span.charge $#{Billable::OVERAGE_HOURLY_RATE}/hour will be charged to your credit card
             .form-group
               label.control-label
                 | Upload Images

@@ -1,5 +1,6 @@
 require 'nokogiri'
 
+# :nocov:
 class XMLMediaImporter
 
   attr_accessor :file, :collection,:collection_id, :dir, :file_name, :filter, :first_item, :last_item
@@ -202,3 +203,4 @@ class XMLMediaImporter
 		item
   end
 end
+# :nocov:

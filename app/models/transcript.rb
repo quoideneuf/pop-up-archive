@@ -176,9 +176,7 @@ class Transcript < ActiveRecord::Base
   end
 
   def is_premium?
-    if self.transcriber_id == Transcriber.premium.id
-      true
-    elsif self.transcriber_id == Transcriber.voicebase.id
+    if Transcriber.ids_for_type('premium').include?(self.transcriber_id)
       true
     else
       false

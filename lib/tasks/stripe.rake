@@ -57,5 +57,51 @@ namespace :stripe do
     end
   end
 
+  desc "delete duplicates"
+  task delete_dupes: [:environment] do
+    # build hash of all Customers, email => customer_id, from Stripe, with no plan
+    stripe_customers = {}
+    # fetch first page to get total we expect
+    custs = Stripe::Customer.all(limit: 100, include: ['total_count'])
+    stripe_total = custs.total_count
+    customer_offset = nil
+    customer_count = 0
+    custs.each do |cust|
+      customer_count += 1
+      if cust.subscriptions.count == 0
+        stripe_customers[cust.email] = cust.id
+      end
+      customer_offset = cust.id
+    end
+    while customer_count < stripe_total
+      custs = Stripe::Customer.all(limit: 100, include: ['total_count'], starting_after: customer_offset)
+      custs.each do |cust|
+        customer_count += 1
+        if cust.subscriptions.count == 0
+          stripe_customers[cust.email] = cust.id
+        end
+        customer_offset = cust.id
+      end
+      puts "Fetched #{customer_count} of #{stripe_total} Stripe customers; offset #{customer_offset}"
+    end
+
+    # compare against our Users
+    stripe_customers.keys.each do |email|
+      user = User.find_by_email(email) or next
+
+      if user.customer_id != stripe_customers[email]
+
+        # (optionally) delete non-existent Users from Stripe
+        if ENV['DELETE_OK']
+          c = Stripe::Customer.retrieve(stripe_customers[email])
+          c.delete
+        else
+          puts "Should delete #{email} => #{stripe_customers[email]}"
+        end
+      end
+    end
+
+  end
+
 end
 

@@ -5,16 +5,21 @@ class Api::V1::ItemsController < Api::V1::BaseController
   expose(:collection)
   expose(:items, ancestor: :collection)
 
+  # currently un-used
+  # :nocov:
   expose(:collection_items) do
     if !params[:collection_id]
       raise ActiveRecord::RecordNotFound
     end
     searched_collection_items
   end
+  # :nocov:
 
   expose(:item)
   expose(:contributions, ancestor: :item)
 
+  # currently un-used
+  # :nocov:
   expose(:searched_collection_items) do
     max_items = collection.items.count # TODO sane ceiling?
     query_builder = QueryBuilder.new({query:"collection_id:#{params[:collection_id].to_i}"}, current_user)
@@ -30,6 +35,7 @@ class Api::V1::ItemsController < Api::V1::BaseController
     response = Item.search(search_query).response
     ::ItemResultsPresenter.new(response).format_results
   end
+  # :nocov:
 
   authorize_resource decent_exposure: true
 
@@ -44,14 +50,10 @@ class Api::V1::ItemsController < Api::V1::BaseController
 
   def create
     if current_user.is_over_monthly_limit?
-      if !current_user.has_active_credit_card? || current_user.role == :member
-        render status: 413, json: {
-          error: 'Monthly limit exceeded',
-        }
-        return
-      else
-        item.transcript_type = 'premium' # force overage charge
-      end
+      render status: 413, json: {
+        error: 'Monthly limit exceeded',
+      }
+      return
     end
     item.valid?
     item.save

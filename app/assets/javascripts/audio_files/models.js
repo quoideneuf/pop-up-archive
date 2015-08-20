@@ -39,32 +39,6 @@ angular.module('Directory.audioFiles.models', ['RailsModel', 'S3Upload'])
   };
 
  
-  AudioFile.prototype.canOrderTranscript = function (user) {
-    var self = this;
-
-    if (self.duration <= 0) return false;
-
-    if (!self.transcodedAt) return false;
- 
-    if (!user.isAdmin()) return false;
-
-    if (!user.hasCard) return false;
-
-    if (self.isTranscriptOrdered()) return false;
-
-    return true;
-  };
-
-  AudioFile.prototype.isTranscriptOrdered = function () {
-    var self = this;
-    var t = self.taskForType('order_transcript');
-
-    if (t && t.status != 'error') {
-      return true;
-    }
-    return false;      
-  }
-
   AudioFile.prototype.canSendToAmara = function (user) {
     var self = this;
 
@@ -96,31 +70,6 @@ angular.module('Directory.audioFiles.models', ['RailsModel', 'S3Upload'])
     for(var i = 0; i < this.tasks.length; i++) {
       if (this.tasks[i].type == t) { return this.tasks[i]; }
     }
-  };
-
-  AudioFile.prototype.orderTranscript = function (user) {
-    var self = this;
-    // console.log('orderTranscript', this);
-    return AudioFile.processResponse($http.post(self.$url() + '/order_transcript')).then(function (orderTranscriptTask) {
-      // console.log('orderTranscript result', orderTranscriptTask, self);
-      self.tasks.push(orderTranscriptTask);
-      return orderTranscriptTask;
-    });
-  };
-
-  AudioFile.prototype.getPremiumCostUrl = function() {
-    var self = this;
-    return self.$url() + '/transcript/premium/cost';
-  };
-
-  AudioFile.prototype.orderPremiumTranscript = function(user) {
-    var self = this;
-    var url = self.$url() + '/transcript/premium/order';
-    //console.log('order url:', url);
-    return AudioFile.processResponse($http.post(url)).then(function (respTask) {
-      //console.log("got response: ", respTask);
-      return respTask;
-    });
   };
 
   AudioFile.prototype.addToAmara = function (user) {

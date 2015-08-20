@@ -85,6 +85,44 @@ angular.module('Directory.users.models', ['RailsModel'])
     return this.hasPremiumTranscripts() ? "premium" : "basic";
   };
 
+  // for usage methods, if the current plan is not-community,
+  // "hide" the community usage since it is free.
+  User.prototype.orgUsageHours = function() {
+    if (this.hasCommunityPlan()) {
+      return this.organization.usage.summary.thisMonth.hours;
+    }
+    else {
+      return (this.organization.usage.summary.thisMonth.hours - (this.organization.communityPlanUsed / 3600));
+    }
+  };
+
+  User.prototype.orgUsageSecs = function() {
+    if (this.hasCommunityPlan()) {
+      return this.organization.usage.summary.thisMonth.secs;
+    }
+    else {
+      return (this.organization.usage.summary.thisMonth.secs - this.organization.communityPlanUsed);
+    }
+  };
+
+  User.prototype.usageSecs = function() {
+    if (this.hasCommunityPlan()) {
+      return this.usage.summary.thisMonth.secs;
+    }
+    else {
+      return this.usage.summary.thisMonth.secs - this.communityPlanUsed;
+    }
+  };
+
+  User.prototype.usageHours = function() {
+    if (this.hasCommunityPlan()) {
+      return this.usage.summary.thisMonth.hours;
+    }
+    else {
+      return (this.usage.summary.thisMonth.hours - (this.communityPlanUsed / 3600));
+    }
+  };
+
   User.prototype.buildUsageSummary = function() {
     var self = this;
     var groups = [];
@@ -94,9 +132,6 @@ angular.module('Directory.users.models', ['RailsModel'])
     var userInOrg = self.organization ? true : false;
     var mnthMap   = {};
     $.each(self.usage.summary.history, function(idx, msum) {
-      if (self.plan.isPremium && msum.type.match(/basic/)) {
-        return true; // filter out some noise
-      }
       if (msum.type.match(/usage only/)) {
         // clarify label
         msum.type = msum.type.replace(/usage only/, 'me');
