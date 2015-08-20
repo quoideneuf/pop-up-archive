@@ -27,6 +27,7 @@ if current_user
     } if current_user.organization.present?
   }
 
+  node(:charges) { current_user.charges.order('transaction_at DESC').as_json }
   node(:used_metered_storage) { current_user.used_metered_storage_cache }
   node(:used_unmetered_storage) { current_user.used_unmetered_storage_cache }
   node(:total_metered_storage) { current_user.pop_up_hours * 3600 }

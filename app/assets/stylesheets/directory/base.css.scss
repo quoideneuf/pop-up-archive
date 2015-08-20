@@ -1815,9 +1815,17 @@ table.usage {
   padding: 1em;
 }
 
+.usage-month-header {
+  background-color:  #f25a4c;
+  th.month {
+    color: #fff;
+  }
+}
+
 .usage-month-group .last {
   text-align: right;
   float: right;
+  border-top: none;
 }
 
 .usage-month-details .first {

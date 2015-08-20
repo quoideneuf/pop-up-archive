@@ -261,7 +261,8 @@ class User < ActiveRecord::Base
   end
 
   def charges
-    if organization && organization.owner_id != id
+    if organization && organization.owner_id != self.id
+      puts "Using organization.owner.charges"
       organization.owner.charges
     else
       super
@@ -275,10 +276,10 @@ class User < ActiveRecord::Base
     invoices.each do |inv|
       charge = Charge.find_by_ref_id inv.id
       amt = inv.lines.first.amount
-      # skip empty invoices -- they just create noise on our side.
-      next if amt.to_i == 0
+      # skip empty invoices ??
+      #next if amt.to_i == 0
       if !charge
-        charge = Charge.create(ref_id: inv.id, ref_type: 'invoice', transaction_at: Time.at(inv.date), amount: amt)
+        charge = Charge.create(ref_id: inv.id, ref_type: 'invoice', transaction_at: Time.at(inv.date), amount: amt.fdiv(100))
         self.charges << charge
       end
     end
@@ -288,7 +289,7 @@ class User < ActiveRecord::Base
     str_charges.each do |chrg|
       charge = Charge.find_by_ref_id(chrg.id) || Charge.find_by_ref_id(chrg.invoice)
       if !charge
-        charge = Charge.create(ref_id: chrg.id, ref_type: 'charge', transaction_at: Time.at(chrg.created), amount: chrg.amount, extras: { invoice: chrg.invoice } )
+        charge = Charge.create(ref_id: chrg.id, ref_type: 'charge', transaction_at: Time.at(chrg.created), amount: chrg.amount.fdiv(100), extras: { invoice: chrg.invoice } )
         self.charges << charge
       end
     end
@@ -300,7 +301,7 @@ class User < ActiveRecord::Base
       refunds.each do |refund|
         ref_charge = Charge.find_by_ref_id(refund.id)
         if !ref_charge
-          ref_charge = Charge.create(ref_id: refund.id, ref_type: 'refund', transaction_at: Time.at(refund.created), amount: refund.amount, extras: { charge: refund.charge, reason: refund.reason })
+          ref_charge = Charge.create(ref_id: refund.id, ref_type: 'refund', transaction_at: Time.at(refund.created), amount: refund.amount.fdiv(100), extras: { charge: refund.charge, reason: refund.reason })
           self.charges << ref_charge
         end
       end
