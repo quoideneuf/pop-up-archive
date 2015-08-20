@@ -53,11 +53,11 @@
       h5() {{me.organization.name}}, This Month ({{me.organization.usage.summary.thisMonth.period}})
       dl.dl-horizontal
         dt Usage
-        dd.usage-meter ng-class="{warning: me.organization.usage.summary.thisMonth.secs >= me.totalMeteredStorage, full: me.organization.usage.summary.thisMonth.secs >= me.totalMeteredStorage }"
-          .bar ng-style="{width: me.organization.usage.summary.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
-          .meter-words() {{me.organization.usage.summary.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
+        dd.usage-meter ng-class="{warning: me.orgUsageSecs() >= me.totalMeteredStorage, full: me.orgUsageSecs() >= me.totalMeteredStorage }"
+          .bar ng-style="{width: me.orgUsageSecs() / me.totalMeteredStorage * 100 + '%'}"
+          .meter-words() {{me.orgUsageSecs() | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Plan Hours
-        dd.usage() {{me.organization.usage.summary.thisMonth.hours}}
+        dd.usage() {{me.orgUsageHours()}}
         dt Total Cost
         dd.usage 
           | {{me.organization.usage.summary.thisMonth.cost | currency:"USD $"}}
@@ -72,11 +72,11 @@
       h5 ng-hide="me.organization" This Month ({{me.usage.summary.thisMonth.period}})
       dl.dl-horizontal
         dt Usage 
-        dd.usage-meter ng-class="{warning: me.usage.summary.thisMonth.secs >= me.totalMeteredStorage, full: me.usage.summary.thisMonth.secs >= me.totalMeteredStorage }"
-          .bar ng-style="{width: me.usage.summary.thisMonth.secs / me.totalMeteredStorage * 100 + '%'}"
-          .meter-words() {{me.usage.summary.thisMonth.secs | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
+        dd.usage-meter ng-class="{warning: me.usageSecs() >= me.totalMeteredStorage, full: me.usageSecs() >= me.totalMeteredStorage }"
+          .bar ng-style="{width: me.usageSecs() / me.totalMeteredStorage * 100 + '%'}"
+          .meter-words() {{me.usageSecs() | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Hours
-        dd.usage() {{me.usage.summary.thisMonth.hours}}
+        dd.usage() {{me.usageHours()}}
         dt Total Cost
         dd.usage 
           | {{me.usage.summary.thisMonth.cost | currency:"USD $"}}
