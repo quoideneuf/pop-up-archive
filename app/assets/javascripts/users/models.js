@@ -146,7 +146,7 @@ angular.module('Directory.users.models', ['RailsModel'])
       if (msum.period != curMonth) {
         // new group
         if (group.length > 0) {
-          groups.push({period: curMonth, rows: group});
+          groups.push({period: curMonth, rows: group, charges: []});
           mnthMap[curMonth] = groups.length - 1;
         }
         group = [msum];
@@ -170,7 +170,9 @@ angular.module('Directory.users.models', ['RailsModel'])
           return true; // filter out some noise
         }
         msum.type = msum.type.charAt(0).toUpperCase() + msum.type.slice(1);
-        msum.type += ' ('+self.organization.name+')';
+        if (!msum.type.match(self.organization.name)) {
+          msum.type += ' ('+self.organization.name+')';
+        }
         // find the correct groups index to push to
         var gIdx = mnthMap[msum.period];
         // if could not match (not likely) then ... ??
@@ -181,6 +183,19 @@ angular.module('Directory.users.models', ['RailsModel'])
         groups[gIdx].rows.unshift(msum); // prepend
       });
     }
+
+    // mix in charges
+    $.each(self.charges, function(idx, charge) {
+      // initial cap
+      charge.refType = charge.refType.charAt(0).toUpperCase() + charge.refType.slice(1);
+      //console.log(charge);
+      var period = charge.transactionAt.match(/^(\d\d\d\d-\d\d)/)[1];
+      //console.log(period, charge);
+      var gIdx = mnthMap[period];
+      //console.log(gIdx, groups[gIdx]);
+      groups[gIdx].charges.push(charge);
+    });
+    //console.log(groups);
     return groups;
   };
 

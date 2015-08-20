@@ -58,15 +58,6 @@
           .meter-words() {{me.orgUsageSecs() | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Plan Hours
         dd.usage() {{me.orgUsageHours()}}
-        dt Total Cost
-        dd.usage 
-          | {{me.organization.usage.summary.thisMonth.cost | currency:"USD $"}}
-          .overage ng-show="me.organization.usage.summary.thisMonth.overage.cost"
-            |  ({{me.organization.usage.summary.thisMonth.overage.hours}} overage hours * $#{Billable::OVERAGE_HOURLY_RATE}/hour)
-        dt.subtotal ng-show="me.organization.usage.summary.thisMonth.ondemand.hours" Premium Hours
-        dd.subtotal ng-show="me.organization.usage.summary.thisMonth.ondemand.hours" {{me.organization.usage.summary.thisMonth.ondemand.hours}}
-        dt.subtotal ng-show="me.organization.usage.summary.thisMonth.ondemand.cost" Premium Cost
-        dd.subtotal ng-show="me.organization.usage.summary.thisMonth.ondemand.cost" {{me.organization.usage.summary.thisMonth.ondemand.cost | currency:"USD $"}}
     .usage-current
       h5 ng-show="me.organization" Me, This Month ({{me.usage.summary.thisMonth.period}})
       h5 ng-hide="me.organization" This Month ({{me.usage.summary.thisMonth.period}})
@@ -77,42 +68,32 @@
           .meter-words() {{me.usageSecs() | timeCode: 'words'}} / {{me.totalMeteredStorage | timeCode: 'words'}}
         dt Total Hours
         dd.usage() {{me.usageHours()}}
-        dt Total Cost
-        dd.usage 
-          | {{me.usage.summary.thisMonth.cost | currency:"USD $"}}
-          .overage ng-show="me.usage.summary.thisMonth.overage.cost"
-            |  ({{me.usage.summary.thisMonth.overage.hours}} overage hours * $#{Billable::OVERAGE_HOURLY_RATE}/hour)
-        dt.subtotal ng-show="me.usage.summary.thisMonth.ondemand.hours" Premium Hours
-        dd.subtotal ng-show="me.usage.summary.thisMonth.ondemand.hours" {{me.usage.summary.thisMonth.ondemand.hours}}
-        dt.subtotal ng-show="me.usage.summary.thisMonth.ondemand.cost" Premium Cost
-        dd.subtotal ng-show="me.usage.summary.thisMonth.ondemand.cost" {{me.usage.summary.thisMonth.ondemand.cost | currency:"USD $"}}
     hr
     .usage-history
       h5 History
       table.table.usage
         tbody.usage-month-group data-period="{{mnthGrp.period}}" ng-repeat="mnthGrp in me.usageSummaryByMonth"
-          tr.usage-month data-period="{{mnthGrp.period}}"
-            th.first Month
-            th.second Type
-            th.time Hours
-            th.cost Cost
-            th
+          tr.usage-month.usage-month-header data-period="{{mnthGrp.period}}"
+            th.month colspan="4" {{mnthGrp.period}}
             th.last
               button.btn.btn-default ng-click="toggleDetails($event)"
                 i.fa.fa-expand-alt.fa.fa-large
                 |  Details
-          tr.usage-month ng-repeat="msum in mnthGrp.rows"
-            td.first() {{msum.period}}
-            td.second() {{msum.type}}
-            td.time() {{msum.hours}}
-            td.cost() {{msum.cost | currency:"USD $"}}
-            td
-            td
+          tr.usage-month.usage-activity ng-repeat="msum in mnthGrp.rows"
+            td() {{msum.type}}
+            td() {{msum.hours}} hours
+            td colspan="3"
+          tr.usage-month.usage-charge.charge-pending ng-show="!mnthGrp.charges.length && $index == 0"
+            td colspan="5" Charges pending
+          tr.usage-month.usage-charge ng-repeat="charge in mnthGrp.charges"
+            td() {{charge.refType}}
+            td() {{charge.amount | currency:"USD $"}}
+            td() {{charge.transactionAt}}
+            td colspan="2"
           tr.usage-month-details data-period="{{mnthGrp.period}}" ng-show="usageDetailsVisible(mnthGrp.period)"
             th.first Date
             th.second Item
             th.time Duration
-            th.cost Cost
             th.type Type
             th User
           tr.usage-month-details.info ng-repeat="t in me.usageDetailsByMonth(mnthGrp.period)" ng-show="usageDetailsVisible(mnthGrp.period)"
@@ -121,7 +102,6 @@
               a title="{{t.id}}" ng-show="!t.deleted" href="/collections/{{t.collId}}/items/{{t.itemId}}" {{t.title}}
               span ng-show="t.deleted" title="this item was deleted {{t.id}}" {{t.title}}
             td.time() {{t.time}}
-            td.cost() {{t.cost | currency:"USD $"}}
             td.type() {{t.flavor}}
             td() {{t.user.name}}
 

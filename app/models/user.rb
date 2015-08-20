@@ -27,6 +27,7 @@ class User < ActiveRecord::Base
   has_many :items, through: :collections
   has_many :audio_files, through: :items
   has_many :csv_imports
+  has_many :charges
   has_many :oauth_applications, class_name: 'Doorkeeper::Application', as: :owner
 
   has_many :active_admin_comments, as: :resource
@@ -257,6 +258,57 @@ class User < ActiveRecord::Base
     else
       return customer.plan || SubscriptionPlanCached.community
     end
+  end
+
+  def charges
+    if organization && organization.owner_id != self.id
+      puts "Using organization.owner.charges"
+      organization.owner.charges
+    else
+      super
+    end
+  end
+
+  def populate_charges
+    # fetch Stripe transactions and sync with charges table
+    # start with invoices
+    invoices = Stripe::Invoice.all(customer: customer_id)
+    invoices.each do |inv|
+      charge = Charge.find_by_ref_id inv.id
+      amt = inv.lines.first.amount
+      # skip empty invoices ??
+      #next if amt.to_i == 0
+      if !charge
+        charge = Charge.create(ref_id: inv.id, ref_type: 'invoice', transaction_at: Time.at(inv.date), amount: amt.fdiv(100))
+        self.charges << charge
+      end
+    end
+
+    # charges
+    str_charges = Stripe::Charge.all(customer: customer_id)
+    str_charges.each do |chrg|
+      charge = Charge.find_by_ref_id(chrg.id) || Charge.find_by_ref_id(chrg.invoice)
+      if !charge
+        charge = Charge.create(ref_id: chrg.id, ref_type: 'charge', transaction_at: Time.at(chrg.created), amount: chrg.amount.fdiv(100), extras: { invoice: chrg.invoice } )
+        self.charges << charge
+      end
+    end
+
+    # refunds, refer only to parent Stripe charges
+    self.charges.each do |charge|
+      next unless charge.ref_type == 'charge'
+      refunds = Stripe::Refund.all(charge: charge.ref_id)
+      refunds.each do |refund|
+        ref_charge = Charge.find_by_ref_id(refund.id)
+        if !ref_charge
+          ref_charge = Charge.create(ref_id: refund.id, ref_type: 'refund', transaction_at: Time.at(refund.created), amount: refund.amount.fdiv(100), extras: { charge: refund.charge, reason: refund.reason })
+          self.charges << ref_charge
+        end
+      end
+    end
+
+    self.save!
+
   end
 
   def entity
