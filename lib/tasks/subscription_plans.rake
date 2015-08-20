@@ -15,7 +15,7 @@ namespace :subscriptions do
   task migrate_community: [:environment] do
     comm_plan = SubscriptionPlanCached.basic_community.as_plan
     prem_plan = SubscriptionPlanCached.community
-    Users.find_in_batches do |users|
+    User.find_in_batches do |users|
       users.each do |user|
         next if user.subscription_plan_id != comm_plan.id
         user.subscribe!(prem_plan)
