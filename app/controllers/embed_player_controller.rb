@@ -63,6 +63,10 @@ class EmbedPlayerController < ApplicationController
     end
   end
 
+  def iframe 
+    @file_id    = params[:file_id]
+  end
+
 end
 
 

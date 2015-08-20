@@ -44,6 +44,7 @@ PopUpArchive::Application.routes.draw do
 
   get 'tplayer/:file_id',        controller: 'embed_player', action: 'tplayer'
   get 'tplayer/:file_id/:title', controller: 'embed_player', action: 'tplayer'
+  get 'player/:file_id/',        controller: 'embed_player', action: 'iframe'
 
   get 'oembed', controller: 'oembed', action: 'show'
 
