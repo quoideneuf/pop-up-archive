@@ -818,7 +818,11 @@ class AudioFile < ActiveRecord::Base
         #STDERR.puts "eval upload status has_failed_upload==#{self.has_failed_upload?}"
         # abort status determination early if upload has not finished.
         if self.has_failed_upload?
-          return UPLOAD_FAILED
+          if self.is_expired?
+            return CANCELLED
+          else
+            return UPLOAD_FAILED
+          end
         else 
           return UPLOADING_INPROCESS
         end
