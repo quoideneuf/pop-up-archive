@@ -105,7 +105,7 @@ namespace :stripe do
 
   desc "populate charges table for all users"
   task populate_charges: [:environment] do
-    User.find_in_batches.each do |users|
+    User.find_in_batches do |users|
       users.each do |user|
         user.populate_charges
       end
