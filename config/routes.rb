@@ -67,6 +67,8 @@ PopUpArchive::Application.routes.draw do
 
   post 'headcheck', :to => 'api/v1/audio_files#head_check'
 
+  get 'organization/:org_id/member/:invitation_token', controller: 'organization', action: 'confirm_invite'
+
   # sharing shortcut
   get 't/:item_id',               controller: 'item', action: 'short'
   get 't/:item_id/:start',        controller: 'item', action: 'short'
@@ -144,6 +146,7 @@ PopUpArchive::Application.routes.draw do
       resources :speakers
 
       resources :organizations
+      post '/organizations/:id/member' => 'organizations#member'
 
       resources :plans
 
