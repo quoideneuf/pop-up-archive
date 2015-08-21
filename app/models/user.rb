@@ -276,8 +276,8 @@ class User < ActiveRecord::Base
     invoices.each do |inv|
       charge = Charge.find_by_ref_id inv.id
       amt = inv.lines.first.amount
-      # skip empty invoices ??
-      #next if amt.to_i == 0
+      # skip empty invoices
+      next if amt.to_i == 0
       if !charge
         charge = Charge.create(ref_id: inv.id, ref_type: 'invoice', transaction_at: Time.at(inv.date), amount: amt.fdiv(100))
         self.charges << charge
