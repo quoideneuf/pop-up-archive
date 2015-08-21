@@ -74,7 +74,7 @@ angular.module('Directory.users.models', ['RailsModel'])
   };
 
   User.prototype.hasCommunityPlan = function () {
-    return !!(!this.plan || !this.plan.id || this.plan.name.match(/Community/));
+    return !!(!this.plan || !this.plan.id || this.plan.id == "premium_community" || this.plan.id == "community");
   };
 
   User.prototype.hasPremiumTranscripts = function() {
