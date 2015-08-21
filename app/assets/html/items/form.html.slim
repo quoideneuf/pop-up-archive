@@ -18,7 +18,7 @@ section.modal ng-controller="ItemFormCtrl"
          | You are over your organization's monthly limit.
         form.item-form.form-horizontal name='newItemForm' ng-show="showForm() && !currentuser.overMonthlyLimit"
     
-          div.form-group.remote-item ng-hide='item.mayUploadFile()' style="text-align:center;"
+          div.form-group.remote-item ng-hide="item.id > 0 || !item.mayUploadFile()" style="text-align:center;"
             h3 Drag and drop a file anywhere on the site
             div style="margin:-10px 0 10px 0;" or
             span file-button="" style='margin-right: 4px;'
