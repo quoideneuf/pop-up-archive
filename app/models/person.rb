@@ -77,15 +77,8 @@ class Person < ActiveRecord::Base
     find_by_slug slugify string or create name: string
   end
 
-  def roles_array(params={})
-    name.as_json
-  end
-
   def as_json(params={})
-    # name.as_json
-    {
-      'name' => self.name.as_json
-    }
+    { 'name' => self.name.as_json }
   end
 
   private
