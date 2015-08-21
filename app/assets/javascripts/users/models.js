@@ -157,7 +157,7 @@ angular.module('Directory.users.models', ['RailsModel'])
       }
     });
     if (group.length > 0) {
-      groups.push({period: curMonth, rows: group});
+      groups.push({period: curMonth, rows: group, charges: []});
       mnthMap[curMonth] = groups.length - 1;
     }
 
