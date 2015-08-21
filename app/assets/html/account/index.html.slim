@@ -49,7 +49,7 @@
 .row
   .well.usage
     h4 Usage
-    .usage-organization ng-show="me.organization"
+    .usage-organization ng-if="me.organization"
       h5() {{me.organization.name}}, This Month ({{me.organization.usage.summary.thisMonth.period}})
       dl.dl-horizontal
         dt Usage
