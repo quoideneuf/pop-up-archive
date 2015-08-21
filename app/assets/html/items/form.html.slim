@@ -18,7 +18,7 @@ section.modal ng-controller="ItemFormCtrl"
          | You are over your organization's monthly limit.
         form.item-form.form-horizontal name='newItemForm' ng-show="showForm() && !currentuser.overMonthlyLimit"
     
-          div.form-group.remote-item ng-hide='(item.id > 0) || (item.files.length > 0) || (remoteFileUrls)' style="text-align:center;"
+          div.form-group.remote-item ng-hide='item.mayUploadFile()' style="text-align:center;"
             h3 Drag and drop a file anywhere on the site
             div style="margin:-10px 0 10px 0;" or
             span file-button="" style='margin-right: 4px;'
@@ -34,7 +34,7 @@ section.modal ng-controller="ItemFormCtrl"
                strong not 
                | episode.1.wav.) 
     
-          section ng-show='(item.id > 0) || (item.files.length > 0) || (remoteFileUrls)'
+          section ng-show='(item.id > 0) || (item.mayUploadFile())'
     
             .alert.alert-danger ng-show="(item.files.length > 1) && showFilesAlert"
               a ng-click="hideAlert()" style='text-decoration: none; color: #da4f49; float: right; margin-right: -20px;' 
@@ -45,7 +45,7 @@ section.modal ng-controller="ItemFormCtrl"
                 strong
                   | For separate playback of each file, delete extra files and upload one at a time.
 
-            .form-group ng-hide="item.audioFiles.length > 0 || item.files.length > 0 || remoteFileUrls.length > 0"
+            .form-group ng-show="item.mayUploadFile()"
               label.control-label
                 | Upload File
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles']" data-placement="bottom" html="true" auto-close="true"
@@ -67,7 +67,7 @@ section.modal ng-controller="ItemFormCtrl"
                 span.pull-right file-button=""
                   button.btn.btn-default.upload-file-button Add Files to Item
     
-            .form-group ng-hide="item.audioFiles.length > 0 || item.files.length > 0 || remoteFileUrls.length > 0"
+            .form-group ng-show="item.mayUploadFile()"
               label.control-label
                 | Add File
                 i.fa.fa-question-circle style="margin-left:8px" bs-popover="itemHelp['audioFiles[][remoteFileUrl]']" data-placement="bottom" html="true" auto-close="true"

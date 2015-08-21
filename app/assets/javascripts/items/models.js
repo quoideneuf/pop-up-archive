@@ -108,6 +108,13 @@ angular.module('Directory.items.models', ['RailsModel', 'Directory.audioFiles.mo
     });
   };
 
+  Item.prototype.mayUploadFile = function() {
+    if (this.files.length > 0 || this.audioFiles.length > 0 || this.remoteFileUrls.length > 0) {
+      return false;
+    }
+    return true;
+  };
+
   Item.prototype.getTitle = function () {
     if (this.title) { return this.title; }
     if (this.episodeTitle) { return this.episodeTitle + " : " + this.identifier; }
