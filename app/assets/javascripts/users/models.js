@@ -192,6 +192,10 @@ angular.module('Directory.users.models', ['RailsModel'])
       var period = charge.transactionAt.match(/^(\d\d\d\d-\d\d)/)[1];
       //console.log(period, charge);
       var gIdx = mnthMap[period];
+      if (typeof gIdx == 'undefined') {
+        console.log("no idx for ", period, charge);
+        return true;
+      }
       //console.log(gIdx, groups[gIdx]);
       groups[gIdx].charges.push(charge);
     });
