@@ -369,7 +369,7 @@ namespace :fixer do
   task ia_mp3_copy: [:environment] do
     AudioFile.find_in_batches do |afs|
       afs.each do |af|
-        next unless af.storage.automatic_transcode?
+        next unless af.storage && af.storage.automatic_transcode?
         af.start_copy_to_s3_job
       end
     end
