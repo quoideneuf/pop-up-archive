@@ -60,7 +60,7 @@ namespace :stripe do
   desc "delete duplicates"
   task delete_dupes: [:environment] do
     # build hash of all Customers, email => customer_id, from Stripe, with no plan
-    stripe_customers = {}
+    stripe_customers = Hash.new{|hsh,key| hsh[key] = [] }
     # fetch first page to get total we expect
     custs = Stripe::Customer.all(limit: 100, include: ['total_count'])
     stripe_total = custs.total_count
@@ -69,7 +69,7 @@ namespace :stripe do
     custs.each do |cust|
       customer_count += 1
       if cust.subscriptions.count == 0
-        stripe_customers[cust.email] = cust.id
+        stripe_customers[cust.email] << cust.id
       end
       customer_offset = cust.id
     end
@@ -78,7 +78,7 @@ namespace :stripe do
       custs.each do |cust|
         customer_count += 1
         if cust.subscriptions.count == 0
-          stripe_customers[cust.email] = cust.id
+          stripe_customers[cust.email] << cust.id
         end
         customer_offset = cust.id
       end
@@ -89,14 +89,15 @@ namespace :stripe do
     stripe_customers.keys.each do |email|
       user = User.find_by_email(email) or next
 
-      if user.customer_id != stripe_customers[email]
-
-        # (optionally) delete non-existent Users from Stripe
-        if ENV['DELETE_OK']
-          c = Stripe::Customer.retrieve(stripe_customers[email])
-          c.delete
-        else
-          puts "Should delete #{email} => #{stripe_customers[email]}"
+      stripe_customers[email].each do |cust_id|
+        if user.customer_id != cust_id
+          # (optionally) delete non-existent Users from Stripe
+          if ENV['DELETE_OK']
+            c = Stripe::Customer.retrieve(cust_id)
+            c.delete
+          else
+            puts "Should delete #{email} => #{cust_id}"
+          end
         end
       end
     end
