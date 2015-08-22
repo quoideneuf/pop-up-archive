@@ -1,4 +1,5 @@
 class SoundcloudBackend
+  # :nocov:
 
   def self.get_url
     client = soundcloud_client
@@ -42,4 +43,5 @@ class SoundcloudBackend
     })
   end
 
+  # :nocov:
 end

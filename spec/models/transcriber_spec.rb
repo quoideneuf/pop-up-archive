@@ -18,4 +18,11 @@ describe Transcriber do
 
   end
 
+  it "should know about transcriber by usage type" do
+    Transcriber.ids_for_type('basic').should eq [ Transcriber.basic.id ]
+    Transcriber.ids_for_type(MonthlyUsage::BASIC_TRANSCRIPT_USAGE).should eq [ Transcriber.basic.id ]
+    Transcriber.ids_for_type('premium').should eq [ Transcriber.speechmatics.id, Transcriber.voicebase.id ]
+    Transcriber.ids_for_type(MonthlyUsage::PREMIUM_TRANSCRIPTS).should eq [ Transcriber.speechmatics.id, Transcriber.voicebase.id ]
+  end
+
 end

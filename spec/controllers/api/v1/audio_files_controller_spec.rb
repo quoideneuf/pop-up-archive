@@ -112,6 +112,43 @@ describe Api::V1::AudioFilesController do
 
   end
 
+  describe "utils" do
+
+    before :each do
+      @audio_file = FactoryGirl.create :audio_file, duration: 90
+
+      @options = { 
+        user_id:       @logged_in_user.id,
+        filename:      'test.mp3',
+        filesize:      1000,
+        last_modified: "2013-11-17 00:59:21 UTC"
+      }
+
+    end
+
+    it "should do a HEAD request check on a remote URL" do
+      get 'head_check', url: 'http://example.com/'
+      response.should be_success
+      resp = JSON.parse(response.body)
+      resp['content-type'].should eq 'text/html'
+    end
+
+    it "should calculate premium transcript cost" do
+      get 'premium_transcript_cost', @options.merge(audio_file_id: @audio_file.id, item_id: @audio_file.item.id)
+      response.should be_success
+      resp = JSON.parse(response.body)
+      resp['type'].should eq 'premium'
+      resp['filename'].should eq @audio_file.filename
+      resp['duration'].should eq @audio_file.duration
+    end
+
+    it "should not be able to order premium transcript" do
+      post 'order_premium_transcript', @options.merge(audio_file_id: @audio_file.id, item_id: @audio_file.item.id)
+      response.status.should eq 403
+    end
+
+  end
+
   describe "admin only" do
 
     before(:each) {

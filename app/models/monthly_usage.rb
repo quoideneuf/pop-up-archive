@@ -20,7 +20,7 @@ class MonthlyUsage < ActiveRecord::Base
     # TODO something better than string matching-by-convention
     # (though that does seem to be the Rails Way)
     usage_type = use.match(/^(\w+)/)[0]
-    transcriber_id = Transcriber.send(usage_type).id
+    transcriber_id = Transcriber.ids_for_type(usage_type)
     ymd = DateTime.parse(self.yearmonth + '-01')
     if entity_type == 'User' && use.match(/usage only/)
       sql = entity.sql_for_transcripts_usage_for_month_of(ymd, transcriber_id)

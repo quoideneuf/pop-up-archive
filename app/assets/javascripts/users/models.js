@@ -74,7 +74,7 @@ angular.module('Directory.users.models', ['RailsModel'])
   };
 
   User.prototype.hasCommunityPlan = function () {
-    return !!(!this.plan || !this.plan.id || this.plan.name.match(/Community/));
+    return !!(!this.plan || !this.plan.id || this.plan.id == "premium_community" || this.plan.id == "community");
   };
 
   User.prototype.hasPremiumTranscripts = function() {
@@ -83,6 +83,44 @@ angular.module('Directory.users.models', ['RailsModel'])
 
   User.prototype.defaultTranscriptType = function() {
     return this.hasPremiumTranscripts() ? "premium" : "basic";
+  };
+
+  // for usage methods, if the current plan is not-community,
+  // "hide" the community usage since it is free.
+  User.prototype.orgUsageHours = function() {
+    if (this.hasCommunityPlan()) {
+      return this.organization.usage.summary.thisMonth.hours;
+    }
+    else {
+      return (this.organization.usage.summary.thisMonth.hours - (this.organization.communityPlanUsed / 3600));
+    }
+  };
+
+  User.prototype.orgUsageSecs = function() {
+    if (this.hasCommunityPlan()) {
+      return this.organization.usage.summary.thisMonth.secs;
+    }
+    else {
+      return (this.organization.usage.summary.thisMonth.secs - this.organization.communityPlanUsed);
+    }
+  };
+
+  User.prototype.usageSecs = function() {
+    if (this.hasCommunityPlan()) {
+      return this.usage.summary.thisMonth.secs;
+    }
+    else {
+      return this.usage.summary.thisMonth.secs - this.communityPlanUsed;
+    }
+  };
+
+  User.prototype.usageHours = function() {
+    if (this.hasCommunityPlan()) {
+      return this.usage.summary.thisMonth.hours;
+    }
+    else {
+      return (this.usage.summary.thisMonth.hours - (this.communityPlanUsed / 3600));
+    }
   };
 
   User.prototype.buildUsageSummary = function() {
@@ -94,9 +132,6 @@ angular.module('Directory.users.models', ['RailsModel'])
     var userInOrg = self.organization ? true : false;
     var mnthMap   = {};
     $.each(self.usage.summary.history, function(idx, msum) {
-      if (self.plan.isPremium && msum.type.match(/basic/)) {
-        return true; // filter out some noise
-      }
       if (msum.type.match(/usage only/)) {
         // clarify label
         msum.type = msum.type.replace(/usage only/, 'me');
@@ -111,7 +146,7 @@ angular.module('Directory.users.models', ['RailsModel'])
       if (msum.period != curMonth) {
         // new group
         if (group.length > 0) {
-          groups.push({period: curMonth, rows: group});
+          groups.push({period: curMonth, rows: group, charges: []});
           mnthMap[curMonth] = groups.length - 1;
         }
         group = [msum];
@@ -122,7 +157,7 @@ angular.module('Directory.users.models', ['RailsModel'])
       }
     });
     if (group.length > 0) {
-      groups.push({period: curMonth, rows: group});
+      groups.push({period: curMonth, rows: group, charges: []});
       mnthMap[curMonth] = groups.length - 1;
     }
 
@@ -135,7 +170,9 @@ angular.module('Directory.users.models', ['RailsModel'])
           return true; // filter out some noise
         }
         msum.type = msum.type.charAt(0).toUpperCase() + msum.type.slice(1);
-        msum.type += ' ('+self.organization.name+')';
+        if (!msum.type.match(self.organization.name)) {
+          msum.type += ' ('+self.organization.name+')';
+        }
         // find the correct groups index to push to
         var gIdx = mnthMap[msum.period];
         // if could not match (not likely) then ... ??
@@ -146,6 +183,23 @@ angular.module('Directory.users.models', ['RailsModel'])
         groups[gIdx].rows.unshift(msum); // prepend
       });
     }
+
+    // mix in charges
+    $.each(self.charges, function(idx, charge) {
+      // initial cap
+      charge.refType = charge.refType.charAt(0).toUpperCase() + charge.refType.slice(1);
+      //console.log(charge);
+      var period = charge.transactionAt.match(/^(\d\d\d\d-\d\d)/)[1];
+      //console.log(period, charge);
+      var gIdx = mnthMap[period];
+      if (typeof gIdx == 'undefined') {
+        console.log("no idx for ", period, charge);
+        return true;
+      }
+      //console.log(gIdx, groups[gIdx]);
+      groups[gIdx].charges.push(charge);
+    });
+    //console.log(groups);
     return groups;
   };
 

@@ -1,5 +1,6 @@
 require 'net/ftp'
 
+# :nocov:
 class RemoteImporter
   attr_accessor :collection, :url, :folder, :user,:password, :first_item, :last_item, :count
 
@@ -86,3 +87,5 @@ class RemoteImporter
 
 
 end
+
+# :nocov:

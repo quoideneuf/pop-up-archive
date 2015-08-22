@@ -27,6 +27,12 @@ describe Tasks::AnalyzeAudioTask do
     @task.audio_file.should eq @task.owner
   end
 
+  it "cancels itself with no length in analysis" do
+    @task.results = {"status"=>"complete", "message"=>"analysis complete", "info"=>{"size"=>517115014}, "logged_at"=>"2013-11-11T15:34:21Z"}
+    @task.recover!
+    @task.extras['error'].should match("Analysis does not include length")
+  end
+
   it 'finish_task' do
     @task.results = {"status"=>"complete", "message"=>"analysis complete", "info"=>{"size"=>517115014, "content_type"=>"audio/vnd.wave", "channel_mode"=>"Mono", "bit_rate"=>705, "length"=>5862, "sample_rate"=>44100}, "logged_at"=>"2013-11-11T15:34:21Z"}
     @task.finish_task

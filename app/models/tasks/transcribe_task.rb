@@ -60,6 +60,7 @@ class Tasks::TranscribeTask < Task
     end
   end
 
+  # :nocov:
   def recover!
     if !owner
       self.extras['error'] = "No owner/audio_file found"
@@ -78,6 +79,7 @@ class Tasks::TranscribeTask < Task
       end
     end 
   end
+  # :nocov:
 
   def notify_user
     return unless (user && audio_file && audio_file.item)
@@ -102,6 +104,7 @@ class Tasks::TranscribeTask < Task
     self.extras['user_id']
   end
 
+  # :nocov:
   def create_transcribe_job
     if start_only?
       j = create_job do |job|
@@ -152,6 +155,7 @@ class Tasks::TranscribeTask < Task
     end
 
   end
+  # :nocov:
 
   def update_transcript_usage(now=DateTime.now)
     billed_user = user
@@ -161,7 +165,7 @@ class Tasks::TranscribeTask < Task
 
     # we call user.entity because that will return the billable object
     ucalc = UsageCalculator.new(billed_user.entity, now)
-    billed_duration = ucalc.calculate(Transcriber.basic, MonthlyUsage::BASIC_TRANSCRIPTS)
+    billed_duration = ucalc.calculate(MonthlyUsage::BASIC_TRANSCRIPTS)
 
     # call again on the user if user != entity, just to record usage.
     if billed_user.entity != billed_user

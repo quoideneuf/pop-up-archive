@@ -11,7 +11,7 @@ describe Tasks::VoicebaseTranscribeTask do
 
   let(:response) {
     m = Hashie::Mash.new
-    m.body = {
+    m.body = { 'transcript' =>  {
  "name"=>"latest",
  "revision"=>"dfbb21ac-ac93-426a-b14a-d9005e7f66d7",
  "type"=>"machine",
@@ -74,13 +74,12 @@ describe Tasks::VoicebaseTranscribeTask do
    {"p"=>54, "c"=>0.994, "s"=>21001, "e"=>23255, "w"=>"United"},
    {"p"=>55, "c"=>0.994, "s"=>21001, "e"=>23255, "w"=>"States"},
    {"p"=>56, "c"=>0.994, "s"=>21001, "e"=>23255, "w"=>"of"},
-   {"p"=>57, "c"=>0.994, "s"=>21001, "e"=>23255, "w"=>"America"}]}
+   {"p"=>57, "c"=>0.994, "s"=>21001, "e"=>23255, "w"=>"America"}]}}
   
     m
   }
 
   context "create job" do
-
 
     it "has audio_file url" do
       url = task.audio_file_url
@@ -203,6 +202,10 @@ describe Tasks::VoicebaseTranscribeTask do
       audio_file.best_transcript.plan.should == org.plan
 
     end
+
+    it "should measure usage" do
+      task.usage_duration.should eq audio_file.duration
+    end 
 
   end
 

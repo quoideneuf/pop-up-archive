@@ -18,12 +18,17 @@ class FeedPopUp
   def parse(feed_url, collection_id)
     able_to_parse = true
     collection = Collection.find(collection_id) # this will throw an error if not present
-    feed = Feedjira::Feed.fetch_and_parse(feed_url, :on_failure => lambda {|url, response_code, header, body| able_to_parse = false if response_code == 200 })
- 
-    if able_to_parse && feed.entries && feed.entries.size > 0
-      add_entries(feed.entries, collection)
-    else
+    parsed = 0
+    begin
+      feed = Feedjira::Feed.fetch_and_parse(feed_url, :on_failure => proc { |c,err| STDERR.puts "#{c} #{err}"})
+      if feed && feed.entries && feed.entries.size > 0
+        parsed = add_entries(feed.entries, collection)
+      end
+    rescue => err
+      # re-throw
+      raise err
     end
+    parsed
   end
  
   def add_entries(entries, collection)

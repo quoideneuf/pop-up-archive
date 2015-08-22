@@ -80,6 +80,7 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
     }
   end
 
+  # :nocov:
   def order_transcript
     authorize! :order_transcript, audio_file
     
@@ -97,6 +98,7 @@ class Api::V1::AudioFilesController < Api::V1::BaseController
     self.task = audio_file.add_to_amara(current_user)
     respond_with :api
   end
+  # :nocov:
 
   def upload_to
     respond_with :api

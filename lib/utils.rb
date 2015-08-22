@@ -83,6 +83,9 @@ class Utils
       Excon.new(uri)
     end
 
+    # TODO better s3 mock testing
+
+    # :nocov:
     def get_private_file(connection, uri, retry_count=10)
       bucket = uri.host
       key = uri.path[1..-1]
@@ -110,7 +113,9 @@ class Utils
 
       result
     end
+    # :nocov:
 
+    # :nocov:
     def private_file_exists?(connection, uri, retry_count=10)
       bucket = uri.host
       key = uri.path[1..-1]
@@ -141,6 +146,7 @@ class Utils
       end
       file_exists
     end
+    # :nocov:
 
     def download_file(connection, uri, retry_count=10)
       if uri.scheme == 'http' || uri.scheme == 'https'
@@ -150,6 +156,7 @@ class Utils
       end
     end
 
+    # :nocov:
     def download_private_file(connection, uri, retry_count=10)
       bucket = uri.host
       key = uri.path[1..-1]
@@ -219,6 +226,7 @@ class Utils
 
       temp_file
     end
+    # :nocov:
 
     def download_public_file(uri, retry_count = 10, limit = 10)
       raise 'HTTP redirect too deep' if limit == 0
@@ -286,6 +294,7 @@ class Utils
 
     def is_file_type?(type, url)
       #puts "is_audio_file? url:#{url}"
+      return false unless EXTENSIONS_BY_TYPE[type]
       begin
         uri = URI.parse(url)
         ext = (File.extname(uri.path)[1..-1] || "").downcase

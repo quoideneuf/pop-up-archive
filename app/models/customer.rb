@@ -104,6 +104,7 @@ class Customer
   end
 
   def stripe_subscription(stripe_cus=stripe_customer)
+    return nil unless stripe_cus
     stripe_cus.subscriptions.first
   end
 

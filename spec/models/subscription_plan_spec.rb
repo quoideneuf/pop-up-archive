@@ -48,12 +48,22 @@ describe SubscriptionPlanCached do
     SubscriptionPlanCached.ungrandfathered.size.should eq 1
   end
 
+  it "can return basic_community" do
+    SubscriptionPlanCached.basic_community.name.should eq 'Community'
+  end
+
   it "can create trial plan for tests" do
     trial_plan    = SubscriptionPlanCached.create trial_period_days: 30, hours: 1, amount: 2000, name: 'Free Trial'
     stripe_helper = StripeMock.create_test_helper
     card_token    = stripe_helper.generate_card_token
     user          = FactoryGirl.create :user
     user.subscribe!(trial_plan, 'radiorace')
+  end
+
+  it "can discern premium plans" do
+    plan = stripe_plan.as_plan
+    plan.has_premium_transcripts?().should be_falsey
+    stripe_plan.has_premium_transcripts?().should be_falsey
   end
 
 end

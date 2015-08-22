@@ -24,14 +24,17 @@ if current_user
       amara_team: current_user.organization.amara_team,
       usage: { summary: current_user.organization.usage_summary, transcripts: [] },
       owner_id: current_user.organization.owner_id,
+      community_plan_used: current_user.organization.premium_community_transcripts_usage,
     } if current_user.organization.present?
   }
 
+  node(:charges) { current_user.charges.order('transaction_at DESC').as_json }
   node(:used_metered_storage) { current_user.used_metered_storage_cache }
   node(:used_unmetered_storage) { current_user.used_unmetered_storage_cache }
   node(:total_metered_storage) { current_user.pop_up_hours * 3600 }
   node(:usage) { { summary: current_user.usage_summary, transcripts: [] } }
   node(:over_monthly_limit) { current_user.is_over_monthly_limit? }
+  node(:community_plan_used) { current_user.premium_community_transcripts_usage }
   node(:offer_ended) { current_user.is_offer_ended? }
   node(:plan) { current_user.plan_json }
   node(:credit_card) { current_user.active_credit_card_json } if current_user.active_credit_card.present?

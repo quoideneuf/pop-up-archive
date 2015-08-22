@@ -6,8 +6,9 @@ angular.module('Directory.account.models', [])
   	return this.get().then(function (plans) {
       var community;
       angular.forEach(plans, function (plan) {
-        if (typeof community === 'undefined' && plan.id === "community") {
+        if (typeof community === 'undefined' && plan.id === "premium_community") {
           community = plan;
+          community.is_community = true;
         }
       });
       return community;
@@ -57,7 +58,7 @@ angular.module('Directory.account.models', [])
     $rootScope.plans = [];
     plans.forEach(function(plan){
       switch(plan.id){
-        case 'community':
+        case 'premium_community':
         case '25_small_business_mo':
         case '25_small_business_yr':
         case '20_small_business_mo':
@@ -81,6 +82,15 @@ angular.module('Directory.account.models', [])
     $rootScope.planOffset = ( $rootScope.planOffset == '2' ? '3' : '2');
   };
 
+  $rootScope.isDisabled = function(plan) {
+    if (plan.name == 'Community') {
+      return true;
+    } 
+    else {
+      return false;
+    } 
+  };
+
   $rootScope.getInterval = function() {
     return $rootScope.interval;
   };
@@ -89,7 +99,7 @@ angular.module('Directory.account.models', [])
     if (plan.name === "Community"){
       return false;
     } else {
-        return true;
+      return true;
     }
   };
 

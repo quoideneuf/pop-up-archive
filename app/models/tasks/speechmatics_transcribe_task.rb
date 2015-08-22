@@ -11,6 +11,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     ProcessTaskWorker.perform_async(self.id) unless Rails.env.test?
   end
 
+  # :nocov:
   def process
 
     # sanity check -- have we already created a remote request?
@@ -71,7 +72,9 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     end
 
   end
+  # :nocov:
 
+  # :nocov:
   def lookup_sm_job_by_name
 
     sm      = Speechmatics::Client.new({ :request => { :timeout => 120 } })
@@ -88,6 +91,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     job_id
 
   end
+  # :nocov:
 
   def update_premium_transcript_usage(now=DateTime.now)
     billed_user = user
@@ -99,12 +103,12 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     ucalc = UsageCalculator.new(billed_user.entity, now)
 
     # call on user.entity so billing goes to org if necessary
-    billed_duration = ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPTS)
+    billed_duration = ucalc.calculate(MonthlyUsage::PREMIUM_TRANSCRIPTS)
 
     # call again on the user if user != entity, just to record usage.
     if billed_user.entity != billed_user
       user_ucalc = UsageCalculator.new(billed_user, now)
-      user_ucalc.calculate(Transcriber.premium, MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
+      user_ucalc.calculate(MonthlyUsage::PREMIUM_TRANSCRIPT_USAGE)
     end
 
     return billed_duration
@@ -114,6 +118,9 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     # cancelled jobs are final.
     return false if status == CANCELLED
     return false if status == COMPLETE
+
+    # in test mode, never stuck
+    return false if Rails.env.test?
 
     # older than max worktime and incomplete
     if outside_work_window?
@@ -133,6 +140,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     return false
   end
 
+  # :nocov:
   def recover!
 
     # easy cases first.
@@ -184,7 +192,9 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     finish!  # attempt to finish. Who knows, we might get lucky.
 
   end
+  # :nocov:
 
+  # :nocov:
   def finish_task
     return unless audio_file
 
@@ -230,6 +240,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       notify_user
     end
   end
+  # :nocov:
 
   def process_transcript(response)
     trans = nil
@@ -332,16 +343,19 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     Rails.application.routes.url_helpers.speechmatics_callback_url(model_name: 'task', model_id: self.extras['public_id'])
   end
 
+  # :nocov:
   def download_audio_file
     connection = Fog::Storage.new(storage.credentials)
     uri        = URI.parse(audio_file_url)
     Utils.download_file(connection, uri)
   end
+  # :nocov:
 
   def audio_file_url
     audio_file.public_url(extension: :mp3)
   end
 
+  # :nocov:
   def notify_user
     return unless (user && audio_file && audio_file.item)
     return if extras['notify_sent'] || (ENV["DO_NOT_EMAIL"].include? user.id.to_s)
@@ -353,6 +367,7 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     self.save!
     r
   end
+  # :nocov:
 
   def audio_file
     owner
@@ -370,6 +385,8 @@ class Tasks::SpeechmaticsTranscribeTask < Task
     self.extras['duration'].to_i
   end
 
+  # this method appears to be unused
+  # :nocov:
   def usage_duration
     # if parent audio_file gets its duration updated after the task was created, for any reason, prefer it
     if duration and duration > 0
@@ -381,5 +398,6 @@ class Tasks::SpeechmaticsTranscribeTask < Task
       duration
     end
   end
+  # :nocov:
 
 end

@@ -1,11 +1,15 @@
 module Api::BaseHelper
+  # :nocov:
   def infer_model_name(controller)
     controller.camelize.demodulize.underscore.singularize.intern
   end
+  # :nocov:
 
+  # :nocov:
   def inferred_model(controller)
     send(infer_model_name(controller))
   end
+  # :nocov:
 
   def format_time(seconds)
     Time.at(seconds).getgm.strftime('%H:%M:%S')

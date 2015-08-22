@@ -48,6 +48,8 @@ PopUpArchive::Application.routes.draw do
 
   get 'oembed', controller: 'oembed', action: 'show'
 
+  get 'test/show', controller: 'test', action: 'show'
+
   post 'callback/test',      controller: 'callbacks', action: 'tester'
 
   post 'fixer_callback/:id', controller: 'callbacks', action: 'fixer', as: 'audio_file_fixer_callback', model_name: 'audio_file'
@@ -64,6 +66,8 @@ PopUpArchive::Application.routes.draw do
   get 'sitemap.xml', :to => 'sitemap#sitemap', as: 'sitemap', defaults: { format: 'xml' }
 
   post 'headcheck', :to => 'api/v1/audio_files#head_check'
+
+  get 'organization/:org_id/member/:invitation_token', controller: 'organization', action: 'confirm_invite'
 
   # sharing shortcut
   get 't/:item_id',               controller: 'item', action: 'short'
@@ -142,6 +146,7 @@ PopUpArchive::Application.routes.draw do
       resources :speakers
 
       resources :organizations
+      post '/organizations/:id/member' => 'organizations#member'
 
       resources :plans
 

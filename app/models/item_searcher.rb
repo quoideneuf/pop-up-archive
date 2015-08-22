@@ -16,8 +16,8 @@ class ItemSearcher
   def initialize(params, current_user=nil)
     @params    = params
     @query_str = params[:q] || params[:query]
-    @sort_by   = params[:sort_by]
-    @sort_order = params[:sort_order]
+    @sort_by   = params[:sort_by] || params[:sortBy]
+    @sort_order = params[:sort_order] || params[:sortOrder]
     if params[:s]
       sstr = params[:s].split /\ +/
       @sort_by = sstr[0]
@@ -251,6 +251,7 @@ class ItemSearcher
 
       # determine sort order
       if has_sort
+        #Rails.logger.warn("has_sort==true. column==#{query_builder.sort_column} dir=#{query_builder.sort_order}")
         sort do
           by query_builder.sort_column, query_builder.sort_order
         end

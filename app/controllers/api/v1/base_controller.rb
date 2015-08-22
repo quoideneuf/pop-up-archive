@@ -30,6 +30,7 @@ class Api::V1::BaseController < Api::BaseController
     Item.index_name
   end
 
+  # :nocov:
   def ping_trackers
     u = current_user_with_oauth
     if u && ENV['GOOGLE_ANALYTICS_KEY'] && !params['_ui'] && Rails.env.production?
@@ -39,5 +40,6 @@ class Api::V1::BaseController < Api::BaseController
       Rails.logger.debug("#{path} - #{ttl}")
     end
   end
+  # :nocov:
 
 end
