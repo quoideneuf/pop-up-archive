@@ -19,8 +19,8 @@ class OembedController < Api::V1::BaseController
 
     # extract the asset from the url
     route_action = Rails.application.routes.recognize_path(params[:url])
-    #Rails.logger.warn( route_action.inspect )
-    if route_action[:action] == 'tplayer'
+    # Rails.logger.warn( route_action.inspect )
+    if (route_action[:action] == 'tplayer') || (route_action[:action] == 'iframe')
       # set up instance vars based on :url
       @url        = params[:url]
       @embed      = true
@@ -62,11 +62,15 @@ class OembedController < Api::V1::BaseController
       @chunk_size = route_action[:chunk] || 30
       @start      = route_action[:start] || 0
       @end        = route_action[:end]   || false
-      @height     = params[:maxheight] || 400
-      @width      = params[:maxwidth]  || 400
 
       # path to html (rich) template partial
-      @partial_path = 'oembed/tplayer.html'
+      if route_action[:action] == 'iframe'
+        @partial_path = "oembed/iframe.html"
+      else
+        @partial_path = 'oembed/tplayer.html'
+        @height     = params[:maxheight] || 400
+        @width      = params[:maxwidth]  || 400
+      end
       
       # response type for tplayer
       @type = "rich"
