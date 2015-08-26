@@ -7,6 +7,12 @@
           .logo.up Up
           .logo.archive &nbsp;Archive
 
-    .navbar-collapse
+      button.navbar-toggle.collapsed type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="false"
+          span.sr-only Toggle navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+
+    #main-nav.navbar-collapse.collapse
       = render('account')
       = render('nav')
