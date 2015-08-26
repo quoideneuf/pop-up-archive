@@ -6,6 +6,11 @@
     background-image: url(<%= asset_path('home/ike_homepage.jpg') %>);
     background-size: cover;
     padding: 3em 0;
+    @media(max-width:540px) {
+      background-position: right;
+      margin: 0 -1.7em;
+      padding: 0;
+    }
   }
   
   h2 {
@@ -63,6 +68,9 @@
 }
 
 #home-feature {
+  #logos img {
+    width: 100%;
+  }
   h2 {
     text-align: center;
     color: #5970b1;
@@ -82,6 +90,14 @@
   }
   .story {
     padding: 4% 0;
+    .col-md-3 {
+      text-align: center;
+      @include mobile {
+        img {
+          width: 100%;
+        } 
+      }
+    }
   }
   .highlight {
     font-family: "freight-text-pro",sans-serif;
@@ -126,9 +142,30 @@
 }
 
 .newimportdiv {
-	padding: 10px;
-	border-radius: 4px;
-	background-color: rgba(255, 255, 255, .7);
+  padding: 10px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, .7);
+}
+.featurebtn {
+  font-family: 'soleil', helvetica, sans-serif;
+  font-size: 1.4em;
+  background-color: #85D0F1;
+  opacity: .9;
+  color: #ffffff;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 1em;
+  border: none;
+  padding: 1em;
+  margin-bottom: 1em;
 }
 
-//end homepage
+.featurebtn2 {
+  @extend .featurebtn;
+  background-color: #f25a4c;
+  margin-left: 2em;
+}
+
+.featurebtn:hover, .featurebtn2:hover {
+  text-decoration: none;
+}
