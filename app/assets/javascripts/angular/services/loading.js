@@ -50,7 +50,7 @@
         if (actuallyIsLoading < 0) actuallyIsLoading = 0;
         return response;
       }, function error(response) {
-        var errCode = response.status;
+        var errCode = response.status.toString();
         // avoid recursion (error throwing error)
         // and only re-route if this was the main request (matches window.location) or 401, 403.
         // NOTE we silently skip 5xx and 404 responses because we do not want to alarm or mislead users
