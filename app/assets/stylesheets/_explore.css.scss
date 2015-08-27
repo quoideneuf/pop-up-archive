@@ -37,6 +37,14 @@
 }
 
 .browse_results{
+
+  #explorewell .row {
+    overflow-x: hidden;
+    text-align: center;
+    &.main-featured {
+      text-align: left;
+    }
+  }
   h4{
     color: #85d0f1;
   }

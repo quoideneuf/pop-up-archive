@@ -26,19 +26,7 @@
     padding-right: 8px;
   }
 }
-@media screen and (max-width: 860px) {
-  .navbar-collapse .pull-right li a #my_collections .nav-label {
-    display: none;
-  }
-}
-@media screen and (max-width: 750px) {
-  .navbar-collapse .pull-right li a #user_name .nav-label {
-    display: none;
-  }
-  .navbar-collapse .pull-right li a .nav-label {
-    display:none;
-  }
-}
+
 @media screen and (max-width: 600px) {
   .navbar-collapse .nav.pull-right {
     /* stop pulling right */
