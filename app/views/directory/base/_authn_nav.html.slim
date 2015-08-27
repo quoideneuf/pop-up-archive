@@ -1,4 +1,4 @@
-ul.navbar.nav.navbar-nav.search-left
+ul.authn.navbar.nav.navbar-nav.search-left
   li
     form.navbar-form ng-controller="GlobalSearchCtrl" ng-submit="go()"
       input.search-query.form-control style="width:150px" ng-model="query.string" placeholder='Search' type='search'
@@ -20,7 +20,7 @@ ul.nav.authn.pull-right.navbar-right.navbar-nav.navbar
         i.fa.fa-folder-o
         span.nav-label
           |  my collections&nbsp;
-    a.split.menu bs-dropdown="myCollectionsMenu" placement="bottom-right"
+    a.split.menu bs-dropdown="myCollectionsMenu" placement="bottom"
       #my_collections_menu
         i.fa.fa-caret-down
   li
