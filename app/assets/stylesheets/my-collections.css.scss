@@ -80,7 +80,6 @@
   
   .collection-info {
     max-width: 820px;
-    margin: -16px 0 0 10px;
     h3 {
       color: #f25b4c;
       text-decoration: underline;
@@ -109,6 +108,7 @@
       padding: 0;
       float: left;
       white-space: nowrap;
+      overflow-x: hidden;
     }
     .items-list {
       margin: 0;
