@@ -24,7 +24,7 @@
       .collection-info
         div
           a ng-href="/collections/{{collection.id}}"
-            h3 style="display: inline-block" {{collection.title}}
+            h3 style="display: inline;" {{collection.title}}
           span
             ng-pluralize count="collection.numberOfItems" when="{'0': '(No Items yet)', '1': '(1 Item)', 'other': '({} Items)' }"
         p() {{collection.description | characters:220}}

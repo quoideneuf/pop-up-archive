@@ -2,27 +2,95 @@
 	.plan-well {
 		border: 5px solid  #F2EFEF;
 		min-height: 340px;
-		padding:0;
+		padding: 10px 0 0 0;
+		font-family: 'soleil', helvetica, sans-serif;
+		background: #FFF;
+		border-radius: 20px;
+		text-align: center;
+		margin-bottom: 20px;
 		&:hover {
 			border: 5px solid #7d7d82;
 		}
+		h2 {
+			margin-top: 0px;
+			color: #FFF;
+			padding: 10px;
+		}
+		h4 {
+			color: #F9A732;
+		}
+		h5 {
+			text-align: center;
+		}
+
+		table {
+			width: 100%;
+		}
+
+		col ~ col {
+			width: 130px;
+		}
+
+		tr {
+			border-bottom: #FFF solid 3px;
+		}
+
+		p {
+			margin-bottom: 0px;
+		}
+
+		.save .btn {
+			margin-left: 3px;
+		}
+
+		.strong {
+			font-weight: 600;
+			font-size: 16px;
+		}
+
+		#rowhead {
+			padding: 20px;
+		}
+
+		thead th{
+			background-color: #7c7b81;
+		}
+
+		thead th:first-child {
+			background-color: #FFF; 
+		}
+
+		tbody td:first-child { 
+			background-color: #FFF;
+			text-align: right;
+			padding: 20px;
+			font-weight: 600; 
+		}
+
+		tbody td {
+			background-color: #ebebeb;
+		}
+
+		.current {
+			background-color: #8BF1DB;
+		}
 	}
 	.contact-button {
-	 	background: #85D0F1;
-	 	border-radius: 20px;
-	 	width: 100%;
-	 	overflow: hidden;
-	 	margin-bottom: 3em;
-	 	object {
-	 		float: left;
-	 		padding: 10px;
-	 	}
-	 	a, h4 {
-	 		color: white;
-	 	}
-	 	h3 {
-	 		margin-top: 3%;
-	 	}
+		background: #85D0F1;
+		border-radius: 20px;
+		width: 100%;
+		overflow: hidden;
+		margin-bottom: 3em;
+		object {
+			float: left;
+			padding: 10px;
+		}
+		a, h4 {
+			color: white;
+		}
+		h3 {
+			margin-top: 3%;
+		}
 	}
 
 	.contact-button:hover {
@@ -41,13 +109,13 @@
 	}
 
 	@mixin word-pill {
-	  border: 0;
-	  margin-right: 5px;
-	  color: white;
-	  padding: 2px;
-	  border-radius: 15px;
-	  font-family: 'soleil', helvetica, sans-serif;
-	  font-size: .8em;
+		border: 0;
+		margin-right: 5px;
+		color: white;
+		padding: 2px;
+		border-radius: 15px;
+		font-family: 'soleil', helvetica, sans-serif;
+		font-size: .8em;
 	}
 
 	p {
@@ -160,4 +228,69 @@
 		@include word-pill;
 		background: #D78551;
 	}
+}
+
+//plans (moved from base)
+#plan-header {
+	text-align: center;
+	color: #7C7B81;
+	font-size: 24px;
+	a {
+		color: #c9b936;
+	}
+}
+.subtitle{
+	text-align: center;
+	color: #000;
+	font-size: 16px;
+}
+
+
+.credit-card, .plan-pricing {
+	font-size: 2.0em;
+	line-height: 2.2em;
+	small {
+		font-size: 16px;
+		line-height: 21px;
+		margin: 0 0 5px;
+		span {
+			float: left;
+			margin-top: 1px;
+			font-size: 0.8em;
+		}
+	}
+}
+
+.plan-pricing small {
+	margin-left: 10px;
+}
+
+.credit-card {
+	margin-top: -10px;
+	text-align: right;
+	small {
+		font-size: 13px;
+		position: relative;
+		display: block;
+		top: -15px;
+	}
+}
+
+.loading-shield {
+	position: absolute;
+	left: 10px;
+	right: 10px;
+	bottom: 70px;
+	top: 55px;
+	background: rgba(255, 255, 255, 0.5);
+	font-size: 4.0em;
+	text-align:center;
+	vertical-align: center;
+	z-index: 100;
+	padding-top: 100px;
+	display: block;
+}
+
+ul.pricing {
+	margin: 0 0 10px 8px;
 }
