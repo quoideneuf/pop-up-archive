@@ -7,7 +7,7 @@ class Entity < ActiveRecord::Base
   scope :middle_scoring, -> { unconfirmed.where(arel_table[:score].gt(0.75).and(arel_table[:score].lt(0.95))) }
   scope :low_scoring, -> { unconfirmed.where(arel_table[:score].lteq(0.75).or(arel_table[:score].eq(nil))) }
   
-  #serialize :extra
+  serialize :extra, JSON
 
   belongs_to :item, touch: true
 

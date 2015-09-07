@@ -1,4 +1,7 @@
 FactoryGirl.define do
+  to_create{|instance| instance.save(validate: false)}
+
+
   factory :audio_file do
 
     association :item, factory: :item
