@@ -55,4 +55,20 @@ describe Tasks::AnalyzeTask do
     @audio_file.item.entities.select{ |e| e.name == 'San Francisco' }[0].score.should eq 1.0
   end
 
+
+  it "chooses one among entities with the same name and stores the rest as 'extra' data" do
+
+    analysis = '{"entities":[{"id":1091241,"name":"Los Angeles","is_confirmed":false,"identifier":null,"score":1,"type":"Place","category":"entity","extra":{"wikipedia_url":"http://en.wikipedia.com/wiki/Los_Angeles"}},{"id":1091245,"name":"Los Angeles","is_confirmed":false,"identifier":"http://d.opencalais.com/genericHasher-1/874eaab9-7b66-36e3-9650-8de7a5001cf9","score":1,"type":"City","category":"location","extra":{"latitude":"34.0522","longitude":"-118.2428","country":"United States","state":"California"}},{"id":1091244,"name":"California","is_confirmed":false,"identifier":"http://d.opencalais.com/genericHasher-1/9679b237-33e8-3478-ba13-d9af3c4b943e","score":1,"type":"Province Or State","category":"location","extra":{"latitude":"36.4885198674","longitude":"-119.701379437","country":"United States"}},{"id":1091243,"name":"California","is_confirmed":false,"identifier":null,"score":1,"type":"Person","category":"entity","extra":{"wikipedia_url":"http://en.wikipedia.com/wiki/California"}}]}'
+    @task.process_analysis(analysis)
+    @audio_file.item.entities.count.should eq 2
+
+    @audio_file.item.entities.find{|e| e['name'] == 'Los Angeles'}.tap {|ent|
+      ent['entity_type'].should eq('Place')
+      ent['extra']['dupes'][0].tap {|dup|
+        dup['type'].should eq('City')
+        dup['extra']['latitude'].should eq("34.0522")
+        dup['id'].should eq(1091245)
+      }
+    }
+  end
 end

@@ -11,7 +11,7 @@ class Tasks::AnalyzeTask < Task
       connection = Fog::Storage.new(storage.credentials)
       uri        = URI.parse(destination)
       analysis   = nil
-      begin 
+      begin
         analysis   = get_file(connection, uri)
       rescue Excon::Errors::InternalServerError => err
         # upstream errors are unpredictable, not worth re-trying.
@@ -52,7 +52,7 @@ class Tasks::AnalyzeTask < Task
     else
       finish!
     end
-  end 
+  end
   # :nocov:
 
   def process_analysis(analysis_json)
@@ -64,7 +64,7 @@ class Tasks::AnalyzeTask < Task
     begin
       if analysis_json.is_a?(String) and analysis_json.length > 0
         analysis = JSON.parse(analysis_json)
-      else 
+      else
         raise "Got invalid analysis JSON string: #{analysis_json.inspect}"
       end
     rescue JSON::ParserError => err
@@ -79,7 +79,10 @@ class Tasks::AnalyzeTask < Task
     return unless analysis
 
     ["entities", "locations", "relations", "tags", "topics"].each do |category|
-      analysis[category].each{|analysis_entity|
+      next unless analysis[category]
+      deduped_entities = dedupe_names(analysis[category])
+
+      deduped_entities.each{|analysis_entity|
         name = analysis_entity.delete('name')
         score = analysis_entity.delete('score')
         if category == "locations"
@@ -130,13 +133,13 @@ class Tasks::AnalyzeTask < Task
       score = log * oscore
       # puts "length: " + length.to_s + " orig score: " + oscore.to_s + " freq: " + freq.to_s + " base: " + base.to_s + " new score: " + score.to_s
       return score
-    end    
+    end
   end
 
   def audio_file
     self.owner
   end
-  
+
   def control_the_vocab(term)
     #Check to see if term exists in DBPedia
     begin
@@ -146,9 +149,9 @@ class Tasks::AnalyzeTask < Task
       Rails.logger.error(response.status)
       return false
     end
-    !results.include?(term.downcase)    
+    !results.include?(term.downcase)
   end
-  
+
   def create_entity(name, score, item, category, analysis_entity)
     entity = item.entities.build
 
@@ -157,7 +160,7 @@ class Tasks::AnalyzeTask < Task
     entity.is_confirmed = false
     entity.name         = name
     entity.identifier   = analysis_entity.delete('guid')
-    entity.score        = score 
+    entity.score        = score
 
     # anything left over, put it in the extra
     entity.extra        = analysis_entity
@@ -190,6 +193,24 @@ class Tasks::AnalyzeTask < Task
       suffix:  '_analysis.json',
       options: { metadata: {'x-archive-meta-mediatype'=>'data' } }
     })
+  end
+
+  def dedupe_names(entities)
+    results = []
+    entities.map{|e| e['name']}.uniq.each do |name|
+      dupes = entities.select{|e| e['name'] == name}
+      if dupes.length == 1
+        results << dupes.shift
+      else
+        # sort by score or preserve orig order
+        n = 0
+        dupes.sort_by {|e| n+=1; [e['score'], n] }.tap {|sorted|
+          results << sorted[0].merge({'dupes' => sorted[1..-1]})
+        }
+      end
+    end
+
+    results
   end
 
 end
